@@ -319,8 +319,8 @@ namespace Labor
                     case DataToken<Vizsgálat.Azonosító>.TokenType.NOT_FOUND:
                         foreach (DataRow current in data.Rows)
                         {
-                            if (token.data.termékkód == (string)current[0] && token.data.sarzs == (string)current[1]
-                                && token.data.hordószám == (string)current[2] && token.data.hordótípus == (string)current[2])
+                            if (token.data.termékkód == current[0].ToString() && token.data.sarzs == current[1].ToString()
+                                && token.data.hordószám == current[2].ToString() && token.data.hordótípus == current[3].ToString())
                             {
                                 data.Rows.Remove(current);
                                 kitörlendők.Add(token);

@@ -335,7 +335,6 @@ namespace Labor
             SqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                // TODO asdasd
                 data.Add(new Vizsgálat.Azonosító(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetString(4), (double)reader.GetDecimal(5), reader.GetByte(6), reader.GetString(7)));
             }
             command.Dispose();
