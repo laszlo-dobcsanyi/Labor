@@ -1,7 +1,0 @@
-D:\Visual Studio 2013\Labor\Labor.exe.config
-D:\Visual Studio 2013\Labor\Labor.exe
-D:\Visual Studio 2013\Labor\Labor.pdb
-D:\Git\Labor\Labor\obj\Debug\Labor.Properties.Resources.resources
-D:\Git\Labor\Labor\obj\Debug\Labor.csproj.GenerateResource.Cache
-D:\Git\Labor\Labor\obj\Debug\Labor.exe
-D:\Git\Labor\Labor\obj\Debug\Labor.pdb
