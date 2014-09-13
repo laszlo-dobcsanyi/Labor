@@ -9,10 +9,6 @@ namespace Labor
 {
     public struct Vizsgálat
     {
-        /// <summary>
-        /// NE MÓDOSÍTSD, VAGY BORUL AZ EGÉSZ ADATBÁZIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!4444négynégynégynégynégy
-        /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!444444NÉGYnégynégynégynégynégynégynégynégy
-        /// </summary>
         public struct Azonosító
         {
             public string termékkód;
@@ -21,11 +17,10 @@ namespace Labor
             public int? sorszám;
             public string hordótípus;
             public double nettó_töltet;
-            public int szita_átmérő;
+            public byte szita_átmérő;
             public string megrendelő;
 
-
-            public Azonosító(string _termékkód, string _hordószám, string _sarzs, int? _sorszám, string _hordótípus, double _nettó_töltet, int _szita_átmérő, string _megrendelő)
+            public Azonosító(string _termékkód, string _hordószám, string _sarzs, int? _sorszám, string _hordótípus, double _nettó_töltet, byte _szita_átmérő, string _megrendelő)
             {
                 sorszám = _sorszám;
                 termékkód = _termékkód;
@@ -38,18 +33,17 @@ namespace Labor
             }
         }
 
-
         public struct Adatok1
         {
             public string terméknév;
-            public int hőkezelés;
+            public byte hőkezelés;
             public string gyártási_év;
             public string műszak_jele;
             public string töltőgép;
             public string szárm_ország;
             public string gyümölcsfajta;
 
-            public Adatok1(string _terméknév, int _hőkezelés, string _gyártási_év, string _műszak_jele, string _töltőgép, string _szárm_ország, string _gyümölcsfajta)
+            public Adatok1(string _terméknév, byte _hőkezelés, string _gyártási_év, string _műszak_jele, string _töltőgép, string _szárm_ország, string _gyümölcsfajta)
             {
                 terméknév = _terméknév;
                 hőkezelés = _hőkezelés;
@@ -68,15 +62,15 @@ namespace Labor
             public double? borkősav;
             public double? ph;
             public double? bostwick;
-            public int? aszkorbinsav;
-            public int? citromsav_adagolás;
-            public int? magtöret;
-            public int? feketepont;
-            public int? barnapont;
+            public byte? aszkorbinsav;
+            public byte? citromsav_adagolás;
+            public byte? magtöret;
+            public byte? feketepont;
+            public byte? barnapont;
             public string szín;
             public string íz;
             public string illat;
-            public Adatok2(double? _brix, double? _citromsav, double? _borkősav, double? _ph, double? _bostwick, int? _aszkorbinsav, int? _citromsav_adagolás, int? _magtöret, int? _feketepont, int? _barnapont, string _szín, string _íz, string _illat)
+            public Adatok2(double? _brix, double? _citromsav, double? _borkősav, double? _ph, double? _bostwick, byte? _aszkorbinsav, byte? _citromsav_adagolás, byte? _magtöret, byte? _feketepont, byte? _barnapont, string _szín, string _íz, string _illat)
             {
                 brix = _brix;
                 citromsav = _citromsav;
@@ -98,14 +92,14 @@ namespace Labor
         {
             public string leoltás;
             public string értékelés;
-            public int? összcsíra_1;
-            public int? összcsíra_2;
-            public int? penész_1;
-            public int? penész_2;
-            public int? élesztő_1;
-            public int? élesztő_2;
+            public byte? összcsíra_1;
+            public byte? összcsíra_2;
+            public byte? penész_1;
+            public byte? penész_2;
+            public byte? élesztő_1;
+            public byte? élesztő_2;
             public string megjegyzés;
-            public Adatok3(string _leoltás, string _értékelés, int? _összcsíra_1, int? _összcsíra_2, int? _penész_1, int? _penész_2, int? _élesztő_1, int? _élesztő_2, string _megjegyzés)
+            public Adatok3(string _leoltás, string _értékelés, byte? _összcsíra_1, byte? _összcsíra_2, byte? _penész_1, byte? _penész_2, byte? _élesztő_1, byte? _élesztő_2, string _megjegyzés)
             {
                 leoltás = _leoltás;
                 értékelés = _értékelés;
@@ -246,7 +240,7 @@ namespace Labor
             data.Columns.Add(new DataColumn("Hordószám", System.Type.GetType("System.String")));
             data.Columns.Add(new DataColumn("Hordótípus", System.Type.GetType("System.String")));
             data.Columns.Add(new DataColumn("Nettó töltet", System.Type.GetType("System.Double")));
-            data.Columns.Add(new DataColumn("Szitaátmérő", System.Type.GetType("System.Int32")));
+            data.Columns.Add(new DataColumn("Szitaátmérő", System.Type.GetType("System.Byte")));
             data.Columns.Add(new DataColumn("Megrendelő", System.Type.GetType("System.String")));
             data.Columns.Add(new DataColumn("Sorszám", System.Type.GetType("System.Int32")));
 
@@ -344,7 +338,7 @@ namespace Labor
             foreach (DataGridViewRow selected in table.SelectedRows)
             {
                 Vizsgálat.Azonosító azonosító = new Vizsgálat.Azonosító((string)selected.Cells[0].Value, (string)selected.Cells[2].Value, (string)selected.Cells[1].Value, (int)selected.Cells[7].Value,
-                    (string)selected.Cells[3].Value, (double)selected.Cells[4].Value, (int)selected.Cells[5].Value, (string)selected.Cells[6].Value);
+                    (string)selected.Cells[3].Value, (double)selected.Cells[4].Value, (byte)selected.Cells[5].Value, (string)selected.Cells[6].Value);
 
                 if (!Program.database.Vizsgálat_Törlés(azonosító))
                 { MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy nem létezik már a törlendő vizsgálat?\nTermékkód: " + azonosító.termékkód + "\nSarzs: " + azonosító.sarzs + "\nHordószám: " + azonosító.hordószám +
@@ -364,10 +358,10 @@ namespace Labor
             if (table.SelectedRows.Count != 1) return;
 
             Vizsgálat.Azonosító azonosító = new Vizsgálat.Azonosító((string)table.SelectedRows[0].Cells[0].Value, (string)table.SelectedRows[0].Cells[2].Value, (string)table.SelectedRows[0].Cells[1].Value,
-                (int)table.SelectedRows[0].Cells[7].Value, (string)table.SelectedRows[0].Cells[3].Value, (double)table.SelectedRows[0].Cells[4].Value, (int)table.SelectedRows[0].Cells[5].Value,
+                (int)table.SelectedRows[0].Cells[7].Value, (string)table.SelectedRows[0].Cells[3].Value, (double)table.SelectedRows[0].Cells[4].Value, (byte)table.SelectedRows[0].Cells[5].Value,
                 (string)table.SelectedRows[0].Cells[6].Value);
 
-            Vizsgálat? _vizsgálat = Program.database.Vizsgálat(azonosító);  if (_vizsgálat == null) { MessageBox.Show("FATÁL"); return; }
+            Vizsgálat? _vizsgálat = Program.database.Vizsgálat(azonosító);  if (_vizsgálat == null) { MessageBox.Show("A kiválasztott vizsgálati lap nem található!", "Adatbázis hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
             Vizsgálati_Lap vizsgálati_lap = new Vizsgálati_Lap(_vizsgálat.Value);
             vizsgálati_lap.ShowDialog();
         }
@@ -920,12 +914,12 @@ namespace Labor
                         eredeti == null ? null : eredeti.Value.azonosító.sorszám,
                         combo_hordótípus.Text,
                         Convert.ToDouble(box_nettó_töltet.Text),
-                        Convert.ToInt32(box_szita_átmérő.Text),
+                        Convert.ToByte(box_szita_átmérő.Text),
                         combo_megrendelő.Text
                         );
                  Vizsgálat.Adatok1 adatok1 = new Vizsgálat.Adatok1(
                         box_terméknév.Text,
-                        Convert.ToInt32(box_hőkezelés.Text),
+                        Convert.ToByte(box_hőkezelés.Text),
                         gyártási_év,
                         box_műszak_jele.Text,
                         box_töltőgép_száma.Text,
@@ -938,11 +932,11 @@ namespace Labor
                         Program.mainform.ConvertOrDie<double>(box_borkősav.Text),
                         Program.mainform.ConvertOrDie<double>(box_ph.Text),
                         Program.mainform.ConvertOrDie<double>(box_bostwick.Text),
-                        Program.mainform.ConvertOrDie<int>(box_aszkorbinsav.Text),
-                        Program.mainform.ConvertOrDie<int>(box_citromsav_ad.Text),
-                        Program.mainform.ConvertOrDie<int>(box_magtöret.Text),
-                        Program.mainform.ConvertOrDie<int>(box_feketepont.Text),
-                        Program.mainform.ConvertOrDie<int>(box_barnapont.Text),
+                        Program.mainform.ConvertOrDie<byte>(box_aszkorbinsav.Text),
+                        Program.mainform.ConvertOrDie<byte>(box_citromsav_ad.Text),
+                        Program.mainform.ConvertOrDie<byte>(box_magtöret.Text),
+                        Program.mainform.ConvertOrDie<byte>(box_feketepont.Text),
+                        Program.mainform.ConvertOrDie<byte>(box_barnapont.Text),
                         Program.mainform.ConvertOrDieString(box_szin.Text),
                         Program.mainform.ConvertOrDieString(box_iz.Text),
                         Program.mainform.ConvertOrDieString(box_illat.Text)
@@ -950,12 +944,12 @@ namespace Labor
                     Vizsgálat.Adatok3 adatok3 = new Vizsgálat.Adatok3(
                         Program.mainform.ConvertOrDieString(box_leoltas.Text),
                         Program.mainform.ConvertOrDieString(box_ertekeles.Text),
-                        Program.mainform.ConvertOrDie<int>(box_összcsíra_higit_1.Text),
-                        Program.mainform.ConvertOrDie<int>(box_összcsíra_higit_2.Text),
-                        Program.mainform.ConvertOrDie<int>(box_penész_higit_1.Text),
-                        Program.mainform.ConvertOrDie<int>(box_penész_higit_2.Text),
-                        Program.mainform.ConvertOrDie<int>(box_élesztő_higit_1.Text),
-                        Program.mainform.ConvertOrDie<int>(box_élesztő_higit_2.Text),
+                        Program.mainform.ConvertOrDie<byte>(box_összcsíra_higit_1.Text),
+                        Program.mainform.ConvertOrDie<byte>(box_összcsíra_higit_2.Text),
+                        Program.mainform.ConvertOrDie<byte>(box_penész_higit_1.Text),
+                        Program.mainform.ConvertOrDie<byte>(box_penész_higit_2.Text),
+                        Program.mainform.ConvertOrDie<byte>(box_élesztő_higit_1.Text),
+                        Program.mainform.ConvertOrDie<byte>(box_élesztő_higit_2.Text),
                         Program.mainform.ConvertOrDieString(box_megjegyzes.Text)
                     );
                     Vizsgálat.Adatok4 adatok4 = new Vizsgálat.Adatok4(
