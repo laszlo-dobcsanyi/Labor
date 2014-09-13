@@ -1,32 +1,7 @@
-C:\Users\László\Dropbox\Marillen program\0.2.0\Labor\Labor\bin\Debug\Labor.exe.config
-C:\Users\László\Dropbox\Marillen program\0.2.0\Labor\Labor\bin\Debug\Labor.exe
-C:\Users\László\Dropbox\Marillen program\0.2.0\Labor\Labor\bin\Debug\Labor.pdb
-C:\Users\László\Dropbox\Marillen program\0.2.0\Labor\Labor\obj\Debug\Labor.Properties.Resources.resources
-C:\Users\László\Dropbox\Marillen program\0.2.0\Labor\Labor\obj\Debug\Labor.csproj.GenerateResource.Cache
-C:\Users\László\Dropbox\Marillen program\0.2.0\Labor\Labor\obj\Debug\Labor.exe
-C:\Users\László\Dropbox\Marillen program\0.2.0\Labor\Labor\obj\Debug\Labor.pdb
-z:\belinyakmate\Dropbox\Marillen program\0.2.0\Labor\Labor\bin\Debug\Labor.exe.config
-z:\belinyakmate\Dropbox\Marillen program\0.2.0\Labor\Labor\obj\Debug\Labor.exe
-z:\belinyakmate\Dropbox\Marillen program\0.2.0\Labor\Labor\obj\Debug\Labor.pdb
-z:\belinyakmate\Dropbox\Marillen program\0.2.0\Labor\Labor\bin\Debug\Labor.exe
-z:\belinyakmate\Dropbox\Marillen program\0.2.0\Labor\Labor\bin\Debug\Labor.pdb
-z:\belinyakmate\Dropbox\Marillen program\0.2.0\Labor\Labor\obj\Debug\Labor.Properties.Resources.resources
-z:\belinyakmate\Dropbox\Marillen program\0.2.0\Labor\Labor\obj\Debug\Labor.csproj.GenerateResource.Cache
-C:\Users\Thinkpad\Dropbox\Marillen program\0.2.0\Labor\Labor\bin\Debug\Labor.exe.config
-C:\Users\Thinkpad\Dropbox\Marillen program\0.2.0\Labor\Labor\obj\Debug\Labor.exe
-C:\Users\Thinkpad\Dropbox\Marillen program\0.2.0\Labor\Labor\obj\Debug\Labor.pdb
-C:\Users\Thinkpad\Dropbox\Marillen program\0.2.0\Labor\Labor\bin\Debug\Labor.exe
-C:\Users\Thinkpad\Dropbox\Marillen program\0.2.0\Labor\Labor\bin\Debug\Labor.pdb
-C:\Users\Thinkpad\Dropbox\Marillen program\0.2.0\Labor\Labor\obj\Debug\Labor.Properties.Resources.resources
-C:\Users\Thinkpad\Dropbox\Marillen program\0.2.0\Labor\Labor\obj\Debug\Labor.csproj.GenerateResource.Cache
-c:\Users\Thinkpad\Dropbox\Marillen program\0.2.0\Labor\Labor\obj\Debug\Labor.csprojResolveAssemblyReference.cache
-C:\Users\László\Dropbox\Marillen program\0.2.0\Labor\Labor\obj\Debug\Labor.csprojResolveAssemblyReference.cache
-z:\belinyakmate\Dropbox\Marillen program\0.2.0\Labor\Labor\obj\Debug\Labor.csprojResolveAssemblyReference.cache
-D:\Git\Labor\Labor\bin\Debug\Labor.exe.config
-D:\Git\Labor\Labor\obj\Debug\Labor.exe
-D:\Git\Labor\Labor\obj\Debug\Labor.pdb
-D:\Git\Labor\Labor\bin\Debug\Labor.exe
-D:\Git\Labor\Labor\bin\Debug\Labor.pdb
-D:\Git\Labor\Labor\obj\Debug\Labor.csprojResolveAssemblyReference.cache
+D:\Visual Studio 2013\Labor\Labor.exe.config
+D:\Visual Studio 2013\Labor\Labor.exe
+D:\Visual Studio 2013\Labor\Labor.pdb
 D:\Git\Labor\Labor\obj\Debug\Labor.Properties.Resources.resources
 D:\Git\Labor\Labor\obj\Debug\Labor.csproj.GenerateResource.Cache
+D:\Git\Labor\Labor\obj\Debug\Labor.exe
+D:\Git\Labor\Labor\obj\Debug\Labor.pdb
