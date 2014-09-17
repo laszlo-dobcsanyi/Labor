@@ -61,7 +61,7 @@ namespace Labor
                             "CREATE TABLE L_VIZSLAP (VITEKO varchar(4) NOT NULL, VISARZ varchar(3) NOT NULL, VIHOSZ varchar(4) NOT NULL, VIHOTI varchar(15), VINETO DECIMAL(6, 3), VISZAT tinyint, VIMEGR varchar(50), VIMSSZ int IDENTITY(1,1)," +
 
                                 // Adatok1
-                                "VITENE varchar(50), VIHOKE tinyint, VIGYEV varchar(1) NOT NULL, VIMUJE varchar(1), VITOGE varchar(1),  VISZOR varchar(15), VIFAJT varchar(50), " +
+                                "VITENE varchar(50), VIHOKE tinyint, VIGYEV varchar(1), VIMUJE varchar(1), VITOGE varchar(1),  VISZOR varchar(15), VIFAJT varchar(50), " +
                                 
                                 // Adatok2
                                 "VIBRIX DECIMAL(3,1), VICSAV DECIMAL(4,2), VIBOSA DECIMAL(4,2), VIPEHA DECIMAL(4,2), VIBOST DECIMAL(3,1) ,VIASAV tinyint, VICIAD tinyint, VIMATO tinyint, VIFEFE tinyint, VIFEBA tinyint, " +
@@ -153,14 +153,17 @@ namespace Labor
         {
             Type type = typeof(T);
             if (type == typeof(char)) { return _column_name + " = '" + _value + "'"; }
-            if (type == typeof(string)) { if (_value != null) return _column_name + " = '" + _value + "'"; }
+            if (type == typeof(string)) { if (_value != null) return _column_name + " = '" + _value + "'"; else return null; }
+
+            if (type == typeof(byte)) { return _column_name + " = " + _value; }
 
             if (type == typeof(int)) { return _column_name + " = " + _value; }
-            if (type == typeof(int?)) { if (_value != null) return _column_name + " = " + _value; }
+            if (type == typeof(int?)) { if (_value != null) return _column_name + " = " + _value; else return null; }
 
             if (type == typeof(double)) { return _column_name + " = " + _value.ToString().Replace(',', '.'); }
-            if (type == typeof(double?)) { if (_value != null) return _column_name + " = " + _value.ToString().Replace(',', '.'); }
-            return null;
+            if (type == typeof(double?)) { if (_value != null) return _column_name + " = " + _value.ToString().Replace(',', '.'); else return null; }
+
+            throw new IndexOutOfRangeException();
         }
 
         public static T? GetNullable<T>(SqlDataReader _reader, int _column) where T : struct 
@@ -544,7 +547,7 @@ namespace Labor
             // Azonosító
             command = laborconnection.CreateCommand();
             command.CommandText = "INSERT INTO L_VIZSLAP (VITEKO, VISARZ, VIHOSZ, VIHOTI, VINETO, VISZAT, VIMEGR)" +
-                                " VALUES('" + _vizsgálat.azonosító.termékkód + "', '" + _vizsgálat.azonosító.hordószám + "', '" + _vizsgálat.azonosító.sarzs + "', '" + _vizsgálat.azonosító.hordótípus + "', "
+                                " VALUES('" + _vizsgálat.azonosító.termékkód + "', '" + _vizsgálat.azonosító.sarzs + "', '" + _vizsgálat.azonosító.hordószám + "', '" + _vizsgálat.azonosító.hordótípus + "', "
                                 + _vizsgálat.azonosító.nettó_töltet.ToString().Replace(',', '.') + ", " + _vizsgálat.azonosító.szita_átmérő + ", '" + _vizsgálat.azonosító.megrendelő + "')";
 
             try { command.ExecuteNonQuery(); command.Dispose(); }
@@ -553,7 +556,7 @@ namespace Labor
 
             // Adatok1
 
-            data = V(new string[] {Update<string>("VITENE", _vizsgálat.adatok1.terméknév), Update<byte>("VIHOKE", _vizsgálat.adatok1.hőkezelés), Update<string>("VIGYEV", _vizsgálat.adatok1.gyártási_év[_vizsgálat.adatok1.gyártási_év.Length - 1].ToString()),
+            data = V(new string[] {Update<string>("VITENE", _vizsgálat.adatok1.terméknév), Update<byte>("VIHOKE", _vizsgálat.adatok1.hőkezelés), Update<char>("VIGYEV", _vizsgálat.adatok1.gyártási_év[_vizsgálat.adatok1.gyártási_év.Length - 1]),
                 Update<string>("VIMUJE", _vizsgálat.adatok1.műszak_jele), Update<string>("VITOGE", _vizsgálat.adatok1.töltőgép), Update<string>("VISZOR", _vizsgálat.adatok1.szárm_ország),
                 Update<string>("VIFAJT", _vizsgálat.adatok1.gyümölcsfajta)});
 
@@ -635,6 +638,90 @@ namespace Labor
 
         public bool Vizsgálat_Módosítás(Vizsgálat _eredeti, Vizsgálat _új)
         {
+            string data;
+            SqlCommand command;
+
+            laborconnection.Open();
+
+            // Adatok1
+
+            data = V(new string[] {Update<string>("VITENE", _új.adatok1.terméknév), Update<byte>("VIHOKE", _új.adatok1.hőkezelés),
+                Update<string>("VIGYEV", _új.adatok1.gyártási_év[_új.adatok1.gyártási_év.Length - 1].ToString()), Update<string>("VIMUJE", _új.adatok1.műszak_jele),
+                Update<string>("VITOGE", _új.adatok1.töltőgép), Update<string>("VISZOR", _új.adatok1.szárm_ország), Update<string>("VIFAJT", _új.adatok1.gyümölcsfajta)});
+
+            if (data != null)
+            {
+                string where = A(new string[] { Update<string>("VITEKO", _eredeti.azonosító.termékkód), Update<string>("VIHOSZ", _eredeti.azonosító.hordószám), Update<string>("VISARZ", _eredeti.azonosító.sarzs) });
+
+                command = laborconnection.CreateCommand();
+                command.CommandText = "UPDATE L_VIZSLAP SET " + data + " WHERE " + where;
+
+                try { command.ExecuteNonQuery(); command.Dispose(); }
+                catch (SqlException q) { MessageBox.Show("Vizsgálat_Hozzáadás -> UPDATE #1 hiba:\n" + q.Message); }
+            }
+            if (laborconnection.State != System.Data.ConnectionState.Open) return false;
+
+            // Adatok2
+
+            data = V(new string[] {Update<double?>("VIBRIX", _új.adatok2.brix), Update<double?>("VICSAV", _új.adatok2.citromsav),
+                Update<double?>("VIBOSA", _új.adatok2.borkősav), Update<double?>("VIPEHA", _új.adatok2.ph), Update<double?>("VIBOST", _új.adatok2.bostwick),
+                Update<int?>("VIASAV", _új.adatok2.aszkorbinsav), Update<int?>("VICIAD", _új.adatok2.citromsav_adagolás),  Update<int?>("VIMATO", _új.adatok2.magtöret),
+                Update<int?>("VIFEFE", _új.adatok2.feketepont),  Update<int?>("VIFEBA", _új.adatok2.barnapont),  Update<string>("VISZIN", _új.adatok2.szín),
+                Update<string>("VIIZEK", _új.adatok2.íz), Update<string>("VIILLA", _új.adatok2.illat)});
+
+            if (data != null)
+            {
+                string where = A(new string[] { Update<string>("VITEKO", _eredeti.azonosító.termékkód), Update<string>("VIHOSZ", _eredeti.azonosító.hordószám), Update<string>("VISARZ", _eredeti.azonosító.sarzs) });
+
+                command = laborconnection.CreateCommand();
+                command.CommandText = "UPDATE L_VIZSLAP SET " + data + " WHERE " + where;
+
+                try { command.ExecuteNonQuery(); command.Dispose(); }
+                catch (SqlException q) { MessageBox.Show("Vizsgálat_Hozzáadás -> UPDATE #2 hiba:\n" + q.Message); }
+            }
+            if (laborconnection.State != System.Data.ConnectionState.Open) return false;
+
+            // Adatok3
+
+            data = V(new string[] {Update<string>("VILEOL", _új.adatok3.leoltás), Update<string>("VIERDA", _új.adatok3.értékelés),
+                Update<int?>("VIOCS1", _új.adatok3.összcsíra_1), Update<int?>("VIOCS2", _új.adatok3.összcsíra_2), Update<int?>("VIPEN1", _új.adatok3.penész_1),
+                Update<int?>("VIPEN2", _új.adatok3.penész_2), Update<int?>("VIELE1", _új.adatok3.élesztő_1),  Update<int?>("VIELE2", _új.adatok3.élesztő_2),
+                Update<string>("VIEMEJE", _új.adatok3.megjegyzés)});
+
+            if (data != null)
+            {
+                string where = A(new string[] { Update<string>("VITEKO", _eredeti.azonosító.termékkód), Update<string>("VIHOSZ", _eredeti.azonosító.hordószám), Update<string>("VISARZ", _eredeti.azonosító.sarzs) });
+
+                command = laborconnection.CreateCommand();
+                command.CommandText = "UPDATE L_VIZSLAP SET " + data + " WHERE " + where;
+
+                try { command.ExecuteNonQuery(); command.Dispose(); }
+                catch (SqlException q) { MessageBox.Show("Vizsgálat_Hozzáadás -> UPDATE #3 hiba:\n" + q.Message); }
+            }
+            if (laborconnection.State != System.Data.ConnectionState.Open) return false;
+
+            // Adatok4
+
+            data = V(new string[] { Update<string>("VIMTS1", _új.adatok4.címzett_t), Update<string>("VIMTD1", _új.adatok4.dátum_t),
+                Update<string>("VIMKS1", _új.adatok4.címzett_k1), Update<string>("VIMKD1", _új.adatok4.dátum_k1), Update<string>("VIMKS2", _új.adatok4.címzett_k2), Update<string>("VIMKD2", _új.adatok4.dátum_k2),
+                Update<string>("VIMKS3", _új.adatok4.címzett_k3), Update<string>("VIMKD3", _új.adatok4.dátum_k3), Update<string>("VIMKS4", _új.adatok4.címzett_k4), Update<string>("VIMKD4", _új.adatok4.dátum_k4),
+                Update<string>("VIMKS5", _új.adatok4.címzett_k5), Update<string>("VIMKD5", _új.adatok4.dátum_k5), Update<string>("VIMKS6", _új.adatok4.címzett_k6), Update<string>("VIMKD6", _új.adatok4.dátum_k6),
+                Update<string>("VILABO", _új.adatok4.laboros)});
+
+            if (data != null)
+            {
+                string where = A(new string[] { Update<string>("VITEKO", _eredeti.azonosító.termékkód), Update<string>("VIHOSZ", _eredeti.azonosító.hordószám), Update<string>("VISARZ", _eredeti.azonosító.sarzs) });
+
+                command = laborconnection.CreateCommand();
+                command.CommandText = "UPDATE L_VIZSLAP SET " + data + " WHERE " + where;
+
+                try { command.ExecuteNonQuery(); command.Dispose(); }
+                catch (SqlException q) { MessageBox.Show("Vizsgálat_Hozzáadás -> UPDATE #3 hiba:\n" + q.Message); }
+            }
+            if (laborconnection.State != System.Data.ConnectionState.Open) return false;
+
+            laborconnection.Close();
+
             return true;
         }
 

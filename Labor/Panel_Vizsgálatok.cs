@@ -204,7 +204,7 @@ namespace Labor
             table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             table.ReadOnly = true;
             table.DataBindingComplete += table_DataBindingComplete;
-            table.CellDoubleClick += módosítás_Click;
+            table.CellDoubleClick += Vizsgálat_Módosítás;
             table.UserDeletingRow += table_UserDeletingRow;
             table.DataSource = CreateSource();
 
@@ -232,7 +232,7 @@ namespace Labor
             hozzáadás.Text = "Hozzáadás";
             hozzáadás.Size = new System.Drawing.Size(96, 32);
             hozzáadás.Location = new Point(törlés.Location.X + törlés.Width + 16, törlés.Location.Y);
-            hozzáadás.Click += hozzáadás_Click;
+            hozzáadás.Click += Vizsgálat_Hozzáadás;
 
             //
 
@@ -342,6 +342,33 @@ namespace Labor
         }
 
         #region EventHandlers
+        private void Vizsgálat_Hozzáadás(object _sender, System.EventArgs _event)
+        {
+            Vizsgálati_Lap vizsgálati_lap = new Vizsgálati_Lap();
+            vizsgálati_lap.ShowDialog();
+
+            Refresh();
+        }
+
+        private void Vizsgálat_Módosítás(object sender, DataGridViewCellEventArgs e)
+        {
+            if (table.SelectedRows.Count != 1) return;
+
+            Vizsgálat.Azonosító azonosító = new Vizsgálat.Azonosító((string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.termékkód].Value,
+                    (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.sarzs].Value, (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.hordószám].Value,
+                    (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.hordótípus].Value, (double)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.nettó_töltet].Value,
+                    (byte)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.szita_átmérő].Value, (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.megrendelő].Value,
+                    (int)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.sorszám].Value);
+
+            Vizsgálat? _vizsgálat = Program.database.Vizsgálat(azonosító); 
+            if (_vizsgálat == null) { MessageBox.Show("A kiválasztott vizsgálati lap nem található!", "Adatbázis hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+            Vizsgálati_Lap vizsgálati_lap = new Vizsgálati_Lap(_vizsgálat.Value);
+            vizsgálati_lap.ShowDialog();
+
+            Refresh();
+        }
+
         private void Vizsgálat_Törlés(object _sender, EventArgs _event)
         {
             if (table.SelectedRows.Count == 1) { if (MessageBox.Show("Biztosan törli a kiválasztott vizsgálatot?", "Megerősítés", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return; }
@@ -355,35 +382,19 @@ namespace Labor
                     (int)selected.Cells[Vizsgálat.Azonosító.TableIndexes.sorszám].Value);
 
                 if (!Program.database.Vizsgálat_Törlés(azonosító))
-                { MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy nem létezik már a törlendő vizsgálat?\nTermékkód: " + azonosító.termékkód + "\nSarzs: " + azonosító.sarzs + "\nHordószám: " + azonosító.hordószám +
-                    "\nSorszám: " + azonosító.sorszám, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                {
+                    MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy nem létezik már a törlendő vizsgálat?\nTermékkód: " + azonosító.termékkód + "\nSarzs: " + azonosító.sarzs + "\nHordószám: " + azonosító.hordószám +
+                      "\nSorszám: " + azonosító.sorszám, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                else Refresh();
             }
 
         }
 
-        private void hozzáadás_Click(object _sender, System.EventArgs _event)
-        {
-            Vizsgálati_Lap vizsgálati_lap = new Vizsgálati_Lap();
-            vizsgálati_lap.ShowDialog();
-        }
+        //
 
-        private void módosítás_Click(object sender, DataGridViewCellEventArgs e)
-        {
-            if (table.SelectedRows.Count != 1) return;
-
-            Vizsgálat.Azonosító azonosító = new Vizsgálat.Azonosító((string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.termékkód].Value,
-                    (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.sarzs].Value, (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.hordószám].Value,
-                    (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.hordótípus].Value, (double)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.nettó_töltet].Value,
-                    (byte)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.szita_átmérő].Value, (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.megrendelő].Value,
-                    (int)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.sorszám].Value);
-
-            Vizsgálat? _vizsgálat = Program.database.Vizsgálat(azonosító); 
-            if (_vizsgálat == null) { MessageBox.Show("A kiválasztott vizsgálati lap nem található!", "Adatbázis hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-            Vizsgálati_Lap vizsgálati_lap = new Vizsgálati_Lap(_vizsgálat.Value);
-            vizsgálati_lap.ShowDialog();
-        }
-
-        void table_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        private void table_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
             table.DataBindingComplete -= table_DataBindingComplete;
             table.Columns[Vizsgálat.Azonosító.TableIndexes.termékkód].Width = 70;
@@ -760,6 +771,10 @@ namespace Labor
                     combo_gyümölcsfajta.Items.Add(item);
                 }
                 combo_gyümölcsfajta.SelectedIndex = 0;
+
+                SetState(States.KÉSZ);
+                box_termékkód.Enabled = false;
+                box_hordószám.Enabled = false;
             }
 
             private void SetState(States _state)
@@ -926,7 +941,7 @@ namespace Labor
 
                 Vizsgálat.Azonosító azonosító = new Vizsgálat.Azonosító(
                         box_termékkód.Text,
-                        box_sarzs.Text, 
+                        box_sarzs.Text,
                         box_hordószám.Text,
                         combo_hordótípus.Text,
                         Convert.ToDouble(box_nettó_töltet.Text),
@@ -934,68 +949,76 @@ namespace Labor
                         combo_megrendelő.Text,
                         eredeti == null ? null : eredeti.Value.azonosító.sorszám
                         );
-                 Vizsgálat.Adatok1 adatok1 = new Vizsgálat.Adatok1(
-                        box_terméknév.Text,
-                        Convert.ToByte(box_hőkezelés.Text),
-                        gyártási_év,
-                        box_műszak_jele.Text,
-                        box_töltőgép_száma.Text,
-                        combo_származási_ország.Text,
-                        combo_gyümölcsfajta.Text
-                    );
-                    Vizsgálat.Adatok2 adatok2 = new Vizsgálat.Adatok2(
-                        Program.mainform.ConvertOrDie<double>(box_brix.Text),
-                        Program.mainform.ConvertOrDie<double>(box_citromsav.Text),
-                        Program.mainform.ConvertOrDie<double>(box_borkősav.Text),
-                        Program.mainform.ConvertOrDie<double>(box_ph.Text),
-                        Program.mainform.ConvertOrDie<double>(box_bostwick.Text),
-                        Program.mainform.ConvertOrDie<byte>(box_aszkorbinsav.Text),
-                        Program.mainform.ConvertOrDie<byte>(box_citromsav_ad.Text),
-                        Program.mainform.ConvertOrDie<byte>(box_magtöret.Text),
-                        Program.mainform.ConvertOrDie<byte>(box_feketepont.Text),
-                        Program.mainform.ConvertOrDie<byte>(box_barnapont.Text),
-                        Program.mainform.ConvertOrDieString(box_szin.Text),
-                        Program.mainform.ConvertOrDieString(box_iz.Text),
-                        Program.mainform.ConvertOrDieString(box_illat.Text)
-                    );
-                    Vizsgálat.Adatok3 adatok3 = new Vizsgálat.Adatok3(
-                        Program.mainform.ConvertOrDieString(box_leoltas.Text),
-                        Program.mainform.ConvertOrDieString(box_ertekeles.Text),
-                        Program.mainform.ConvertOrDie<byte>(box_összcsíra_higit_1.Text),
-                        Program.mainform.ConvertOrDie<byte>(box_összcsíra_higit_2.Text),
-                        Program.mainform.ConvertOrDie<byte>(box_penész_higit_1.Text),
-                        Program.mainform.ConvertOrDie<byte>(box_penész_higit_2.Text),
-                        Program.mainform.ConvertOrDie<byte>(box_élesztő_higit_1.Text),
-                        Program.mainform.ConvertOrDie<byte>(box_élesztő_higit_2.Text),
-                        Program.mainform.ConvertOrDieString(box_megjegyzes.Text)
-                    );
-                    Vizsgálat.Adatok4 adatok4 = new Vizsgálat.Adatok4(
-                        Program.mainform.ConvertOrDieString(box_t_cimzett.Text),
-                        Program.mainform.ConvertOrDieString(box_t_datum.Text),
-                        Program.mainform.ConvertOrDieString(box_k1_cimzett.Text),
-                        Program.mainform.ConvertOrDieString(box_k1_datum.Text),
-                        Program.mainform.ConvertOrDieString(box_k2_cimzett.Text),
-                        Program.mainform.ConvertOrDieString(box_k2_datum.Text),
-                        Program.mainform.ConvertOrDieString(box_k3_cimzett.Text),
-                        Program.mainform.ConvertOrDieString(box_k3_datum.Text),
-                        Program.mainform.ConvertOrDieString(box_k4_cimzett.Text),
-                        Program.mainform.ConvertOrDieString(box_k4_datum.Text),
-                        Program.mainform.ConvertOrDieString(box_k5_cimzett.Text),
-                        Program.mainform.ConvertOrDieString(box_k5_datum.Text),
-                        Program.mainform.ConvertOrDieString(box_k6_cimzett.Text),
-                        Program.mainform.ConvertOrDieString(box_k6_datum.Text),
-                        Program.mainform.ConvertOrDieString(combo_laboros.Text)
-                    );
+                Vizsgálat.Adatok1 adatok1 = new Vizsgálat.Adatok1(
+                       box_terméknév.Text,
+                       Convert.ToByte(box_hőkezelés.Text),
+                       gyártási_év,
+                       box_műszak_jele.Text,
+                       box_töltőgép_száma.Text,
+                       combo_származási_ország.Text,
+                       combo_gyümölcsfajta.Text
+                   );
+                Vizsgálat.Adatok2 adatok2 = new Vizsgálat.Adatok2(
+                    Program.mainform.ConvertOrDie<double>(box_brix.Text),
+                    Program.mainform.ConvertOrDie<double>(box_citromsav.Text),
+                    Program.mainform.ConvertOrDie<double>(box_borkősav.Text),
+                    Program.mainform.ConvertOrDie<double>(box_ph.Text),
+                    Program.mainform.ConvertOrDie<double>(box_bostwick.Text),
+                    Program.mainform.ConvertOrDie<byte>(box_aszkorbinsav.Text),
+                    Program.mainform.ConvertOrDie<byte>(box_citromsav_ad.Text),
+                    Program.mainform.ConvertOrDie<byte>(box_magtöret.Text),
+                    Program.mainform.ConvertOrDie<byte>(box_feketepont.Text),
+                    Program.mainform.ConvertOrDie<byte>(box_barnapont.Text),
+                    Program.mainform.ConvertOrDieString(box_szin.Text),
+                    Program.mainform.ConvertOrDieString(box_iz.Text),
+                    Program.mainform.ConvertOrDieString(box_illat.Text)
+                );
+                Vizsgálat.Adatok3 adatok3 = new Vizsgálat.Adatok3(
+                    Program.mainform.ConvertOrDieString(box_leoltas.Text),
+                    Program.mainform.ConvertOrDieString(box_ertekeles.Text),
+                    Program.mainform.ConvertOrDie<byte>(box_összcsíra_higit_1.Text),
+                    Program.mainform.ConvertOrDie<byte>(box_összcsíra_higit_2.Text),
+                    Program.mainform.ConvertOrDie<byte>(box_penész_higit_1.Text),
+                    Program.mainform.ConvertOrDie<byte>(box_penész_higit_2.Text),
+                    Program.mainform.ConvertOrDie<byte>(box_élesztő_higit_1.Text),
+                    Program.mainform.ConvertOrDie<byte>(box_élesztő_higit_2.Text),
+                    Program.mainform.ConvertOrDieString(box_megjegyzes.Text)
+                );
+                Vizsgálat.Adatok4 adatok4 = new Vizsgálat.Adatok4(
+                    Program.mainform.ConvertOrDieString(box_t_cimzett.Text),
+                    Program.mainform.ConvertOrDieString(box_t_datum.Text),
+                    Program.mainform.ConvertOrDieString(box_k1_cimzett.Text),
+                    Program.mainform.ConvertOrDieString(box_k1_datum.Text),
+                    Program.mainform.ConvertOrDieString(box_k2_cimzett.Text),
+                    Program.mainform.ConvertOrDieString(box_k2_datum.Text),
+                    Program.mainform.ConvertOrDieString(box_k3_cimzett.Text),
+                    Program.mainform.ConvertOrDieString(box_k3_datum.Text),
+                    Program.mainform.ConvertOrDieString(box_k4_cimzett.Text),
+                    Program.mainform.ConvertOrDieString(box_k4_datum.Text),
+                    Program.mainform.ConvertOrDieString(box_k5_cimzett.Text),
+                    Program.mainform.ConvertOrDieString(box_k5_datum.Text),
+                    Program.mainform.ConvertOrDieString(box_k6_cimzett.Text),
+                    Program.mainform.ConvertOrDieString(box_k6_datum.Text),
+                    Program.mainform.ConvertOrDieString(combo_laboros.Text)
+                );
 
-                   Vizsgálat _vizsgálat = new Vizsgálat(azonosító, adatok1, adatok2, adatok3, adatok4);
+                Vizsgálat _vizsgálat = new Vizsgálat(azonosító, adatok1, adatok2, adatok3, adatok4);
 
                 if (eredeti != null)
                 {
-                    Program.database.Vizsgálat_Módosítás(eredeti.Value, _vizsgálat);
+                    if (!Program.database.Vizsgálat_Módosítás(eredeti.Value, _vizsgálat))
+                    {
+                        MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy nem létezik már a törlendő vizsgálat?\nTermékkód: " + azonosító.termékkód + "\nSarzs: " + azonosító.sarzs + "\nHordószám: " + azonosító.hordószám +
+                          "\nSorszám: " + azonosító.sorszám, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
                 else
                 {
-                    Program.database.Vizsgálat_Hozzáadás(_vizsgálat);
+                    if (!Program.database.Vizsgálat_Hozzáadás(_vizsgálat))
+                    {
+                        MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy nem létezik már a törlendő vizsgálat?\nTermékkód: " + azonosító.termékkód + "\nSarzs: " + azonosító.sarzs + "\nHordószám: " + azonosító.hordószám +
+                          "\nSorszám: " + azonosító.sorszám, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
 
                 Close();
