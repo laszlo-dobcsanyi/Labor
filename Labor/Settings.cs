@@ -18,21 +18,22 @@ namespace Labor
                 string line = null;
                 while ((line = config.ReadLine()) != null)
                 {
-                    string[] arguments = line.ToLower().Split('=');
-
-                    switch (arguments[0])
+                    try
                     {
-                        case "logging": Logging = true; break;
-                        case "refresh": RefreshTime = Convert.ToInt32(arguments[1]); break;
-                        case "login_name": LoginName = arguments[1]; break;
+                        string[] arguments = line.ToLower().Split('=');
+
+                        switch (arguments[0])
+                        {
+                            case "logging": Logging = true; break;
+                            case "refresh": RefreshTime = Convert.ToInt32(arguments[1]); break;
+                            case "login_name": LoginName = arguments[1]; break;
+                        }
                     }
+                    catch { }
                 }
                 config.Close();
             }
-            catch
-            {
-
-            }
+            catch { }
         }
     }
 }
