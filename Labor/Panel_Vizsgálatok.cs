@@ -664,6 +664,7 @@ namespace Labor
                 box_k6_datum.Leave += OnlyDate;
                 box_leoltas.Leave += OnlyTime;
                 box_ertekeles.Leave += OnlyTime;
+                combo_hordótípus.Leave += combo_hordótípus_Leave;
                 #endregion
 
                 #region Data
@@ -709,6 +710,7 @@ namespace Labor
                 Controls.Add(vonal);
             }
 
+           
             private void InitializeData()
             {
                 SetState(States.TERMÉKKÓD);
@@ -824,6 +826,31 @@ namespace Labor
             }
 
             #region EventHandlers
+            void combo_hordótípus_Leave(object sender, EventArgs e)
+            {
+                Vizsgálat temp = new Vizsgálat();
+                temp.azonosító = new Vizsgálat.Azonosító(
+                                        box_termékkód.Text,
+                                        box_sarzs.Text,
+                                        box_hordószám.Text,
+                                        combo_hordótípus.Text,
+                                        Convert.ToDouble(box_nettó_töltet.Text),
+                                        Convert.ToByte(box_szita_átmérő.Text),
+                                        combo_megrendelő.Text,
+                                        eredeti == null ? null : eredeti.Value.azonosító.sorszám
+                                        );
+                temp.adatok1.gyártási_év = DateTime.Now.Year.ToString();
+                
+                string hordótípus = Program.database.Vizsgálat_SarzsEllenőrzés(temp);
+                if (hordótípus != null)
+                {
+                    MessageBox.Show("Nem egyezik meg a hordótípus! (" + hordótípus + ")", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    combo_hordótípus.Focus();
+                    return;
+                }
+            }
+
+            
             private void box_termékkód_TextChanged(object _sender, EventArgs _event)
             {
                 if (box_termékkód.Text.Length == 3)
@@ -893,14 +920,7 @@ namespace Labor
 
                         SetState(States.KÉSZ);
 
-                        //TODO NE FELEJTS EL, össze kell tenni egy azonosítót!
-                        string hordótípus = null; //Program.database.Vizsgálat_SarzsEllenőrzés(new Azonosító(...));
-                        if (hordótípus != null)
-                        {
-                            MessageBox.Show("Nem egyezik meg a hordótípus! (" + hordótípus + ")", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            combo_hordótípus.Focus();
-                            return;
-                        }
+                        
                     }
                     else
                     {

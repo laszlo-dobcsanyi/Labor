@@ -452,8 +452,20 @@ namespace Labor
         /// <summary>
         /// Ha a Vizsgálat táblában ennek a vizsgálatnak már van eltérő hordótípus, akkor az előző típust kell visszaadni, különben null!
         /// </summary>
-        public string Vizsgálat_SarzsEllenőrzés(Vizsgálat.Azonosító _azonosító)
+        public string Vizsgálat_SarzsEllenőrzés(Vizsgálat _vizsgálat)
         {
+            string where = A(new string[] { Update<string>("VITEKO", _vizsgálat.azonosító.termékkód), Update<string>("VISARZ", _vizsgálat.azonosító.sarzs), Update<string>("VIGYEV", _vizsgálat.adatok1.gyártási_év)});
+
+            SqlCommand command = new SqlCommand("SELECT VIHOTI FROM L_VIZSLAP WHERE " + where);// "')");
+            command.Connection = laborconnection;
+            SqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                if(reader.GetString(0)!=_vizsgálat.azonosító.hordótípus)
+                return reader.GetString(0);
+            }
+            reader.Close();
+
             return null;
         }
 
