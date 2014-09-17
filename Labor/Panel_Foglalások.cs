@@ -49,6 +49,16 @@ namespace Labor
 
             szűrő = _szűrő;
         }
+
+        public struct TableIndexes
+        {
+            public const int név = 0;
+            public const int id = 1;
+            public const int hordók_száma = 2;
+            public const int típus = 3;
+            public const int készítő = 4;
+            public const int idő = 5;
+        }
     }
 
     public struct Vizsgalap_Szűrő
