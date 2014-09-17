@@ -372,7 +372,7 @@ namespace Labor
             private void InitializeForm()
             {
                 Text = "Új Foglalás";
-                ClientSize = new Size(400, 250);
+                ClientSize = new Size(400, 250 - 24);
                 MinimumSize = ClientSize;
                 StartPosition = FormStartPosition.CenterScreen;
                 FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -386,9 +386,9 @@ namespace Labor
                 Label készítette = Program.mainform.createlabel("Készítette:", 8, 4 * 32, this);
                 Label foglalás_ideje = Program.mainform.createlabel("Foglalás ideje:", 8, 5 * 32, this);
 
-                TextBox box_foglalás_neve = Program.mainform.createtextbox(foglalás_neve.Location.X + 128, foglalás_neve.Location.Y, 10, 160, this);
+                TextBox box_foglalás_neve = Program.mainform.createtextbox(foglalás_neve.Location.X + 128, foglalás_neve.Location.Y, 10, 240, this);
+                TextBox box_foglalás_típusa = Program.mainform.createtextbox(box_foglalás_neve.Location.X, foglalás_típusa.Location.Y, 10, 240, this);
                 Label foglalt_hordók_száma = Program.mainform.createlabel("0", box_foglalás_neve.Location.X, foglalt_hordók.Location.Y, this);
-                TextBox box_foglalás_típusa = Program.mainform.createtextbox(box_foglalás_neve.Location.X, foglalás_típusa.Location.Y, 10, 160, this);
                 Label label_készítette = Program.mainform.createlabel("Felhasználó", box_foglalás_neve.Location.X, készítette.Location.Y, this);
                 Label label_foglalás_ideje = Program.mainform.createlabel(DateTime.Now.ToString(), box_foglalás_neve.Location.X, foglalás_ideje.Location.Y, this);
 
