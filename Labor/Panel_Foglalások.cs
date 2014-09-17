@@ -180,7 +180,6 @@ namespace Labor
             table.AllowUserToAddRows = false;
             table.Width = 720;
             table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            //table.MultiSelect = false;
             table.ReadOnly = true;
             table.DataBindingComplete += table_DataBindingComplete;
             table.CellDoubleClick += módosítás_Click;
@@ -232,6 +231,22 @@ namespace Labor
             data.Columns.Add(new DataColumn("Foglalás típusa", System.Type.GetType("System.String")));
             data.Columns.Add(new DataColumn("Készítette", System.Type.GetType("System.String")));
             data.Columns.Add(new DataColumn("Foglalás ideje", System.Type.GetType("System.String")));
+
+            List<Foglalás> foglalások = Program.database.Foglalás_Azonosítók();
+
+            foreach (Foglalás item in foglalások)
+            {
+                DataRow row = data.NewRow();
+                row[Foglalás.TableIndexes.id] = item.id;
+                row[Foglalás.TableIndexes.név] = item.név;
+                row[Foglalás.TableIndexes.hordók_száma] = item.hordók_száma;
+                row[Foglalás.TableIndexes.típus] = item.típus;
+                row[Foglalás.TableIndexes.készítő] = item.készítő;
+                row[Foglalás.TableIndexes.idő] = item.idő;
+                data.Rows.Add(row);
+
+                foglalás_tokenek.Add(new DataToken<Foglalás>(item));
+            }
 
             return data;
         }
