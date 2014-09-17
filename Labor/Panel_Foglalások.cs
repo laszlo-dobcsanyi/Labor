@@ -696,8 +696,9 @@ namespace Labor
                     Program.mainform.ConvertOrDieString(combo_származási_ország.SelectedText),
                     Program.mainform.ConvertOrDieString(box_műszak_jele.Text),
                     Program.mainform.ConvertOrDieString(box_töltőgép_száma.Text),
-                    "TODO",
-                    "TODO",
+                    //TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!444444444négynégy
+                     Program.mainform.ConvertOrDieString(eredeti.Value.idő),
+                     Program.mainform.ConvertOrDieString(eredeti.Value.típus),
                     Program.mainform.ConvertOrDieString(box_termékkód.Text));
 
                 Vizsgalap_Szűrő.Adatok2 adatok2 = new Vizsgalap_Szűrő.Adatok2
@@ -734,6 +735,7 @@ namespace Labor
                 }
                 else
                 {
+                    Program.database.Foglalás_ÚjVizsgalap(eredeti.Value, new Vizsgalap_Szűrő(adatok1, adatok2));
                     Keresés_Eredmény keresés_eredmény = new Keresés_Eredmény(new Vizsgalap_Szűrő(adatok1, adatok2), eredeti.Value);
                     keresés_eredmény.ShowDialog();
                 }

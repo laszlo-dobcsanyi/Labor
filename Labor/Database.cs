@@ -810,6 +810,60 @@ namespace Labor
             return true;
         }
 
+        public bool Foglalás_ÚjVizsgalap(Foglalás _azonosító, Vizsgalap_Szűrő _szűrő)
+        {
+            string data;
+            SqlCommand command;
+            laborconnection.Open();
+            command = laborconnection.CreateCommand();
+
+            string where = A(new string[] { Update<int>("FOSZAM", _azonosító.id), Update<string>("FONEVE", _azonosító.név), Update<int>("FOFOHO", _azonosító.hordók_száma),
+                     Update<string>("FOTIPU", _azonosító.típus) ,Update<string>("FOFENE", _azonosító.készítő) ,Update<string>("FODATE", _azonosító.idő),Update<string>("FOFAJT", _azonosító.típus)  });
+
+            // public Adatok1(string _gyümölcsfajta, string _hordótípus, string _megrendelő, string _származási_ország, string _műszak_jele, string _töltőgép_száma, string _foglalás_ideje, string _foglalás_típusa, string _termékkód)
+            data = V(new string[] {Update<string>("FOFAJT", _szűrő.adatok1.foglalás_típusa), Update<string>("FOHOTI", _szűrő.adatok1.hordótípus), Update<string>("FOMEGR", _szűrő.adatok1.megrendelő),
+                Update<string>("FOSZOR", _szűrő.adatok1.származási_ország), Update<string>("FOMUJE", _szűrő.adatok1.műszak_jele), Update<string>("FOTOGE", _szűrő.adatok1.töltőgép_száma),
+                Update<string>("FODATE", _szűrő.adatok1.foglalás_ideje),Update<string>("FOTIPU", _szűrő.adatok1.foglalás_típusa),Update<string>("FOTEKO", _szűrő.adatok1.termékkód)});
+
+            if (data != null)
+            {
+                command = laborconnection.CreateCommand();
+                command.CommandText = "UPDATE L_FOGLAL SET " + data + " WHERE " + where;
+
+                try { command.ExecuteNonQuery(); command.Dispose(); }
+                catch (SqlException) { MessageBox.Show("Vizsgalap_Hozzáad -> adat1 hiba"); }
+            }
+
+            // Adatok2
+
+            data = V(new string[] {
+                Update<int?>("FOSARZT", _szűrő.adatok2.min_sarzs), Update<int?>("FOSARZI", _szűrő.adatok2.max_sarzs),
+                Update<int?>("FOZSSZT", _szűrő.adatok2.min_hordószám), Update<int?>("FOZSSZI", _szűrő.adatok2.max_hordószám),
+                Update<double?>("FOBRIXT", _szűrő.adatok2.min_brix), Update<double?>("FOBRIXI", _szűrő.adatok2.max_brix),
+                Update<double?>("FOCSAVT", _szűrő.adatok2.min_citromsav), Update<double?>("FOCSAVI", _szűrő.adatok2.max_citromsav),
+                Update<double?>("FOBOSAT", _szűrő.adatok2.min_borkősav), Update<double?>("FOBOSAI", _szűrő.adatok2.max_borkősav),
+                Update<double?>("FOPEHAT", _szűrő.adatok2.min_ph), Update<double?>("FOPEHAI", _szűrő.adatok2.max_ph),
+                Update<double?>("FOBOSTT", _szűrő.adatok2.min_bostwick), Update<double?>("FOBOSTI", _szűrő.adatok2.max_bostwick),
+                Update<int?>("FOASAVT", _szűrő.adatok2.min_aszkorbinsav), Update<int?>("FOASAVI", _szűrő.adatok2.max_aszkorbinsav),
+                Update<int?>("FONETOT", _szűrő.adatok2.min_nettó_töltet), Update<int?>("FONETOI", _szűrő.adatok2.max_nettó_töltet),
+                Update<int?>("FOHOFOT", _szűrő.adatok2.min_hőkezelés), Update<int?>("FOHOFOI", _szűrő.adatok2.max_hőkezelés),
+                Update<int?>("FOSZATT", _szűrő.adatok2.min_szita_átmérő), Update<int?>("FOSZATI", _szűrő.adatok2.max_szita_átmérő),
+                Update<int?>("FOCIADT", _szűrő.adatok2.min_citromsav_ad), Update<int?>("FOCIADI", _szűrő.adatok2.max_citromsav_ad)});
+
+            if (data != null)
+            {
+                command = laborconnection.CreateCommand();
+                command.CommandText = "UPDATE L_FOGLAL SET " + data + " WHERE " + where;
+
+                try { command.ExecuteNonQuery(); command.Dispose(); }
+                catch (SqlException q) { MessageBox.Show("Vizsgalap_Hozzáad -> adat1 hiba:\n" + q.Message); }
+            }
+            if (laborconnection.State != System.Data.ConnectionState.Open) return false;
+
+            laborconnection.Close();
+            return true;
+        }
+
         public bool Foglalás_Törlés(Foglalás _azonosító)
         {
             bool found = true;
