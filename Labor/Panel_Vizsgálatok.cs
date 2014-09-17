@@ -375,6 +375,7 @@ namespace Labor
             else if (table.SelectedRows.Count != 0) { if (MessageBox.Show("Biztosan törli a kiválasztott vizsgálatokat?", "Megerősítés", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return; }
             foreach (DataGridViewRow selected in table.SelectedRows)
             {
+
                 Vizsgálat.Azonosító azonosító = new Vizsgálat.Azonosító((string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.termékkód].Value,
                     (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.sarzs].Value, (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.hordószám].Value,
                     (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.hordótípus].Value, (double)selected.Cells[Vizsgálat.Azonosító.TableIndexes.nettó_töltet].Value,
@@ -388,6 +389,7 @@ namespace Labor
                     return;
                 }
                 else Refresh();
+                 
             }
 
         }

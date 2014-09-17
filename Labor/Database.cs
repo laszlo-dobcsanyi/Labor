@@ -752,7 +752,7 @@ namespace Labor
             while (reader.Read())
             {
                 int c = 0;
-                Foglalás temp_foglalás = new Foglalás(reader.GetByte(++c), reader.GetString(++c), reader.GetByte(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c));
+                Foglalás temp_foglalás = new Foglalás(reader.GetInt32(c), reader.GetString(++c), reader.GetByte(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c));
                 data.Add(temp_foglalás);
             }
             command.Dispose();
@@ -812,7 +812,19 @@ namespace Labor
 
         public bool Foglalás_Törlés(Foglalás _azonosító)
         {
-            return true;
+            bool found = true;
+            laborconnection.Open();
+            SqlCommand command = laborconnection.CreateCommand();
+            string where = A(new string[] { Update<int>("FOSZAM", _azonosító.id), Update<string>("FONEVE", _azonosító.név), Update<int>("FOFOHO", _azonosító.hordók_száma),
+                     Update<string>("FOTIPU", _azonosító.típus) ,Update<string>("FOFENE", _azonosító.készítő) ,Update<string>("FODATE", _azonosító.idő),Update<string>("FOFAJT", _azonosító.típus)  });
+
+            command.CommandText = "DELETE FROM L_FOGLAL WHERE " + where  ;
+            if (command.ExecuteNonQuery() == 0) found = false;
+            command.Dispose();
+            laborconnection.Close();
+
+            Program.mainform.RefreshData();
+            return found;
         }
 
         public List<Hordó> Foglalás_Hordók(Foglalás _foglalás)

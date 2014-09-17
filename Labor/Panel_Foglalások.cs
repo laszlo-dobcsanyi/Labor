@@ -52,8 +52,8 @@ namespace Labor
 
         public struct TableIndexes
         {
-            public const int név = 0;
-            public const int id = 1;
+            public const int id = 0;
+            public const int név = 1;
             public const int hordók_száma = 2;
             public const int típus = 3;
             public const int készítő = 4;
@@ -225,7 +225,7 @@ namespace Labor
         {
             data = new DataTable();
 
-            data.Columns.Add(new DataColumn("Foglalás száma", System.Type.GetType("System.String")));
+            data.Columns.Add(new DataColumn("Foglalás száma", System.Type.GetType("System.Int32")));
             data.Columns.Add(new DataColumn("Foglalás neve", System.Type.GetType("System.String")));
             data.Columns.Add(new DataColumn("Foglalt hordók száma", System.Type.GetType("System.Int32")));
             data.Columns.Add(new DataColumn("Foglalás típusa", System.Type.GetType("System.String")));
@@ -317,7 +317,24 @@ namespace Labor
         #region EventHandlers
         private void Foglalás_Törlés(object _sender, EventArgs _event)
         {
+            if (table.SelectedRows.Count == 1) { if (MessageBox.Show("Biztosan törli a kiválasztott foglalást?", "Megerősítés", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return; }
+            else if (table.SelectedRows.Count != 0) { if (MessageBox.Show("Biztosan törli a kiválasztott foglalást?", "Megerősítés", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return; }
 
+             foreach (DataGridViewRow selected in table.SelectedRows)
+            {
+//                         public Foglalás(int _id, string _név, int _hordók_száma, string _típus, string _készítő, string _idő)
+
+                Foglalás azonosító = new Foglalás((int)selected.Cells[Foglalás.TableIndexes.id].Value, (string)selected.Cells[Foglalás.TableIndexes.név].Value, (int)selected.Cells[Foglalás.TableIndexes.hordók_száma].Value,
+                    (string)selected.Cells[Foglalás.TableIndexes.típus].Value, (string)selected.Cells[Foglalás.TableIndexes.készítő].Value, (string)selected.Cells[Foglalás.TableIndexes.idő].Value);
+
+
+                if (!Program.database.Foglalás_Törlés(azonosító ) )
+                {
+                    MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy nem létezik már a törlendő foglalás?\nID: " + azonosító.id + "\nNév: " + azonosító.név , "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                else Refresh();
+            }
         }
 
         void Foglalás_Feltöltés(object sender, EventArgs e)
