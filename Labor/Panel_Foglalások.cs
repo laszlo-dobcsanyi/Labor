@@ -285,12 +285,12 @@ namespace Labor
                 {
                     case DataToken<Foglalás>.TokenType.NEW:
                         DataRow row = data.NewRow();
-                        row[0] = token.data.id;
-                        row[1] = token.data.név;
-                        row[2] = token.data.hordók_száma;
-                        row[3] = token.data.típus;
-                        row[4] = token.data.készítő;
-                        row[5] = token.data.idő;
+                        row[Foglalás.TableIndexes.id] = token.data.id;
+                        row[Foglalás.TableIndexes.név] = token.data.név;
+                        row[Foglalás.TableIndexes.hordók_száma] = token.data.hordók_száma;
+                        row[Foglalás.TableIndexes.típus] = token.data.típus;
+                        row[Foglalás.TableIndexes.készítő] = token.data.készítő;
+                        row[Foglalás.TableIndexes.idő] = token.data.idő;
                         data.Rows.Add(row);
                         break;
 
