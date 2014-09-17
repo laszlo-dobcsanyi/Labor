@@ -680,6 +680,40 @@ namespace Labor
                 box_töltőgép_száma.Name = "töltő";
                 #endregion
 
+                if(eredeti!=null)
+                {
+                    box_termékkód.Text=eredeti.Value.szűrő.Value.adatok1.termékkód;
+                    box_min_sarzs.Text=eredeti.Value.szűrő.Value.adatok2.min_sarzs.ToString();
+                    box_max_sarzs.Text=eredeti.Value.szűrő.Value.adatok2.max_sarzs.ToString();
+                    box_min_hordószám.Text=eredeti.Value.szűrő.Value.adatok2.min_hordószám.ToString();
+                    box_max_hordószám.Text=eredeti.Value.szűrő.Value.adatok2.max_hordószám.ToString();
+                    box_min_brix.Text=eredeti.Value.szűrő.Value.adatok2.min_brix.ToString();
+                    box_max_brix.Text=eredeti.Value.szűrő.Value.adatok2.max_brix.ToString();
+                    box_min_citromsav.Text=eredeti.Value.szűrő.Value.adatok2.min_citromsav.ToString();
+                    box_max_citromsav.Text=eredeti.Value.szűrő.Value.adatok2.max_citromsav.ToString();
+                    box_min_borkősav.Text=eredeti.Value.szűrő.Value.adatok2.min_borkősav.ToString();
+                    box_max_borkősav.Text=eredeti.Value.szűrő.Value.adatok2.max_borkősav.ToString();
+                    box_min_ph.Text=eredeti.Value.szűrő.Value.adatok2.min_ph.ToString();
+                    box_max_ph.Text=eredeti.Value.szűrő.Value.adatok2.max_ph.ToString();
+                    box_min_bostwick.Text=eredeti.Value.szűrő.Value.adatok2.min_bostwick.ToString();
+                    box_max_bostwick.Text=eredeti.Value.szűrő.Value.adatok2.max_bostwick.ToString();
+                    box_min_aszkorbinsav.Text=eredeti.Value.szűrő.Value.adatok2.min_aszkorbinsav.ToString();
+                    box_max_aszkorbinsav.Text=eredeti.Value.szűrő.Value.adatok2.max_aszkorbinsav.ToString();
+                    box_min_nettó_töltet.Text=eredeti.Value.szűrő.Value.adatok2.min_nettó_töltet.ToString();
+                    box_max_nettó_töltet.Text=eredeti.Value.szűrő.Value.adatok2.max_nettó_töltet.ToString();
+                    box_min_hőkezelés.Text=eredeti.Value.szűrő.Value.adatok2.min_hőkezelés.ToString();
+                    box_max_hőkezelés.Text=eredeti.Value.szűrő.Value.adatok2.max_hőkezelés.ToString();
+                    box_min_szita_átmérő.Text=eredeti.Value.szűrő.Value.adatok2.min_szita_átmérő.ToString();
+                    box_max_szita_átmérő.Text=eredeti.Value.szűrő.Value.adatok2.max_szita_átmérő.ToString();
+                    box_max_citromsav_ad.Text=eredeti.Value.szűrő.Value.adatok2.max_citromsav_ad.ToString();
+
+                    combo_gyümölcsfajta.Text = eredeti.Value.szűrő.Value.adatok1.gyümölcsfajta;
+                    combo_hordótípus.Text=eredeti.Value.szűrő.Value.adatok1.hordótípus;
+                    combo_származási_ország.Text=eredeti.Value.szűrő.Value.adatok1.származási_ország;
+                    box_töltőgép_száma.Text=eredeti.Value.szűrő.Value.adatok1.töltőgép_száma;
+                }
+
+
                 Button rendben = new Button();
                 rendben.Text = "Rendben";
                 rendben.Size = new System.Drawing.Size(96, 32);

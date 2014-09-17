@@ -787,11 +787,46 @@ namespace Labor
                     GetNullableString(reader, c++));
 
                 data.adatok2 = new Vizsgalap_Szűrő.Adatok2(
-                    (int?)GetNullable<Int32>(reader, c++),
-                    (int?)GetNullable<Int32>(reader, c++),
-                    (int?)GetNullable<Int32>(reader, c++),
-                    (int?)GetNullable<Int32>(reader, c++),
-                    0,
+                    Program.mainform.ConvertOrDie<int>(reader.GetString(c++)),
+                    Program.mainform.ConvertOrDie<int>(reader.GetString(c++)),
+                    Program.mainform.ConvertOrDie<int>(reader.GetString(c++)),
+                    Program.mainform.ConvertOrDie<int>(reader.GetString(c++)),
+                    (double)reader.GetDecimal(c++),
+                    (double)reader.GetDecimal(c++),
+                    (double)reader.GetDecimal(c++),
+                    (double)reader.GetDecimal(c++),
+                    (double)reader.GetDecimal(c++),
+                    (double)reader.GetDecimal(c++),
+                    (double)reader.GetDecimal(c++),
+                    (double)reader.GetDecimal(c++),
+                    (double)reader.GetDecimal(c++),
+                    (double)reader.GetDecimal(c++),
+                /*
+                    Program.mainform.ConvertOrDie<double>(reader.GetDecimal(c++).ToString()),
+                    Program.mainform.ConvertOrDie<double>(reader.GetDecimal(c++).ToString()),
+                    Program.mainform.ConvertOrDie<double>(reader.GetDecimal(c++).ToString()),
+                    Program.mainform.ConvertOrDie<double>(reader.GetDecimal(c++).ToString()),
+                    Program.mainform.ConvertOrDie<double>(reader.GetDecimal(c++).ToString()),
+                    Program.mainform.ConvertOrDie<double>(reader.GetDecimal(c++).ToString()),
+                    Program.mainform.ConvertOrDie<double>(reader.GetDecimal(c++).ToString()),
+                    Program.mainform.ConvertOrDie<double>(reader.GetDecimal(c++).ToString()),
+                    Program.mainform.ConvertOrDie<double>(reader.GetDecimal(c++).ToString()),
+                    Program.mainform.ConvertOrDie<double>(reader.GetDecimal(c++).ToString()),
+                  */
+                 Program.mainform.ConvertOrDie<short>(reader.GetInt16(c++).ToString()),
+                    Program.mainform.ConvertOrDie<short>(reader.GetInt16(c++).ToString()),
+                    Program.mainform.ConvertOrDie<short>(reader.GetInt16(c++).ToString()),
+                    Program.mainform.ConvertOrDie<short>(reader.GetInt16(c++).ToString()),
+                    Program.mainform.ConvertOrDie<byte>(reader.GetInt16(c++).ToString()),
+                    Program.mainform.ConvertOrDie<byte>(reader.GetInt16(c++).ToString()),
+                    Program.mainform.ConvertOrDie<byte>(reader.GetInt16(c++).ToString()),
+                    Program.mainform.ConvertOrDie<byte>(reader.GetInt16(c++).ToString()),
+                    Program.mainform.ConvertOrDie<byte>(reader.GetInt16(c++).ToString()),
+                    Program.mainform.ConvertOrDie<byte>(reader.GetInt16(c++).ToString());
+
+                /*
+                    //(GetNullableString(reader, c++)),
+                       0,
                     0,
                     0,
                     0,
@@ -811,8 +846,10 @@ namespace Labor
                     0,
                     0,
                     0);
-                /*
-
+                    (int?)GetNullable<Int32>(reader, c++),
+                    (int?)GetNullable<Int32>(reader, c++),
+                    (int?)GetNullable<Int32>(reader, c++),
+                    
                     (double?)GetNullable<decimal>(reader,c++),
                     (double?)GetNullable<decimal>(reader,c++),
                     (double?)GetNullable<decimal>(reader,c++),
