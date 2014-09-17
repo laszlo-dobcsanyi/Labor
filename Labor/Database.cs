@@ -774,11 +774,68 @@ namespace Labor
             while (reader.Read())
             {
                 int c = 0;
-                data.adatok1 = new Vizsgalap_Szűrő.Adatok1(reader.GetString(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c));
-                data.adatok2 = new Vizsgalap_Szűrő.Adatok2(reader.GetInt16(++c), reader.GetInt16(++c), reader.GetInt16(++c), reader.GetInt16(++c), Program.mainform.ConvertOrDie<double>(reader.GetDecimal(++c).ToString()), Program.mainform.ConvertOrDie<double>(reader.GetDecimal(++c).ToString()), Program.mainform.ConvertOrDie<double>(reader.GetDecimal(++c).ToString()), Program.mainform.ConvertOrDie<double>(reader.GetDecimal(++c).ToString())
-                , Program.mainform.ConvertOrDie<double>(reader.GetDecimal(++c).ToString()), Program.mainform.ConvertOrDie<double>(reader.GetDecimal(++c).ToString()), Program.mainform.ConvertOrDie<double>(reader.GetDecimal(++c).ToString()), Program.mainform.ConvertOrDie<double>(reader.GetDecimal(++c).ToString()), Program.mainform.ConvertOrDie<double>(reader.GetDecimal(++c).ToString()), Program.mainform.ConvertOrDie<double>(reader.GetDecimal(++c).ToString()), reader.GetInt16(++c), reader.GetInt16(++c), reader.GetInt32(++c), reader.GetInt32(++c)
-                , reader.GetInt16(++c), reader.GetInt16(++c), reader.GetInt16(++c), reader.GetInt16(++c), reader.GetInt16(++c), reader.GetInt16(++c));
-            }
+                data.adatok1 = new Vizsgalap_Szűrő.Adatok1(
+                    
+                    GetNullableString(reader, c),
+                    GetNullableString(reader, c++),
+                    GetNullableString(reader, c++),
+                    GetNullableString(reader, c++),
+                    GetNullableString(reader, c++),
+                    GetNullableString(reader, c++),
+                    GetNullableString(reader, c++),
+                    GetNullableString(reader, c++),
+                    GetNullableString(reader, c++));
+
+                data.adatok2 = new Vizsgalap_Szűrő.Adatok2(
+                    (int?)GetNullable<Int32>(reader, c++),
+                    (int?)GetNullable<Int32>(reader, c++),
+                    (int?)GetNullable<Int32>(reader, c++),
+                    (int?)GetNullable<Int32>(reader, c++),
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0);
+                /*
+
+                    (double?)GetNullable<decimal>(reader,c++),
+                    (double?)GetNullable<decimal>(reader,c++),
+                    (double?)GetNullable<decimal>(reader,c++),
+                    (double?)GetNullable<decimal>(reader,c++),
+                    (double?)GetNullable<decimal>(reader,c++),
+                    (double?)GetNullable<decimal>(reader,c++),
+                    (double?)GetNullable<decimal>(reader,c++),
+                    (double?)GetNullable<decimal>(reader,c++),
+                    (double?)GetNullable<decimal>(reader,c++),
+                    (double?)GetNullable<decimal>(reader,c++),
+
+                    (short?)GetNullable<Int16>(reader, c++),
+                    (short?)GetNullable<Int16>(reader, c++),
+                    (short?)GetNullable<Int32>(reader, c++),
+                    (short?)GetNullable<Int32>(reader, c++),
+                    (byte?)GetNullable<Int16>(reader, c++),
+                    (byte?)GetNullable<Int16>(reader, c++),
+                    (byte?)GetNullable<Int16>(reader, c++),
+                    (byte?)GetNullable<Int16>(reader, c++),
+                    (byte?)GetNullable<Int16>(reader, c++),
+                    (byte?)GetNullable<Int16>(reader, c++));
+                 */
+            };
 
             command.Dispose();
             laborconnection.Close();
@@ -863,6 +920,8 @@ namespace Labor
             laborconnection.Close();
             return true;
         }
+
+
 
         public bool Foglalás_Törlés(Foglalás _azonosító)
         {

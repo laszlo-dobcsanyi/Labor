@@ -106,19 +106,19 @@ namespace Labor
             public double? min_bostwick;
             public double? max_bostwick;
 
-            public int? min_aszkorbinsav;
-            public int? max_aszkorbinsav;
-            public int? min_nettó_töltet;
-            public int? max_nettó_töltet;
-            public int? min_hőkezelés;
-            public int? max_hőkezelés;
-            public int? min_citromsav_ad;
-            public int? max_citromsav_ad;
-            public int? min_szita_átmérő;
-            public int? max_szita_átmérő;
+            public Int16? min_aszkorbinsav;
+            public Int16? max_aszkorbinsav;
+            public Int16? min_nettó_töltet;
+            public Int16? max_nettó_töltet;
+            public byte? min_hőkezelés;
+            public byte? max_hőkezelés;
+            public byte? min_citromsav_ad;
+            public byte? max_citromsav_ad;
+            public byte? min_szita_átmérő;
+            public byte? max_szita_átmérő;
 
             public Adatok2(int? _min_sarzs, int? _max_sarzs, int? _min_hordószám, int? _max_hordószám, double? _min_brix, double? _max_brix, double? _min_citromsav, double? _max_citromsav, double? _min_borkősav, double? _max_borkősav, double? _min_ph, double? _max_ph, double? _min_bostwick,
-                double? _max_bostwick, int? _min_aszkorbinsav, int? _max_aszkorbinsav, int? _min_nettó_töltet, int? _max_nettó_töltet, int? _min_hőkezelés, int? _max_hőkezelés, int? _min_szita_átmérő, int? _max_szita_átmérő, int? _min_citromsav_ad, int? _max_citromsav_ad)
+                double? _max_bostwick, Int16? _min_aszkorbinsav, Int16? _max_aszkorbinsav, Int16? _min_nettó_töltet, Int16? _max_nettó_töltet, byte? _min_hőkezelés, byte? _max_hőkezelés, byte? _min_szita_átmérő, byte? _max_szita_átmérő, byte? _min_citromsav_ad, byte? _max_citromsav_ad)
             {
                 min_sarzs = _min_sarzs;
                 max_sarzs = _max_sarzs;
@@ -182,7 +182,7 @@ namespace Labor
             table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             table.ReadOnly = true;
             table.DataBindingComplete += table_DataBindingComplete;
-            table.CellDoubleClick += módosítás_Click;
+            table.CellDoubleClick += VizsgaLap_Módosítás;
             table.UserDeletingRow += table_UserDeletingRow;
             table.DataSource = CreateSource();
 
@@ -315,6 +315,21 @@ namespace Labor
 
 
         #region EventHandlers
+
+        private void VizsgaLap_Módosítás(object sender, DataGridViewCellEventArgs e)
+        {
+            foreach (DataGridViewRow selected in table.SelectedRows)
+            {
+                Foglalás temp = new Foglalás((int)selected.Cells[Foglalás.TableIndexes.id].Value, (string)selected.Cells[Foglalás.TableIndexes.név].Value, (int)selected.Cells[Foglalás.TableIndexes.hordók_száma].Value,
+                        (string)selected.Cells[Foglalás.TableIndexes.típus].Value, (string)selected.Cells[Foglalás.TableIndexes.készítő].Value, (string)selected.Cells[Foglalás.TableIndexes.idő].Value);
+                temp.szűrő = Program.database.Foglalás_Vizsgalap_Szűrő(temp);
+                Foglalás_Keresés foglalás_keresés = new Foglalás_Keresés(temp);
+                foglalás_keresés.ShowDialog();
+            }
+        }
+
+
+
         private void Foglalás_Törlés(object _sender, EventArgs _event)
         {
             if (table.SelectedRows.Count == 1) { if (MessageBox.Show("Biztosan törli a kiválasztott foglalást?", "Megerősítés", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return; }
@@ -717,16 +732,16 @@ namespace Labor
                     Program.mainform.ConvertOrDie<double>(box_max_ph.Text),
                     Program.mainform.ConvertOrDie<double>(box_min_bostwick.Text),
                     Program.mainform.ConvertOrDie<double>(box_max_bostwick.Text),
-                    Program.mainform.ConvertOrDie<int>(box_min_aszkorbinsav.Text),
-                    Program.mainform.ConvertOrDie<int>(box_max_aszkorbinsav.Text),
-                    Program.mainform.ConvertOrDie<int>(box_min_nettó_töltet.Text),
-                    Program.mainform.ConvertOrDie<int>(box_max_nettó_töltet.Text),
-                    Program.mainform.ConvertOrDie<int>(box_min_hőkezelés.Text),
-                    Program.mainform.ConvertOrDie<int>(box_max_hőkezelés.Text),
-                    Program.mainform.ConvertOrDie<int>(box_min_citromsav_ad.Text),
-                    Program.mainform.ConvertOrDie<int>(box_max_citromsav_ad.Text),
-                    Program.mainform.ConvertOrDie<int>(box_min_szita_átmérő.Text),
-                    Program.mainform.ConvertOrDie<int>(box_max_szita_átmérő.Text));
+                    Program.mainform.ConvertOrDie<Int16>(box_min_aszkorbinsav.Text),
+                    Program.mainform.ConvertOrDie<Int16>(box_max_aszkorbinsav.Text),
+                    Program.mainform.ConvertOrDie<Int16>(box_min_nettó_töltet.Text),
+                    Program.mainform.ConvertOrDie<Int16>(box_max_nettó_töltet.Text),
+                    Program.mainform.ConvertOrDie<byte>(box_min_hőkezelés.Text),
+                    Program.mainform.ConvertOrDie<byte>(box_max_hőkezelés.Text),
+                    Program.mainform.ConvertOrDie<byte>(box_min_citromsav_ad.Text),
+                    Program.mainform.ConvertOrDie<byte>(box_max_citromsav_ad.Text),
+                    Program.mainform.ConvertOrDie<byte>(box_min_szita_átmérő.Text),
+                    Program.mainform.ConvertOrDie<byte>(box_max_szita_átmérő.Text));
 
                 if (eredeti == null)
                 {
@@ -818,7 +833,7 @@ namespace Labor
                     //table.MultiSelect = false;
                     table.ReadOnly = true;
                     table.DataBindingComplete += table_DataBindingComplete;
-                    table.CellDoubleClick += módosítás_Click;
+                    table.CellDoubleClick += keresés_Click;
                     table.UserDeletingRow += table_UserDeletingRow;
                     table.DataSource = CreateSource();
 
@@ -895,7 +910,9 @@ namespace Labor
 
                 }
 
-                public DataGridViewCellEventHandler módosítás_Click { get; set; }
+                private void keresés_Click(object sender, DataGridViewCellEventArgs e)
+                { 
+                }
 
                 public sealed class Eredmény_Hordók : Form
                 {
