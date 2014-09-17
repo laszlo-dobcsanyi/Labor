@@ -49,6 +49,16 @@ namespace Labor
 
             szűrő = _szűrő;
         }
+
+        public struct TableIndexes
+        {
+            public const int név = 0;
+            public const int id = 1;
+            public const int hordók_száma = 2;
+            public const int típus = 3;
+            public const int készítő = 4;
+            public const int idő = 5;
+        }
     }
 
     public struct Vizsgalap_Szűrő
@@ -170,7 +180,6 @@ namespace Labor
             table.AllowUserToAddRows = false;
             table.Width = 720;
             table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            //table.MultiSelect = false;
             table.ReadOnly = true;
             table.DataBindingComplete += table_DataBindingComplete;
             table.CellDoubleClick += módosítás_Click;
@@ -223,6 +232,22 @@ namespace Labor
             data.Columns.Add(new DataColumn("Készítette", System.Type.GetType("System.String")));
             data.Columns.Add(new DataColumn("Foglalás ideje", System.Type.GetType("System.String")));
 
+            List<Foglalás> foglalások = Program.database.Foglalás_Azonosítók();
+
+            foreach (Foglalás item in foglalások)
+            {
+                DataRow row = data.NewRow();
+                row[Foglalás.TableIndexes.id] = item.id;
+                row[Foglalás.TableIndexes.név] = item.név;
+                row[Foglalás.TableIndexes.hordók_száma] = item.hordók_száma;
+                row[Foglalás.TableIndexes.típus] = item.típus;
+                row[Foglalás.TableIndexes.készítő] = item.készítő;
+                row[Foglalás.TableIndexes.idő] = item.idő;
+                data.Rows.Add(row);
+
+                foglalás_tokenek.Add(new DataToken<Foglalás>(item));
+            }
+
             return data;
         }
 
@@ -260,12 +285,12 @@ namespace Labor
                 {
                     case DataToken<Foglalás>.TokenType.NEW:
                         DataRow row = data.NewRow();
-                        row[0] = token.data.id;
-                        row[1] = token.data.név;
-                        row[2] = token.data.hordók_száma;
-                        row[3] = token.data.típus;
-                        row[4] = token.data.készítő;
-                        row[5] = token.data.idő;
+                        row[Foglalás.TableIndexes.id] = token.data.id;
+                        row[Foglalás.TableIndexes.név] = token.data.név;
+                        row[Foglalás.TableIndexes.hordók_száma] = token.data.hordók_száma;
+                        row[Foglalás.TableIndexes.típus] = token.data.típus;
+                        row[Foglalás.TableIndexes.készítő] = token.data.készítő;
+                        row[Foglalás.TableIndexes.idő] = token.data.idő;
                         data.Rows.Add(row);
                         break;
 
@@ -347,7 +372,7 @@ namespace Labor
             private void InitializeForm()
             {
                 Text = "Új Foglalás";
-                ClientSize = new Size(400, 250);
+                ClientSize = new Size(400, 250 - 24);
                 MinimumSize = ClientSize;
                 StartPosition = FormStartPosition.CenterScreen;
                 FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -361,9 +386,9 @@ namespace Labor
                 Label készítette = Program.mainform.createlabel("Készítette:", 8, 4 * 32, this);
                 Label foglalás_ideje = Program.mainform.createlabel("Foglalás ideje:", 8, 5 * 32, this);
 
-                TextBox box_foglalás_neve = Program.mainform.createtextbox(foglalás_neve.Location.X + 128, foglalás_neve.Location.Y, 10, 160, this);
+                TextBox box_foglalás_neve = Program.mainform.createtextbox(foglalás_neve.Location.X + 128, foglalás_neve.Location.Y, 10, 240, this);
+                TextBox box_foglalás_típusa = Program.mainform.createtextbox(box_foglalás_neve.Location.X, foglalás_típusa.Location.Y, 10, 240, this);
                 Label foglalt_hordók_száma = Program.mainform.createlabel("0", box_foglalás_neve.Location.X, foglalt_hordók.Location.Y, this);
-                TextBox box_foglalás_típusa = Program.mainform.createtextbox(box_foglalás_neve.Location.X, foglalás_típusa.Location.Y, 10, 160, this);
                 Label label_készítette = Program.mainform.createlabel("Felhasználó", box_foglalás_neve.Location.X, készítette.Location.Y, this);
                 Label label_foglalás_ideje = Program.mainform.createlabel(DateTime.Now.ToString(), box_foglalás_neve.Location.X, foglalás_ideje.Location.Y, this);
 
