@@ -848,6 +848,7 @@ namespace Labor
                     combo_hordótípus.Focus();
                     return;
                 }
+                
             }
 
             
