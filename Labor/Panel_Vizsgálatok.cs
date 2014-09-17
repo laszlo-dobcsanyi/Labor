@@ -12,24 +12,36 @@ namespace Labor
         public struct Azonosító
         {
             public string termékkód;
-            public string hordószám;
             public string sarzs;
-            public int? sorszám;
+            public string hordószám;
             public string hordótípus;
             public double nettó_töltet;
             public byte szita_átmérő;
             public string megrendelő;
+            public int? sorszám;
 
-            public Azonosító(string _termékkód, string _hordószám, string _sarzs, int? _sorszám, string _hordótípus, double _nettó_töltet, byte _szita_átmérő, string _megrendelő)
+            public Azonosító(string _termékkód, string _sarzs, string _hordószám, string _hordótípus, double _nettó_töltet, byte _szita_átmérő, string _megrendelő, int? _sorszám)
             {
-                sorszám = _sorszám;
                 termékkód = _termékkód;
-                hordószám = _hordószám;
                 sarzs = _sarzs;
+                hordószám = _hordószám;
                 hordótípus = _hordótípus;
                 nettó_töltet = _nettó_töltet;
                 szita_átmérő = _szita_átmérő;
                 megrendelő = _megrendelő;
+                sorszám = _sorszám;
+            }
+
+            public struct TableIndexes
+            {
+                public const int termékkód      = 0;
+                public const int sarzs          = 1;
+                public const int hordószám      = 2;
+                public const int hordótípus     = 3;
+                public const int nettó_töltet   = 4;
+                public const int szita_átmérő   = 5;
+                public const int megrendelő     = 6;
+                public const int sorszám        = 7;
             }
         }
 
@@ -249,15 +261,14 @@ namespace Labor
             foreach (Vizsgálat.Azonosító item in vizsgálatok)
             {
                 DataRow row = data.NewRow();
-                row[0] = item.termékkód;
-                row[1] = item.sarzs;
-                row[2] = item.hordószám;
-                row[3] = item.hordótípus;
-                row[4] = item.nettó_töltet;
-                row[5] = item.szita_átmérő;
-                row[6] = item.megrendelő;
-                // TODO hallóó, ez nem lehet null itt!!
-                row[7] = (item.sorszám == null ? -1 : item.sorszám);
+                row[Vizsgálat.Azonosító.TableIndexes.termékkód] = item.termékkód;
+                row[Vizsgálat.Azonosító.TableIndexes.sarzs] = item.sarzs;
+                row[Vizsgálat.Azonosító.TableIndexes.hordószám] = item.hordószám;
+                row[Vizsgálat.Azonosító.TableIndexes.hordótípus] = item.hordótípus;
+                row[Vizsgálat.Azonosító.TableIndexes.nettó_töltet] = item.nettó_töltet;
+                row[Vizsgálat.Azonosító.TableIndexes.szita_átmérő] = item.szita_átmérő;
+                row[Vizsgálat.Azonosító.TableIndexes.megrendelő] = item.megrendelő;
+                row[Vizsgálat.Azonosító.TableIndexes.sorszám] = item.sorszám;
                 data.Rows.Add(row);
 
                 vizsgálat_tokenek.Add(new DataToken<Vizsgálat.Azonosító>(item));
@@ -299,14 +310,14 @@ namespace Labor
                 {
                     case DataToken<Vizsgálat.Azonosító>.TokenType.NEW:
                         DataRow row = data.NewRow();
-                        row[0] = token.data.termékkód;
-                        row[1] = token.data.sarzs;
-                        row[2] = token.data.hordószám;
-                        row[3] = token.data.hordótípus;
-                        row[4] = token.data.nettó_töltet;
-                        row[5] = token.data.szita_átmérő;
-                        row[6] = token.data.megrendelő;
-                        row[7] = token.data.sorszám;
+                        row[Vizsgálat.Azonosító.TableIndexes.termékkód] = token.data.termékkód;
+                        row[Vizsgálat.Azonosító.TableIndexes.sarzs] = token.data.sarzs;
+                        row[Vizsgálat.Azonosító.TableIndexes.hordószám] = token.data.hordószám;
+                        row[Vizsgálat.Azonosító.TableIndexes.hordótípus] = token.data.hordótípus;
+                        row[Vizsgálat.Azonosító.TableIndexes.nettó_töltet] = token.data.nettó_töltet;
+                        row[Vizsgálat.Azonosító.TableIndexes.szita_átmérő] = token.data.szita_átmérő;
+                        row[Vizsgálat.Azonosító.TableIndexes.megrendelő] = token.data.megrendelő;
+                        row[Vizsgálat.Azonosító.TableIndexes.sorszám] = token.data.sorszám;
                         data.Rows.Add(row);
                         break;
 
@@ -337,8 +348,11 @@ namespace Labor
             else if (table.SelectedRows.Count != 0) { if (MessageBox.Show("Biztosan törli a kiválasztott vizsgálatokat?", "Megerősítés", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return; }
             foreach (DataGridViewRow selected in table.SelectedRows)
             {
-                Vizsgálat.Azonosító azonosító = new Vizsgálat.Azonosító((string)selected.Cells[0].Value, (string)selected.Cells[2].Value, (string)selected.Cells[1].Value, (int)selected.Cells[7].Value,
-                    (string)selected.Cells[3].Value, (double)selected.Cells[4].Value, (byte)selected.Cells[5].Value, (string)selected.Cells[6].Value);
+                Vizsgálat.Azonosító azonosító = new Vizsgálat.Azonosító((string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.termékkód].Value,
+                    (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.sarzs].Value, (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.hordószám].Value,
+                    (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.hordótípus].Value, (double)selected.Cells[Vizsgálat.Azonosító.TableIndexes.nettó_töltet].Value,
+                    (byte)selected.Cells[Vizsgálat.Azonosító.TableIndexes.szita_átmérő].Value, (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.megrendelő].Value,
+                    (int)selected.Cells[Vizsgálat.Azonosító.TableIndexes.sorszám].Value);
 
                 if (!Program.database.Vizsgálat_Törlés(azonosító))
                 { MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy nem létezik már a törlendő vizsgálat?\nTermékkód: " + azonosító.termékkód + "\nSarzs: " + azonosító.sarzs + "\nHordószám: " + azonosító.hordószám +
@@ -357,11 +371,14 @@ namespace Labor
         {
             if (table.SelectedRows.Count != 1) return;
 
-            Vizsgálat.Azonosító azonosító = new Vizsgálat.Azonosító((string)table.SelectedRows[0].Cells[0].Value, (string)table.SelectedRows[0].Cells[2].Value, (string)table.SelectedRows[0].Cells[1].Value,
-                (int)table.SelectedRows[0].Cells[7].Value, (string)table.SelectedRows[0].Cells[3].Value, (double)table.SelectedRows[0].Cells[4].Value, (byte)table.SelectedRows[0].Cells[5].Value,
-                (string)table.SelectedRows[0].Cells[6].Value);
+            Vizsgálat.Azonosító azonosító = new Vizsgálat.Azonosító((string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.termékkód].Value,
+                    (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.sarzs].Value, (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.hordószám].Value,
+                    (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.hordótípus].Value, (double)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.nettó_töltet].Value,
+                    (byte)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.szita_átmérő].Value, (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.megrendelő].Value,
+                    (int)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.sorszám].Value);
 
-            Vizsgálat? _vizsgálat = Program.database.Vizsgálat(azonosító);  if (_vizsgálat == null) { MessageBox.Show("A kiválasztott vizsgálati lap nem található!", "Adatbázis hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+            Vizsgálat? _vizsgálat = Program.database.Vizsgálat(azonosító); 
+            if (_vizsgálat == null) { MessageBox.Show("A kiválasztott vizsgálati lap nem található!", "Adatbázis hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
             Vizsgálati_Lap vizsgálati_lap = new Vizsgálati_Lap(_vizsgálat.Value);
             vizsgálati_lap.ShowDialog();
         }
@@ -369,14 +386,14 @@ namespace Labor
         void table_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
             table.DataBindingComplete -= table_DataBindingComplete;
-            table.Columns[0].Width = 70;
-            table.Columns[1].Width = 70;
-            table.Columns[2].Width = 70;
-            table.Columns[3].Width = 70;
-            table.Columns[4].Width = 70;
-            table.Columns[5].Width = 70;
-            table.Columns[6].Width = 280 - 3;
-            table.Columns[7].Visible = false;
+            table.Columns[Vizsgálat.Azonosító.TableIndexes.termékkód].Width = 70;
+            table.Columns[Vizsgálat.Azonosító.TableIndexes.sarzs].Width = 70;
+            table.Columns[Vizsgálat.Azonosító.TableIndexes.hordószám].Width = 70;
+            table.Columns[Vizsgálat.Azonosító.TableIndexes.hordótípus].Width = 70;
+            table.Columns[Vizsgálat.Azonosító.TableIndexes.nettó_töltet].Width = 70;
+            table.Columns[Vizsgálat.Azonosító.TableIndexes.szita_átmérő].Width = 70;
+            table.Columns[Vizsgálat.Azonosító.TableIndexes.megrendelő].Width = 280 - 3;
+            table.Columns[Vizsgálat.Azonosító.TableIndexes.sorszám].Visible = false;
         }
 
         private void table_UserDeletingRow(object _sender, DataGridViewRowCancelEventArgs _event)
@@ -909,13 +926,13 @@ namespace Labor
 
                 Vizsgálat.Azonosító azonosító = new Vizsgálat.Azonosító(
                         box_termékkód.Text,
+                        box_sarzs.Text, 
                         box_hordószám.Text,
-                        box_sarzs.Text,
-                        eredeti == null ? null : eredeti.Value.azonosító.sorszám,
                         combo_hordótípus.Text,
                         Convert.ToDouble(box_nettó_töltet.Text),
                         Convert.ToByte(box_szita_átmérő.Text),
-                        combo_megrendelő.Text
+                        combo_megrendelő.Text,
+                        eredeti == null ? null : eredeti.Value.azonosító.sorszám
                         );
                  Vizsgálat.Adatok1 adatok1 = new Vizsgálat.Adatok1(
                         box_terméknév.Text,
