@@ -767,7 +767,8 @@ namespace Labor
             laborconnection.Open();
 
             SqlCommand command = laborconnection.CreateCommand();
-            command.CommandText = "SELECT FOFAJT,FOHOTI,FOMEGR,FOSZOR, FOMUJE,FOTOGE,FODATE,FOTIPU,FOTEKO,FOCSAVT,FOCSAVI,FOSARZT,FOSARZI,FOZSSZT,FOZSSZI,FOBRIXT,FOBRIXI,FOBOSAI,FOBOSAT,FOPEHAT,FOPEHAI,FOBOSTT,FOBOSTI,FOASAVT,FOASAVI,FONETOT,FONETOI,FOHOFOT,FOHOFOI,FOSZATI,FOSZATT,FOCIADT,FOCIADI FROM L_FOGLAL";
+            command.CommandText = "SELECT FOFAJT,FOHOTI,FOMEGR,FOSZOR, FOMUJE,FOTOGE,FODATE,FOTIPU,FOTEKO,"+
+                "FOSARZT,FOSARZI,FOZSSZT,FOZSSZI,FOBRIXT,FOBRIXI,FOCSAVT,FOCSAVI,FOBOSAI,FOBOSAT,FOPEHAT,FOPEHAI,FOBOSTT,FOBOSTI,FOASAVT,FOASAVI,FONETOT,FONETOI,FOHOFOT,FOHOFOI,FOSZATI,FOSZATT,FOCIADT,FOCIADI FROM L_FOGLAL";
 
 
             SqlDataReader reader = command.ExecuteReader();
@@ -777,20 +778,23 @@ namespace Labor
                 data.adatok1 = new Vizsgalap_Szűrő.Adatok1(
                     
                     GetNullableString(reader, c),
-                    GetNullableString(reader, c++),
-                    GetNullableString(reader, c++),
-                    GetNullableString(reader, c++),
-                    GetNullableString(reader, c++),
-                    GetNullableString(reader, c++),
-                    GetNullableString(reader, c++),
-                    GetNullableString(reader, c++),
-                    GetNullableString(reader, c++));
+                    GetNullableString(reader, ++c),
+                    GetNullableString(reader, ++c),
+                    GetNullableString(reader, ++c),
+                    GetNullableString(reader, ++c),
+                    GetNullableString(reader, ++c),
+                    GetNullableString(reader, ++c),
+                    GetNullableString(reader, ++c),
+                    GetNullableString(reader, ++c));
 
+                /*
                 data.adatok2 = new Vizsgalap_Szűrő.Adatok2(
-                    Program.mainform.ConvertOrDie<int>(reader.GetString(c++)),
-                    Program.mainform.ConvertOrDie<int>(reader.GetString(c++)),
-                    Program.mainform.ConvertOrDie<int>(reader.GetString(c++)),
-                    Program.mainform.ConvertOrDie<int>(reader.GetString(c++)),
+                    Program.mainform.ConvertOrDie<int>(reader.GetString(++c)),
+                    Program.mainform.ConvertOrDie<int>(reader.GetString(++c)),
+                    Program.mainform.ConvertOrDie<int>(reader.GetString(++c)),
+                    Program.mainform.ConvertOrDie<int>(reader.GetString(++c)),
+                    //Program.mainform.ConvertOrDie<double>(reader.GetDecimal(++c).ToString()),
+                      0, 0, 0, 0, 0, 0, 0, 0,0,0,
                     (double)reader.GetDecimal(c++),
                     (double)reader.GetDecimal(c++),
                     (double)reader.GetDecimal(c++),
@@ -800,8 +804,6 @@ namespace Labor
                     (double)reader.GetDecimal(c++),
                     (double)reader.GetDecimal(c++),
                     (double)reader.GetDecimal(c++),
-                    (double)reader.GetDecimal(c++),
-                /*
                     Program.mainform.ConvertOrDie<double>(reader.GetDecimal(c++).ToString()),
                     Program.mainform.ConvertOrDie<double>(reader.GetDecimal(c++).ToString()),
                     Program.mainform.ConvertOrDie<double>(reader.GetDecimal(c++).ToString()),
@@ -812,8 +814,7 @@ namespace Labor
                     Program.mainform.ConvertOrDie<double>(reader.GetDecimal(c++).ToString()),
                     Program.mainform.ConvertOrDie<double>(reader.GetDecimal(c++).ToString()),
                     Program.mainform.ConvertOrDie<double>(reader.GetDecimal(c++).ToString()),
-                  */
-                 Program.mainform.ConvertOrDie<short>(reader.GetInt16(c++).ToString()),
+                     Program.mainform.ConvertOrDie<short>(reader.GetInt16(c++).ToString()),
                     Program.mainform.ConvertOrDie<short>(reader.GetInt16(c++).ToString()),
                     Program.mainform.ConvertOrDie<short>(reader.GetInt16(c++).ToString()),
                     Program.mainform.ConvertOrDie<short>(reader.GetInt16(c++).ToString()),
@@ -822,55 +823,7 @@ namespace Labor
                     Program.mainform.ConvertOrDie<byte>(reader.GetInt16(c++).ToString()),
                     Program.mainform.ConvertOrDie<byte>(reader.GetInt16(c++).ToString()),
                     Program.mainform.ConvertOrDie<byte>(reader.GetInt16(c++).ToString()),
-                    Program.mainform.ConvertOrDie<byte>(reader.GetInt16(c++).ToString());
-
-                /*
-                    //(GetNullableString(reader, c++)),
-                       0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0);
-                    (int?)GetNullable<Int32>(reader, c++),
-                    (int?)GetNullable<Int32>(reader, c++),
-                    (int?)GetNullable<Int32>(reader, c++),
-                    
-                    (double?)GetNullable<decimal>(reader,c++),
-                    (double?)GetNullable<decimal>(reader,c++),
-                    (double?)GetNullable<decimal>(reader,c++),
-                    (double?)GetNullable<decimal>(reader,c++),
-                    (double?)GetNullable<decimal>(reader,c++),
-                    (double?)GetNullable<decimal>(reader,c++),
-                    (double?)GetNullable<decimal>(reader,c++),
-                    (double?)GetNullable<decimal>(reader,c++),
-                    (double?)GetNullable<decimal>(reader,c++),
-                    (double?)GetNullable<decimal>(reader,c++),
-
-                    (short?)GetNullable<Int16>(reader, c++),
-                    (short?)GetNullable<Int16>(reader, c++),
-                    (short?)GetNullable<Int32>(reader, c++),
-                    (short?)GetNullable<Int32>(reader, c++),
-                    (byte?)GetNullable<Int16>(reader, c++),
-                    (byte?)GetNullable<Int16>(reader, c++),
-                    (byte?)GetNullable<Int16>(reader, c++),
-                    (byte?)GetNullable<Int16>(reader, c++),
-                    (byte?)GetNullable<Int16>(reader, c++),
-                    (byte?)GetNullable<Int16>(reader, c++));
+                    Program.mainform.ConvertOrDie<byte>(reader.GetInt16(c++).ToString()));
                  */
             };
 
@@ -957,8 +910,6 @@ namespace Labor
             laborconnection.Close();
             return true;
         }
-
-
 
         public bool Foglalás_Törlés(Foglalás _azonosító)
         {
