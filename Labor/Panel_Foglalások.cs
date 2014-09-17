@@ -325,6 +325,7 @@ namespace Labor
                 temp.szűrő = Program.database.Foglalás_Vizsgalap_Szűrő(temp);
                 Foglalás_Keresés foglalás_keresés = new Foglalás_Keresés(temp);
                 foglalás_keresés.ShowDialog();
+                 
             }
         }
 
@@ -726,11 +727,11 @@ namespace Labor
             private void Keresés_Rendben(object sender, EventArgs e)
             {
                 if (box_min_sarzs.Text.Length != 0 && box_max_sarzs.Text.Length != 0) if (Convert.ToInt32(box_min_sarzs.Text) > Convert.ToInt32(box_max_sarzs.Text)) { MessageBox.Show("Sarzs!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
-                if (box_min_brix.Text.Length != 0 && box_max_brix.Text.Length != 0) if (Convert.ToInt32(box_min_brix.Text) > Convert.ToInt32(box_max_brix.Text)) { MessageBox.Show("brix!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
-                if (box_min_citromsav.Text.Length != 0 && box_max_citromsav.Text.Length != 0) if (Convert.ToInt32(box_min_citromsav.Text) > Convert.ToInt32(box_max_citromsav.Text)) { MessageBox.Show("citromsav!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
-                if (box_min_borkősav.Text.Length != 0 && box_max_borkősav.Text.Length != 0) if (Convert.ToInt32(box_min_borkősav.Text) > Convert.ToInt32(box_max_borkősav.Text)) { MessageBox.Show("borkősav!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
-                if (box_min_ph.Text.Length != 0 && box_max_ph.Text.Length != 0) if (Convert.ToInt32(box_min_ph.Text) > Convert.ToInt32(box_max_ph.Text)) { MessageBox.Show("ph!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
-                if (box_min_bostwick.Text.Length != 0 && box_max_bostwick.Text.Length != 0) if (Convert.ToInt32(box_min_bostwick.Text) > Convert.ToInt32(box_max_bostwick.Text)) { MessageBox.Show("bostwick!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+                if (box_min_brix.Text.Length != 0 && box_max_brix.Text.Length != 0) if (Convert.ToDouble(box_min_brix.Text) > Convert.ToDouble(box_max_brix.Text)) { MessageBox.Show("brix!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+                if (box_min_citromsav.Text.Length != 0 && box_max_citromsav.Text.Length != 0) if (Convert.ToDouble(box_min_citromsav.Text) > Convert.ToDouble(box_max_citromsav.Text)) { MessageBox.Show("citromsav!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+                if (box_min_borkősav.Text.Length != 0 && box_max_borkősav.Text.Length != 0) if (Convert.ToDouble(box_min_borkősav.Text) > Convert.ToDouble(box_max_borkősav.Text)) { MessageBox.Show("borkősav!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+                if (box_min_ph.Text.Length != 0 && box_max_ph.Text.Length != 0) if (Convert.ToDouble(box_min_ph.Text) > Convert.ToDouble(box_max_ph.Text)) { MessageBox.Show("ph!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+                if (box_min_bostwick.Text.Length != 0 && box_max_bostwick.Text.Length != 0) if (Convert.ToDouble(box_min_bostwick.Text) > Convert.ToDouble(box_max_bostwick.Text)) { MessageBox.Show("bostwick!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 if (box_min_aszkorbinsav.Text.Length != 0 && box_max_aszkorbinsav.Text.Length != 0) if (Convert.ToInt32(box_min_aszkorbinsav.Text) > Convert.ToInt32(box_max_aszkorbinsav.Text)) { MessageBox.Show("aszkorbinsav!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 if (box_min_nettó_töltet.Text.Length != 0 && box_max_nettó_töltet.Text.Length != 0) if (Convert.ToInt32(box_min_nettó_töltet.Text) > Convert.ToInt32(box_max_nettó_töltet.Text)) { MessageBox.Show("nettó_töltet!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 if (box_min_hőkezelés.Text.Length != 0 && box_max_hőkezelés.Text.Length != 0) if (Convert.ToInt32(box_min_hőkezelés.Text) > Convert.ToInt32(box_max_hőkezelés.Text)) { MessageBox.Show("hőkezelés!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
