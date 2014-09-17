@@ -739,18 +739,73 @@ namespace Labor
         #endregion
 
         #region Foglalások
-        public List<Foglalás> Foglalások()
+        public List<Foglalás> Foglalás_Azonosítók()
         {
             List<Foglalás> data = new List<Foglalás>();
+            laborconnection.Open();
+
+            SqlCommand command = laborconnection.CreateCommand();
+            command.CommandText = "SELECT FOSZAM,FONEVE,FOFOHO,FOTIPU,FOFENE,FODATE FROM L_FOGLAL";
+
+
+            SqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                int c = 0;
+                Foglalás temp_foglalás = new Foglalás(reader.GetByte(++c), reader.GetString(++c), reader.GetByte(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c));
+                data.Add(temp_foglalás);
+            }
+            command.Dispose();
+            laborconnection.Close();
             return data;
         }
 
-        public bool Foglalás_Hozzáadás(Foglalás _foglalás )
+        public Vizsgalap_Szűrő Foglalás_Vizsgalap_Szűrő(Foglalás _foglalás)
         {
+            Vizsgalap_Szűrő data = new Vizsgalap_Szűrő();
+
+            laborconnection.Open();
+
+            SqlCommand command = laborconnection.CreateCommand();
+            command.CommandText = "SELECT FOFAJT,FOHOTI,FOMEGR,FOSZOR, FOMUJE,FOTOGE,FODATE,FOTIPU,FOTEKO,FOCSAVT,FOCSAVI,FOSARZT,FOSARZI,FOZSSZT,FOZSSZI,FOBRIXT,FOBRIXI,FOBOSAI,FOBOSAT,FOPEHAT,FOPEHAI,FOBOSTT,FOBOSTI,FOASAVT,FOASAVI,FONETOT,FONETOI,FOHOFOT,FOHOFOI,FOSZATI,FOSZATT,FOCIADT,FOCIADI FROM L_FOGLAL";
+
+
+            SqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                int c = 0;
+                data.adatok1 = new Vizsgalap_Szűrő.Adatok1(reader.GetString(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c));
+                data.adatok2 = new Vizsgalap_Szűrő.Adatok2(reader.GetInt16(++c), reader.GetInt16(++c), reader.GetInt16(++c), reader.GetInt16(++c), Program.mainform.ConvertOrDie<double>(reader.GetDecimal(++c).ToString()), Program.mainform.ConvertOrDie<double>(reader.GetDecimal(++c).ToString()), Program.mainform.ConvertOrDie<double>(reader.GetDecimal(++c).ToString()), Program.mainform.ConvertOrDie<double>(reader.GetDecimal(++c).ToString())
+                , Program.mainform.ConvertOrDie<double>(reader.GetDecimal(++c).ToString()), Program.mainform.ConvertOrDie<double>(reader.GetDecimal(++c).ToString()), Program.mainform.ConvertOrDie<double>(reader.GetDecimal(++c).ToString()), Program.mainform.ConvertOrDie<double>(reader.GetDecimal(++c).ToString()), Program.mainform.ConvertOrDie<double>(reader.GetDecimal(++c).ToString()), Program.mainform.ConvertOrDie<double>(reader.GetDecimal(++c).ToString()), reader.GetInt16(++c), reader.GetInt16(++c), reader.GetInt32(++c), reader.GetInt32(++c)
+                , reader.GetInt16(++c), reader.GetInt16(++c), reader.GetInt16(++c), reader.GetInt16(++c), reader.GetInt16(++c), reader.GetInt16(++c));
+            }
+
+            command.Dispose();
+            laborconnection.Close();
+            return data;
+        }
+
+        public bool Foglalás_Hozzáadás(Foglalás _foglalás)
+        {
+            SqlCommand command;
+
+            laborconnection.Open();
+
+            command = laborconnection.CreateCommand();
+            command.CommandText = "INSERT INTO L_FOGLAL (FOSZAM,FONEVE,FOFOHO,FOTIPU,FOFENE,FODATE,FOFAJT)" +
+                                " VALUES('" + _foglalás.id + "', '" + _foglalás.név + "', " + _foglalás.hordók_száma + ", '" + _foglalás.típus + "', '"
+                                + _foglalás.készítő + "', '" + _foglalás.idő + "', '" + _foglalás.típus + "')";
+
+            try { command.ExecuteNonQuery(); }
+            catch (Exception e) { MessageBox.Show(e.Message); return false; }
+            finally { command.Dispose(); laborconnection.Close(); }
+
+            laborconnection.Close();
+            Program.mainform.RefreshData();
             return true;
         }
 
-        public bool Foglalás_Módosítás(Foglalás _eredeti , Foglalás _új)
+        public bool Foglalás_Módosítás(Foglalás _eredeti, Foglalás _új)
         {
             return true;
         }

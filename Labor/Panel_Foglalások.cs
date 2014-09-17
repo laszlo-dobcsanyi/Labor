@@ -229,7 +229,7 @@ namespace Labor
         public override void Refresh()
         {
             // Összes adat lekérdezése
-            List<Foglalás> foglalások = Program.database.Foglalások();
+            List<Foglalás> foglalások = Program.database.Foglalás_Azonosítók();
             // Minden token beállítása a kereséshez
             foreach (DataToken<Foglalás> token in foglalás_tokenek) { token.type = DataToken<Foglalás>.TokenType.NOT_FOUND; }
 
