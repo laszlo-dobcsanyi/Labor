@@ -314,6 +314,45 @@ namespace Labor
                 return value;
             }
         }
+
+        public List<Hordó> ÚjHordók(Vizsgálat _vizsgálat)
+        {
+            List<Hordó> value = new List<Hordó>();
+            lock (MarillenLock)
+            {
+                int összhordó = 0;
+                List<string> prod_id = new List<string>();
+
+                string iPROD_ID = "12" + _vizsgálat.azonosító.termékkód + _vizsgálat.adatok1.gyártási_év[_vizsgálat.adatok1.gyártási_év.Length - 1];
+                marillenconnection.Open();
+                SqlCommand command = new SqlCommand("SELECT tetelek.prod_id FROM tetelek" +
+                                      " INNER JOIN folyoprops ON tetelek.serial_nr=folyoprops.serial_nr" +
+                                      " WHERE left(tetelek.prod_id,7) = '" + iPROD_ID + "'AND folyoprops.code= '" + 3 + "' AND folyoprops.propstr = '" + 1 + "'  ;");
+                command.Connection = marillenconnection;
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    összhordó++;
+                    prod_id.Add(reader.GetString(0).Substring(reader.GetString(0).Length - 4));
+                }
+                reader.Close();
+                marillenconnection.Close();
+
+                foreach (string item in prod_id)
+                {
+                    value.Add(new Hordó(_vizsgálat.azonosító.termékkód, _vizsgálat.azonosító.sarzs, _vizsgálat.azonosító.hordószám, _vizsgálat.azonosító.sorszám, _vizsgálat.adatok1.gyártási_év));
+                }
+
+                laborconnection.Open();
+                SqlCommand command3 = laborconnection.CreateCommand();
+                command3.CommandText = "UPDATE L_VIZSLAP SET VIOSHO = '" + összhordó + "' WHERE VITEKO = '" + _vizsgálat.azonosító.termékkód + "' AND VIZSSZ= '" + _vizsgálat.azonosító.hordószám + "' AND VIGYEV= '" + _vizsgálat.adatok1.gyártási_év + "' AND VISARZ= '" + _vizsgálat.azonosító.sarzs + "' AND VIMSSZ= '" + _vizsgálat.azonosító.sorszám + "';";
+                command3.ExecuteNonQuery();
+                command3.Dispose();
+                laborconnection.Close();
+                return value;
+            }
+        }
+
         #endregion
 
         #region Törzsadatok
