@@ -759,8 +759,8 @@ namespace Labor
             private void InitializeData(Foglalás _foglalás)
             {
                 box_termékkód.Text = _foglalás.szűrő.Value.adatok1.termékkód;
-                box_min_sarzs.Text = _foglalás.szűrő.Value.adatok2.min_sarzs.ToString();
-                box_max_sarzs.Text = _foglalás.szűrő.Value.adatok2.max_sarzs.ToString();
+                box_min_sarzs.Text = _foglalás.szűrő.Value.adatok2.min_sarzs;
+                box_max_sarzs.Text = _foglalás.szűrő.Value.adatok2.max_sarzs;
                 box_min_hordószám.Text = _foglalás.szűrő.Value.adatok2.min_hordóid;
                 box_max_hordószám.Text = _foglalás.szűrő.Value.adatok2.max_hordóid;
                 box_min_brix.Text = _foglalás.szűrő.Value.adatok2.min_brix.ToString();
