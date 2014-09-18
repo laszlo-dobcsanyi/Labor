@@ -556,17 +556,6 @@ namespace Labor
             }
 
             #region EventHandlers
-            private void table_DataBindingComplete(object _sender, DataGridViewBindingCompleteEventArgs _event)
-            {
-                table.DataBindingComplete -= table_DataBindingComplete;
-
-                table.Columns[Hordó.TableIndexes.termékkód].Width = 100;
-                table.Columns[Hordó.TableIndexes.sarzs].Width = 100;
-                table.Columns[Hordó.TableIndexes.id].Width = 100;
-                table.Columns[Hordó.TableIndexes.foglalás_száma].Visible = false;
-                table.Columns[Hordó.TableIndexes.gyártási_év].Width = 100;
-            }
-
             private void Hordó_Törlés(object _sender, EventArgs _event)
             {
 
@@ -579,6 +568,17 @@ namespace Labor
 
                 Vizsgálat_Kereső vizsgálat_kereső = new Vizsgálat_Kereső(foglalás);
                 vizsgálat_kereső.ShowDialog();
+            }
+
+            private void table_DataBindingComplete(object _sender, DataGridViewBindingCompleteEventArgs _event)
+            {
+                table.DataBindingComplete -= table_DataBindingComplete;
+
+                table.Columns[Hordó.TableIndexes.termékkód].Width = 100;
+                table.Columns[Hordó.TableIndexes.sarzs].Width = 100;
+                table.Columns[Hordó.TableIndexes.id].Width = 100;
+                table.Columns[Hordó.TableIndexes.foglalás_száma].Visible = false;
+                table.Columns[Hordó.TableIndexes.gyártási_év].Width = 100;
             }
 
             private void table_UserDeletingRow(object _sender, DataGridViewRowCancelEventArgs _event)
