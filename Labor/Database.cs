@@ -160,6 +160,7 @@ namespace Labor
             if (type == typeof(string)) { if (_value != null) return _column_name + " = '" + _value + "'"; else return null; }
 
             if (type == typeof(byte)) { return _column_name + " = " + _value; }
+            if (type == typeof(byte?)) { if (_value != null) return _column_name + " = " + _value; else return null; }
 
             if (type == typeof(short)) { return _column_name + " = " + _value; }
             if (type == typeof(short?)) { if (_value != null) return _column_name + " = " + _value; else return null; }
