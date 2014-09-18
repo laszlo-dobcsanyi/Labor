@@ -94,7 +94,7 @@ namespace Labor
 
                             "CREATE TABLE L_GYFAJTA(GFTEKO varchar(2), GFAZON varchar(30), GFSZO2 varchar(30), GFSZO3 varchar(30));" +
 
-                            "CREATE TABLE L_TAPERTEK(TATEKO varchar(2), TAKIO tinyint, TAKCAL tinyint, TAFEHE DECIMAL(2, 1), TASZHI DECIMAL(3, 1), TAZSIR DECIMAL(2, 1), TAELRO DECIMAL(2, 1));" +
+                            "CREATE TABLE L_TAPERTEK(TATEKO varchar(2), TAKIO smallint, TAKCAL smallint, TAFEHE DECIMAL(2, 1), TASZHI DECIMAL(3, 1), TAZSIR DECIMAL(2, 1), TAELRO DECIMAL(2, 1));" +
 
                             "CREATE TABLE L_MINBIZ(MISZ1M varchar(600), MISZ1A varchar(600), MISZ2M varchar(600), MISZ2A varchar(600));" +
 
@@ -153,7 +153,7 @@ namespace Labor
                                                                                             "('61','Presenta','','')," +
                                                                                             "('61','Rodna','','')," +
                                                                                             "('51','Clapp','','')," +
-                                                                                            "('51','Vilmos','William's','')," +
+                                                                                            "('51','Vilmos','Williams','')," +
                                                                                             "('51','Bosc kobak','','')," +
                                                                                             "('51','Kálmán','','')," +
                                                                                             "('51','Papp','','')," +
@@ -176,15 +176,67 @@ namespace Labor
                                                                                             "('12','gyűjtött','collected','');" +
 
 
+                    "INSERT INTO L_TAPERTEK (TATEKO, TAKIO , TAKCAL, TAFEHE , TASZHI , TAZSIR , TAELRO) VALUES" +
+                                                        "(10, 143, 34, 0.6, 7.0, 1.2,0),"+
+                                                        "( 11, 202, 48, 0.9, 9.5, 2.0, 7.80),"+
+                                                        "(12,0, 0, 0, 0, 0, 0 ),"+
+                                                        "(13, 139, 33, 0.8, 6.0, 1.8, 0),"+
+                                                        "(14, 147, 35, 0.9, 7.2, 0.6, 1.70),"+
+                                                        "( 15, 122, 29, 1.2, 5.4, 0.8, 9.10),"+
+                                                        "( 16,0, 0, 0, 0, 0, 0 ),"+
+                                                        "( 17,0, 0, 0, 0, 0, 0 ),"+
+                                                        "( 18, 214, 51, 3.6, 8.0,0,0),"+
+                                                        "(19,0, 0, 0, 0, 0, 0 ),"+
+                                                        "(21, 218, 52, 0.8, 11.0, 1.4, 4.20),"+
+                                                        "(22, 265, 63, 0.8, 14.0, 0.7, 0),"+
+                                                        "(23, 164, 39, 0.6, 8.0, 1.4, 3.50),"+
+                                                        "(24,0, 0, 0, 0, 0, 0 ),"+
+                                                        "(25,0, 0, 0, 0, 0,0  ),"+
+                                                        "(27, 265, 63, 0.8, 14.0, 0.7, 0),"+
+                                                        "(28, 218, 52, 0.8, 11.0, 1.4, 4.20),"+
+                                                        "(29, 218, 52, 0.8, 11.0, 1.4, 4.20),"+
+                                                        "(31, 202, 48, 0.9, 10.2, 0.6, 3.60),"+
+                                                        "(39, 202, 48, 0.9, 10.2, 0.6, 3.60),"+
+                                                        "(41, 172, 41, 0.7, 9.0, 0.3, 3.20),"+
+                                                        "(42, 172, 41, 0.7, 9.0, 0.3, 3.20),"+
+                                                        "(43, 206, 49, 0.4, 11.4, 0.5,0 ),"+
+                                                        "(49, 172, 41, 0.7, 9.0, 0.3, 3.20),"+
+                                                        "(51, 218, 52, 0.4, 12.0, 0.3, 6.20),"+
+                                                        "(52, 218, 52, 0.4, 12.0, 0.3, 6.20),"+
+                                                        "(53, 218, 52, 0.4, 12.0, 0.3, 6.20),"+
+                                                        "(54, 218, 52, 0.4, 12.0, 0.3, 6.20),"+
+                                                        "(57, 218, 52, 0.4, 12.0, 0.3, 6.20),"+
+                                                        "(58, 218, 52, 0.4, 12.0, 0.3, 6.20),"+
+                                                        "(59, 218, 52, 0.4, 12.0, 0.3, 6.20),"+
+                                                        "(61, 197, 47, 0.8, 10.2, 0.8, 0),"+
+                                                        "(69, 197, 47, 0.8, 10.2, 0.8, 0),"+
+                                                        "(71, 130, 31, 0.4, 7.0, 0.4, 3.70),"+
+                                                        "(72, 130, 31, 0.4, 7.0, 0.4, 3.70),"+
+                                                        "(73, 176, 42, 0.6, 9.1, 0.9, 0),"+
+                                                        "(74, 130, 31, 0.4, 7.0, 0.4, 3.70),"+
+                                                        "(75, 130, 31, 0.4, 7.0, 0.4, 3.70),"+
+                                                        "(76, 130, 31, 0.4, 7.0, 0.4, 3.70),"+
+                                                        "(77, 130, 31, 0.4, 7.0, 0.4, 3.70),"+
+                                                        "(78, 130, 31, 0.4, 7.0, 0.4, 3.70),"+
+                                                        "(79, 130, 31, 0.4, 7.0, 0.4, 3.70),"+
+                                                        "(81, 168, 40, 0.3, 9.5,0,0),"+
+                                                        "(89, 130, 31, 1.3, 5.9, 0.1, 4.24),"+
+                                                        "(91, 97, 23, 1.0, 4.0, 0.2, 1.73),"+
+                                                        "(92, 336, 80, 1.5, 16.5, 0.6, 0),"+
+                                                        "(93, 168, 40, 1.2, 8.1, 0.2, 3.27),"+
+                                                        "(94, 130, 31, 1.3, 5.9, 0.1, 4.24),"+
+                                                        "(97, 97, 23, 1.0, 4.0, 0.2, 1.73),"+
+                                                        "(98, 168, 40, 1.2, 8.1, 0.2, 3.27),"+
+                                                        "(99, 336, 80, 1.5, 16.5, 0.6, 0);" +
+                "INSERT INTO L_TORZSA (TOTIPU, TOAZON, TOSZO2,TOSZO3) VALUES('Származási ország','Magyarország','Hungary','Ungarn')," +
+                                                                            "('Származási ország','Szlovákia','Slovakia','Slowakei')," +
+                                                                            "('Származási ország','Románia','Romania','Rumänien')," +
+                                                                            "('Hordótípus','Kicsi','Small','Klein')," +
+                                                                            "('Hordótípus','Nagy','Big','Groß')," +
+                                                                            "('Laboros','Belinyák Máté','Máté Belinyák','Máté Belinyák')," +
+                                                                            "('Laboros','Belinyák Nándor','Nándor Belinyák','Nándor Belinyák');", laborconnection);
 
 
-                            "INSERT INTO L_TORZSA (TOTIPU, TOAZON, TOSZO2,TOSZO3) VALUES('Származási ország','Magyarország','Hungary','Ungarn')," +
-                                                                                        "('Származási ország','Szlovákia','Slovakia','Slowakei')," +
-                                                                                        "('Származási ország','Románia','Romania','Rumänien')," +
-                                                                                        "('Hordótípus','Kicsi','Small','Klein')," +
-                                                                                        "('Hordótípus','Nagy','Big','Groß')," +
-                                                                                        "('Laboros','Belinyák Máté','Máté Belinyák','Máté Belinyák')," +
-                                                                                        "('Laboros','Belinyák Nándor','Nándor Belinyák','Nándor Belinyák');", laborconnection);
                     command.ExecuteNonQuery();
                     command.Dispose();
                     laborconnection.Close();
