@@ -719,6 +719,9 @@ namespace Labor
                 box_töltőgép_száma = Program.mainform.createtextbox(box_termékkód.Location.X, töltőgép_száma.Location.Y, 1, 20, this);
                 box_töltőgép_száma.Name = "töltő";
                 #endregion
+                
+
+
 
                 List<Törzsadat> seged = Program.database.Törzsadatok("Hordótípus");
                 foreach (Törzsadat item in seged)
