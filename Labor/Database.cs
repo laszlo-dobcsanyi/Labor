@@ -954,7 +954,7 @@ namespace Labor
                     command.CommandText = "UPDATE L_FOGLAL SET " + data + " WHERE " + where;
 
                     try { command.ExecuteNonQuery(); command.Dispose(); }
-                    catch (SqlException) { MessageBox.Show("Vizsgalap_Hozzáad -> adat1 hiba"); }
+                    catch (SqlException) { MessageBox.Show("Foglalás_ÚjVizsgalap -> adat1 hiba"); }
                 }
 
                 // Adatok2
@@ -979,7 +979,7 @@ namespace Labor
                     command.CommandText = "UPDATE L_FOGLAL SET " + data + " WHERE " + where;
 
                     try { command.ExecuteNonQuery(); command.Dispose(); }
-                    catch (SqlException q) { MessageBox.Show("Vizsgalap_Hozzáad -> adat1 hiba:\n" + q.Message); }
+                    catch (SqlException q) { MessageBox.Show("Foglalás_ÚjVizsgalap -> adat2 hiba:\n" + q.Message); }
                 }
                 if (laborconnection.State != System.Data.ConnectionState.Open) return false;
 
