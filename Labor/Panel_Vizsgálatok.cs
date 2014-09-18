@@ -920,8 +920,6 @@ namespace Labor
                         box_sarzs.Text = temp[4];
 
                         SetState(States.KÉSZ);
-
-                        
                     }
                     else
                     {

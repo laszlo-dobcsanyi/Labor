@@ -860,7 +860,6 @@ namespace Labor
                             GetNullableString(reader, ++c),
                             GetNullableString(reader, ++c));
 
-
                         data.adatok2 = new Vizsgalap_Szűrő.Adatok2(
                             GetNullable<int>(reader, ++c),
                             GetNullable<int>(reader, ++c),
@@ -891,8 +890,9 @@ namespace Labor
                             GetNullable<byte>(reader, ++c));
                     };
                 }
-                catch
+                catch (SqlException q)
                 {
+                    MessageBox.Show("Foglalás_Vizsgalap_Szűrő hiba:\n" + q.Message);
                     return null;
                 }
                 finally
@@ -977,7 +977,7 @@ namespace Labor
                 if (data != null)
                 {
                     command = laborconnection.CreateCommand();
-                    command.CommandText = "UPDATE L_FOGLAL SET " + data +" WHERE FOSZAM = " + _azonosító.id; ;
+                    command.CommandText = "UPDATE L_FOGLAL SET " + data +" WHERE FOSZAM = " + _azonosító.id;
 
                     try { command.ExecuteNonQuery(); command.Dispose(); }
                     catch (SqlException q) { MessageBox.Show("Foglalás_ÚjVizsgalap -> adat2 hiba:\n" + q.Message); }
