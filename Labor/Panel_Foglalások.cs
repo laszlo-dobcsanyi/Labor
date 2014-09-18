@@ -112,11 +112,9 @@ namespace Labor
             public string származási_ország;
             public string műszak_jele;
             public string töltőgép_száma;
-            public string foglalás_ideje;
-            public string foglalás_típusa;
             public string termékkód;
 
-            public Adatok1(string _gyümölcsfajta, string _hordótípus, string _megrendelő, string _származási_ország, string _műszak_jele, string _töltőgép_száma, string _foglalás_ideje, string _foglalás_típusa, string _termékkód)
+            public Adatok1(string _gyümölcsfajta, string _hordótípus, string _megrendelő, string _származási_ország, string _műszak_jele, string _töltőgép_száma, string _termékkód)
             {
                 gyümölcsfajta = _gyümölcsfajta;
                 hordótípus = _hordótípus;
@@ -124,8 +122,6 @@ namespace Labor
                 származási_ország = _származási_ország;
                 műszak_jele = _műszak_jele;
                 töltőgép_száma = _töltőgép_száma;
-                foglalás_ideje = _foglalás_ideje;
-                foglalás_típusa = _foglalás_típusa;
                 termékkód = _termékkód;
             }
         }
@@ -843,8 +839,6 @@ namespace Labor
                     MainForm.ConvertOrDieString(combo_származási_ország.Text),
                     MainForm.ConvertOrDieString(box_műszak_jele.Text),
                     MainForm.ConvertOrDieString(box_töltőgép_száma.Text),
-                    MainForm.ConvertOrDieString((eredeti == null) ? null : eredeti.Value.idő),
-                    MainForm.ConvertOrDieString((eredeti == null) ? null : eredeti.Value.típus),
                     MainForm.ConvertOrDieString(box_termékkód.Text));
 
                 Vizsgalap_Szűrő.Adatok2 adatok2 = new Vizsgalap_Szűrő.Adatok2(

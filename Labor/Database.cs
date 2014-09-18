@@ -183,6 +183,41 @@ namespace Labor
             if (!_reader.IsDBNull(_column)) return _reader.GetString(_column);
             return null;
         }
+
+        public static string Is(string _filter, string _value_field)
+        {
+            if (_filter != null) return _value_field + " = " + _filter;
+            return null;
+        }
+
+        public static string Between<T>(T? _min, string _value_field, T? _max) where T : struct
+        {
+            if (typeof(T) != typeof(double))
+            {
+                string value = _value_field + " IS NOT NULL AND ";
+                if ((_min != null) && (_max == null)) return value + _min.Value + " <= " + _value_field;
+                if ((_min == null) && (_max != null)) return value + _value_field + " <= " + _max.Value;
+                if ((_min != null) && (_max != null)) return value + _value_field + " BETWEEN " + _min.Value + " AND " + _max.Value;
+                return null;
+            }
+            else
+            {
+                string value = _value_field + " IS NOT NULL AND ";
+                if ((_min != null) && (_max == null)) return value + _min.Value.ToString().Replace(',', '.') + " <= " + _value_field;
+                if ((_min == null) && (_max != null)) return value + _value_field + " <= " + _max.Value.ToString().Replace(',', '.');
+                if ((_min != null) && (_max != null)) return value + _value_field + " BETWEEN " + _min.ToString().Replace(',', '.') + " AND " + _max.Value.ToString().Replace(',', '.');
+                return null;
+            }
+        }
+
+        public static string BetweenString(string _min, string _value_field, string _max)
+        {
+            string value = _value_field + " IS NOT NULL AND ";
+            if ((_min != null) && (_max == null)) return value + "'" + _min + "' <= " + _value_field;
+            if ((_min == null) && (_max != null)) return value + _value_field + " <= '" + _max + "'";
+            if ((_min != null) && (_max != null)) return value + _value_field + " BETWEEN '" + _min + "' AND '" + _max + "'";
+            return null;
+        }
         #endregion
 
         #region Marillen Adatbázisából
@@ -858,7 +893,7 @@ namespace Labor
                 laborconnection.Open();
 
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT FOFAJT, FOHOTI, FOMEGR, FOSZOR, FOMUJE, FOTOGE, FODATE, FOTIPU, FOTEKO, " +
+                command.CommandText = "SELECT FOFAJT, FOHOTI, FOMEGR, FOSZOR, FOMUJE, FOTOGE, FOTEKO, " +
                     "FOSARZT, FOSARZI, FOHOSZT, FOHOSZI, FOBRIXT, FOBRIXI, FOCSAVT, FOCSAVI, FOBOSAT, FOBOSAI, FOPEHAT, FOPEHAI, FOBOSTT, FOBOSTI, FOASAVT, FOASAVI, FONETOT, FONETOI, FOHOFOT, FOHOFOI, " +
                     "FOCIADT, FOCIADI, FOSZATI, FOSZATT  FROM L_FOGLAL WHERE FOSZAM = " + _foglalás.id;
 
@@ -869,9 +904,6 @@ namespace Labor
                     {
                         int c = -1;
                         data.adatok1 = new Vizsgalap_Szűrő.Adatok1(
-
-                            GetNullableString(reader, ++c),
-                            GetNullableString(reader, ++c),
                             GetNullableString(reader, ++c),
                             GetNullableString(reader, ++c),
                             GetNullableString(reader, ++c),
@@ -934,10 +966,10 @@ namespace Labor
                 laborconnection.Open();
                 command = laborconnection.CreateCommand();
 
-                // public Adatok1(string _gyümölcsfajta, string _hordótípus, string _megrendelő, string _származási_ország, string _műszak_jele, string _töltőgép_száma, string _foglalás_ideje, string _foglalás_típusa, string _termékkód)
-                data = V(new string[] {Update<string>("FOFAJT", _szűrő.adatok1.foglalás_típusa), Update<string>("FOHOTI", _szűrő.adatok1.hordótípus), Update<string>("FOMEGR", _szűrő.adatok1.megrendelő),
+                // Adatok1
+                data = V(new string[] {Update<string>("FOFAJT", _szűrő.adatok1.gyümölcsfajta), Update<string>("FOHOTI", _szűrő.adatok1.hordótípus), Update<string>("FOMEGR", _szűrő.adatok1.megrendelő),
                 Update<string>("FOSZOR", _szűrő.adatok1.származási_ország), Update<string>("FOMUJE", _szűrő.adatok1.műszak_jele), Update<string>("FOTOGE", _szűrő.adatok1.töltőgép_száma),
-                Update<string>("FODATE", _szűrő.adatok1.foglalás_ideje),Update<string>("FOTIPU", _szűrő.adatok1.foglalás_típusa),Update<string>("FOTEKO", _szűrő.adatok1.termékkód)});
+                Update<string>("FOTEKO", _szűrő.adatok1.termékkód)});
 
                 if (data != null)
                 {
@@ -949,7 +981,6 @@ namespace Labor
                 }
 
                 // Adatok2
-
                 data = V(new string[] {
                 Update<string>("FOSARZT", _szűrő.adatok2.min_sarzs), Update<string>("FOSARZI", _szűrő.adatok2.max_sarzs),
                 Update<string>("FOHOSZT", _szűrő.adatok2.min_hordóid), Update<string>("FOHOSZI", _szűrő.adatok2.max_hordóid),
@@ -1053,15 +1084,62 @@ namespace Labor
             }
         }
 
+        /*
+        FOSARZI varchar(3), FOHOSZT varchar(4)," +
+        "FOHOSZI varchar(4), FOBRIXT DECIMAL(4,2), FOBRIXI DECIMAL(4,2), FOCSAVT DECIMAL(4,2), FOCSAVI DECIMAL(4,2), FOPEHAT DECIMAL(4,2), FOPEHAI DECIMAL(4,2), FOBOSTT DECIMAL(4,2)," +
+        "FOBOSTI DECIMAL(4,2), FOASAVT smallint, FOASAVI smallint, FONETOT smallint, FONETOI smallint, FOHOFOT tinyint, FOHOFOI tinyint, FOCIADT smallint, FOCIADI smallint," +
+        "FOFAJT varchar(15), FOHOTI varchar(15), FOMEGR varchar(15), FOSZOR varchar(15), FOMUJE varchar(1), FOTOGE varchar(1), FOFOHO tinyint, FOSZSZ tinyint ," +
+        "FOSZATI varchar(6) , FOSZATT varchar(6), FOBOSAI smallint, FOBOSAT smallint
+         
+                 
+         "SELECT VITEKO, VISARZ FROM L_VIZSLAP WHERE(_szűrő.Adatok2.min_sarzs)
+         
+
+
+
+            public double? min_brix;
+            public double? max_brix;
+            public double? min_citromsav;
+            public double? max_citromsav;
+            public double? min_borkősav;
+            public double? max_borkősav;
+            public double? min_ph;
+            public double? max_ph;
+            public double? min_bostwick;
+            public double? max_bostwick;
+
+            public Int16? min_aszkorbinsav;
+            public Int16? max_aszkorbinsav;
+            public Int16? min_nettó_töltet;
+            public Int16? max_nettó_töltet;
+            public byte? min_hőkezelés;
+            public byte? max_hőkezelés;
+            public byte? min_citromsav_ad;
+            public byte? max_citromsav_ad;
+            public byte? min_szita_átmérő;
+            public byte? max_szita_átmérő;
+*/
+
         public List<Sarzs> Sarzsok(Vizsgalap_Szűrő _szűrő)
         {
             lock (LaborLock)
             {
                 List<Sarzs> value = new List<Sarzs>();
+            /*public string min_sarzs;
+            public string max_sarzs;
+            public string min_hordóid;
+            public string max_hordóid;*/
+
+                string Filter = A(new string[] { Is(_szűrő.adatok1.gyümölcsfajta, "VIFAJT"), Is(_szűrő.adatok1.hordótípus, "VIHOTI"), Is(_szűrő.adatok1.megrendelő, "VIMEGR"),
+                    Is(_szűrő.adatok1.származási_ország, "VISZOR"), Is(_szűrő.adatok1.műszak_jele, "VIMUJE"), Is(_szűrő.adatok1.töltőgép_száma, "VITOGE"), Is(_szűrő.adatok1.termékkód, "VITEKO"),
+                    BetweenString(_szűrő.adatok2.min_sarzs, "VISARZ", _szűrő.adatok2.max_sarzs), BetweenString(_szűrő.adatok2.min_hordóid, "VIHOSZ", _szűrő.adatok2.max_hordóid),
+                    Between<double>(_szűrő.adatok2.min_brix, "VIBRIX", _szűrő.adatok2.max_brix) });
+         
 
                 laborconnection.Open();
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT VITEKO, VISARZ, SUM(case when FOSZAM is not null then 1 else 0 end), SUM(case when FOSZAM is null then 1 else 0 end) FROM L_VIZSLAP GROUP BY VITEKO, VISARZ;";
+                command.CommandText = "SELECT VITEKO, VISARZ, SUM(case when FOSZAM is not null then 1 else 0 end), SUM(case when FOSZAM is null then 1 else 0 end) " + 
+                    "FROM L_VIZSLAP" + (Filter == null ? "" : " WHERE " + Filter) + " GROUP BY VITEKO, VISARZ;";
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
