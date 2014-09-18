@@ -892,7 +892,7 @@ namespace Labor
 
                     InitializeForm();
                     InitializeContent();
-                    InitializeData();
+                    InitializeData(_foglalás);
                 }
 
                 private void InitializeForm()
@@ -916,7 +916,7 @@ namespace Labor
                     table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
                     table.ReadOnly = true;
                     table.DataBindingComplete += table_DataBindingComplete;
-                    table.CellDoubleClick += keresés_Click;
+                    table.CellDoubleClick += Sarzs_Módosítás;
                     table.UserDeletingRow += table_UserDeletingRow;
                     table.DataSource = CreateSource();
 
@@ -927,29 +927,20 @@ namespace Labor
                     rögzítés.Size = new System.Drawing.Size(96, 32);
                     rögzítés.Location = new Point(ClientRectangle.Width - rögzítés.Size.Width - 16, ClientRectangle.Height - rögzítés.Size.Height - 16);
 
-                    Button hordók = new Button();
-                    hordók.Text = "Hordók";
-                    hordók.Size = new System.Drawing.Size(96, 32);
-                    hordók.Location = new Point(ClientRectangle.Width - hordók.Size.Width - rögzítés.Width - 32, ClientRectangle.Height - hordók.Size.Height - 16);
-                    hordók.Click += hordók_Click;
-
                     //
 
-                    Controls.Add(hordók);
                     Controls.Add(rögzítés);
                     Controls.Add(table);
                 }
 
-                private void hordók_Click(object _sender, EventArgs _event)
+                private void InitializeData()
                 {
-                    // TODO tábláról kibányászni!
-                    Sarzs sarzs;
 
-                    Eredmény_Hordók eredmény_hordók;
-                    if (foglalás == null) eredmény_hordók = new Eredmény_Hordók(szűrő, sarzs);
-                    else eredmény_hordók = new Eredmény_Hordók(szűrő, sarzs, foglalás.Value);
+                }
 
-                    eredmény_hordók.ShowDialog();
+                private void InitializeData(Foglalás _foglalás)
+                {
+
                 }
 
                 private DataTable CreateSource()
@@ -967,6 +958,7 @@ namespace Labor
                     return data;
                 }
 
+                #region EventHandlers
                 private void table_DataBindingComplete(object _sender, DataGridViewBindingCompleteEventArgs _event)
                 {
                     table.DataBindingComplete -= table_DataBindingComplete;
@@ -975,6 +967,7 @@ namespace Labor
                     table.Columns[2].Width = 125;
                     table.Columns[3].Width = 125;
                 }
+
                 private void table_UserDeletingRow(object _sender, DataGridViewRowCancelEventArgs _event)
                 {
                     // Delete lenyomása esetén kitörli az adott sorokat, ezt iktatjuk ki ezzel!
@@ -984,19 +977,18 @@ namespace Labor
                     //Vizsgálat_Törlés(_sender, _event);
                 }
 
-                private void InitializeData()
+                private void Sarzs_Módosítás(object _sender, DataGridViewCellEventArgs _event)
                 {
+                    // TODO hello ez miez?! Lekérdezni / Kibányászni
+                    Sarzs sarzs;
 
+                    Eredmény_Hordók eredmény_hordók;
+                    if (foglalás == null) eredmény_hordók = new Eredmény_Hordók(szűrő, sarzs);
+                    else eredmény_hordók = new Eredmény_Hordók(szűrő, sarzs, foglalás.Value);
+
+                    eredmény_hordók.ShowDialog();
                 }
-
-                private void InitializeData(Foglalás _foglalás)
-                {
-
-                }
-
-                private void keresés_Click(object sender, DataGridViewCellEventArgs e)
-                {
-                }
+                #endregion
 
                 public sealed class Eredmény_Hordók : Form
                 {
