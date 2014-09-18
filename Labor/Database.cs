@@ -940,9 +940,6 @@ namespace Labor
                 laborconnection.Open();
                 command = laborconnection.CreateCommand();
 
-                string where = A(new string[] { Update<int>("FOSZAM", _azonosító.id), Update<string>("FONEVE", _azonosító.név), Update<int>("FOFOHO", _azonosító.hordók_száma),
-                     Update<string>("FOTIPU", _azonosító.típus) ,Update<string>("FOFENE", _azonosító.készítő) ,Update<string>("FODATE", _azonosító.idő),Update<string>("FOFAJT", _azonosító.típus)  });
-
                 // public Adatok1(string _gyümölcsfajta, string _hordótípus, string _megrendelő, string _származási_ország, string _műszak_jele, string _töltőgép_száma, string _foglalás_ideje, string _foglalás_típusa, string _termékkód)
                 data = V(new string[] {Update<string>("FOFAJT", _szűrő.adatok1.foglalás_típusa), Update<string>("FOHOTI", _szűrő.adatok1.hordótípus), Update<string>("FOMEGR", _szűrő.adatok1.megrendelő),
                 Update<string>("FOSZOR", _szűrő.adatok1.származási_ország), Update<string>("FOMUJE", _szűrő.adatok1.műszak_jele), Update<string>("FOTOGE", _szűrő.adatok1.töltőgép_száma),
@@ -951,7 +948,7 @@ namespace Labor
                 if (data != null)
                 {
                     command = laborconnection.CreateCommand();
-                    command.CommandText = "UPDATE L_FOGLAL SET " + data + " WHERE " + where;
+                    command.CommandText = "UPDATE L_FOGLAL SET " + data + " WHERE FOSZAM = " + _azonosító.id;
 
                     try { command.ExecuteNonQuery(); command.Dispose(); }
                     catch (SqlException) { MessageBox.Show("Foglalás_ÚjVizsgalap -> adat1 hiba"); }
@@ -976,7 +973,7 @@ namespace Labor
                 if (data != null)
                 {
                     command = laborconnection.CreateCommand();
-                    command.CommandText = "UPDATE L_FOGLAL SET " + data + " WHERE " + where;
+                    command.CommandText = "UPDATE L_FOGLAL SET " + data +" WHERE FOSZAM = " + _azonosító.id; ;
 
                     try { command.ExecuteNonQuery(); command.Dispose(); }
                     catch (SqlException q) { MessageBox.Show("Foglalás_ÚjVizsgalap -> adat2 hiba:\n" + q.Message); }
