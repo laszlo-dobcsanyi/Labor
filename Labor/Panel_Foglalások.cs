@@ -181,7 +181,7 @@ namespace Labor
             table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             table.ReadOnly = true;
             table.DataBindingComplete += table_DataBindingComplete;
-            table.CellDoubleClick += VizsgaLap_Módosítás;
+            table.CellDoubleClick += Foglalás_Módosítás;
             table.UserDeletingRow += table_UserDeletingRow;
             table.DataSource = CreateSource();
 
@@ -197,7 +197,7 @@ namespace Labor
             keresés.Text = "Keresés";
             keresés.Size = new System.Drawing.Size(96, 32);
             keresés.Location = new Point(törlés.Location.X + törlés.Width + 16, törlés.Location.Y);
-            keresés.Click += Foglalás_Keresése;
+            keresés.Click += Vizsgálat_Keresése;
 
             Button feltöltés = new Button();
             feltöltés.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
@@ -312,7 +312,6 @@ namespace Labor
             base.Refresh();
         }
 
-
         #region EventHandlers
         private void Foglalás_Hozzáadás(object _sender, System.EventArgs _event)
         {
@@ -326,16 +325,16 @@ namespace Labor
         {
         }
 
-        private void VizsgaLap_Módosítás(object sender, DataGridViewCellEventArgs e)
+        private void Foglalás_Módosítás(object _sender, DataGridViewCellEventArgs _event)
         {
-            foreach (DataGridViewRow selected in table.SelectedRows)
-            {
-                Foglalás foglalás = new Foglalás((int)selected.Cells[Foglalás.TableIndexes.id].Value, (string)selected.Cells[Foglalás.TableIndexes.név].Value, (int)selected.Cells[Foglalás.TableIndexes.hordók_száma].Value,
-                        (string)selected.Cells[Foglalás.TableIndexes.típus].Value, (string)selected.Cells[Foglalás.TableIndexes.készítő].Value, (string)selected.Cells[Foglalás.TableIndexes.idő].Value);
-                foglalás.szűrő = Program.database.Foglalás_Vizsgalap_Szűrő(foglalás);
-                Foglalás_Kereső foglalás_kereső = new Foglalás_Kereső(foglalás);
-                foglalás_kereső.ShowDialog();
-            }
+            if (table.SelectedRows.Count != 1) return;
+
+            Foglalás foglalás = new Foglalás((int)table.SelectedRows[0].Cells[Foglalás.TableIndexes.id].Value, (string)table.SelectedRows[0].Cells[Foglalás.TableIndexes.név].Value,
+                (int)table.SelectedRows[0].Cells[Foglalás.TableIndexes.hordók_száma].Value, (string)table.SelectedRows[0].Cells[Foglalás.TableIndexes.típus].Value,
+                (string)table.SelectedRows[0].Cells[Foglalás.TableIndexes.készítő].Value, (string)table.SelectedRows[0].Cells[Foglalás.TableIndexes.idő].Value);
+
+            Foglalás_Szerkesztő foglalás_szerkesztő = new Foglalás_Szerkesztő(foglalás);
+            foglalás_szerkesztő.ShowDialog();
         }
 
         private void Foglalás_Törlés(object _sender, EventArgs _event)
@@ -358,10 +357,10 @@ namespace Labor
             }
         }
 
-        private void Foglalás_Keresése(object _sender, EventArgs _event)
+        private void Vizsgálat_Keresése(object _sender, EventArgs _event)
         {
-            Foglalás_Kereső foglalás_kereső = new Foglalás_Kereső();
-            foglalás_kereső.ShowDialog();
+            Vizsgálat_Kereső vizsgálat_kereső = new Vizsgálat_Kereső();
+            vizsgálat_kereső.ShowDialog();
         }
 
         private void table_DataBindingComplete(object _sender, DataGridViewBindingCompleteEventArgs _event)
@@ -500,7 +499,7 @@ namespace Labor
                 keresés.Text = "Keresés";
                 keresés.Size = new System.Drawing.Size(96, 32);
                 keresés.Location = new Point(törlés.Location.X + törlés.Width + 16, törlés.Location.Y);
-                keresés.Click += keresés_Click;
+                keresés.Click += Vizsgálat_Keresés;
 
                 //
 
@@ -542,10 +541,10 @@ namespace Labor
 
             }
 
-            private void keresés_Click(object _sender, EventArgs _event)
+            private void Vizsgálat_Keresés(object _sender, EventArgs _event)
             {
-                Foglalás_Kereső kereső = new Foglalás_Kereső(foglalás);
-                kereső.ShowDialog();
+                Vizsgálat_Kereső vizsgálat_kereső = new Vizsgálat_Kereső(foglalás);
+                vizsgálat_kereső.ShowDialog();
             }
 
             private void table_UserDeletingRow(object _sender, DataGridViewRowCancelEventArgs _event)
@@ -558,7 +557,7 @@ namespace Labor
             #endregion
         }
 
-        public sealed class Foglalás_Kereső : Form
+        public sealed class Vizsgálat_Kereső : Form
         {
             #region TextBox
             TextBox box_termékkód;
@@ -596,14 +595,14 @@ namespace Labor
 
             Foglalás? eredeti = null;
 
-            public Foglalás_Kereső()
+            public Vizsgálat_Kereső()
             {
                 InitializeForm();
                 InitializeContent();
                 InitializeData();
             }
 
-            public Foglalás_Kereső(Foglalás _eredeti)
+            public Vizsgálat_Kereső(Foglalás _eredeti)
             {
                 eredeti = _eredeti;
                 InitializeForm();
