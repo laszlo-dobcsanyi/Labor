@@ -1159,6 +1159,20 @@ namespace Labor
             lock (LaborLock)
             {
                 List<Hordó> value = new List<Hordó>();
+
+                laborconnection.Open();
+                SqlCommand command = laborconnection.CreateCommand();
+                command.CommandText = "SELECT VIHOSZ, FOSZAM, VIGYEV FROM L_VIZSLAP WHERE VITEKO = '" + _sarzs.termékkód + "' AND VISARZ = '" + _sarzs.sarzs + "';";
+
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    value.Add(new Hordó(_sarzs.termékkód, _sarzs.sarzs, reader.GetString(0), GetNullable<int>(reader, 1), reader.GetString(2)));
+                }
+
+                command.Dispose();
+                laborconnection.Close();
+
                 return value;
             }
         }
@@ -1168,7 +1182,46 @@ namespace Labor
             lock (LaborLock)
             {
                 List<Hordó> value = new List<Hordó>();
+
+                laborconnection.Open();
+                SqlCommand command = laborconnection.CreateCommand();
+                command.CommandText = "SELECT VIHOSZ, FOSZAM, VIGYEV FROM L_VIZSLAP WHERE (FOSZAM IS NULL OR FOSZAM = " + _foglalás.id +") AND VITEKO = '" + _sarzs.termékkód + "' AND VISARZ = '" + _sarzs.sarzs + "';";
+
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    value.Add(new Hordó(_sarzs.termékkód, _sarzs.sarzs, reader.GetString(0), GetNullable<int>(reader, 1), reader.GetString(2)));
+                }
+
+                command.Dispose();
+                laborconnection.Close();
+
                 return value;
+            }
+        }
+
+        /// <summary>
+        /// Igazzal tér vissza, ha sikeres volt a foglalás!
+        /// </summary>
+        public bool Hordó_Foglalás(int? _foglalás_id, string _termékkód, string _sarzs)
+        {
+            lock (LaborLock)
+            {
+                SqlCommand command;
+
+                laborconnection.Open();
+
+                command = laborconnection.CreateCommand();
+                command.CommandText = "UPDATE L_VIZSLAP SET FOSZAM = " + (_foglalás_id == null ? "NULL" : "'" + _foglalás_id + "'") +
+                    " WHERE " + ((_foglalás_id == null) ? "" : "FOSZAM IS NULL AND ") + "VITEKO = '" + _termékkód + "' AND VISARZ = '" + _sarzs + "';";
+
+                int modified = command.ExecuteNonQuery();
+
+                command.Dispose();
+                laborconnection.Close();
+
+                if (modified != 1) return false;
+                return true;
             }
         }
         #endregion

@@ -573,7 +573,8 @@ namespace Labor
             #region EventHandlers
             private void Hordó_Törlés(object _sender, EventArgs _event)
             {
-
+                if (table.SelectedRows.Count != 1) return;
+                Program.database.Hordó_Foglalás(null, (string)table.SelectedRows[0].Cells[Hordó.TableIndexes.termékkód].Value, (string)table.SelectedRows[0].Cells[Hordó.TableIndexes.sarzs].Value);
             }
 
             private void Vizsgálat_Keresés(object _sender, EventArgs _event)
@@ -1064,9 +1065,10 @@ namespace Labor
                         table.Width = 300 + 3;
                         table.Height = 400;
                         table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-                        table.ReadOnly = true;
                         table.DataBindingComplete += table_DataBindingComplete;
                         table.UserDeletingRow += table_UserDeletingRow;
+                        table.CellValueChanged += table_CellValueChanged;
+                        table.CellMouseUp += table_CellMouseUp;
                         table.DataSource = CreateSource();
 
                         //
@@ -1112,18 +1114,20 @@ namespace Labor
                         data = new DataTable();
 
                         data.Columns.Add(new DataColumn("Termékkód", System.Type.GetType("System.String")));
-                        data.Columns.Add(new DataColumn("Hordószám", System.Type.GetType("System.Int32")));
+                        data.Columns.Add(new DataColumn("Hordószám", System.Type.GetType("System.String")));
 
                         if (foglalás != null)
                         {
-                            data.Columns.Add(new DataColumn("Foglalt hordó", System.Type.GetType("System.Boolean")));
+                            DataColumn column = new DataColumn("Foglalás", System.Type.GetType("System.Boolean"));
+                            column.ReadOnly = false;
+                            data.Columns.Add(column);
 
                             List<Hordó> hordók = Program.database.Hordók(foglalás.Value, sarzs);
                             foreach(Hordó item in hordók)
                             {
                                 DataRow row = data.NewRow();
                                 row[0] = item.termékkód;
-                                row[1] = item.sarzs;
+                                row[1] = item.id;
                                 row[2] = item.foglalás_száma == null ? false : true;
                                 data.Rows.Add(row);
                             }
@@ -1139,7 +1143,7 @@ namespace Labor
                             {
                                 DataRow row = data.NewRow();
                                 row[0] = item.termékkód;
-                                row[1] = item.sarzs;
+                                row[1] = item.id;
                                 if (item.foglalás_száma == null) row[2] = DBNull.Value;
                                 else row[2] = item.foglalás_száma.Value;
                                 data.Rows.Add(row);
@@ -1156,13 +1160,18 @@ namespace Labor
                         if (foglalás != null)
                         { 
                             table.Columns[0].Width = 100;
+                            table.Columns[0].ReadOnly = true;
                             table.Columns[1].Width = 100;
+                            table.Columns[1].ReadOnly = true;
                             table.Columns[2].Width = 100;
+                            table.Columns[2].ReadOnly = false;
                         }
                         else
                         {
                             table.Columns[0].Width = 150;
+                            table.Columns[0].ReadOnly = true;
                             table.Columns[1].Width = 150;
+                            table.Columns[1].ReadOnly = true;
                         }
                     }
 
@@ -1175,12 +1184,28 @@ namespace Labor
                         //Vizsgálat_Törlés(_sender, _event);
                     }
 
+                    private void table_CellValueChanged(object _sender, DataGridViewCellEventArgs _event)
+                    {
+                        if (_event.ColumnIndex == 2 && _event.RowIndex != -1)
+                        {
+                            int? foglalás_szám = null;
+                            if ((bool)table.Rows[_event.RowIndex].Cells[_event.ColumnIndex].Value) foglalás_szám = foglalás.Value.id;
+                            Program.database.Hordó_Foglalás(foglalás_szám, sarzs.termékkód, sarzs.sarzs);
+                        }
+                    }
+
+                    private void table_CellMouseUp(object _sender, DataGridViewCellMouseEventArgs _event)
+                    {
+                        // End of edition on each click on column of checkbox
+                        if (_event.ColumnIndex == 2 && _event.RowIndex != -1)
+                        {
+                            table.EndEdit();
+                        }
+                    }
+
                     private void rendben_Click(object _sender, EventArgs _event)
                     {
-                        if (foglalás != null)
-                        {
-                            // TODO foglalások elmentése!
-                        }
+                        Close();
                     }
 
                     private void kijelölés_megfordítása_Click(object _sender, EventArgs _event)

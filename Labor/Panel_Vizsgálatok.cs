@@ -325,7 +325,8 @@ namespace Labor
                         row[Vizsgálat.Azonosító.TableIndexes.szita_átmérő] = token.data.szita_átmérő;
                         row[Vizsgálat.Azonosító.TableIndexes.megrendelő] = token.data.megrendelő;
                         row[Vizsgálat.Azonosító.TableIndexes.sorszám] = token.data.sorszám;
-                        row[Vizsgálat.Azonosító.TableIndexes.foglalás] = token.data.foglalás;
+                        if (token.data.foglalás == null) row[Vizsgálat.Azonosító.TableIndexes.foglalás] = DBNull.Value;
+                        else row[Vizsgálat.Azonosító.TableIndexes.foglalás] = token.data.foglalás.Value;
                         data.Rows.Add(row);
                         break;
 
