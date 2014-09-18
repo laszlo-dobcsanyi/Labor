@@ -199,7 +199,7 @@ namespace Labor
             table.AllowUserToResizeRows = false;
             table.AllowUserToResizeColumns = false;
             table.AllowUserToAddRows = false;
-            table.Width = 720;
+            table.Width = 720 + 3;
             table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             table.ReadOnly = true;
             table.DataBindingComplete += table_DataBindingComplete;
@@ -388,12 +388,12 @@ namespace Labor
         private void table_DataBindingComplete(object _sender, DataGridViewBindingCompleteEventArgs _event)
         {
             table.DataBindingComplete -= table_DataBindingComplete;
-            table.Columns[0].Width = 120;
-            table.Columns[1].Width = 120;
-            table.Columns[2].Width = 120;
-            table.Columns[3].Width = 120;
-            table.Columns[4].Width = 120;
-            table.Columns[5].Width = 120 - 3;
+            table.Columns[Foglalás.TableIndexes.id].Width = 120;
+            table.Columns[Foglalás.TableIndexes.név].Width = 120;
+            table.Columns[Foglalás.TableIndexes.hordók_száma].Width = 120;
+            table.Columns[Foglalás.TableIndexes.típus].Width = 120;
+            table.Columns[Foglalás.TableIndexes.készítő].Width = 120;
+            table.Columns[Foglalás.TableIndexes.idő].Width = 120;
         }
 
         private void table_UserDeletingRow(object _sender, DataGridViewRowCancelEventArgs _event)
