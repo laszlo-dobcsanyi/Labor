@@ -940,7 +940,7 @@ namespace Labor
                     Controls.Add(table);
                 }
 
-                void hordók_Click(object sender, EventArgs e)
+                private void hordók_Click(object _sender, EventArgs _event)
                 {
                     // TODO tábláról kibányászni!
                     Sarzs sarzs;
@@ -967,7 +967,7 @@ namespace Labor
                     return data;
                 }
 
-                void table_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+                private void table_DataBindingComplete(object _sender, DataGridViewBindingCompleteEventArgs _event)
                 {
                     table.DataBindingComplete -= table_DataBindingComplete;
                     table.Columns[0].Width = 125;
@@ -1035,7 +1035,6 @@ namespace Labor
                         MinimumSize = ClientSize;
                         StartPosition = FormStartPosition.CenterScreen;
                         FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-
                     }
 
                     private void InitializeContent()
@@ -1048,12 +1047,12 @@ namespace Labor
                         table.AllowUserToAddRows = false;
                         table.Width = 300;
                         table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-                        //table.MultiSelect = false;
                         table.ReadOnly = true;
                         table.DataBindingComplete += table_DataBindingComplete;
                         table.UserDeletingRow += table_UserDeletingRow;
                         table.DataSource = CreateSource();
 
+                        //
 
                         Button rendben = new Button();
                         rendben.Text = "Rendben";
@@ -1077,6 +1076,7 @@ namespace Labor
                         vonal.Width = 1000;
                         vonal.BackColor = Color.Black;
 
+                        //
 
                         Controls.Add(kijelölés_megfordítása);
                         Controls.Add(label_foglalt_hordó);
