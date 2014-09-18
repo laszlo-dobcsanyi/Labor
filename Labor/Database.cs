@@ -256,25 +256,6 @@ namespace Labor
         #endregion
 
         #region Marillen Adatbázisából
-        public List<string> Gyümölcsfajták(string _termékkód)
-        {
-            lock (MarillenLock)
-            {
-                List<string> value = new List<string>();
-                marillenconnection.Open();
-                SqlCommand command = marillenconnection.CreateCommand();
-                command.CommandText = "SELECT gfazon FROM l_gyfajta WHERE (l_gyfajta.gfteko = '" + _termékkód.Substring(0,2 ) + "') ORDER BY gfazon";
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    value.Add(reader.GetString(0));
-                }
-                command.Dispose();
-                marillenconnection.Close();
-                return value;
-            }
-        }
-
         public List<string> Megrendelők()
         {
             lock (MarillenLock)
@@ -1120,6 +1101,27 @@ namespace Labor
         #region Keresés
 
 
+        #endregion
+
+        #region Gyümölcsfajták
+        public List<string> Gyümölcsfajták(string _termékkód)
+        {
+            lock (LaborLock)
+            {
+                List<string> value = new List<string>();
+                laborconnection.Open();
+                SqlCommand command = laborconnection.CreateCommand();
+                command.CommandText = "SELECT GFAZON FROM L_GYFAJTA WHERE (l_gyfajta.gfteko = '" + _termékkód.Substring(0, 2) + "') ORDER BY GFAZON";
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    value.Add(reader.GetString(0));
+                }
+                command.Dispose();
+                laborconnection.Close();
+                return value;
+            }
+        }
         #endregion
     }
 }
