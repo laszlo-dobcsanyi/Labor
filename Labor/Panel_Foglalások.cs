@@ -35,7 +35,26 @@ namespace Labor
 
     public struct Sarzs
     {
+        public string termékkód;
+        public string sarzs;
+        public int foglalt;
+        public int szabad;
 
+        public Sarzs(string _termékkód, string _sarzs, int _foglalt, int _szabad)
+        {
+            termékkód = _termékkód;
+            sarzs = _sarzs;
+            foglalt = _foglalt;
+            szabad = _szabad;
+        }
+
+        public struct TableIndexes
+        {
+            public const int termékkód = 0;
+            public const int sarzs = 1;
+            public const int foglalt = 2;
+            public const int szabad = 3;
+        }
     }
 
     public struct Foglalás
@@ -953,7 +972,15 @@ namespace Labor
                     data.Columns.Add(new DataColumn("Szabad hordó", System.Type.GetType("System.Int32")));
 
                     List<Sarzs> sarzsok = Program.database.Sarzsok(szűrő);
-                    // TODO WTF
+                    foreach(Sarzs item in sarzsok)
+                    {
+                        DataRow row = data.NewRow();
+                        row[Sarzs.TableIndexes.termékkód] = item.termékkód;
+                        row[Sarzs.TableIndexes.sarzs] = item.sarzs;
+                        row[Sarzs.TableIndexes.foglalt] = item.foglalt;
+                        row[Sarzs.TableIndexes.szabad] = item.szabad;
+                        data.Rows.Add(row);
+                    }
 
                     return data;
                 }
@@ -962,10 +989,10 @@ namespace Labor
                 private void table_DataBindingComplete(object _sender, DataGridViewBindingCompleteEventArgs _event)
                 {
                     table.DataBindingComplete -= table_DataBindingComplete;
-                    table.Columns[0].Width = 125;
-                    table.Columns[1].Width = 125;
-                    table.Columns[2].Width = 125;
-                    table.Columns[3].Width = 125;
+                    table.Columns[Sarzs.TableIndexes.termékkód].Width = 125;
+                    table.Columns[Sarzs.TableIndexes.sarzs].Width = 125;
+                    table.Columns[Sarzs.TableIndexes.foglalt].Width = 125;
+                    table.Columns[Sarzs.TableIndexes.szabad].Width = 125;
                 }
 
                 private void table_UserDeletingRow(object _sender, DataGridViewRowCancelEventArgs _event)
@@ -979,8 +1006,10 @@ namespace Labor
 
                 private void Sarzs_Módosítás(object _sender, DataGridViewCellEventArgs _event)
                 {
-                    // TODO hello ez miez?! Lekérdezni / Kibányászni
-                    Sarzs sarzs;
+                    if (table.SelectedRows.Count != 1) return;
+
+                    Sarzs sarzs = new Sarzs((string)table.SelectedRows[0].Cells[Sarzs.TableIndexes.termékkód].Value, (string)table.SelectedRows[0].Cells[Sarzs.TableIndexes.sarzs].Value,
+                        (int)table.SelectedRows[0].Cells[Sarzs.TableIndexes.foglalt].Value, (int)table.SelectedRows[0].Cells[Sarzs.TableIndexes.szabad].Value);
 
                     Eredmény_Hordók eredmény_hordók;
                     if (foglalás == null) eredmény_hordók = new Eredmény_Hordók(szűrő, sarzs);

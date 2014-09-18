@@ -1038,12 +1038,12 @@ namespace Labor
 
                 laborconnection.Open();
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT HOTEKO, HOSARZ, HOSZAM, VIGYEV FROM L_HORDO WHERE FOSZAM = " + _foglalás.id;
+                command.CommandText = "SELECT VITEKO, VISARZ, VIHOSZ, VIGYEV FROM L_VIZSLAP WHERE FOSZAM = " + _foglalás.id;
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    value.Add(new Hordó(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetString(4)));
+                    value.Add(new Hordó(reader.GetString(0), reader.GetString(1), reader.GetString(2), _foglalás.id, reader.GetString(3)));
                 }
 
                 command.Dispose();
@@ -1058,6 +1058,20 @@ namespace Labor
             lock (LaborLock)
             {
                 List<Sarzs> value = new List<Sarzs>();
+
+                laborconnection.Open();
+                SqlCommand command = laborconnection.CreateCommand();
+                command.CommandText = "SELECT VITEKO, VISARZ, SUM(case when FOSZAM is not null then 1 else 0 end), SUM(case when FOSZAM is null then 1 else 0 end) FROM L_VIZSLAP GROUP BY VITEKO, VISARZ;";
+
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    value.Add(new Sarzs(reader.GetString(0), reader.GetString(1), reader.GetInt32(2), reader.GetInt32(3)));
+                }
+
+                command.Dispose();
+                laborconnection.Close();
+
                 return value;
             }
         }
