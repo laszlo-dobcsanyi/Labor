@@ -446,7 +446,7 @@ namespace Labor
                     while (reader.Read())
                     {
                         azonosító = new Vizsgálat.Azonosító(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), (double)reader.GetDecimal(4), reader.GetByte(5),
-                            reader.GetString(6), reader.GetInt32(7), reader.GetInt32(8));
+                            reader.GetString(6), reader.GetInt32(7), GetNullable<int>(reader, 8));
                     }
                     reader.Close();
                 }
@@ -543,7 +543,7 @@ namespace Labor
                 while (reader.Read())
                 {
                     data.Add(new Vizsgálat.Azonosító(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), (double)reader.GetDecimal(4), reader.GetByte(5),
-                        reader.GetString(6), reader.GetInt32(7), reader.GetInt32(8)));
+                        reader.GetString(6), reader.GetInt32(7), GetNullable<int>(reader, 8)));
                 }
                 command.Dispose();
                 laborconnection.Close();
