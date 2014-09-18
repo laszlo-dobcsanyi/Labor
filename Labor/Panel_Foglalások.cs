@@ -574,7 +574,7 @@ namespace Labor
 
             private void Vizsgálat_Keresés(object _sender, EventArgs _event)
             {
-                foglalás.szűrő = Program.database.Foglalás_Vizsgalap_Szűrő(foglalás);
+                foglalás.szűrő = Program.database.Foglalás_Vizsgálat_Szűrő(foglalás);
                 if (foglalás.szűrő == null) { MessageBox.Show("Hiba a foglalás szűrőjének lekérdezésekor!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
 
                 Vizsgálat_Kereső vizsgálat_kereső = new Vizsgálat_Kereső(foglalás);
@@ -861,7 +861,7 @@ namespace Labor
                 }
                 else
                 {
-                    Program.database.Foglalás_ÚjVizsgalap(eredeti.Value, new Vizsgalap_Szűrő(adatok1, adatok2));
+                    Program.database.Foglalás_Vizsgálat_Szűrő_Hozzáadás(eredeti.Value, new Vizsgalap_Szűrő(adatok1, adatok2));
                     Keresés_Eredmény keresés_eredmény = new Keresés_Eredmény(new Vizsgalap_Szűrő(adatok1, adatok2), eredeti.Value);
                     keresés_eredmény.ShowDialog();
                 }
