@@ -78,7 +78,7 @@ namespace Labor
 
                             "CREATE TABLE L_HORDO(HOTEKO varchar(3),HOSARZ varchar(3) ,HOZSSZ varchar(4),FOSZAM tinyint, VIGYEV varchar(1));" +
 
-                            "CREATE TABLE L_FOGLAL (FONEVE varchar(30), FOSZAM tinyint, FODATE varchar(15), FOTIPU varchar(9), FOFENE varchar(15), FOTEKO varchar(3), FOSARZT varchar(3), FOSARZI varchar(3), FOZSSZT varchar(4)," +
+                            "CREATE TABLE L_FOGLAL (FONEVE varchar(30), FOSZAM int IDENTITY(1,1), FODATE varchar(20), FOTIPU varchar(9), FOFENE varchar(15), FOTEKO varchar(3), FOSARZT varchar(3), FOSARZI varchar(3), FOZSSZT varchar(4)," +
                                 "FOZSSZI varchar(4), FOBRIXT DECIMAL(4,4), FOBRIXI DECIMAL(4,4), FOCSAVT DECIMAL(4,4), FOCSAVI DECIMAL(4,4), FOPEHAT DECIMAL(4,4), FOPEHAI DECIMAL(4,4), FOBOSTT DECIMAL(4,4)," +
                                 "FOBOSTI DECIMAL(4,4), FOASAVT smallint, FOASAVI smallint, FONETOT smallint, FONETOI smallint, FOHOFOT tinyint, FOHOFOI tinyint, FOCIADT smallint, FOCIADI smallint," +
                                 "FOFAJT varchar(15), FOHOTI varchar(15), FOMEGR varchar(15), FOSZOR varchar(15), FOMUJE varchar(1), FOTOGE varchar(1), FOFOHO tinyint, FOSZSZ tinyint ," +
@@ -900,8 +900,8 @@ namespace Labor
                 laborconnection.Open();
 
                 command = laborconnection.CreateCommand();
-                command.CommandText = "INSERT INTO L_FOGLAL (FOSZAM,FONEVE,FOFOHO,FOTIPU,FOFENE,FODATE,FOFAJT)" +
-                                    " VALUES('" + _foglalás.id + "', '" + _foglalás.név + "', " + _foglalás.hordók_száma + ", '" + _foglalás.típus + "', '"
+                command.CommandText = "INSERT INTO L_FOGLAL (FONEVE, FOFOHO, FOTIPU, FOFENE, FODATE, FOFAJT)" +
+                                    " VALUES('" + _foglalás.név + "', " + _foglalás.hordók_száma + ", '" + _foglalás.típus + "', '"
                                     + _foglalás.készítő + "', '" + _foglalás.idő + "', '" + _foglalás.típus + "')";
 
                 try { command.ExecuteNonQuery(); }
@@ -909,7 +909,6 @@ namespace Labor
                 finally { command.Dispose(); laborconnection.Close(); }
 
                 laborconnection.Close();
-                Program.mainform.RefreshData();
                 return true;
             }
         }

@@ -318,6 +318,8 @@ namespace Labor
         {
             Foglalás_Hozzáadó foglalás_hozzáadó = new Foglalás_Hozzáadó();
             foglalás_hozzáadó.ShowDialog();
+
+            Refresh();
         }
 
         private void Foglalás_Feltöltés(object _sender, EventArgs _event)
@@ -333,7 +335,6 @@ namespace Labor
                 foglalás.szűrő = Program.database.Foglalás_Vizsgalap_Szűrő(foglalás);
                 Foglalás_Kereső foglalás_kereső = new Foglalás_Kereső(foglalás);
                 foglalás_kereső.ShowDialog();
-                 
             }
         }
 
@@ -344,8 +345,6 @@ namespace Labor
 
              foreach (DataGridViewRow selected in table.SelectedRows)
             {
-//                         public Foglalás(int _id, string _név, int _hordók_száma, string _típus, string _készítő, string _idő)
-
                 Foglalás azonosító = new Foglalás((int)selected.Cells[Foglalás.TableIndexes.id].Value, (string)selected.Cells[Foglalás.TableIndexes.név].Value, (int)selected.Cells[Foglalás.TableIndexes.hordók_száma].Value,
                     (string)selected.Cells[Foglalás.TableIndexes.típus].Value, (string)selected.Cells[Foglalás.TableIndexes.készítő].Value, (string)selected.Cells[Foglalás.TableIndexes.idő].Value);
 
@@ -373,7 +372,7 @@ namespace Labor
             table.Columns[2].Width = 120;
             table.Columns[3].Width = 120;
             table.Columns[4].Width = 120;
-            table.Columns[5].Width = 120;
+            table.Columns[5].Width = 120 - 3;
         }
 
         private void table_UserDeletingRow(object _sender, DataGridViewRowCancelEventArgs _event)
@@ -387,6 +386,12 @@ namespace Labor
 
         public sealed class Foglalás_Hozzáadó : Form
         {
+            TextBox box_foglalás_neve;
+            TextBox box_foglalás_típusa;
+            Label label_foglalt_hordók;
+            Label label_készítette;
+            Label label_foglalás_ideje;
+            
             public Foglalás_Hozzáadó()
             {
                 InitializeForm();
@@ -410,11 +415,11 @@ namespace Labor
                 Label készítette = Program.mainform.createlabel("Készítette:", 8, 4 * 32, this);
                 Label foglalás_ideje = Program.mainform.createlabel("Foglalás ideje:", 8, 5 * 32, this);
 
-                TextBox box_foglalás_neve = Program.mainform.createtextbox(foglalás_neve.Location.X + 128, foglalás_neve.Location.Y, 10, 240, this);
-                TextBox box_foglalás_típusa = Program.mainform.createtextbox(box_foglalás_neve.Location.X, foglalás_típusa.Location.Y, 10, 240, this);
-                Label foglalt_hordók_száma = Program.mainform.createlabel("0", box_foglalás_neve.Location.X, foglalt_hordók.Location.Y, this);
-                Label label_készítette = Program.mainform.createlabel("Felhasználó", box_foglalás_neve.Location.X, készítette.Location.Y, this);
-                Label label_foglalás_ideje = Program.mainform.createlabel(DateTime.Now.ToString(), box_foglalás_neve.Location.X, foglalás_ideje.Location.Y, this);
+                box_foglalás_neve = Program.mainform.createtextbox(foglalás_neve.Location.X + 128, foglalás_neve.Location.Y, 10, 240, this);
+                box_foglalás_típusa = Program.mainform.createtextbox(box_foglalás_neve.Location.X, foglalás_típusa.Location.Y, 10, 240, this);
+                label_foglalt_hordók = Program.mainform.createlabel("0", box_foglalás_neve.Location.X, foglalt_hordók.Location.Y, this);
+                label_készítette = Program.mainform.createlabel("Felhasználó", box_foglalás_neve.Location.X, készítette.Location.Y, this);
+                label_foglalás_ideje = Program.mainform.createlabel(DateTime.Now.ToString(), box_foglalás_neve.Location.X, foglalás_ideje.Location.Y, this);
 
                 Button rendben = new Button();
                 rendben.Text = "Rendben";
@@ -428,6 +433,15 @@ namespace Labor
             #region EventHandlers
             private void rendben_Click(object _sender, EventArgs _event)
             {
+                if (!(0 < box_foglalás_neve.Text.Length && box_foglalás_neve.Text.Length <= 30)) { MessageBox.Show("Foglalás neve nem megfelelő(1-30)!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+                if (!(0 < box_foglalás_típusa.Text.Length && box_foglalás_típusa.Text.Length <= 9)) { MessageBox.Show("Foglalás típusa nem megfelelő(1-9)!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+
+                if (!Program.database.Foglalás_Hozzáadás(new Foglalás(0, box_foglalás_neve.Text, Convert.ToInt32(label_foglalt_hordók.Text), box_foglalás_típusa.Text, label_készítette.Text, label_foglalás_ideje.Text)))
+                {
+                    MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy létezik már ilyen foglalás?", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+
+                Close();
             }
             #endregion
         }

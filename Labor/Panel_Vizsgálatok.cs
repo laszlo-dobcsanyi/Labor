@@ -1031,7 +1031,7 @@ namespace Labor
                 {
                     if (!Program.database.Vizsgálat_Módosítás(eredeti.Value, _vizsgálat))
                     {
-                        MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy nem létezik már a törlendő vizsgálat?\nTermékkód: " + azonosító.termékkód + "\nSarzs: " + azonosító.sarzs + "\nHordószám: " + azonosító.hordószám +
+                        MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy nem létezik már a módosítandó vizsgálat?\nTermékkód: " + azonosító.termékkód + "\nSarzs: " + azonosító.sarzs + "\nHordószám: " + azonosító.hordószám +
                           "\nSorszám: " + azonosító.sorszám, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
@@ -1039,7 +1039,7 @@ namespace Labor
                 {
                     if (!Program.database.Vizsgálat_Hozzáadás(_vizsgálat))
                     {
-                        MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy nem létezik már a törlendő vizsgálat?\nTermékkód: " + azonosító.termékkód + "\nSarzs: " + azonosító.sarzs + "\nHordószám: " + azonosító.hordószám +
+                        MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy már létezik ilyen vizsgálat?\nTermékkód: " + azonosító.termékkód + "\nSarzs: " + azonosító.sarzs + "\nHordószám: " + azonosító.hordószám +
                           "\nSorszám: " + azonosító.sorszám, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
