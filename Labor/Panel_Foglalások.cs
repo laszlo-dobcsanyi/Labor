@@ -914,14 +914,13 @@ namespace Labor
                     table.AllowUserToAddRows = false;
                     table.Width = 500;
                     table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-                    //table.MultiSelect = false;
                     table.ReadOnly = true;
                     table.DataBindingComplete += table_DataBindingComplete;
                     table.CellDoubleClick += keresés_Click;
                     table.UserDeletingRow += table_UserDeletingRow;
                     table.DataSource = CreateSource();
 
-                    // TODO frissítés gomb!
+                    //
 
                     Button rögzítés = new Button();
                     rögzítés.Text = "Rögzítés";
@@ -934,6 +933,7 @@ namespace Labor
                     hordók.Location = new Point(ClientRectangle.Width - hordók.Size.Width - rögzítés.Width - 32, ClientRectangle.Height - hordók.Size.Height - 16);
                     hordók.Click += hordók_Click;
 
+                    //
 
                     Controls.Add(hordók);
                     Controls.Add(rögzítés);
