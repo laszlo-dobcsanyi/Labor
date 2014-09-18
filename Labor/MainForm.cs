@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Globalization;
 using System.Windows.Forms;
 
 namespace Labor
@@ -149,7 +150,7 @@ namespace Labor
         #endregion
 
         #region Segédfüggvények
-        public T? ConvertOrDie<T>(string _text) where T : struct, IComparable
+        public static T? ConvertOrDie<T>(string _text) where T : struct, IComparable
         {
             if (_text == "") return null;
             try
@@ -162,13 +163,40 @@ namespace Labor
             }
         }
 
-        public string ConvertOrDieString(string _text)
+        public static void OnlyNumber(object sender, KeyPressEventArgs e)
+        {
+            // TODO nem az igazi!!
+            if (Char.IsLetter(e.KeyChar) || e.KeyChar == '.')
+                e.Handled = true;
+        }
+
+        public static void OnlyDate(object _sender, EventArgs _event)
+        {
+            TextBox box = (TextBox)_sender;
+
+            if (box.Text.Length == 0) return;
+
+            DateTime dt;
+            if (!DateTime.TryParseExact(box.Text, "yy.MM.dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out dt)) { box.Focus(); return; }
+        }
+
+        public static void OnlyTime(object _sender, EventArgs _event)
+        {
+            TextBox box = (TextBox)_sender;
+
+            if (box.Text.Length == 0) return;
+
+            DateTime dt;
+            if (!DateTime.TryParseExact(box.Text, "MM.dd hh:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out dt)) { box.Focus(); return; }
+        }
+
+        public static string ConvertOrDieString(string _text)
         {
             if (_text == "") return null;
             return _text;
         }
 
-        public Label createlabel(string _szöveg, int _x, int _y, Form _form)
+        public static Label createlabel(string _szöveg, int _x, int _y, Form _form)
         {
             Label label = new Label();
             label.Text = _szöveg;
@@ -178,7 +206,7 @@ namespace Labor
             return label;
         }
 
-        public TextBox createtextbox(int _x, int _y, int _maxlength, int _width, Form _form)
+        public static TextBox createtextbox(int _x, int _y, int _maxlength, int _width, Form _form)
         {
             TextBox box = new TextBox();
             box.Location = new Point(_x, _y - 3);
@@ -188,7 +216,7 @@ namespace Labor
             _form.Controls.Add(box);
             return box;
         }
-        public TextBox createtextbox(string _text, int _x, int _y, int _maxlength, int _width, Form _form)
+        public static TextBox createtextbox(string _text, int _x, int _y, int _maxlength, int _width, Form _form)
         {
             TextBox box = new TextBox();
             box.Text = _text;
@@ -200,7 +228,7 @@ namespace Labor
             return box;
         }
 
-        public ComboBox createcombobox(int _x, int _y, int _width,Form _form)
+        public static ComboBox createcombobox(int _x, int _y, int _width, Form _form)
         {
             ComboBox combo = new ComboBox();
             combo.Location = new Point(_x, _y);

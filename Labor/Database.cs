@@ -971,8 +971,8 @@ namespace Labor
                 Update<short?>("FOASAVT", _szűrő.adatok2.min_aszkorbinsav), Update<short?>("FOASAVI", _szűrő.adatok2.max_aszkorbinsav),
                 Update<short?>("FONETOT", _szűrő.adatok2.min_nettó_töltet), Update<short?>("FONETOI", _szűrő.adatok2.max_nettó_töltet),
                 Update<byte?>("FOHOFOT", _szűrő.adatok2.min_hőkezelés), Update<byte?>("FOHOFOI", _szűrő.adatok2.max_hőkezelés),
-                Update<byte?>("FOSZATT", _szűrő.adatok2.min_szita_átmérő), Update<byte?>("FOSZATI", _szűrő.adatok2.max_szita_átmérő),
-                Update<byte?>("FOCIADT", _szűrő.adatok2.min_citromsav_ad), Update<byte?>("FOCIADI", _szűrő.adatok2.max_citromsav_ad)});
+                Update<byte?>("FOCIADT", _szűrő.adatok2.min_citromsav_ad), Update<byte?>("FOCIADI", _szűrő.adatok2.max_citromsav_ad),
+                Update<byte?>("FOSZATT", _szűrő.adatok2.min_szita_átmérő), Update<byte?>("FOSZATI", _szűrő.adatok2.max_szita_átmérő)});
 
                 if (data != null)
                 {
