@@ -157,7 +157,6 @@ namespace Labor
         }
     }
 
-
     public sealed class Panel_Foglalások : Control
     {
         private DataTable data;
@@ -212,7 +211,7 @@ namespace Labor
             hozzáadás.Text = "Hozzáadás";
             hozzáadás.Size = new System.Drawing.Size(96, 32);
             hozzáadás.Location = new Point(törlés.Location.X, feltöltés.Location.Y);
-            hozzáadás.Click += hozzáadás_Click;
+            hozzáadás.Click += Foglalás_Hozzáadás;
 
             Controls.Add(table);
             Controls.Add(törlés);
@@ -315,21 +314,28 @@ namespace Labor
 
 
         #region EventHandlers
+        private void Foglalás_Hozzáadás(object _sender, System.EventArgs _event)
+        {
+            Foglalás_Hozzáadó foglalás_hozzáadó = new Foglalás_Hozzáadó();
+            foglalás_hozzáadó.ShowDialog();
+        }
+
+        private void Foglalás_Feltöltés(object _sender, EventArgs _event)
+        {
+        }
 
         private void VizsgaLap_Módosítás(object sender, DataGridViewCellEventArgs e)
         {
             foreach (DataGridViewRow selected in table.SelectedRows)
             {
-                Foglalás temp = new Foglalás((int)selected.Cells[Foglalás.TableIndexes.id].Value, (string)selected.Cells[Foglalás.TableIndexes.név].Value, (int)selected.Cells[Foglalás.TableIndexes.hordók_száma].Value,
+                Foglalás foglalás = new Foglalás((int)selected.Cells[Foglalás.TableIndexes.id].Value, (string)selected.Cells[Foglalás.TableIndexes.név].Value, (int)selected.Cells[Foglalás.TableIndexes.hordók_száma].Value,
                         (string)selected.Cells[Foglalás.TableIndexes.típus].Value, (string)selected.Cells[Foglalás.TableIndexes.készítő].Value, (string)selected.Cells[Foglalás.TableIndexes.idő].Value);
-                temp.szűrő = Program.database.Foglalás_Vizsgalap_Szűrő(temp);
-                Foglalás_Keresés foglalás_keresés = new Foglalás_Keresés(temp);
-                foglalás_keresés.ShowDialog();
+                foglalás.szűrő = Program.database.Foglalás_Vizsgalap_Szűrő(foglalás);
+                Foglalás_Kereső foglalás_kereső = new Foglalás_Kereső(foglalás);
+                foglalás_kereső.ShowDialog();
                  
             }
         }
-
-
 
         private void Foglalás_Törlés(object _sender, EventArgs _event)
         {
@@ -353,28 +359,13 @@ namespace Labor
             }
         }
 
-        void Foglalás_Feltöltés(object sender, EventArgs e)
+        private void Foglalás_Keresése(object _sender, EventArgs _event)
         {
+            Foglalás_Kereső foglalás_kereső = new Foglalás_Kereső();
+            foglalás_kereső.ShowDialog();
         }
 
-        void Foglalás_Keresése(object sender, EventArgs e)
-        {
-
-            Foglalás_Keresés foglalás_keresés = new Foglalás_Keresés();
-            foglalás_keresés.ShowDialog();
-        }
-
-        private void hozzáadás_Click(object _sender, System.EventArgs _event)
-        {
-            Foglalás_Hozzáadás foglalás_hozzáadás = new Foglalás_Hozzáadás();
-            foglalás_hozzáadás.ShowDialog();
-        }
-
-        private void módosítás_Click(object sender, DataGridViewCellEventArgs e)
-        {
-        }
-
-        void table_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        private void table_DataBindingComplete(object _sender, DataGridViewBindingCompleteEventArgs _event)
         {
             table.DataBindingComplete -= table_DataBindingComplete;
             table.Columns[0].Width = 120;
@@ -394,9 +385,9 @@ namespace Labor
         }
         #endregion
 
-        public sealed class Foglalás_Hozzáadás : Form
+        public sealed class Foglalás_Hozzáadó : Form
         {
-            public Foglalás_Hozzáadás()
+            public Foglalás_Hozzáadó()
             {
                 InitializeForm();
                 InitializeContent();
@@ -539,7 +530,7 @@ namespace Labor
 
             private void keresés_Click(object _sender, EventArgs _event)
             {
-                Foglalás_Keresés kereső = new Foglalás_Keresés(foglalás);
+                Foglalás_Kereső kereső = new Foglalás_Kereső(foglalás);
                 kereső.ShowDialog();
             }
 
@@ -553,7 +544,7 @@ namespace Labor
             #endregion
         }
 
-        public sealed class Foglalás_Keresés : Form
+        public sealed class Foglalás_Kereső : Form
         {
             #region TextBox
             TextBox box_termékkód;
@@ -591,14 +582,14 @@ namespace Labor
 
             Foglalás? eredeti = null;
 
-            public Foglalás_Keresés()
+            public Foglalás_Kereső()
             {
                 InitializeForm();
                 InitializeContent();
                 InitializeData();
             }
 
-            public Foglalás_Keresés(Foglalás _eredeti)
+            public Foglalás_Kereső(Foglalás _eredeti)
             {
                 eredeti = _eredeti;
                 InitializeForm();
