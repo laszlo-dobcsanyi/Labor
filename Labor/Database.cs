@@ -806,7 +806,7 @@ namespace Labor
         #endregion
 
         #region Foglalások
-        public List<Foglalás> Foglalás_Azonosítók()
+        public List<Foglalás> Foglalások()
         {
             lock (LaborLock)
             {

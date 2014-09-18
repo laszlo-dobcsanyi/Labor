@@ -232,7 +232,7 @@ namespace Labor
             data.Columns.Add(new DataColumn("Készítette", System.Type.GetType("System.String")));
             data.Columns.Add(new DataColumn("Foglalás ideje", System.Type.GetType("System.String")));
 
-            List<Foglalás> foglalások = Program.database.Foglalás_Azonosítók();
+            List<Foglalás> foglalások = Program.database.Foglalások();
 
             foreach (Foglalás item in foglalások)
             {
@@ -254,7 +254,7 @@ namespace Labor
         public override void Refresh()
         {
             // Összes adat lekérdezése
-            List<Foglalás> foglalások = Program.database.Foglalás_Azonosítók();
+            List<Foglalás> foglalások = Program.database.Foglalások();
             // Minden token beállítása a kereséshez
             foreach (DataToken<Foglalás> token in foglalás_tokenek) { token.type = DataToken<Foglalás>.TokenType.NOT_FOUND; }
 
