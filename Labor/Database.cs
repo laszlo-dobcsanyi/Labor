@@ -118,6 +118,51 @@ namespace Labor
                                                                                             "('31','Gönci kajszi','','')," +
                                                                                             "('31','Ceglédi óriás','','');" +
 
+                                                                                            "('31','Bergeron','','');" +
+                                                                                            "('31','Sweetred','','');" +
+                                                                                            "('31','SPB-1','','');" +
+                                                                                            "('31','Pincot','','');" +
+                                                                                            "('31','Sylred','','');" +
+                                                                                            "('31','MK','','');" +
+                                                                                            "('31','Bergarouge','','');" +
+                                                                                            "('31','Mandula','','');" +
+                                                                                            "('31','Zebra','','');" +
+                                                                                            "('31','Berge cot','','');" +
+                                                                                            "('31','Flavor cot','','');" +
+                                                                                            "('31','Gold cot','','');" +
+                                                                                            "('31','Vertige','','');" +
+                                                                                            "('31','Tardiff de provance','','');" +
+
+                                                                                            "('41','Early redhaven','','');" +
+                                                                                            "('41','Suncrest','','');" +
+                                                                                            "('41','Babygold','','');" +
+                                                                                            "('41','Fayette','','');" +
+                                                                                            "('41','Cresthaven','','');" +
+                                                                                            "('41','Padana','','');" +
+                                                                                            "('41','Yo-yo','','');" +
+                                                                                            "('41','President','','');" +
+                                                                                            "('41','sárgahúsú','yellow sort','');" +
+                                                                                            "('42','fehérhúsú','white sort','');" +
+
+                                                                                            "('42','Incrocio Pierry','','');" +
+                                                                                            "('42','Champion','','');" +
+                                                                                            "('42','Michellini','','');" +
+                                                                                            "('61','Lepotica','','');" +
+                                                                                            "('61','Stanley','','');" +
+                                                                                            "('61','Bluefree','','');" +
+                                                                                            "('61','Empress','','');" +
+                                                                                            "('61','Besztercei','','');" +
+                                                                                            "('61','Elena','','');" +
+                                                                                            "('61','Presenta','','');" +
+                                                                                            "('61','Rodna','','');" +
+                                                                                            "('61','Rodna','','');" +
+                                                                                            "('61','Rodna','','');" +
+                                                                                            "('61','Rodna','','');" +
+                                                                                            "('61','Rodna','','');" +
+                                                                                            "('61','Rodna','','');" +
+                                                                                            "('61','Rodna','','');" +
+                                                                                            "('61','Rodna','','');" +
+
 
 
                             "INSERT INTO L_TORZSA (TOTIPU, TOAZON, TOSZO2,TOSZO3) VALUES('Származási ország','Magyarország','Hungary','Ungarn')," +
