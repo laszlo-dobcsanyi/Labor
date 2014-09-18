@@ -893,13 +893,13 @@ namespace Labor
                 catch (SqlException q)
                 {
                     MessageBox.Show("Foglalás_Vizsgalap_Szűrő hiba:\n" + q.Message);
-                    return null;
-                }
-                finally
-                {
                     command.Dispose();
                     laborconnection.Close();
+                    return null;
                 }
+
+                command.Dispose();
+                laborconnection.Close();
 
                 return data;
             }
@@ -979,9 +979,10 @@ namespace Labor
                     command = laborconnection.CreateCommand();
                     command.CommandText = "UPDATE L_FOGLAL SET " + data +" WHERE FOSZAM = " + _azonosító.id;
 
-                    try { command.ExecuteNonQuery(); command.Dispose(); }
+                    try { command.ExecuteNonQuery();  }
                     catch (SqlException q) { MessageBox.Show("Foglalás_ÚjVizsgalap -> adat2 hiba:\n" + q.Message); }
                 }
+
                 if (laborconnection.State != System.Data.ConnectionState.Open) return false;
 
                 laborconnection.Close();
