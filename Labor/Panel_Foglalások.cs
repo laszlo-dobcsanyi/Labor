@@ -1118,7 +1118,7 @@ namespace Labor
 
                         if (foglalás != null)
                         {
-                            DataColumn column = new DataColumn("Foglalás", System.Type.GetType("System.Boolean"));
+                            DataColumn column = new DataColumn("Foglalva", System.Type.GetType("System.Boolean"));
                             column.ReadOnly = false;
                             data.Columns.Add(column);
 
@@ -1157,22 +1157,13 @@ namespace Labor
                     private void table_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
                     {
                         table.DataBindingComplete -= table_DataBindingComplete;
-                        if (foglalás != null)
-                        { 
-                            table.Columns[0].Width = 100;
-                            table.Columns[0].ReadOnly = true;
-                            table.Columns[1].Width = 100;
-                            table.Columns[1].ReadOnly = true;
-                            table.Columns[2].Width = 100;
-                            table.Columns[2].ReadOnly = false;
-                        }
-                        else
-                        {
-                            table.Columns[0].Width = 150;
-                            table.Columns[0].ReadOnly = true;
-                            table.Columns[1].Width = 150;
-                            table.Columns[1].ReadOnly = true;
-                        }
+
+                        table.Columns[0].Width = 100;
+                        table.Columns[0].ReadOnly = true;
+                        table.Columns[1].Width = 100;
+                        table.Columns[1].ReadOnly = true;
+                        table.Columns[2].Width = 100;
+                        table.Columns[2].ReadOnly = (foglalás == null) ? true : false;
                     }
 
                     private void table_UserDeletingRow(object _sender, DataGridViewRowCancelEventArgs _event)
