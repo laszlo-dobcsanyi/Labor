@@ -615,7 +615,6 @@ namespace Labor
                 if (laborconnection.State != System.Data.ConnectionState.Open) return false;
 
                 // Adatok1
-
                 data = V(new string[] {Update<string>("VITENE", _vizsgálat.adatok1.terméknév), Update<byte>("VIHOKE", _vizsgálat.adatok1.hőkezelés), Update<char>("VIGYEV", _vizsgálat.adatok1.gyártási_év[_vizsgálat.adatok1.gyártási_év.Length - 1]),
                 Update<string>("VIMUJE", _vizsgálat.adatok1.műszak_jele), Update<string>("VITOGE", _vizsgálat.adatok1.töltőgép), Update<string>("VISZOR", _vizsgálat.adatok1.szárm_ország),
                 Update<string>("VIFAJT", _vizsgálat.adatok1.gyümölcsfajta)});
@@ -633,7 +632,6 @@ namespace Labor
                 if (laborconnection.State != System.Data.ConnectionState.Open) return false;
 
                 // Adatok2
-
                 data = V(new string[] {Update<double?>("VIBRIX", _vizsgálat.adatok2.brix), Update<double?>("VICSAV", _vizsgálat.adatok2.citromsav),
                 Update<double?>("VIBOSA", _vizsgálat.adatok2.borkősav), Update<double?>("VIPEHA", _vizsgálat.adatok2.ph), Update<double?>("VIBOST", _vizsgálat.adatok2.bostwick),
                 Update<int?>("VIASAV", _vizsgálat.adatok2.aszkorbinsav), Update<int?>("VICIAD", _vizsgálat.adatok2.citromsav_adagolás),  Update<int?>("VIMATO", _vizsgálat.adatok2.magtöret),
@@ -653,7 +651,6 @@ namespace Labor
                 if (laborconnection.State != System.Data.ConnectionState.Open) return false;
 
                 // Adatok3
-
                 data = V(new string[] {Update<string>("VILEOL", _vizsgálat.adatok3.leoltás), Update<string>("VIERDA", _vizsgálat.adatok3.értékelés),
                 Update<int?>("VIOCS1", _vizsgálat.adatok3.összcsíra_1), Update<int?>("VIOCS2", _vizsgálat.adatok3.összcsíra_2), Update<int?>("VIPEN1", _vizsgálat.adatok3.penész_1),
                 Update<int?>("VIPEN2", _vizsgálat.adatok3.penész_2), Update<int?>("VIELE1", _vizsgálat.adatok3.élesztő_1),  Update<int?>("VIELE2", _vizsgálat.adatok3.élesztő_2),
@@ -672,7 +669,6 @@ namespace Labor
                 if (laborconnection.State != System.Data.ConnectionState.Open) return false;
 
                 // Adatok4
-
                 data = V(new string[] { Update<string>("VIMTS1", _vizsgálat.adatok4.címzett_t), Update<string>("VIMTD1", _vizsgálat.adatok4.dátum_t),
                 Update<string>("VIMKS1", _vizsgálat.adatok4.címzett_k1), Update<string>("VIMKD1", _vizsgálat.adatok4.dátum_k1), Update<string>("VIMKS2", _vizsgálat.adatok4.címzett_k2), Update<string>("VIMKD2", _vizsgálat.adatok4.dátum_k2),
                 Update<string>("VIMKS3", _vizsgálat.adatok4.címzett_k3), Update<string>("VIMKD3", _vizsgálat.adatok4.dátum_k3), Update<string>("VIMKS4", _vizsgálat.adatok4.címzett_k4), Update<string>("VIMKD4", _vizsgálat.adatok4.dátum_k4),
@@ -858,44 +854,35 @@ namespace Labor
                         GetNullableString(reader, ++c),
                         GetNullableString(reader, ++c));
 
-                    /*
+                    
                     data.adatok2 = new Vizsgalap_Szűrő.Adatok2(
-                        Program.mainform.ConvertOrDie<int>(reader.GetString(++c)),
-                        Program.mainform.ConvertOrDie<int>(reader.GetString(++c)),
-                        Program.mainform.ConvertOrDie<int>(reader.GetString(++c)),
-                        Program.mainform.ConvertOrDie<int>(reader.GetString(++c)),
-                        //Program.mainform.ConvertOrDie<double>(reader.GetDecimal(++c).ToString()),
-                          0, 0, 0, 0, 0, 0, 0, 0,0,0,
-                        (double)reader.GetDecimal(c++),
-                        (double)reader.GetDecimal(c++),
-                        (double)reader.GetDecimal(c++),
-                        (double)reader.GetDecimal(c++),
-                        (double)reader.GetDecimal(c++),
-                        (double)reader.GetDecimal(c++),
-                        (double)reader.GetDecimal(c++),
-                        (double)reader.GetDecimal(c++),
-                        (double)reader.GetDecimal(c++),
-                        Program.mainform.ConvertOrDie<double>(reader.GetDecimal(c++).ToString()),
-                        Program.mainform.ConvertOrDie<double>(reader.GetDecimal(c++).ToString()),
-                        Program.mainform.ConvertOrDie<double>(reader.GetDecimal(c++).ToString()),
-                        Program.mainform.ConvertOrDie<double>(reader.GetDecimal(c++).ToString()),
-                        Program.mainform.ConvertOrDie<double>(reader.GetDecimal(c++).ToString()),
-                        Program.mainform.ConvertOrDie<double>(reader.GetDecimal(c++).ToString()),
-                        Program.mainform.ConvertOrDie<double>(reader.GetDecimal(c++).ToString()),
-                        Program.mainform.ConvertOrDie<double>(reader.GetDecimal(c++).ToString()),
-                        Program.mainform.ConvertOrDie<double>(reader.GetDecimal(c++).ToString()),
-                        Program.mainform.ConvertOrDie<double>(reader.GetDecimal(c++).ToString()),
-                         Program.mainform.ConvertOrDie<short>(reader.GetInt16(c++).ToString()),
-                        Program.mainform.ConvertOrDie<short>(reader.GetInt16(c++).ToString()),
-                        Program.mainform.ConvertOrDie<short>(reader.GetInt16(c++).ToString()),
-                        Program.mainform.ConvertOrDie<short>(reader.GetInt16(c++).ToString()),
-                        Program.mainform.ConvertOrDie<byte>(reader.GetInt16(c++).ToString()),
-                        Program.mainform.ConvertOrDie<byte>(reader.GetInt16(c++).ToString()),
-                        Program.mainform.ConvertOrDie<byte>(reader.GetInt16(c++).ToString()),
-                        Program.mainform.ConvertOrDie<byte>(reader.GetInt16(c++).ToString()),
-                        Program.mainform.ConvertOrDie<byte>(reader.GetInt16(c++).ToString()),
-                        Program.mainform.ConvertOrDie<byte>(reader.GetInt16(c++).ToString()));
-                     */
+                        GetNullable<int>(reader, ++c),
+                        GetNullable<int>(reader, ++c),
+                        GetNullable<int>(reader, ++c),
+                        GetNullable<int>(reader, ++c),
+
+                        (double?)GetNullable<decimal>(reader, ++c),
+                        (double?)GetNullable<decimal>(reader, ++c),
+                        (double?)GetNullable<decimal>(reader, ++c),
+                        (double?)GetNullable<decimal>(reader, ++c),
+                        (double?)GetNullable<decimal>(reader, ++c),
+                        (double?)GetNullable<decimal>(reader, ++c),
+                        (double?)GetNullable<decimal>(reader, ++c),
+                        (double?)GetNullable<decimal>(reader, ++c),
+                        (double?)GetNullable<decimal>(reader, ++c),
+                        (double?)GetNullable<decimal>(reader, ++c),
+
+                        GetNullable<Int16>(reader, ++c),
+                        GetNullable<Int16>(reader, ++c),
+                        GetNullable<Int16>(reader, ++c),
+                        GetNullable<Int16>(reader, ++c),
+
+                        GetNullable<byte>(reader, ++c),
+                        GetNullable<byte>(reader, ++c),
+                        GetNullable<byte>(reader, ++c),
+                        GetNullable<byte>(reader, ++c),
+                        GetNullable<byte>(reader, ++c),
+                        GetNullable<byte>(reader, ++c));
                 };
 
                 command.Dispose();
