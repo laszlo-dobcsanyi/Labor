@@ -364,15 +364,15 @@ namespace Labor
             if (table.SelectedRows.Count == 1) { if (MessageBox.Show("Biztosan törli a kiválasztott foglalást?", "Megerősítés", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return; }
             else if (table.SelectedRows.Count != 0) { if (MessageBox.Show("Biztosan törli a kiválasztott foglalást?", "Megerősítés", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return; }
 
-             foreach (DataGridViewRow selected in table.SelectedRows)
+            foreach (DataGridViewRow selected in table.SelectedRows)
             {
                 Foglalás azonosító = new Foglalás((int)selected.Cells[Foglalás.TableIndexes.id].Value, (string)selected.Cells[Foglalás.TableIndexes.név].Value, (int)selected.Cells[Foglalás.TableIndexes.hordók_száma].Value,
                     (string)selected.Cells[Foglalás.TableIndexes.típus].Value, (string)selected.Cells[Foglalás.TableIndexes.készítő].Value, (string)selected.Cells[Foglalás.TableIndexes.idő].Value);
 
 
-                if (!Program.database.Foglalás_Törlés(azonosító ) )
+                if (!Program.database.Foglalás_Törlés(azonosító))
                 {
-                    MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy nem létezik már a törlendő foglalás?\nID: " + azonosító.id + "\nNév: " + azonosító.név , "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy nem létezik már a törlendő foglalás?\nID: " + azonosító.id + "\nNév: " + azonosító.név, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
                 else Refresh();
@@ -412,7 +412,7 @@ namespace Labor
             Label label_foglalt_hordók;
             Label label_készítette;
             Label label_foglalás_ideje;
-            
+
             public Foglalás_Hozzáadó()
             {
                 InitializeForm();
@@ -485,7 +485,7 @@ namespace Labor
             private void InitializeForm()
             {
                 Text = "Foglalás adatai";
-                ClientSize = new Size(400, 250);
+                ClientSize = new Size(403 + 96 + 32, 400);
                 MinimumSize = ClientSize;
                 StartPosition = FormStartPosition.CenterScreen;
                 FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -512,14 +512,14 @@ namespace Labor
                 törlés.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
                 törlés.Text = "Törlés";
                 törlés.Size = new System.Drawing.Size(96, 32);
-                törlés.Location = new Point(ClientRectangle.Width - 224 - 16, ClientRectangle.Height - 32 - 16);
+                törlés.Location = new Point(ClientRectangle.Width - törlés.Size.Width - 16, ClientRectangle.Height - törlés.Size.Height - 64);
                 törlés.Click += Hordó_Törlés;
 
                 Button keresés = new Button();
                 keresés.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
                 keresés.Text = "Keresés";
                 keresés.Size = new System.Drawing.Size(96, 32);
-                keresés.Location = new Point(törlés.Location.X + törlés.Width + 16, törlés.Location.Y);
+                keresés.Location = new Point(törlés.Location.X, törlés.Location.Y + törlés.Size.Height + 16);
                 keresés.Click += Vizsgálat_Keresés;
 
                 //
@@ -541,7 +541,7 @@ namespace Labor
                 data.Columns.Add(new DataColumn("Gyártási év", System.Type.GetType("System.String")));
 
                 List<Hordó> hordók = Program.database.Foglalás_Hordók(foglalás);
-                foreach(Hordó item in hordók)
+                foreach (Hordó item in hordók)
                 {
                     DataRow row = data.NewRow();
                     row[Hordó.TableIndexes.termékkód] = item.termékkód;
@@ -574,6 +574,9 @@ namespace Labor
 
             private void Vizsgálat_Keresés(object _sender, EventArgs _event)
             {
+                foglalás.szűrő = Program.database.Foglalás_Vizsgalap_Szűrő(foglalás);
+                if (foglalás.szűrő == null) { MessageBox.Show("Hiba a foglalás szűrőjének lekérdezésekor!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
                 Vizsgálat_Kereső vizsgálat_kereső = new Vizsgálat_Kereső(foglalás);
                 vizsgálat_kereső.ShowDialog();
             }
@@ -638,7 +641,7 @@ namespace Labor
                 eredeti = _eredeti;
                 InitializeForm();
                 InitializeContent();
-                InitializeData();
+                InitializeData(_eredeti);
             }
 
             private void InitializeForm()
@@ -656,7 +659,6 @@ namespace Labor
                 int sor = 30;
 
                 #region Controls
-
                 Label termékkód = Program.mainform.createlabel("Termékkód:", 10, 10, this);
                 Label sarzs = Program.mainform.createlabel("Sarzs:", termékkód.Location.X, termékkód.Location.Y + sor, this);
                 Label hordószám = Program.mainform.createlabel("Hordószám:", termékkód.Location.X, sarzs.Location.Y + sor, this);
@@ -716,39 +718,25 @@ namespace Labor
                 box_töltőgép_száma.Name = "töltő";
                 #endregion
 
-                if(eredeti!=null)
+                List<Törzsadat> seged = Program.database.Törzsadatok("Hordótípus");
+                foreach (Törzsadat item in seged)
                 {
-                    box_termékkód.Text=eredeti.Value.szűrő.Value.adatok1.termékkód;
-                    box_min_sarzs.Text=eredeti.Value.szűrő.Value.adatok2.min_sarzs.ToString();
-                    box_max_sarzs.Text=eredeti.Value.szűrő.Value.adatok2.max_sarzs.ToString();
-                    box_min_hordószám.Text=eredeti.Value.szűrő.Value.adatok2.min_hordószám.ToString();
-                    box_max_hordószám.Text=eredeti.Value.szűrő.Value.adatok2.max_hordószám.ToString();
-                    box_min_brix.Text=eredeti.Value.szűrő.Value.adatok2.min_brix.ToString();
-                    box_max_brix.Text=eredeti.Value.szűrő.Value.adatok2.max_brix.ToString();
-                    box_min_citromsav.Text=eredeti.Value.szűrő.Value.adatok2.min_citromsav.ToString();
-                    box_max_citromsav.Text=eredeti.Value.szűrő.Value.adatok2.max_citromsav.ToString();
-                    box_min_borkősav.Text=eredeti.Value.szűrő.Value.adatok2.min_borkősav.ToString();
-                    box_max_borkősav.Text=eredeti.Value.szűrő.Value.adatok2.max_borkősav.ToString();
-                    box_min_ph.Text=eredeti.Value.szűrő.Value.adatok2.min_ph.ToString();
-                    box_max_ph.Text=eredeti.Value.szűrő.Value.adatok2.max_ph.ToString();
-                    box_min_bostwick.Text=eredeti.Value.szűrő.Value.adatok2.min_bostwick.ToString();
-                    box_max_bostwick.Text=eredeti.Value.szűrő.Value.adatok2.max_bostwick.ToString();
-                    box_min_aszkorbinsav.Text=eredeti.Value.szűrő.Value.adatok2.min_aszkorbinsav.ToString();
-                    box_max_aszkorbinsav.Text=eredeti.Value.szűrő.Value.adatok2.max_aszkorbinsav.ToString();
-                    box_min_nettó_töltet.Text=eredeti.Value.szűrő.Value.adatok2.min_nettó_töltet.ToString();
-                    box_max_nettó_töltet.Text=eredeti.Value.szűrő.Value.adatok2.max_nettó_töltet.ToString();
-                    box_min_hőkezelés.Text=eredeti.Value.szűrő.Value.adatok2.min_hőkezelés.ToString();
-                    box_max_hőkezelés.Text=eredeti.Value.szűrő.Value.adatok2.max_hőkezelés.ToString();
-                    box_min_szita_átmérő.Text=eredeti.Value.szűrő.Value.adatok2.min_szita_átmérő.ToString();
-                    box_max_szita_átmérő.Text=eredeti.Value.szűrő.Value.adatok2.max_szita_átmérő.ToString();
-                    box_max_citromsav_ad.Text=eredeti.Value.szűrő.Value.adatok2.max_citromsav_ad.ToString();
-
-                    combo_gyümölcsfajta.Text = eredeti.Value.szűrő.Value.adatok1.gyümölcsfajta;
-                    combo_hordótípus.Text=eredeti.Value.szűrő.Value.adatok1.hordótípus;
-                    combo_származási_ország.Text=eredeti.Value.szűrő.Value.adatok1.származási_ország;
-                    box_töltőgép_száma.Text=eredeti.Value.szűrő.Value.adatok1.töltőgép_száma;
+                    combo_hordótípus.Items.Add(item.azonosító);
                 }
 
+                seged.Clear();
+                seged = Program.database.Törzsadatok("Származási ország");
+                foreach (Törzsadat item in seged)
+                {
+                    combo_származási_ország.Items.Add(item.azonosító);
+                }
+
+                // TODO ne feljts el!
+                /* List<string> megrendelok = Program.database.Megrendelők();
+                 foreach (string item in megrendelok)
+                 {
+                     combo_megrendelő.Items.Add(item);
+                 }*/
 
                 Button rendben = new Button();
                 rendben.Text = "Rendben";
@@ -759,7 +747,46 @@ namespace Labor
                 Controls.Add(rendben);
             }
 
-            private void Keresés_Rendben(object sender, EventArgs e)
+            private void InitializeData()
+            {
+
+            }
+
+            private void InitializeData(Foglalás _foglalás)
+            {
+                box_termékkód.Text = _foglalás.szűrő.Value.adatok1.termékkód;
+                box_min_sarzs.Text = _foglalás.szűrő.Value.adatok2.min_sarzs.ToString();
+                box_max_sarzs.Text = _foglalás.szűrő.Value.adatok2.max_sarzs.ToString();
+                box_min_hordószám.Text = _foglalás.szűrő.Value.adatok2.min_hordószám.ToString();
+                box_max_hordószám.Text = _foglalás.szűrő.Value.adatok2.max_hordószám.ToString();
+                box_min_brix.Text = _foglalás.szűrő.Value.adatok2.min_brix.ToString();
+                box_max_brix.Text = _foglalás.szűrő.Value.adatok2.max_brix.ToString();
+                box_min_citromsav.Text = _foglalás.szűrő.Value.adatok2.min_citromsav.ToString();
+                box_max_citromsav.Text = _foglalás.szűrő.Value.adatok2.max_citromsav.ToString();
+                box_min_borkősav.Text = _foglalás.szűrő.Value.adatok2.min_borkősav.ToString();
+                box_max_borkősav.Text = _foglalás.szűrő.Value.adatok2.max_borkősav.ToString();
+                box_min_ph.Text = _foglalás.szűrő.Value.adatok2.min_ph.ToString();
+                box_max_ph.Text = _foglalás.szűrő.Value.adatok2.max_ph.ToString();
+                box_min_bostwick.Text = _foglalás.szűrő.Value.adatok2.min_bostwick.ToString();
+                box_max_bostwick.Text = _foglalás.szűrő.Value.adatok2.max_bostwick.ToString();
+                box_min_aszkorbinsav.Text = _foglalás.szűrő.Value.adatok2.min_aszkorbinsav.ToString();
+                box_max_aszkorbinsav.Text = _foglalás.szűrő.Value.adatok2.max_aszkorbinsav.ToString();
+                box_min_nettó_töltet.Text = _foglalás.szűrő.Value.adatok2.min_nettó_töltet.ToString();
+                box_max_nettó_töltet.Text = _foglalás.szűrő.Value.adatok2.max_nettó_töltet.ToString();
+                box_min_hőkezelés.Text = _foglalás.szűrő.Value.adatok2.min_hőkezelés.ToString();
+                box_max_hőkezelés.Text = _foglalás.szűrő.Value.adatok2.max_hőkezelés.ToString();
+                box_min_szita_átmérő.Text = _foglalás.szűrő.Value.adatok2.min_szita_átmérő.ToString();
+                box_max_szita_átmérő.Text = _foglalás.szűrő.Value.adatok2.max_szita_átmérő.ToString();
+                box_max_citromsav_ad.Text = _foglalás.szűrő.Value.adatok2.max_citromsav_ad.ToString();
+
+                combo_gyümölcsfajta.Text = _foglalás.szűrő.Value.adatok1.gyümölcsfajta;
+                combo_hordótípus.Text = _foglalás.szűrő.Value.adatok1.hordótípus;
+                combo_származási_ország.Text = _foglalás.szűrő.Value.adatok1.származási_ország;
+                box_töltőgép_száma.Text = _foglalás.szűrő.Value.adatok1.töltőgép_száma;
+            }
+
+            #region EventHandlers
+            private void Keresés_Rendben(object _sender, EventArgs _e)
             {
                 if (box_min_sarzs.Text.Length != 0 && box_max_sarzs.Text.Length != 0) if (Convert.ToInt32(box_min_sarzs.Text) > Convert.ToInt32(box_max_sarzs.Text)) { MessageBox.Show("Sarzs!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 if (box_min_brix.Text.Length != 0 && box_max_brix.Text.Length != 0) if (Convert.ToDouble(box_min_brix.Text) > Convert.ToDouble(box_max_brix.Text)) { MessageBox.Show("brix!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
@@ -825,34 +852,7 @@ namespace Labor
                     keresés_eredmény.ShowDialog();
                 }
             }
-
-            private void InitializeData()
-            {
-                List<Törzsadat> seged = Program.database.Törzsadatok("Hordótípus");
-                foreach (Törzsadat item in seged)
-                {
-                    combo_hordótípus.Items.Add(item.azonosító);
-                }
-
-                seged.Clear();
-                seged = Program.database.Törzsadatok("Származási ország");
-                foreach (Törzsadat item in seged)
-                {
-                    combo_származási_ország.Items.Add(item.azonosító);
-                }
-
-                // TODO ne feljts el!
-                /* List<string> megrendelok = Program.database.Megrendelők();
-                 foreach (string item in megrendelok)
-                 {
-                     combo_megrendelő.Items.Add(item);
-                 }*/
-            }
-
-            private void InitializeData(Foglalás _foglalás)
-            {
-
-            }
+            #endregion
 
             public sealed class Keresés_Eredmény : Form
             {
@@ -981,7 +981,7 @@ namespace Labor
                 }
 
                 private void keresés_Click(object sender, DataGridViewCellEventArgs e)
-                { 
+                {
                 }
 
                 public sealed class Eredmény_Hordók : Form

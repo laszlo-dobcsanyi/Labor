@@ -825,7 +825,7 @@ namespace Labor
             }
         }
 
-        public Vizsgalap_Szűrő Foglalás_Vizsgalap_Szűrő(Foglalás _foglalás)
+        public Vizsgalap_Szűrő? Foglalás_Vizsgalap_Szűrő(Foglalás _foglalás)
         {
             lock (LaborLock)
             {
@@ -834,58 +834,69 @@ namespace Labor
                 laborconnection.Open();
 
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT FOFAJT,FOHOTI,FOMEGR,FOSZOR, FOMUJE,FOTOGE,FODATE,FOTIPU,FOTEKO," +
-                "FOSARZT,FOSARZI,FOZSSZT,FOZSSZI,FOBRIXT,FOBRIXI,FOCSAVT,FOCSAVI,FOBOSAI,FOBOSAT,FOPEHAT,FOPEHAI,FOBOSTT,FOBOSTI,FOASAVT,FOASAVI,FONETOT,FONETOI,FOHOFOT,FOHOFOI,FOSZATI,FOSZATT,FOCIADT,FOCIADI FROM L_FOGLAL";
+                command.CommandText = "SELECT FOFAJT, FOHOTI, FOMEGR, FOSZOR, FOMUJE, FOTOGE, FODATE, FOTIPU, FOTEKO, " +
+                    "FOSARZT, FOSARZI, FOZSSZT, FOZSSZI, FOBRIXT, FOBRIXI, FOCSAVT, FOCSAVI, FOBOSAI, FOBOSAT, FOPEHAT, FOPEHAI, FOBOSTT, FOBOSTI, FOASAVT, FOASAVI, FONETOT, FONETOI, FOHOFOT, FOHOFOI, FOSZATI, " +
+                    "FOSZATT, FOCIADT, FOCIADI FROM L_FOGLAL WHERE FOSZAM = " + _foglalás.id;
 
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
+                try
                 {
-                    int c = 0;
-                    data.adatok1 = new Vizsgalap_Szűrő.Adatok1(
+                    SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        int c = 0;
+                        data.adatok1 = new Vizsgalap_Szűrő.Adatok1(
 
-                        GetNullableString(reader, c),
-                        GetNullableString(reader, ++c),
-                        GetNullableString(reader, ++c),
-                        GetNullableString(reader, ++c),
-                        GetNullableString(reader, ++c),
-                        GetNullableString(reader, ++c),
-                        GetNullableString(reader, ++c),
-                        GetNullableString(reader, ++c),
-                        GetNullableString(reader, ++c));
+                            GetNullableString(reader, c),
+                            GetNullableString(reader, ++c),
+                            GetNullableString(reader, ++c),
+                            GetNullableString(reader, ++c),
+                            GetNullableString(reader, ++c),
+                            GetNullableString(reader, ++c),
+                            GetNullableString(reader, ++c),
+                            GetNullableString(reader, ++c),
+                            GetNullableString(reader, ++c));
 
-                    
-                    data.adatok2 = new Vizsgalap_Szűrő.Adatok2(
-                        GetNullable<int>(reader, ++c),
-                        GetNullable<int>(reader, ++c),
-                        GetNullable<int>(reader, ++c),
-                        GetNullable<int>(reader, ++c),
 
-                        (double?)GetNullable<decimal>(reader, ++c),
-                        (double?)GetNullable<decimal>(reader, ++c),
-                        (double?)GetNullable<decimal>(reader, ++c),
-                        (double?)GetNullable<decimal>(reader, ++c),
-                        (double?)GetNullable<decimal>(reader, ++c),
-                        (double?)GetNullable<decimal>(reader, ++c),
-                        (double?)GetNullable<decimal>(reader, ++c),
-                        (double?)GetNullable<decimal>(reader, ++c),
-                        (double?)GetNullable<decimal>(reader, ++c),
-                        (double?)GetNullable<decimal>(reader, ++c),
+                        data.adatok2 = new Vizsgalap_Szűrő.Adatok2(
+                            GetNullable<int>(reader, ++c),
+                            GetNullable<int>(reader, ++c),
+                            GetNullable<int>(reader, ++c),
+                            GetNullable<int>(reader, ++c),
 
-                        GetNullable<Int16>(reader, ++c),
-                        GetNullable<Int16>(reader, ++c),
-                        GetNullable<Int16>(reader, ++c),
-                        GetNullable<Int16>(reader, ++c),
+                            (double?)GetNullable<decimal>(reader, ++c),
+                            (double?)GetNullable<decimal>(reader, ++c),
+                            (double?)GetNullable<decimal>(reader, ++c),
+                            (double?)GetNullable<decimal>(reader, ++c),
+                            (double?)GetNullable<decimal>(reader, ++c),
+                            (double?)GetNullable<decimal>(reader, ++c),
+                            (double?)GetNullable<decimal>(reader, ++c),
+                            (double?)GetNullable<decimal>(reader, ++c),
+                            (double?)GetNullable<decimal>(reader, ++c),
+                            (double?)GetNullable<decimal>(reader, ++c),
 
-                        GetNullable<byte>(reader, ++c),
-                        GetNullable<byte>(reader, ++c),
-                        GetNullable<byte>(reader, ++c),
-                        GetNullable<byte>(reader, ++c),
-                        GetNullable<byte>(reader, ++c),
-                        GetNullable<byte>(reader, ++c));
-                };
+                            GetNullable<Int16>(reader, ++c),
+                            GetNullable<Int16>(reader, ++c),
+                            GetNullable<Int16>(reader, ++c),
+                            GetNullable<Int16>(reader, ++c),
 
-                command.Dispose();
-                laborconnection.Close();
+                            GetNullable<byte>(reader, ++c),
+                            GetNullable<byte>(reader, ++c),
+                            GetNullable<byte>(reader, ++c),
+                            GetNullable<byte>(reader, ++c),
+                            GetNullable<byte>(reader, ++c),
+                            GetNullable<byte>(reader, ++c));
+                    };
+                }
+                catch
+                {
+                    return null;
+                }
+                finally
+                {
+                    command.Dispose();
+                    laborconnection.Close();
+                }
+
                 return data;
             }
         }
