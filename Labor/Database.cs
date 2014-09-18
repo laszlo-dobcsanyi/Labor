@@ -967,11 +967,11 @@ namespace Labor
                 Update<double?>("FOBOSAT", _szűrő.adatok2.min_borkősav), Update<double?>("FOBOSAI", _szűrő.adatok2.max_borkősav),
                 Update<double?>("FOPEHAT", _szűrő.adatok2.min_ph), Update<double?>("FOPEHAI", _szűrő.adatok2.max_ph),
                 Update<double?>("FOBOSTT", _szűrő.adatok2.min_bostwick), Update<double?>("FOBOSTI", _szűrő.adatok2.max_bostwick),
-                Update<int?>("FOASAVT", _szűrő.adatok2.min_aszkorbinsav), Update<int?>("FOASAVI", _szűrő.adatok2.max_aszkorbinsav),
-                Update<int?>("FONETOT", _szűrő.adatok2.min_nettó_töltet), Update<int?>("FONETOI", _szűrő.adatok2.max_nettó_töltet),
-                Update<int?>("FOHOFOT", _szűrő.adatok2.min_hőkezelés), Update<int?>("FOHOFOI", _szűrő.adatok2.max_hőkezelés),
-                Update<int?>("FOSZATT", _szűrő.adatok2.min_szita_átmérő), Update<int?>("FOSZATI", _szűrő.adatok2.max_szita_átmérő),
-                Update<int?>("FOCIADT", _szűrő.adatok2.min_citromsav_ad), Update<int?>("FOCIADI", _szűrő.adatok2.max_citromsav_ad)});
+                Update<short?>("FOASAVT", _szűrő.adatok2.min_aszkorbinsav), Update<short?>("FOASAVI", _szűrő.adatok2.max_aszkorbinsav),
+                Update<short?>("FONETOT", _szűrő.adatok2.min_nettó_töltet), Update<short?>("FONETOI", _szűrő.adatok2.max_nettó_töltet),
+                Update<byte?>("FOHOFOT", _szűrő.adatok2.min_hőkezelés), Update<byte?>("FOHOFOI", _szűrő.adatok2.max_hőkezelés),
+                Update<byte?>("FOSZATT", _szűrő.adatok2.min_szita_átmérő), Update<byte?>("FOSZATI", _szűrő.adatok2.max_szita_átmérő),
+                Update<byte?>("FOCIADT", _szűrő.adatok2.min_citromsav_ad), Update<byte?>("FOCIADI", _szűrő.adatok2.max_citromsav_ad)});
 
                 if (data != null)
                 {
