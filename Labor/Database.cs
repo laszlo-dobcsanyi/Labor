@@ -1066,7 +1066,7 @@ namespace Labor
                 List<string> value = new List<string>();
                 laborconnection.Open();
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT GFAZON FROM L_GYFAJTA WHERE (l_gyfajta.gfteko = '" + _termékkód.Substring(0, 2) + "') ORDER BY GFAZON";
+                command.CommandText = "SELECT GFAZON FROM L_GYFAJTA WHERE (GFTEKO = '" + _termékkód.Substring(0, 2) + "') ORDER BY GFAZON";
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
