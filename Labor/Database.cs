@@ -78,8 +78,8 @@ namespace Labor
 
                             "CREATE TABLE L_HORDO(HOTEKO varchar(3), HOSARZ varchar(3), HOSZAM varchar(4), FOSZAM int, VIGYEV varchar(1));" +
 
-                            "CREATE TABLE L_FOGLAL (FONEVE varchar(30), FOSZAM int IDENTITY(1,1), FODATE varchar(20), FOTIPU varchar(9), FOFENE varchar(15), FOTEKO varchar(3), FOSARZT varchar(3), FOSARZI varchar(3), FOZSSZT varchar(4)," +
-                                "FOZSSZI varchar(4), FOBRIXT DECIMAL(4,2), FOBRIXI DECIMAL(4,2), FOCSAVT DECIMAL(4,2), FOCSAVI DECIMAL(4,2), FOPEHAT DECIMAL(4,2), FOPEHAI DECIMAL(4,2), FOBOSTT DECIMAL(4,2)," +
+                            "CREATE TABLE L_FOGLAL (FONEVE varchar(30), FOSZAM int IDENTITY(1,1), FODATE varchar(20), FOTIPU varchar(9), FOFENE varchar(15), FOTEKO varchar(3), FOSARZT varchar(3), FOSARZI varchar(3), FOHOSZT varchar(4)," +
+                                "FOHOSZI varchar(4), FOBRIXT DECIMAL(4,2), FOBRIXI DECIMAL(4,2), FOCSAVT DECIMAL(4,2), FOCSAVI DECIMAL(4,2), FOPEHAT DECIMAL(4,2), FOPEHAI DECIMAL(4,2), FOBOSTT DECIMAL(4,2)," +
                                 "FOBOSTI DECIMAL(4,2), FOASAVT smallint, FOASAVI smallint, FONETOT smallint, FONETOI smallint, FOHOFOT tinyint, FOHOFOI tinyint, FOCIADT smallint, FOCIADI smallint," +
                                 "FOFAJT varchar(15), FOHOTI varchar(15), FOMEGR varchar(15), FOSZOR varchar(15), FOMUJE varchar(1), FOTOGE varchar(1), FOFOHO tinyint, FOSZSZ tinyint ," +
                                 "FOSZATI varchar(6) , FOSZATT varchar(6), FOBOSAI smallint, FOBOSAT smallint, SZSZAM tinyint);" +
@@ -839,7 +839,7 @@ namespace Labor
 
                 SqlCommand command = laborconnection.CreateCommand();
                 command.CommandText = "SELECT FOFAJT, FOHOTI, FOMEGR, FOSZOR, FOMUJE, FOTOGE, FODATE, FOTIPU, FOTEKO, " +
-                    "FOSARZT, FOSARZI, FOZSSZT, FOZSSZI, FOBRIXT, FOBRIXI, FOCSAVT, FOCSAVI, FOBOSAT, FOBOSAI, FOPEHAT, FOPEHAI, FOBOSTT, FOBOSTI, FOASAVT, FOASAVI, FONETOT, FONETOI, FOHOFOT, FOHOFOI, FOSZATI, " +
+                    "FOSARZT, FOSARZI, FOHOSZT, FOHOSZI, FOBRIXT, FOBRIXI, FOCSAVT, FOCSAVI, FOBOSAT, FOBOSAI, FOPEHAT, FOPEHAI, FOBOSTT, FOBOSTI, FOASAVT, FOASAVI, FONETOT, FONETOI, FOHOFOT, FOHOFOI, FOSZATI, " +
                     "FOSZATT, FOCIADT, FOCIADI FROM L_FOGLAL WHERE FOSZAM = " + _foglalás.id;
 
                 try
@@ -847,10 +847,10 @@ namespace Labor
                     SqlDataReader reader = command.ExecuteReader();
                     while (reader.Read())
                     {
-                        int c = 0;
+                        int c = -1;
                         data.adatok1 = new Vizsgalap_Szűrő.Adatok1(
 
-                            GetNullableString(reader, c),
+                            GetNullableString(reader, ++c),
                             GetNullableString(reader, ++c),
                             GetNullableString(reader, ++c),
                             GetNullableString(reader, ++c),
@@ -860,11 +860,13 @@ namespace Labor
                             GetNullableString(reader, ++c),
                             GetNullableString(reader, ++c));
 
+                        int sarzs_alsó = reader.GetInt32(9);
+
                         data.adatok2 = new Vizsgalap_Szűrő.Adatok2(
-                            GetNullable<int>(reader, ++c),
-                            GetNullable<int>(reader, ++c),
-                            GetNullable<int>(reader, ++c),
-                            GetNullable<int>(reader, ++c),
+                            GetNullableString(reader, ++c),
+                            GetNullableString(reader, ++c),
+                            GetNullableString(reader, ++c),
+                            GetNullableString(reader, ++c),
 
                             (double?)GetNullable<decimal>(reader, ++c),
                             (double?)GetNullable<decimal>(reader, ++c),
@@ -961,8 +963,8 @@ namespace Labor
                 // Adatok2
 
                 data = V(new string[] {
-                Update<int?>("FOSARZT", _szűrő.adatok2.min_sarzs), Update<int?>("FOSARZI", _szűrő.adatok2.max_sarzs),
-                Update<int?>("FOZSSZT", _szűrő.adatok2.min_hordószám), Update<int?>("FOZSSZI", _szűrő.adatok2.max_hordószám),
+                Update<string>("FOSARZT", _szűrő.adatok2.min_sarzs), Update<string>("FOSARZI", _szűrő.adatok2.max_sarzs),
+                Update<string>("FOHOSZT", _szűrő.adatok2.min_hordóid), Update<string>("FOHOSZI", _szűrő.adatok2.max_hordóid),
                 Update<double?>("FOBRIXT", _szűrő.adatok2.min_brix), Update<double?>("FOBRIXI", _szűrő.adatok2.max_brix),
                 Update<double?>("FOCSAVT", _szűrő.adatok2.min_citromsav), Update<double?>("FOCSAVI", _szűrő.adatok2.max_citromsav),
                 Update<double?>("FOBOSAT", _szűrő.adatok2.min_borkősav), Update<double?>("FOBOSAI", _szűrő.adatok2.max_borkősav),

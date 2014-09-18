@@ -112,10 +112,10 @@ namespace Labor
         }
         public struct Adatok2
         {
-            public int? min_sarzs;
-            public int? max_sarzs;
-            public int? min_hordószám;
-            public int? max_hordószám;
+            public string min_sarzs;
+            public string max_sarzs;
+            public string min_hordóid;
+            public string max_hordóid;
 
             public double? min_brix;
             public double? max_brix;
@@ -139,13 +139,13 @@ namespace Labor
             public byte? min_szita_átmérő;
             public byte? max_szita_átmérő;
 
-            public Adatok2(int? _min_sarzs, int? _max_sarzs, int? _min_hordószám, int? _max_hordószám, double? _min_brix, double? _max_brix, double? _min_citromsav, double? _max_citromsav, double? _min_borkősav, double? _max_borkősav, double? _min_ph, double? _max_ph, double? _min_bostwick,
+            public Adatok2(string _min_sarzs, string _max_sarzs, string _min_hordóid, string _max_hordóid, double? _min_brix, double? _max_brix, double? _min_citromsav, double? _max_citromsav, double? _min_borkősav, double? _max_borkősav, double? _min_ph, double? _max_ph, double? _min_bostwick,
                 double? _max_bostwick, Int16? _min_aszkorbinsav, Int16? _max_aszkorbinsav, Int16? _min_nettó_töltet, Int16? _max_nettó_töltet, byte? _min_hőkezelés, byte? _max_hőkezelés, byte? _min_szita_átmérő, byte? _max_szita_átmérő, byte? _min_citromsav_ad, byte? _max_citromsav_ad)
             {
                 min_sarzs = _min_sarzs;
                 max_sarzs = _max_sarzs;
-                min_hordószám = _min_hordószám;
-                max_hordószám = _max_hordószám;
+                min_hordóid = _min_hordóid;
+                max_hordóid = _max_hordóid;
                 min_brix = _min_brix;
                 max_brix = _max_brix;
                 min_citromsav = _min_citromsav;
@@ -761,8 +761,8 @@ namespace Labor
                 box_termékkód.Text = _foglalás.szűrő.Value.adatok1.termékkód;
                 box_min_sarzs.Text = _foglalás.szűrő.Value.adatok2.min_sarzs.ToString();
                 box_max_sarzs.Text = _foglalás.szűrő.Value.adatok2.max_sarzs.ToString();
-                box_min_hordószám.Text = _foglalás.szűrő.Value.adatok2.min_hordószám.ToString();
-                box_max_hordószám.Text = _foglalás.szűrő.Value.adatok2.max_hordószám.ToString();
+                box_min_hordószám.Text = _foglalás.szűrő.Value.adatok2.min_hordóid;
+                box_max_hordószám.Text = _foglalás.szűrő.Value.adatok2.max_hordóid;
                 box_min_brix.Text = _foglalás.szűrő.Value.adatok2.min_brix.ToString();
                 box_max_brix.Text = _foglalás.szűrő.Value.adatok2.max_brix.ToString();
                 box_min_citromsav.Text = _foglalás.szűrő.Value.adatok2.min_citromsav.ToString();
@@ -816,10 +816,10 @@ namespace Labor
                     Program.mainform.ConvertOrDieString(box_termékkód.Text));
 
                 Vizsgalap_Szűrő.Adatok2 adatok2 = new Vizsgalap_Szűrő.Adatok2(
-                    Program.mainform.ConvertOrDie<int>(box_min_sarzs.Text),
-                    Program.mainform.ConvertOrDie<int>(box_max_sarzs.Text),
-                    Program.mainform.ConvertOrDie<int>(box_min_hordószám.Text),
-                    Program.mainform.ConvertOrDie<int>(box_max_hordószám.Text),
+                    Program.mainform.ConvertOrDieString(box_min_sarzs.Text),
+                    Program.mainform.ConvertOrDieString(box_max_sarzs.Text),
+                    Program.mainform.ConvertOrDieString(box_min_hordószám.Text),
+                    Program.mainform.ConvertOrDieString(box_max_hordószám.Text),
                     Program.mainform.ConvertOrDie<double>(box_min_brix.Text),
                     Program.mainform.ConvertOrDie<double>(box_max_brix.Text),
                     Program.mainform.ConvertOrDie<double>(box_min_citromsav.Text),
