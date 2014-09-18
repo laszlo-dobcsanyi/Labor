@@ -837,7 +837,6 @@ namespace Labor
                 command.CommandText = "SELECT FOFAJT,FOHOTI,FOMEGR,FOSZOR, FOMUJE,FOTOGE,FODATE,FOTIPU,FOTEKO," +
                 "FOSARZT,FOSARZI,FOZSSZT,FOZSSZI,FOBRIXT,FOBRIXI,FOCSAVT,FOCSAVI,FOBOSAI,FOBOSAT,FOPEHAT,FOPEHAI,FOBOSTT,FOBOSTI,FOASAVT,FOASAVI,FONETOT,FONETOI,FOHOFOT,FOHOFOI,FOSZATI,FOSZATT,FOCIADT,FOCIADI FROM L_FOGLAL";
 
-
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -1003,6 +1002,20 @@ namespace Labor
             lock (LaborLock)
             {
                 List<Hordó> value = new List<Hordó>();
+
+                laborconnection.Open();
+                SqlCommand command = laborconnection.CreateCommand();
+                command.CommandText = "SELECT HOTEKO, HOSARZ, HOSZAM, VIGYEV FROM L_HORDO WHERE FOSZAM = " + _foglalás.id;
+
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    value.Add(new Hordó(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetString(4)));
+                }
+
+                command.Dispose();
+                laborconnection.Close();
+
                 return value;
             }
         }
