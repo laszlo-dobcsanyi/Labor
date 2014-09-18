@@ -814,13 +814,13 @@ namespace Labor
                 laborconnection.Open();
 
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT FOSZAM,FONEVE,FOFOHO,FOTIPU,FOFENE,FODATE FROM L_FOGLAL";
+                command.CommandText = "SELECT FOSZAM, FONEVE, FOFOHO, FOTIPU, FOFENE, FODATE FROM L_FOGLAL";
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    int c = 0;
-                    Foglalás temp_foglalás = new Foglalás(reader.GetInt32(c), reader.GetString(++c), reader.GetByte(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c));
+                    int c = -1;
+                    Foglalás temp_foglalás = new Foglalás(reader.GetInt32(++c), reader.GetString(++c), reader.GetByte(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c));
                     data.Add(temp_foglalás);
                 }
                 command.Dispose();
@@ -829,7 +829,7 @@ namespace Labor
             }
         }
 
-        public Vizsgalap_Szűrő? Foglalás_Vizsgalap_Szűrő(Foglalás _foglalás)
+        public Vizsgalap_Szűrő? Foglalás_Vizsgálat_Szűrő(Foglalás _foglalás)
         {
             lock (LaborLock)
             {
@@ -905,37 +905,7 @@ namespace Labor
             }
         }
 
-        public bool Foglalás_Hozzáadás(Foglalás _foglalás)
-        {
-            lock (LaborLock)
-            {
-                SqlCommand command;
-
-                laborconnection.Open();
-
-                command = laborconnection.CreateCommand();
-                command.CommandText = "INSERT INTO L_FOGLAL (FONEVE, FOFOHO, FOTIPU, FOFENE, FODATE, FOFAJT)" +
-                                    " VALUES('" + _foglalás.név + "', " + _foglalás.hordók_száma + ", '" + _foglalás.típus + "', '"
-                                    + _foglalás.készítő + "', '" + _foglalás.idő + "', '" + _foglalás.típus + "')";
-
-                try { command.ExecuteNonQuery(); }
-                catch (Exception e) { MessageBox.Show(e.Message); return false; }
-                finally { command.Dispose(); laborconnection.Close(); }
-
-                laborconnection.Close();
-                return true;
-            }
-        }
-
-        public bool Foglalás_Módosítás(Foglalás _eredeti, Foglalás _új)
-        {
-            lock (LaborLock)
-            {
-                return true;
-            }
-        }
-
-        public bool Foglalás_ÚjVizsgalap(Foglalás _azonosító, Vizsgalap_Szűrő _szűrő)
+        public bool Foglalás_Vizsgálat_Szűrő_Hozzáadás(Foglalás _azonosító, Vizsgalap_Szűrő _szűrő)
         {
             lock (LaborLock)
             {
@@ -977,15 +947,45 @@ namespace Labor
                 if (data != null)
                 {
                     command = laborconnection.CreateCommand();
-                    command.CommandText = "UPDATE L_FOGLAL SET " + data +" WHERE FOSZAM = " + _azonosító.id;
+                    command.CommandText = "UPDATE L_FOGLAL SET " + data + " WHERE FOSZAM = " + _azonosító.id;
 
-                    try { command.ExecuteNonQuery();  }
+                    try { command.ExecuteNonQuery(); }
                     catch (SqlException q) { MessageBox.Show("Foglalás_ÚjVizsgalap -> adat2 hiba:\n" + q.Message); }
                 }
 
                 if (laborconnection.State != System.Data.ConnectionState.Open) return false;
 
                 laborconnection.Close();
+                return true;
+            }
+        }
+
+        public bool Foglalás_Hozzáadás(Foglalás _foglalás)
+        {
+            lock (LaborLock)
+            {
+                SqlCommand command;
+
+                laborconnection.Open();
+
+                command = laborconnection.CreateCommand();
+                command.CommandText = "INSERT INTO L_FOGLAL (FONEVE, FOFOHO, FOTIPU, FOFENE, FODATE, FOFAJT)" +
+                                    " VALUES('" + _foglalás.név + "', " + _foglalás.hordók_száma + ", '" + _foglalás.típus + "', '"
+                                    + _foglalás.készítő + "', '" + _foglalás.idő + "', '" + _foglalás.típus + "')";
+
+                try { command.ExecuteNonQuery(); }
+                catch (Exception e) { MessageBox.Show(e.Message); return false; }
+                finally { command.Dispose(); laborconnection.Close(); }
+
+                laborconnection.Close();
+                return true;
+            }
+        }
+
+        public bool Foglalás_Módosítás(Foglalás _eredeti, Foglalás _új)
+        {
+            lock (LaborLock)
+            {
                 return true;
             }
         }
