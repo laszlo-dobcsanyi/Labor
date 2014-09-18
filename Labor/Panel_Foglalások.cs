@@ -8,7 +8,29 @@ namespace Labor
 {
     public struct Hordó
     {
+        public string termékkód;
+        public string sarzs;
+        public string id;
+        public int? foglalás_száma;
+        public string gyártási_év;
 
+        public Hordó(string _termékkód, string _sarzs, string _id, int? _foglalás_száma, string _gyártási_év)
+        {
+            termékkód = _termékkód;
+            sarzs = _sarzs;
+            id = _id;
+            foglalás_száma = _foglalás_száma;
+            gyártási_év = _gyártási_év;
+        }
+
+        public struct TableIndexes
+        {
+            public const int termékkód = 0;
+            public const int sarzs = 1;
+            public const int id = 2;
+            public const int foglalás_száma = 3;
+            public const int gyártási_év = 4;
+        }
     }
 
     public struct Sarzs
@@ -477,9 +499,8 @@ namespace Labor
                 table.AllowUserToResizeRows = false;
                 table.AllowUserToResizeColumns = false;
                 table.AllowUserToAddRows = false;
-                table.Width = 720;
+                table.Width = 403;
                 table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-                //table.MultiSelect = false;
                 table.ReadOnly = true;
                 table.DataBindingComplete += table_DataBindingComplete;
                 table.UserDeletingRow += table_UserDeletingRow;
@@ -513,27 +534,37 @@ namespace Labor
             {
                 data = new DataTable();
 
-                // TODO
+                data.Columns.Add(new DataColumn("Termékkód", System.Type.GetType("System.String")));
+                data.Columns.Add(new DataColumn("Sarzs", System.Type.GetType("System.String")));
+                data.Columns.Add(new DataColumn("Hordó száma", System.Type.GetType("System.String")));
                 data.Columns.Add(new DataColumn("Foglalás száma", System.Type.GetType("System.String")));
-                data.Columns.Add(new DataColumn("Foglalás neve", System.Type.GetType("System.String")));
-                data.Columns.Add(new DataColumn("Foglalt hordók száma", System.Type.GetType("System.Int32")));
-                data.Columns.Add(new DataColumn("Foglalás típusa", System.Type.GetType("System.String")));
-                data.Columns.Add(new DataColumn("Készítette", System.Type.GetType("System.String")));
-                data.Columns.Add(new DataColumn("Foglalás ideje", System.Type.GetType("System.String")));
+                data.Columns.Add(new DataColumn("Gyártási év", System.Type.GetType("System.String")));
+
+                List<Hordó> hordók = Program.database.Foglalás_Hordók(foglalás);
+                foreach(Hordó item in hordók)
+                {
+                    DataRow row = data.NewRow();
+                    row[Hordó.TableIndexes.termékkód] = item.termékkód;
+                    row[Hordó.TableIndexes.sarzs] = item.sarzs;
+                    row[Hordó.TableIndexes.id] = item.id;
+                    row[Hordó.TableIndexes.foglalás_száma] = item.foglalás_száma;
+                    row[Hordó.TableIndexes.gyártási_év] = item.gyártási_év;
+                    data.Rows.Add(row);
+                }
 
                 return data;
             }
 
             #region EventHandlers
-            void table_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+            private void table_DataBindingComplete(object _sender, DataGridViewBindingCompleteEventArgs _event)
             {
                 table.DataBindingComplete -= table_DataBindingComplete;
-                table.Columns[0].Width = 120;
-                table.Columns[1].Width = 120;
-                table.Columns[2].Width = 120;
-                table.Columns[3].Width = 120;
-                table.Columns[4].Width = 120;
-                table.Columns[5].Width = 120;
+
+                table.Columns[Hordó.TableIndexes.termékkód].Width = 100;
+                table.Columns[Hordó.TableIndexes.sarzs].Width = 100;
+                table.Columns[Hordó.TableIndexes.id].Width = 100;
+                table.Columns[Hordó.TableIndexes.foglalás_száma].Visible = false;
+                table.Columns[Hordó.TableIndexes.gyártási_év].Width = 100;
             }
 
             private void Hordó_Törlés(object _sender, EventArgs _event)

@@ -76,7 +76,7 @@ namespace Labor
                                 "VIMTS1 varchar(15),VIMTD1 varchar(8),VIMKS1 varchar(15),VIMKD1 varchar(8), VIMKS2 varchar(15), VIMKD2 varchar(8), VIMKS3 varchar(15), VIMKD3 varchar(8), VIMKS4 varchar(15), VIMKD4 varchar(8), " +
                                 "VIMKS5 varchar(15), VIMKD5 varchar(8), VIMKS6 varchar(15), VIMKD6 varchar(8),VILABO varchar(15));" +
 
-                            "CREATE TABLE L_HORDO(HOTEKO varchar(3),HOSARZ varchar(3) ,HOZSSZ varchar(4),FOSZAM tinyint, VIGYEV varchar(1));" +
+                            "CREATE TABLE L_HORDO(HOTEKO varchar(3), HOSARZ varchar(3), HOSZAM varchar(4), FOSZAM int, VIGYEV varchar(1));" +
 
                             "CREATE TABLE L_FOGLAL (FONEVE varchar(30), FOSZAM int IDENTITY(1,1), FODATE varchar(20), FOTIPU varchar(9), FOFENE varchar(15), FOTEKO varchar(3), FOSARZT varchar(3), FOSARZI varchar(3), FOZSSZT varchar(4)," +
                                 "FOZSSZI varchar(4), FOBRIXT DECIMAL(4,4), FOBRIXI DECIMAL(4,4), FOCSAVT DECIMAL(4,4), FOCSAVI DECIMAL(4,4), FOPEHAT DECIMAL(4,4), FOPEHAI DECIMAL(4,4), FOBOSTT DECIMAL(4,4)," +
