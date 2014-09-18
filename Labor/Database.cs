@@ -1154,7 +1154,7 @@ namespace Labor
             }
         }
 
-        public List<Hordó> Hordók(Vizsgalap_Szűrő _szűrő, Sarzs _sarzs)
+        public List<Hordó> Hordók(Sarzs _sarzs)
         {
             lock (LaborLock)
             {
@@ -1163,6 +1163,14 @@ namespace Labor
             }
         }
 
+        public List<Hordó> Hordók(Foglalás _foglalás, Sarzs _sarzs)
+        {
+            lock (LaborLock)
+            {
+                List<Hordó> value = new List<Hordó>();
+                return value;
+            }
+        }
         #endregion
 
         #region Keresés

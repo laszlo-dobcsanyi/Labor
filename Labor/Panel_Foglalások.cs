@@ -911,7 +911,7 @@ namespace Labor
                 private void InitializeForm()
                 {
                     Text = "Keresés eredménye";
-                    ClientSize = new Size(500, 600);
+                    ClientSize = new Size(500 + 3, 600);
                     MinimumSize = ClientSize;
                     StartPosition = FormStartPosition.CenterScreen;
                     FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -925,7 +925,8 @@ namespace Labor
                     table.AllowUserToResizeRows = false;
                     table.AllowUserToResizeColumns = false;
                     table.AllowUserToAddRows = false;
-                    table.Width = 500;
+                    table.Width = 500 + 3;
+                    table.Height = 500;
                     table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
                     table.ReadOnly = true;
                     table.DataBindingComplete += table_DataBindingComplete;
@@ -1046,7 +1047,7 @@ namespace Labor
                     private void InitializeForm()
                     {
                         Text = "Hordók";
-                        ClientSize = new Size(300, 500);
+                        ClientSize = new Size(300 + 3, 500);
                         MinimumSize = ClientSize;
                         StartPosition = FormStartPosition.CenterScreen;
                         FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -1060,7 +1061,8 @@ namespace Labor
                         table.AllowUserToResizeRows = false;
                         table.AllowUserToResizeColumns = false;
                         table.AllowUserToAddRows = false;
-                        table.Width = 300;
+                        table.Width = 300 + 3;
+                        table.Height = 400;
                         table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
                         table.ReadOnly = true;
                         table.DataBindingComplete += table_DataBindingComplete;
@@ -1111,15 +1113,37 @@ namespace Labor
 
                         data.Columns.Add(new DataColumn("Termékkód", System.Type.GetType("System.String")));
                         data.Columns.Add(new DataColumn("Hordószám", System.Type.GetType("System.Int32")));
-                        data.Columns.Add(new DataColumn("Foglalt hordó", System.Type.GetType("System.String")));
-
-                        // TODO adatokat felpattintani
-                        List<Hordó> hordók = Program.database.Hordók(szűrő, sarzs);
 
                         if (foglalás != null)
                         {
-                            List<Hordó> foglalás_hordói = Program.database.Foglalás_Hordók(foglalás.Value);
-                            // TODO lehessen bejelölni utolsó sort, meg kell jeleníteni, és a foglalás_hordóiból kivenni, hogy le van-e már foglalva
+                            data.Columns.Add(new DataColumn("Foglalt hordó", System.Type.GetType("System.Boolean")));
+
+                            List<Hordó> hordók = Program.database.Hordók(foglalás.Value, sarzs);
+                            foreach(Hordó item in hordók)
+                            {
+                                DataRow row = data.NewRow();
+                                row[0] = item.termékkód;
+                                row[1] = item.sarzs;
+                                row[2] = item.foglalás_száma == null ? false : true;
+                                data.Rows.Add(row);
+                            }
+                        }
+                        else
+                        {
+                            DataColumn column = new DataColumn("Foglalás száma", System.Type.GetType("System.Int32"));
+                            column.AllowDBNull = true;
+                            data.Columns.Add(column);
+
+                            List<Hordó> hordók = Program.database.Hordók(sarzs);
+                            foreach (Hordó item in hordók)
+                            {
+                                DataRow row = data.NewRow();
+                                row[0] = item.termékkód;
+                                row[1] = item.sarzs;
+                                if (item.foglalás_száma == null) row[2] = DBNull.Value;
+                                else row[2] = item.foglalás_száma.Value;
+                                data.Rows.Add(row);
+                            }
                         }
 
                         return data;
@@ -1129,12 +1153,16 @@ namespace Labor
                     private void table_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
                     {
                         table.DataBindingComplete -= table_DataBindingComplete;
-                        table.Columns[0].Width = 100;
-                        table.Columns[1].Width = 100;
-                        table.Columns[2].Width = 100;
                         if (foglalás != null)
+                        { 
+                            table.Columns[0].Width = 100;
+                            table.Columns[1].Width = 100;
+                            table.Columns[2].Width = 100;
+                        }
+                        else
                         {
-                            // TODO CheckBoxok megjelenítése
+                            table.Columns[0].Width = 150;
+                            table.Columns[1].Width = 150;
                         }
                     }
 
