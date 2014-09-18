@@ -98,6 +98,14 @@ namespace Labor
 
                             "CREATE TABLE L_MINBIZ(MISZ1M varchar(600), MISZ1A varchar(600), MISZ2M varchar(600), MISZ2A varchar(600));" +
 
+                            //TODO TÖBBI
+                            "INSERT INTO L_GYFAJTA (GFTEKO, GFAZON, GFSZO2,GFSZO3) VALUES('" + "21" + "','" + "Érdi jubileum" + "','" + "" + "','" + "" + "');" +
+                            "INSERT INTO L_GYFAJTA (GFTEKO, GFAZON, GFSZO2,GFSZO3) VALUES('" + "21" + "','" + "Érdi bőtermő" + "','" + "" + "','" + "" + "');" +
+                            "INSERT INTO L_GYFAJTA (GFTEKO, GFAZON, GFSZO2,GFSZO3) VALUES('" + "21" + "','" + "Cigány" + "','" + "Gipsy" + "','" + "" + "');" +
+                            "INSERT INTO L_GYFAJTA (GFTEKO, GFAZON, GFSZO2,GFSZO3) VALUES('" + "31" + "','" + "Piroska" + "','" + "" + "','" + "" + "');" +
+                            "INSERT INTO L_GYFAJTA (GFTEKO, GFAZON, GFSZO2,GFSZO3) VALUES('" + "12" + "','" + "Hasberg" + "','" + "" + "','" + "" + "');" +
+                            "INSERT INTO L_GYFAJTA (GFTEKO, GFAZON, GFSZO2,GFSZO3) VALUES('" + "12" + "','" + "Gyűjtött" + "','" + "collected" + "','" + "" + "');" +
+
                             "INSERT INTO L_TORZSA (TOTIPU, TOAZON, TOSZO2,TOSZO3) VALUES('" + "Származási ország" + "','" + "Magyarország" + "','" + "Hungary" + "','" + "Ungarn" + "');" +
                             "INSERT INTO L_TORZSA (TOTIPU, TOAZON, TOSZO2,TOSZO3) VALUES('" + "Származási ország" + "','" + "Szlovákia" + "','" + "Slovakia" + "','" + "Slowakei" + "');" +
                             "INSERT INTO L_TORZSA (TOTIPU, TOAZON, TOSZO2,TOSZO3) VALUES('" + "Származási ország" + "','" + "Románia" + "','" + "Romania" + "','" + "Rumänien" + "');" +
@@ -194,10 +202,9 @@ namespace Labor
             lock (MarillenLock)
             {
                 List<string> value = new List<string>();
-                /*
                 marillenconnection.Open();
                 SqlCommand command = marillenconnection.CreateCommand();
-                command.CommandText = "SELECT gfazon FROM l_gyfajta WHERE (l_gyfajta.gfazon = " + _termékkód.Substring(0, 2) + ") ORDER BY gfazon";
+                command.CommandText = "SELECT gfazon FROM l_gyfajta WHERE (l_gyfajta.gfteko = '" + _termékkód.Substring(0,2 ) + "') ORDER BY gfazon";
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -205,8 +212,6 @@ namespace Labor
                 }
                 command.Dispose();
                 marillenconnection.Close();
-                 */
-                value.Add("FIXME - gyümölcsfajta");
                 return value;
             }
         }

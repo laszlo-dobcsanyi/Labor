@@ -901,6 +901,7 @@ namespace Labor
                     {
                         combo_gyümölcsfajta.Items.Add(item);
                     }
+                    if(combo_gyümölcsfajta.Items.Count!=0)
                     combo_gyümölcsfajta.SelectedIndex = 0;
                 }
             }
