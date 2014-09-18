@@ -14,8 +14,8 @@ namespace Labor
 
         public Database()
         {
-            marillenconnection = new SqlConnection("Server=.\\SQLEXPRESS;Database=marillen2013;Integrated Security=true");
-            laborconnection = new SqlConnection("Server=.\\SQLEXPRESS;Database=Labor;Integrated Security=true");
+            marillenconnection = new SqlConnection("Server=" + Settings.server + ";Database=" + Settings.marillen_database + ";Integrated Security=true");
+            laborconnection = new SqlConnection("Server=" + Settings.server + ";Database=" + Settings.labor_database + ";Integrated Security=true");
 
             try
             {
@@ -34,12 +34,12 @@ namespace Labor
             }
             catch
             {
-                SqlConnection create_connection = new SqlConnection("Server=.\\SQLEXPRESS;Integrated Security=true");
+                SqlConnection create_connection = new SqlConnection("Server=" + Settings.server + ";Integrated Security=true");
 
                 try
                 {
                     create_connection.Open();
-                    SqlCommand command = new SqlCommand("CREATE DATABASE Labor", create_connection);
+                    SqlCommand command = new SqlCommand("CREATE DATABASE " + Settings.labor_database, create_connection);
                     command.ExecuteNonQuery();
                     command.Dispose();
 
@@ -54,7 +54,7 @@ namespace Labor
                 {
                     //MessageBox.Show("Várakozás a Labor adatbázis létrehozására..", "Információ");
                     System.Threading.Thread.Sleep(5000);
-                    laborconnection = new SqlConnection("Server=.\\SQLEXPRESS;Database=Labor;Integrated Security=true");
+                    laborconnection = new SqlConnection("Server=" + Settings.server + ";Database=" + Settings.labor_database + ";Integrated Security=true");
                     laborconnection.Open();
                     SqlCommand command = new SqlCommand(
                             "CREATE TABLE L_TORZSA (TOTIPU varchar(20) NOT NULL,TOAZON varchar(15) PRIMARY KEY,TOSZO2 varchar(15),TOSZO3 varchar(15));" +
