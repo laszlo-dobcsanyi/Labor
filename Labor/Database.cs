@@ -60,7 +60,8 @@ namespace Labor
                             "CREATE TABLE L_TORZSA (TOTIPU varchar(20) NOT NULL,TOAZON varchar(15) PRIMARY KEY,TOSZO2 varchar(15),TOSZO3 varchar(15));" +
 
                             // Vizsgálat
-                            "CREATE TABLE L_VIZSLAP (VITEKO varchar(4) NOT NULL, VISARZ varchar(3) NOT NULL, VIHOSZ varchar(4) NOT NULL, VIHOTI varchar(15), VINETO DECIMAL(6, 3), VISZAT tinyint, VIMEGR varchar(50), VIMSSZ int IDENTITY(1,1)," +
+                            "CREATE TABLE L_VIZSLAP (VITEKO varchar(4) NOT NULL, VISARZ varchar(3) NOT NULL, VIHOSZ varchar(4) NOT NULL, VIHOTI varchar(15), VINETO DECIMAL(6, 3), VISZAT tinyint, VIMEGR varchar(50), " +
+                                "VIMSSZ int IDENTITY(1,1), FOSZAM int, " +
 
                                 // Adatok1
                                 "VITENE varchar(50), VIHOKE tinyint, VIGYEV varchar(1), VIMUJE varchar(1), VITOGE varchar(1),  VISZOR varchar(15), VIFAJT varchar(50), " +
@@ -438,13 +439,14 @@ namespace Labor
                 // Azonosító
                 Vizsgálat.Azonosító? azonosító = null;
                 command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT VITEKO, VISARZ, VIHOSZ, VIHOTI, VINETO, VISZAT, VIMEGR, VIMSSZ FROM L_VIZSLAP";
+                command.CommandText = "SELECT VITEKO, VISARZ, VIHOSZ, VIHOTI, VINETO, VISZAT, VIMEGR, VIMSSZ, FOSZAM FROM L_VIZSLAP";
                 try
                 {
                     reader = command.ExecuteReader();
                     while (reader.Read())
                     {
-                        azonosító = new Vizsgálat.Azonosító(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), (double)reader.GetDecimal(4), reader.GetByte(5), reader.GetString(6), reader.GetInt32(7));
+                        azonosító = new Vizsgálat.Azonosító(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), (double)reader.GetDecimal(4), reader.GetByte(5),
+                            reader.GetString(6), reader.GetInt32(7), reader.GetInt32(8));
                     }
                     reader.Close();
                 }
@@ -535,12 +537,13 @@ namespace Labor
                 laborconnection.Open();
 
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT VITEKO, VISARZ, VIHOSZ, VIHOTI, VINETO, VISZAT, VIMEGR, VIMSSZ FROM L_VIZSLAP";
+                command.CommandText = "SELECT VITEKO, VISARZ, VIHOSZ, VIHOTI, VINETO, VISZAT, VIMEGR, VIMSSZ, FOSZAM FROM L_VIZSLAP";
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    data.Add(new Vizsgálat.Azonosító(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), (double)reader.GetDecimal(4), reader.GetByte(5), reader.GetString(6), reader.GetInt32(7)));
+                    data.Add(new Vizsgálat.Azonosító(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), (double)reader.GetDecimal(4), reader.GetByte(5),
+                        reader.GetString(6), reader.GetInt32(7), reader.GetInt32(8)));
                 }
                 command.Dispose();
                 laborconnection.Close();
@@ -557,6 +560,8 @@ namespace Labor
         {
             lock (LaborLock)
             {
+                laborconnection.Open();
+
                 string where = A(new string[] { Update<string>("VITEKO", _vizsgálat.azonosító.termékkód), Update<string>("VISARZ", _vizsgálat.azonosító.sarzs), Update<string>("VIGYEV", _vizsgálat.adatok1.gyártási_év) });
 
                 SqlCommand command = new SqlCommand("SELECT VIHOTI FROM L_VIZSLAP WHERE " + where);// "')");
@@ -567,7 +572,9 @@ namespace Labor
                     if (reader.GetString(0) != _vizsgálat.azonosító.hordótípus)
                         return reader.GetString(0);
                 }
-                reader.Close();
+
+                command.Dispose();
+                laborconnection.Close();
 
                 return null;
             }
