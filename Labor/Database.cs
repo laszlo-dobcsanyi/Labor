@@ -92,27 +92,41 @@ namespace Labor
 
                             "CREATE TABLE L_EREDMENY(RTEKO varchar(3), RSARZ varchar(3), RSZHO tinyint, FOFOHO tinyint);" +
 
-                            "CREATE TABLE L_GYFAJTA(GFTEKO varchar(2), GFAZON varchar(15), GFSZO2 varchar(15), GFSZO3 varchar(15));" +
+                            "CREATE TABLE L_GYFAJTA(GFTEKO varchar(2), GFAZON varchar(30), GFSZO2 varchar(30), GFSZO3 varchar(30));" +
 
                             "CREATE TABLE L_TAPERTEK(TATEKO varchar(2), TAKIO tinyint, TAKCAL tinyint, TAFEHE DECIMAL(2, 1), TASZHI DECIMAL(3, 1), TAZSIR DECIMAL(2, 1), TAELRO DECIMAL(2, 1));" +
 
                             "CREATE TABLE L_MINBIZ(MISZ1M varchar(600), MISZ1A varchar(600), MISZ2M varchar(600), MISZ2A varchar(600));" +
 
                             //TODO TÖBBI
-                            "INSERT INTO L_GYFAJTA (GFTEKO, GFAZON, GFSZO2,GFSZO3) VALUES('" + "21" + "','" + "Érdi jubileum" + "','" + "" + "','" + "" + "');" +
-                            "INSERT INTO L_GYFAJTA (GFTEKO, GFAZON, GFSZO2,GFSZO3) VALUES('" + "21" + "','" + "Érdi bőtermő" + "','" + "" + "','" + "" + "');" +
-                            "INSERT INTO L_GYFAJTA (GFTEKO, GFAZON, GFSZO2,GFSZO3) VALUES('" + "21" + "','" + "Cigány" + "','" + "Gipsy" + "','" + "" + "');" +
-                            "INSERT INTO L_GYFAJTA (GFTEKO, GFAZON, GFSZO2,GFSZO3) VALUES('" + "31" + "','" + "Piroska" + "','" + "" + "','" + "" + "');" +
-                            "INSERT INTO L_GYFAJTA (GFTEKO, GFAZON, GFSZO2,GFSZO3) VALUES('" + "12" + "','" + "Hasberg" + "','" + "" + "','" + "" + "');" +
-                            "INSERT INTO L_GYFAJTA (GFTEKO, GFAZON, GFSZO2,GFSZO3) VALUES('" + "12" + "','" + "Gyűjtött" + "','" + "collected" + "','" + "" + "');" +
+                            "INSERT INTO L_GYFAJTA (GFTEKO, GFAZON, GFSZO2,GFSZO3) VALUES    ('21','Érdi jubileum','','')," +
+                                                                                            "('21','Érdi bőtermő','','')," +
+                                                                                            "('21','Cigány','Gipsy','')," +
+                                                                                            "('21','Pándy','','')," +
+                                                                                            "('21','Újfehértói fürtös','','')," +
+                                                                                            "('21','Debreceni Bőtermő','','')," +
+                                                                                            "('21','Kántorjánosi','','')," +
+                                                                                            "('22','Vega','','')," +
+                                                                                            "('14','Anita','','')," +
+                                                                                            "('14','Elsanta','','')," +
+                                                                                            "('14','Ázsia','Asia','')," +
+                                                                                            "('14','Clary','','')," +
+                                                                                            "('11','Piros','red','')," +
+                                                                                            "('10','Fekete','black','')," +
+                                                                                            "('31','Piroska','','')," +
+                                                                                            "('31','Pannónia','','')," +
+                                                                                            "('31','Gönci kajszi','','')," +
+                                                                                            "('31','Ceglédi óriás','','');" +
 
-                            "INSERT INTO L_TORZSA (TOTIPU, TOAZON, TOSZO2,TOSZO3) VALUES('" + "Származási ország" + "','" + "Magyarország" + "','" + "Hungary" + "','" + "Ungarn" + "');" +
-                            "INSERT INTO L_TORZSA (TOTIPU, TOAZON, TOSZO2,TOSZO3) VALUES('" + "Származási ország" + "','" + "Szlovákia" + "','" + "Slovakia" + "','" + "Slowakei" + "');" +
-                            "INSERT INTO L_TORZSA (TOTIPU, TOAZON, TOSZO2,TOSZO3) VALUES('" + "Származási ország" + "','" + "Románia" + "','" + "Romania" + "','" + "Rumänien" + "');" +
-                            "INSERT INTO L_TORZSA (TOTIPU, TOAZON, TOSZO2,TOSZO3) VALUES('" + "Hordótípus" + "','" + "Kicsi" + "','" + "Small" + "','" + "Klein" + "');" +
-                            "INSERT INTO L_TORZSA (TOTIPU, TOAZON, TOSZO2,TOSZO3) VALUES('" + "Hordótípus" + "','" + "Nagy" + "','" + "Big" + "','" + "Groß" + "');" +
-                            "INSERT INTO L_TORZSA (TOTIPU, TOAZON, TOSZO2,TOSZO3) VALUES('" + "Laboros" + "','" + "Belinyák Máté" + "','" + "Máté Belinyák" + "','" + "Máté Belinyák" + "');" +
-                            "INSERT INTO L_TORZSA (TOTIPU, TOAZON, TOSZO2,TOSZO3) VALUES('" + "Laboros" + "','" + "Belinyák Nándor" + "','" + "Nándor Belinyák" + "','" + "Nándor Belinyák" + "');", laborconnection);
+
+
+                            "INSERT INTO L_TORZSA (TOTIPU, TOAZON, TOSZO2,TOSZO3) VALUES('Származási ország','Magyarország','Hungary','Ungarn')," +
+                                                                                        "('Származási ország','Szlovákia','Slovakia','Slowakei')," +
+                                                                                        "('Származási ország','Románia','Romania','Rumänien')," +
+                                                                                        "('Hordótípus','Kicsi','Small','Klein')," +
+                                                                                        "('Hordótípus','Nagy','Big','Groß')," +
+                                                                                        "('Laboros','Belinyák Máté','Máté Belinyák','Máté Belinyák')," +
+                                                                                        "('Laboros','Belinyák Nándor','Nándor Belinyák','Nándor Belinyák');", laborconnection);
                     command.ExecuteNonQuery();
                     command.Dispose();
                     laborconnection.Close();
