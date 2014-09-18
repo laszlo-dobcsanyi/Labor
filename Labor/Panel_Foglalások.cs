@@ -631,6 +631,7 @@ namespace Labor
 
             public Vizsgálat_Kereső()
             {
+                Text = "Vizsgálat keresés";
                 InitializeForm();
                 InitializeContent();
                 InitializeData();
@@ -639,6 +640,8 @@ namespace Labor
             public Vizsgálat_Kereső(Foglalás _eredeti)
             {
                 eredeti = _eredeti;
+
+                Text = "Vizsgálat keresés " + _eredeti.név + " foglalás számára";
                 InitializeForm();
                 InitializeContent();
                 InitializeData(_eredeti);
@@ -646,7 +649,6 @@ namespace Labor
 
             private void InitializeForm()
             {
-                Text = "Vizsgálat keresés";
                 ClientSize = new Size(500, 588);
                 MinimumSize = ClientSize;
                 StartPosition = FormStartPosition.CenterScreen;
@@ -731,12 +733,11 @@ namespace Labor
                     combo_származási_ország.Items.Add(item.azonosító);
                 }
 
-                // TODO ne feljts el!
-                /* List<string> megrendelok = Program.database.Megrendelők();
+                 List<string> megrendelok = Program.database.Megrendelők();
                  foreach (string item in megrendelok)
                  {
                      combo_megrendelő.Items.Add(item);
-                 }*/
+                 }
 
                 Button rendben = new Button();
                 rendben.Text = "Rendben";
@@ -800,21 +801,18 @@ namespace Labor
                 if (box_min_citromsav_ad.Text.Length != 0 && box_max_citromsav_ad.Text.Length != 0) if (Convert.ToInt32(box_min_citromsav_ad.Text) > Convert.ToInt32(box_max_citromsav_ad.Text)) { MessageBox.Show("citromsav_ad!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 if (box_min_szita_átmérő.Text.Length != 0 && box_max_szita_átmérő.Text.Length != 0) if (Convert.ToInt32(box_min_szita_átmérő.Text) > Convert.ToInt32(box_max_szita_átmérő.Text)) { MessageBox.Show("szita_átmérő!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
 
-                Vizsgalap_Szűrő.Adatok1 adatok1 = new Vizsgalap_Szűrő.Adatok1
-                    (
-                    Program.mainform.ConvertOrDieString(combo_gyümölcsfajta.SelectedText),
-                    Program.mainform.ConvertOrDieString(combo_hordótípus.SelectedText),
-                    Program.mainform.ConvertOrDieString(combo_megrendelő.SelectedText),
-                    Program.mainform.ConvertOrDieString(combo_származási_ország.SelectedText),
+                Vizsgalap_Szűrő.Adatok1 adatok1 = new Vizsgalap_Szűrő.Adatok1(
+                    Program.mainform.ConvertOrDieString(combo_gyümölcsfajta.Text),
+                    Program.mainform.ConvertOrDieString(combo_hordótípus.Text),
+                    Program.mainform.ConvertOrDieString(combo_megrendelő.Text),
+                    Program.mainform.ConvertOrDieString(combo_származási_ország.Text),
                     Program.mainform.ConvertOrDieString(box_műszak_jele.Text),
                     Program.mainform.ConvertOrDieString(box_töltőgép_száma.Text),
-                    //TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!444444444négynégy
-                     Program.mainform.ConvertOrDieString(eredeti.Value.idő),
-                     Program.mainform.ConvertOrDieString(eredeti.Value.típus),
+                    Program.mainform.ConvertOrDieString((eredeti == null) ? null : eredeti.Value.idő),
+                    Program.mainform.ConvertOrDieString((eredeti == null) ? null : eredeti.Value.típus),
                     Program.mainform.ConvertOrDieString(box_termékkód.Text));
 
-                Vizsgalap_Szűrő.Adatok2 adatok2 = new Vizsgalap_Szűrő.Adatok2
-                    (
+                Vizsgalap_Szűrő.Adatok2 adatok2 = new Vizsgalap_Szűrő.Adatok2(
                     Program.mainform.ConvertOrDie<int>(box_min_sarzs.Text),
                     Program.mainform.ConvertOrDie<int>(box_max_sarzs.Text),
                     Program.mainform.ConvertOrDie<int>(box_min_hordószám.Text),
