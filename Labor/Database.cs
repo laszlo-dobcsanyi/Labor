@@ -860,8 +860,6 @@ namespace Labor
                             GetNullableString(reader, ++c),
                             GetNullableString(reader, ++c));
 
-                        int sarzs_alsó = reader.GetInt32(9);
-
                         data.adatok2 = new Vizsgalap_Szűrő.Adatok2(
                             GetNullableString(reader, ++c),
                             GetNullableString(reader, ++c),
