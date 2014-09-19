@@ -6,6 +6,39 @@ using System.Windows.Forms;
 
 namespace Labor
 {
+    public struct Szállítólevél
+    {
+        public byte szlevél_szám;
+        public string szlevél;
+        public string fnév;
+        public string elszállítás_ideje;
+        public string nyelv;
+        public string vevő;
+        public string gépkocsi1;
+        public string gépkocsi2;
+        public byte foglalt_hordó;
+        public string gyártási_idő;
+        public string szín;
+        public string íz;
+        public string illat;
+
+        public Szállítólevél(byte _szlevél_szám, string _szlevél, string _fnév, string _elszállítás_ideje, string _nyelv, string _vevő, string _gépkocsi1, string _gépkocsi2, byte _foglalt_hordó, string _gyártási_idő, string _szín, string _íz, string _illat)
+        {
+            szlevél_szám = _szlevél_szám;
+            szlevél = _szlevél;
+            fnév = _fnév;
+            elszállítás_ideje = _elszállítás_ideje;
+            nyelv = _nyelv;
+            vevő = _vevő;
+            gépkocsi1 = _gépkocsi1;
+            gépkocsi2 = _gépkocsi2;
+            foglalt_hordó = _foglalt_hordó;
+            gyártási_idő = _gyártási_idő;
+            szín = _szín;
+            íz = _íz;
+            illat = _illat;
+        }
+    }
 
     public struct Konszignáció_Hordók_TableIndexes
     {
@@ -129,79 +162,15 @@ namespace Labor
         }
 
         #region EventHandlers
-        ComboBox combo_megrendelők;
 
         void nyomtatás_Click(object sender, EventArgs e)
         {
-            Form form_nyomtatás = new Form();
-            form_nyomtatás.Text = "Nyomtatás";
-            form_nyomtatás.ClientSize = new Size(320, 368);
-            form_nyomtatás.StartPosition = FormStartPosition.CenterScreen;
-
-
-            Label label_nyelv;
-            Label label_vevő;
-            Label label_gépkocsi;
-            Label label_szállítólevél;
-            Label label_gyártási_idő;
-            Label label_szín;
-            Label label_íz;
-            Label label_illat;
-
-            ComboBox combo_nyelv;
-            ComboBox combo_megrendelők;
-            TextBox box_rendszám1;
-            TextBox box_rendszám2;
-            TextBox box_levél;
-            TextBox box_gyártási_idő;
-            TextBox box_szín;
-            TextBox box_íz;
-            TextBox box_illat;
-            Button rendben;
-
-
-            label_nyelv = MainForm.createlabel("Nyelv:", 16, 16 + 0 * 32, form_nyomtatás);
-            label_vevő = MainForm.createlabel("Vevő:", 16, 16 + 1 * 32, form_nyomtatás);
-            label_gépkocsi = MainForm.createlabel("Gépkocsi:", 16, 16 + 2 * 32, form_nyomtatás);
-            label_szállítólevél = MainForm.createlabel("Szállítólevél:", 16, 16 + 3 * 32, form_nyomtatás);
-            label_gyártási_idő = MainForm.createlabel("Gyártási idő:", 16, 16 + 4 * 32, form_nyomtatás);
-            label_szín = MainForm.createlabel("Szín:", 16, 16 + 5 * 32, form_nyomtatás);
-            label_íz = MainForm.createlabel("Íz:", 16, 16 + 6 * 32, form_nyomtatás);
-            label_illat = MainForm.createlabel("Illat:", 16, 16 + 7 * 32, form_nyomtatás);
-
-            combo_nyelv = MainForm.createcombobox(label_nyelv.Location.X + 48 + label_nyelv.Width, label_nyelv.Location.Y, 200, form_nyomtatás);
-            combo_nyelv.Items.Add("Magyar"); combo_nyelv.Items.Add("Angol"); combo_nyelv.Items.Add("3. label_nyelv"); combo_nyelv.SelectedIndex = 0;
-
-            combo_megrendelők = MainForm.createcombobox(combo_nyelv.Location.X, label_vevő.Location.Y, 200, form_nyomtatás);
-            List<string> megrendelok = Program.database.Megrendelők();
-            foreach (string item in megrendelok) { combo_megrendelők.Items.Add(item); } combo_megrendelők.SelectedIndex = 0;
-
-            box_rendszám1 = MainForm.createtextbox(combo_nyelv.Location.X, label_gépkocsi.Location.Y, 20, 70, form_nyomtatás);
-            box_rendszám2 = MainForm.createtextbox(box_rendszám1.Location.X + box_rendszám1.Width + 8, label_gépkocsi.Location.Y, 20, 70, form_nyomtatás);
-            box_levél = MainForm.createtextbox(combo_nyelv.Location.X, label_szállítólevél.Location.Y, 20, 70, form_nyomtatás);
-
-            box_gyártási_idő = MainForm.createtextbox(combo_nyelv.Location.X, label_gyártási_idő.Location.Y, 20, 70, form_nyomtatás);
-            box_szín = MainForm.createtextbox(combo_nyelv.Location.X, label_szín.Location.Y, 20, 70, form_nyomtatás);
-            box_íz = MainForm.createtextbox(combo_nyelv.Location.X, label_íz.Location.Y, 20, 70, form_nyomtatás);
-            box_illat = MainForm.createtextbox(combo_nyelv.Location.X, label_illat.Location.Y, 20, 70, form_nyomtatás);
-
-            rendben = new Button();
-            rendben.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
-            rendben.Text = "Rendben";
-            rendben.Size = new System.Drawing.Size(96, 32);
-            rendben.Location = new Point(150, 300);
-            rendben.Click += nyomtatás_rendben_Click;
-
-            form_nyomtatás.Controls.Add(rendben);
-            form_nyomtatás.ShowDialog();
+            if (table.Rows.Count == 0) return;
+            Konszignáció_Nyomtatás form = new Konszignáció_Nyomtatás(
+                new Foglalás((int)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.foglalás_száma].Value, (string)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.foglalás_neve].Value, (int)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.foglalt_hordók_száma].Value,
+                    (string)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.foglalás_típusa].Value, (string)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.készítette].Value, (string)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.foglalás_ideje].Value));
+            form.ShowDialog();
         }
-
-        void nyomtatás_rendben_Click(object sender, EventArgs e)
-        {
-            Nyomtat.Nyomtat_Konszignáció(combo_megrendelők.Text);
-        }
-
-
 
         private void table_CellMouseUp(object _sender, DataGridViewCellMouseEventArgs _event)
         {
@@ -214,6 +183,7 @@ namespace Labor
      
         void hordók_Click(object sender, EventArgs e)
         {
+            if (table.Rows.Count == 0) return;
             Konszignáció_Hordók konszignáció_hordók = new Konszignáció_Hordók( (int)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.foglalás_száma].Value );
             int q = (int)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.foglalás_száma].Value;
             konszignáció_hordók.Show();
@@ -243,6 +213,102 @@ namespace Labor
             //Vizsgálat_Törlés(_sender, _event);
         }
         #endregion
+
+        public sealed class Konszignáció_Nyomtatás : Form
+        {
+            ComboBox combo_megrendelők;
+            ComboBox combo_nyelv;
+            TextBox box_rendszám1;
+            TextBox box_rendszám2;
+            TextBox box_levél;
+            TextBox box_gyártási_idő;
+            TextBox box_szín;
+            TextBox box_íz;
+            TextBox box_illat;
+
+            Foglalás foglalás;
+            public Konszignáció_Nyomtatás(Foglalás _foglalás)
+            {
+                foglalás = _foglalás;
+                InitializeForm();
+                InitializeContent();
+                InitializeData();
+
+            }
+            private void InitializeForm()
+            {
+                Text = "Nyomtatás";
+                ClientSize = new Size(320, 368);
+                StartPosition = FormStartPosition.CenterScreen;
+                MinimumSize = ClientSize;
+                FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            }
+
+            private void InitializeContent()
+            {
+
+                Label label_nyelv;
+                Label label_vevő;
+                Label label_gépkocsi;
+                Label label_szállítólevél;
+                Label label_gyártási_idő;
+                Label label_szín;
+                Label label_íz;
+                Label label_illat;
+
+               
+                Button rendben;
+
+
+                label_nyelv = MainForm.createlabel("Nyelv:", 16, 16 + 0 * 32, this);
+                label_vevő = MainForm.createlabel("Vevő:", 16, 16 + 1 * 32, this);
+                label_gépkocsi = MainForm.createlabel("Gépkocsi:", 16, 16 + 2 * 32, this);
+                label_szállítólevél = MainForm.createlabel("Szállítólevél:", 16, 16 + 3 * 32, this);
+                label_gyártási_idő = MainForm.createlabel("Gyártási idő:", 16, 16 + 4 * 32, this);
+                label_szín = MainForm.createlabel("Szín:", 16, 16 + 5 * 32, this);
+                label_íz = MainForm.createlabel("Íz:", 16, 16 + 6 * 32, this);
+                label_illat = MainForm.createlabel("Illat:", 16, 16 + 7 * 32, this);
+
+                combo_nyelv = MainForm.createcombobox(label_nyelv.Location.X + 48 + label_nyelv.Width, label_nyelv.Location.Y, 200, this);
+                combo_nyelv.Items.Add("Magyar"); combo_nyelv.Items.Add("Angol"); combo_nyelv.Items.Add("3. label_nyelv"); combo_nyelv.SelectedIndex = 0;
+
+                combo_megrendelők = MainForm.createcombobox(combo_nyelv.Location.X, label_vevő.Location.Y, 200, this);
+                List<string> megrendelok = Program.database.Megrendelők();
+                foreach (string item in megrendelok) { combo_megrendelők.Items.Add(item); } combo_megrendelők.SelectedIndex = 0;
+
+                box_rendszám1 = MainForm.createtextbox(combo_nyelv.Location.X, label_gépkocsi.Location.Y, 20, 70, this);
+                box_rendszám2 = MainForm.createtextbox(box_rendszám1.Location.X + box_rendszám1.Width + 8, label_gépkocsi.Location.Y, 20, 70, this);
+                box_levél = MainForm.createtextbox(combo_nyelv.Location.X, label_szállítólevél.Location.Y, 20, 70, this);
+
+                box_gyártási_idő = MainForm.createtextbox(combo_nyelv.Location.X, label_gyártási_idő.Location.Y, 20, 70, this);
+                box_szín = MainForm.createtextbox(combo_nyelv.Location.X, label_szín.Location.Y, 20, 70, this);
+                box_íz = MainForm.createtextbox(combo_nyelv.Location.X, label_íz.Location.Y, 20, 70, this);
+                box_illat = MainForm.createtextbox(combo_nyelv.Location.X, label_illat.Location.Y, 20, 70, this);
+
+                rendben = new Button();
+                rendben.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
+                rendben.Text = "Rendben";
+                rendben.Size = new System.Drawing.Size(96, 32);
+                rendben.Location = new Point(150, 300);
+                rendben.Click += rendben_Click;
+                this.Controls.Add(rendben);
+                this.ShowDialog();
+            }
+
+            void rendben_Click(object sender, EventArgs e)
+            {
+                //TODO
+                Program.database.Konszignáció_ÚJSzállítólevél(new Szállítólevél(0, box_levél.Text, foglalás.készítő, "??", combo_nyelv.Text[0].ToString(), combo_megrendelők.Text, box_rendszám1.Text, box_rendszám2.Text, (byte)foglalás.hordók_száma, "??", box_szín.Text, box_íz.Text, box_illat.Text));
+                Close();
+            }
+
+            private void InitializeData()
+            {
+            }
+
+        }
+
+
 
         public sealed class Konszignáció_Hordók : Form
         {

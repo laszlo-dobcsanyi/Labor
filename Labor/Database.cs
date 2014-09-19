@@ -88,7 +88,7 @@ namespace Labor
                             "CREATE TABLE L_FELHASZ (FEFEN1 varchar(15), FEFEN2 varchar(15), FEBEO1 varchar(15), FEBEO2 varchar(15), FEBEKO varchar(15), FEJELS varchar(15), FETOHO varchar(1), FETORO varchar(1), FETOTO varchar(1)," +
                                 "FEVIHO varchar(1), FEVIRO varchar(1), FEVITO varchar(1), FEFOKE varchar(1), FEFOFE varchar(1), FEFOTO varchar(1), FEFEHO varchar(1), FEFERO varchar(1), FEFETO varchar(1), FEKONY varchar(1), FEKITO varchar(1));" +
 
-                            "CREATE TABLE L_SZLEV (SZSZAM tinyint PRIMARY KEY, SZSZSZ varchar(15), SZFENE varchar(15), SZDATE varchar(10), SZNYEL varchar(1), SZVEVO varchar(15), SZGKR1 varchar(7), SZGKR2 varchar(7)," +
+                            "CREATE TABLE L_SZLEV (SZSZAM tinyint PRIMARY KEY, SZSZSZ varchar(50), SZFENE varchar(50), SZDATE varchar(10), SZNYEL varchar(1), SZVEVO varchar(100), SZGKR1 varchar(7), SZGKR2 varchar(7)," +
                                 "FOFOHO tinyint, SZGYEV varchar(4), SZSZIN varchar(60), SZIZEK varchar(60), SZILLA varchar(60));" +
 
                             //"CREATE TABLE L_EREDMENY(RTEKO varchar(3), RSARZ varchar(3), RSZHO tinyint, FOFOHO tinyint);" +
@@ -1290,6 +1290,25 @@ namespace Labor
             }
         }       
 
+        public bool Konszignáció_ÚJSzállítólevél(Szállítólevél _data)
+        {
+            lock (LaborLock)
+            {
+                SqlCommand command;
+                laborconnection.Open();
+                command = laborconnection.CreateCommand();
+                command.CommandText = "INSERT INTO L_SZLEV (SZSZAM,SZSZSZ,SZFENE,SZDATE,SZNYEL,SZVEVO,SZGKR1,SZGKR2,FOFOHO,SZGYEV,SZSZIN,SZIZEK,SZILLA)" +  
+                    " VALUES(" +_data.szlevél_szám + ",'" + _data.szlevél + "','" + _data.fnév + "','" + _data.elszállítás_ideje + "','"+ _data.nyelv + "','" +_data.vevő + "','"+ _data.gépkocsi1 + "','" +_data.gépkocsi2  + "'," + _data.foglalt_hordó + ",'"+ _data.gyártási_idő + "','"+ _data.szín + "','"+ _data.íz + "','"+ _data.illat + "');";
+
+                try { command.ExecuteNonQuery(); }
+                catch (Exception e) { MessageBox.Show(e.Message); return false; }
+                finally { command.Dispose(); laborconnection.Close(); }
+
+                laborconnection.Close();
+                return true;
+            }
+        }
+
         public Node_Konszignáció.Fejléc.Vevő Konszignáció_Vevő(string _partner)
         {
 
@@ -1310,8 +1329,6 @@ namespace Labor
                 return data;
             }
         }
-
-
         #endregion
 
 
