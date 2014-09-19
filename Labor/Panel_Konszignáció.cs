@@ -60,16 +60,19 @@ namespace Labor
             hordók.Size = new System.Drawing.Size(96, 32);
             hordók.Location = new Point(ClientRectangle.Width - 224 - 16, ClientRectangle.Height - 32 - 16);
             hordók.Click += hordók_Click;
+
             Button nyomtatás = new Button();
             nyomtatás.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
             nyomtatás.Text = "Nyomtatás";
             nyomtatás.Size = new System.Drawing.Size(96, 32);
             nyomtatás.Location = new Point(hordók.Location.X + hordók.Width + 16, hordók.Location.Y);
+            nyomtatás.Click += nyomtatás_Click;
 
             Controls.Add(table);
             Controls.Add(hordók);
             Controls.Add(nyomtatás);
         }
+
 
 
 
@@ -125,6 +128,70 @@ namespace Labor
         }
 
         #region EventHandlers
+        void nyomtatás_Click(object sender, EventArgs e)
+        {
+            Form form_nyomtatás = new Form();
+
+            form_nyomtatás.Text = "Nyomtatás";
+            form_nyomtatás.ClientSize = new Size(280, 268);
+            form_nyomtatás.StartPosition = FormStartPosition.CenterScreen;
+
+            Label nyelv = new Label();
+            nyelv.Text = "Nyelv:";
+            nyelv.Location = new Point(16, 16 + 0 * 32);
+
+
+            ComboBox combo_nyelv = MainForm.createcombobox(nyelv.Location.X + 4 + nyelv.Width, nyelv.Location.Y, 100, form_nyomtatás);
+            combo_nyelv.Items.Add("Magyar");
+            combo_nyelv.Items.Add("Angol");
+            combo_nyelv.Items.Add("3. nyelv");
+
+            Label vevő = new Label();
+            vevő.Text = "Vevő:";
+            vevő.Location = new Point(16, 16 + 1 * 32);
+
+            ComboBox combo_megrendelők = MainForm.createcombobox(vevő.Location.X + 4 + vevő.Width, vevő.Location.Y, 100, form_nyomtatás);
+            List<string> megrendelok = Program.database.Megrendelők();
+            foreach (string item in megrendelok)
+            {
+                combo_megrendelők.Items.Add(item);
+            }
+            combo_megrendelők.SelectedIndex = 0;
+
+
+            Label gépkocsi = new Label();
+            gépkocsi.Text = "Gépkocsi:";
+            gépkocsi.Location = new Point(16, 16 + 2 * 32);
+
+            TextBox rendszám = MainForm.createtextbox(gépkocsi.Location.X + 4 + gépkocsi.Width, gépkocsi.Location.Y, 20, 120, form_nyomtatás);
+
+            Label szállítólevél = new Label();
+            szállítólevél.Text = "Szállítólevél:";
+            szállítólevél.Location = new Point(16, 16 + 3 * 32);
+
+            TextBox levél = MainForm.createtextbox(szállítólevél.Location.X + 4 + szállítólevél.Width, szállítólevél.Location.Y, 20,120, form_nyomtatás);
+
+            Button rendben = new Button();
+            rendben.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
+            rendben.Text = "Rendben";
+            rendben.Size = new System.Drawing.Size(96, 32);
+            rendben.Location = new Point(150, 200);
+
+            form_nyomtatás.Controls.Add(nyelv);
+            form_nyomtatás.Controls.Add(vevő);
+            form_nyomtatás.Controls.Add(gépkocsi);
+            form_nyomtatás.Controls.Add(szállítólevél);
+            form_nyomtatás.Controls.Add(combo_nyelv);
+            form_nyomtatás.Controls.Add(combo_megrendelők);
+            form_nyomtatás.Controls.Add(rendszám);
+            form_nyomtatás.Controls.Add(levél);
+
+            form_nyomtatás.Controls.Add(rendben);
+            form_nyomtatás.ShowDialog();
+        }
+
+
+
         private void table_CellMouseUp(object _sender, DataGridViewCellMouseEventArgs _event)
         {
             // End of edition on each click on column of checkbox
