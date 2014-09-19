@@ -297,8 +297,18 @@ namespace Labor
 
             void rendben_Click(object sender, EventArgs e)
             {
-                //TODO
-                Program.database.Konszignáció_ÚJSzállítólevél(new Szállítólevél(0, box_levél.Text, foglalás.készítő, "??", combo_nyelv.Text[0].ToString(), combo_megrendelők.Text, box_rendszám1.Text, box_rendszám2.Text, (byte)foglalás.hordók_száma, "??", box_szín.Text, box_íz.Text, box_illat.Text));
+                //TODO check jó-é, gyártási idő??
+                string date = DateTime.Now.Year.ToString() + '.'+ DateTime.Now.Month + '.' + DateTime.Now.Day;
+                Szállítólevél temp = new Szállítólevél(0, box_levél.Text, foglalás.készítő , date , combo_nyelv.Text[0].ToString(), combo_megrendelők.Text, box_rendszám1.Text, box_rendszám2.Text, (byte)foglalás.hordók_száma, "??", box_szín.Text, box_íz.Text, box_illat.Text);
+
+                Program.database.Konszignáció_ÚJSzállítólevél(temp);
+
+                List<Hordó> hordók = Program.database.Konszignáció_Hordók(foglalás.id);
+
+                foreach (Hordó item in hordók)
+                {
+                    Nyomtat.Nyomtat_Konszignáció(temp,item.termékkód );
+                }
                 Close();
             }
 
