@@ -60,12 +60,12 @@ namespace Labor
             {
                 public int sorszám;
                 public int hordó;
-                public int sarzs;
-                public int nettó_súly;
+                public string sarzs;
+                public double? nettó_súly;
                 public string hordó_típus;
                 public string gyártás_dátum;
 
-                public Adat(int _sorszám, string _megnevezés, int _hordó, int _sarzs, int _nettó_súly, string _hordó_típus, string _gyártás_dátum)
+                public Adat(int _sorszám, string _megnevezés, int _hordó, string _sarzs, double? _nettó_súly, string _hordó_típus, string _gyártás_dátum)
                 {
                     sorszám = _sorszám;
                     hordó = _hordó;
@@ -100,15 +100,18 @@ namespace Labor
 
     public sealed class Nyomtat
     {
-        public static void Nyomtat_Konszignáció( Szállítólevél _szlevél,string _termékkód )
+        public static void Nyomtat_Konszignáció( Szállítólevél _szlevél,Hordó _hordó )
         {
             Node_Konszignáció data = new Node_Konszignáció();
             data.fejléc = new Node_Konszignáció.Fejléc();
             data.fejléc.vevő = Program.database.Konszignáció_Vevő(_szlevél.vevő);
             data.fejléc.feladó = new Node_Konszignáció.Fejléc.Feladó("Marillen Gyümölcsfeldolgozó Kft", "Kiskunfélegyháza, VIII. ker. 99/A");
             data.fejléc.szállítólevél = new Node_Konszignáció.Fejléc.Szlevél(_szlevél);
-            Node_Konszignáció.Gyümölcstípus gyümölcstípus = Program.database.Konszignáció_Gyümöklcstípus_Adatok(_termékkód);
-            
+            Node_Konszignáció.Gyümölcstípus gyümölcstípus = Program.database.Konszignáció_Gyümöklcstípus_Adatok(_hordó.termékkód);
+            gyümölcstípus.adat = new List<Node_Konszignáció.Gyümölcstípus.Adat>();
+            Node_Konszignáció.Gyümölcstípus.Adat gyadat = new Node_Konszignáció.Gyümölcstípus.Adat();
+
+            gyadat = Program.database.Konszignáció_Hordósor_Adatok(_hordó);
         }
 
     }

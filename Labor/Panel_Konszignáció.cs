@@ -307,7 +307,7 @@ namespace Labor
 
                 foreach (Hordó item in hordók)
                 {
-                    Nyomtat.Nyomtat_Konszignáció(temp,item.termékkód );
+                    Nyomtat.Nyomtat_Konszignáció(temp,item );
                 }
                 Close();
             }

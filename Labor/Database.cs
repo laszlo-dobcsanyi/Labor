@@ -1332,21 +1332,44 @@ namespace Labor
 
         public Node_Konszignáció.Gyümölcstípus Konszignáció_Gyümöklcstípus_Adatok(string _termékkód)
         {
-            int c = -1;
-            Node_Konszignáció.Gyümölcstípus data = new Node_Konszignáció.Gyümölcstípus();
-            marillenconnection.Open();
-            SqlCommand command = marillenconnection.CreateCommand();
-            command.CommandText = "SELECT vtsz,name FROM cikkek WHERE cikkek.item_nr=" + "'12" +  _termékkód.Substring(0,2) + "01'" ;
-            SqlDataReader reader = command.ExecuteReader();
-            while (reader.Read())
+            lock (MarillenLock)
             {
-                data = new Node_Konszignáció.Gyümölcstípus(reader.GetString(++c), reader.GetString(++c));
+                int c = -1;
+                Node_Konszignáció.Gyümölcstípus data = new Node_Konszignáció.Gyümölcstípus();
+                marillenconnection.Open();
+                SqlCommand command = marillenconnection.CreateCommand();
+                command.CommandText = "SELECT vtsz,name FROM cikkek WHERE cikkek.item_nr=" + "'12" +  _termékkód.Substring(0,2) + "01'" ;
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    data = new Node_Konszignáció.Gyümölcstípus(reader.GetString(++c), reader.GetString(++c));
+                }
+                command.Dispose();
+                marillenconnection.Close();
+                return data;
             }
-            command.Dispose();
-            marillenconnection.Close();
-            return data;
         }
 
+        public Node_Konszignáció.Gyümölcstípus.Adat Konszignáció_Hordósor_Adatok(Hordó _hordó)
+        {
+            lock (MarillenLock)
+            {
+                int c = -1;
+                Node_Konszignáció.Gyümölcstípus.Adat data = new Node_Konszignáció.Gyümölcstípus.Adat();
+                string iprod_id = "12" + _hordó.termékkód.Substring(0, 2) + "01" + _hordó.gyártási_év + "_0" + _hordó.gyártási_év + _hordó.id;
+                marillenconnection.Open();
+                SqlCommand command = marillenconnection.CreateCommand();
+                command.CommandText = "SELECT qty, time_ FROM tetelek WHERE (type=300) AND (prod_id LIKE" + "'" + iprod_id +"'" + ")";
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    data = new Node_Konszignáció.Gyümölcstípus.Adat(0, "", Convert.ToInt32(_hordó.gyártási_év.ToString() + _hordó.id.ToString()), _hordó.sarzs, (double?)GetNullable<decimal>(reader, ++c), "", reader.GetDateTime(++c).ToString());
+                }
+                command.Dispose();
+                marillenconnection.Close();
+                return data;
+            }
+        }
         #endregion
 
 
