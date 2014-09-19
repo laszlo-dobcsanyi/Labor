@@ -1219,11 +1219,6 @@ namespace Labor
         }
         #endregion
 
-        #region Keresés
-
-
-        #endregion
-
         #region Gyümölcsfajták
         public List<string> Gyümölcsfajták(string _termékkód)
         {
@@ -1244,6 +1239,60 @@ namespace Labor
             }
         }
         #endregion
+
+        #region Konszignáció
+        /// <summary>
+        /// azok a foglalások,amik még nem lettek kiszállítva, SZSZAM==0
+        /// </summary>
+        public List<Foglalás> Konszingnáció_Foglalások()
+        {
+            lock (LaborLock)
+            {
+                List<Foglalás> data = new List<Foglalás>();
+                laborconnection.Open();
+
+                SqlCommand command = laborconnection.CreateCommand();
+                command.CommandText = "SELECT FOSZAM, FONEVE, FOFOHO, FOTIPU, FOFENE, FODATE FROM L_FOGLAL WHERE SZSZAM IS NULL";
+
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    int c = -1;
+                    Foglalás temp_foglalás = new Foglalás(reader.GetInt32(++c), reader.GetString(++c), reader.GetByte(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c));
+                    data.Add(temp_foglalás);
+                }
+                command.Dispose();
+                laborconnection.Close();
+                return data;
+            }
+        }
+
+        public List<Hordó> Konszignáció_Hordók(int _id)
+        {
+            lock (LaborLock)
+            {
+                List<Hordó> value = new List<Hordó>();
+
+                laborconnection.Open();
+                SqlCommand command = laborconnection.CreateCommand();
+                command.CommandText = "SELECT VITEKO, VISARZ, VIHOSZ, VIGYEV FROM L_VIZSLAP WHERE FOSZAM = " + _id;
+
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    value.Add(new Hordó(reader.GetString(0), reader.GetString(1), reader.GetString(2), _id, reader.GetString(3)));
+                }
+
+                command.Dispose();
+                laborconnection.Close();
+
+                return value;
+            }
+        }       
+
+
+        #endregion
+
 
         #region Sufni
         private string HardcodedData()
