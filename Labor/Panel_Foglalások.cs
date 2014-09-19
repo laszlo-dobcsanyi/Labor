@@ -783,6 +783,16 @@ namespace Labor
             private void InitializeData()
             {
 
+                /*TESZTELÉSHEZ
+                int i = 0;
+                foreach (Control c in this.Controls)
+                {
+                    if (c is TextBox)
+                    {
+                        c.Text = (i++).ToString();
+                    }
+                }
+                */
             }
 
             private void InitializeData(Foglalás _foglalás)

@@ -186,7 +186,7 @@ namespace Labor
 
         public static string Is(string _filter, string _value_field)
         {
-            if (_filter != null) return _value_field + " = " + _filter;
+            if (_filter != null) return _value_field + " = " + "'" + _filter + "'";
             return null;
         }
 
@@ -1093,31 +1093,7 @@ namespace Labor
          
                  
          "SELECT VITEKO, VISARZ FROM L_VIZSLAP WHERE(_szűrő.Adatok2.min_sarzs)
-         
 
-
-
-            public double? min_brix;
-            public double? max_brix;
-            public double? min_citromsav;
-            public double? max_citromsav;
-            public double? min_borkősav;
-            public double? max_borkősav;
-            public double? min_ph;
-            public double? max_ph;
-            public double? min_bostwick;
-            public double? max_bostwick;
-
-            public Int16? min_aszkorbinsav;
-            public Int16? max_aszkorbinsav;
-            public Int16? min_nettó_töltet;
-            public Int16? max_nettó_töltet;
-            public byte? min_hőkezelés;
-            public byte? max_hőkezelés;
-            public byte? min_citromsav_ad;
-            public byte? max_citromsav_ad;
-            public byte? min_szita_átmérő;
-            public byte? max_szita_átmérő;
 */
 
         public List<Sarzs> Sarzsok(Vizsgalap_Szűrő _szűrő)
@@ -1125,15 +1101,32 @@ namespace Labor
             lock (LaborLock)
             {
                 List<Sarzs> value = new List<Sarzs>();
-            /*public string min_sarzs;
-            public string max_sarzs;
-            public string min_hordóid;
-            public string max_hordóid;*/
 
-                string Filter = A(new string[] { Is(_szűrő.adatok1.gyümölcsfajta, "VIFAJT"), Is(_szűrő.adatok1.hordótípus, "VIHOTI"), Is(_szűrő.adatok1.megrendelő, "VIMEGR"),
-                    Is(_szűrő.adatok1.származási_ország, "VISZOR"), Is(_szűrő.adatok1.műszak_jele, "VIMUJE"), Is(_szűrő.adatok1.töltőgép_száma, "VITOGE"), Is(_szűrő.adatok1.termékkód, "VITEKO"),
-                    BetweenString(_szűrő.adatok2.min_sarzs, "VISARZ", _szűrő.adatok2.max_sarzs), BetweenString(_szűrő.adatok2.min_hordóid, "VIHOSZ", _szűrő.adatok2.max_hordóid),
-                    Between<double>(_szűrő.adatok2.min_brix, "VIBRIX", _szűrő.adatok2.max_brix) });
+                string Filter = A(new string[]
+                {
+                    Is(_szűrő.adatok1.gyümölcsfajta, "VIFAJT"),
+                    Is(_szűrő.adatok1.hordótípus, "VIHOTI"),
+                    Is(_szűrő.adatok1.megrendelő, "VIMEGR"),
+                    Is(_szűrő.adatok1.származási_ország, "VISZOR"), 
+                    Is(_szűrő.adatok1.műszak_jele, "VIMUJE"),
+                    Is(_szűrő.adatok1.töltőgép_száma, "VITOGE"),
+                    Is(_szűrő.adatok1.termékkód, "VITEKO"),
+                    BetweenString(_szűrő.adatok2.min_sarzs, "VISARZ", _szűrő.adatok2.max_sarzs),
+                    BetweenString(_szűrő.adatok2.min_hordóid, "VIHOSZ", _szűrő.adatok2.max_hordóid),
+
+                    Between<double>(_szűrő.adatok2.min_brix, "VIBRIX", _szűrő.adatok2.max_brix) ,
+                    Between<double>(_szűrő.adatok2.min_citromsav, "VICSAV", _szűrő.adatok2.max_citromsav) ,
+                    Between<double>(_szűrő.adatok2.min_borkősav, "VIBOSA", _szűrő.adatok2.max_borkősav) ,
+                    Between<double>(_szűrő.adatok2.min_ph, "VIPEHA", _szűrő.adatok2.max_ph) ,
+                    Between<double>(_szűrő.adatok2.min_bostwick, "VIBOST", _szűrő.adatok2.max_bostwick) ,
+
+                    Between<Int16>(_szűrő.adatok2.min_aszkorbinsav, "VIASAV", _szűrő.adatok2.max_aszkorbinsav) ,
+                    Between<Int16>(_szűrő.adatok2.min_nettó_töltet, "VINETO", _szűrő.adatok2.max_nettó_töltet) ,
+                    Between<byte>(_szűrő.adatok2.min_hőkezelés, "VIHOKE", _szűrő.adatok2.max_hőkezelés) ,
+                    Between<byte>(_szűrő.adatok2.min_citromsav_ad, "VICIAD", _szűrő.adatok2.max_citromsav_ad) ,
+                    Between<byte>(_szűrő.adatok2.min_szita_átmérő, "VISZAT", _szűrő.adatok2.max_szita_átmérő) ,
+
+                });
          
 
                 laborconnection.Open();
