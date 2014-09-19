@@ -1290,6 +1290,27 @@ namespace Labor
             }
         }       
 
+        public Node_Konszignáció.Fejléc.Vevő Konszignáció_Vevő(string _partner)
+        {
+
+            lock (MarillenLock)
+            {
+                int c = -1;
+                Node_Konszignáció.Fejléc.Vevő data = new Node_Konszignáció.Fejléc.Vevő();
+                marillenconnection.Open();
+                SqlCommand command = marillenconnection.CreateCommand();
+                command.CommandText = "SELECT name, city, addr FROM partner WHERE partner.name=" + "'" + _partner + "'";
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    data = new Node_Konszignáció.Fejléc.Vevő(reader.GetString(++c), reader.GetString(++c), reader.GetString(++c));
+                }
+                command.Dispose();
+                marillenconnection.Close();
+                return data;
+            }
+        }
+
 
         #endregion
 

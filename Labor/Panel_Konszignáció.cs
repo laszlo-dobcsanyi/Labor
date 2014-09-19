@@ -6,6 +6,7 @@ using System.Windows.Forms;
 
 namespace Labor
 {
+
     public struct Konszignáció_Hordók_TableIndexes
     {
         public const int termékkód = 0;
@@ -128,66 +129,76 @@ namespace Labor
         }
 
         #region EventHandlers
+        ComboBox combo_megrendelők;
+
         void nyomtatás_Click(object sender, EventArgs e)
         {
             Form form_nyomtatás = new Form();
-
             form_nyomtatás.Text = "Nyomtatás";
-            form_nyomtatás.ClientSize = new Size(280, 268);
+            form_nyomtatás.ClientSize = new Size(320, 368);
             form_nyomtatás.StartPosition = FormStartPosition.CenterScreen;
 
-            Label nyelv = new Label();
-            nyelv.Text = "Nyelv:";
-            nyelv.Location = new Point(16, 16 + 0 * 32);
+
+            Label label_nyelv;
+            Label label_vevő;
+            Label label_gépkocsi;
+            Label label_szállítólevél;
+            Label label_gyártási_idő;
+            Label label_szín;
+            Label label_íz;
+            Label label_illat;
+
+            ComboBox combo_nyelv;
+            ComboBox combo_megrendelők;
+            TextBox box_rendszám1;
+            TextBox box_rendszám2;
+            TextBox box_levél;
+            TextBox box_gyártási_idő;
+            TextBox box_szín;
+            TextBox box_íz;
+            TextBox box_illat;
+            Button rendben;
 
 
-            ComboBox combo_nyelv = MainForm.createcombobox(nyelv.Location.X + 4 + nyelv.Width, nyelv.Location.Y, 100, form_nyomtatás);
-            combo_nyelv.Items.Add("Magyar");
-            combo_nyelv.Items.Add("Angol");
-            combo_nyelv.Items.Add("3. nyelv");
+            label_nyelv = MainForm.createlabel("Nyelv:", 16, 16 + 0 * 32, form_nyomtatás);
+            label_vevő = MainForm.createlabel("Vevő:", 16, 16 + 1 * 32, form_nyomtatás);
+            label_gépkocsi = MainForm.createlabel("Gépkocsi:", 16, 16 + 2 * 32, form_nyomtatás);
+            label_szállítólevél = MainForm.createlabel("Szállítólevél:", 16, 16 + 3 * 32, form_nyomtatás);
+            label_gyártási_idő = MainForm.createlabel("Gyártási idő:", 16, 16 + 4 * 32, form_nyomtatás);
+            label_szín = MainForm.createlabel("Szín:", 16, 16 + 5 * 32, form_nyomtatás);
+            label_íz = MainForm.createlabel("Íz:", 16, 16 + 6 * 32, form_nyomtatás);
+            label_illat = MainForm.createlabel("Illat:", 16, 16 + 7 * 32, form_nyomtatás);
 
-            Label vevő = new Label();
-            vevő.Text = "Vevő:";
-            vevő.Location = new Point(16, 16 + 1 * 32);
+            combo_nyelv = MainForm.createcombobox(label_nyelv.Location.X + 48 + label_nyelv.Width, label_nyelv.Location.Y, 200, form_nyomtatás);
+            combo_nyelv.Items.Add("Magyar"); combo_nyelv.Items.Add("Angol"); combo_nyelv.Items.Add("3. label_nyelv"); combo_nyelv.SelectedIndex = 0;
 
-            ComboBox combo_megrendelők = MainForm.createcombobox(vevő.Location.X + 4 + vevő.Width, vevő.Location.Y, 100, form_nyomtatás);
+            combo_megrendelők = MainForm.createcombobox(combo_nyelv.Location.X, label_vevő.Location.Y, 200, form_nyomtatás);
             List<string> megrendelok = Program.database.Megrendelők();
-            foreach (string item in megrendelok)
-            {
-                combo_megrendelők.Items.Add(item);
-            }
-            combo_megrendelők.SelectedIndex = 0;
+            foreach (string item in megrendelok) { combo_megrendelők.Items.Add(item); } combo_megrendelők.SelectedIndex = 0;
 
+            box_rendszám1 = MainForm.createtextbox(combo_nyelv.Location.X, label_gépkocsi.Location.Y, 20, 70, form_nyomtatás);
+            box_rendszám2 = MainForm.createtextbox(box_rendszám1.Location.X + box_rendszám1.Width + 8, label_gépkocsi.Location.Y, 20, 70, form_nyomtatás);
+            box_levél = MainForm.createtextbox(combo_nyelv.Location.X, label_szállítólevél.Location.Y, 20, 70, form_nyomtatás);
 
-            Label gépkocsi = new Label();
-            gépkocsi.Text = "Gépkocsi:";
-            gépkocsi.Location = new Point(16, 16 + 2 * 32);
+            box_gyártási_idő = MainForm.createtextbox(combo_nyelv.Location.X, label_gyártási_idő.Location.Y, 20, 70, form_nyomtatás);
+            box_szín = MainForm.createtextbox(combo_nyelv.Location.X, label_szín.Location.Y, 20, 70, form_nyomtatás);
+            box_íz = MainForm.createtextbox(combo_nyelv.Location.X, label_íz.Location.Y, 20, 70, form_nyomtatás);
+            box_illat = MainForm.createtextbox(combo_nyelv.Location.X, label_illat.Location.Y, 20, 70, form_nyomtatás);
 
-            TextBox rendszám = MainForm.createtextbox(gépkocsi.Location.X + 4 + gépkocsi.Width, gépkocsi.Location.Y, 20, 120, form_nyomtatás);
-
-            Label szállítólevél = new Label();
-            szállítólevél.Text = "Szállítólevél:";
-            szállítólevél.Location = new Point(16, 16 + 3 * 32);
-
-            TextBox levél = MainForm.createtextbox(szállítólevél.Location.X + 4 + szállítólevél.Width, szállítólevél.Location.Y, 20,120, form_nyomtatás);
-
-            Button rendben = new Button();
+            rendben = new Button();
             rendben.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
             rendben.Text = "Rendben";
             rendben.Size = new System.Drawing.Size(96, 32);
-            rendben.Location = new Point(150, 200);
-
-            form_nyomtatás.Controls.Add(nyelv);
-            form_nyomtatás.Controls.Add(vevő);
-            form_nyomtatás.Controls.Add(gépkocsi);
-            form_nyomtatás.Controls.Add(szállítólevél);
-            form_nyomtatás.Controls.Add(combo_nyelv);
-            form_nyomtatás.Controls.Add(combo_megrendelők);
-            form_nyomtatás.Controls.Add(rendszám);
-            form_nyomtatás.Controls.Add(levél);
+            rendben.Location = new Point(150, 300);
+            rendben.Click += nyomtatás_rendben_Click;
 
             form_nyomtatás.Controls.Add(rendben);
             form_nyomtatás.ShowDialog();
+        }
+
+        void nyomtatás_rendben_Click(object sender, EventArgs e)
+        {
+            Nyomtat.Nyomtat_Konszignáció(combo_megrendelők.Text);
         }
 
 
