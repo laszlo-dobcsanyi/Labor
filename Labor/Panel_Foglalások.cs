@@ -749,6 +749,7 @@ namespace Labor
                 box_max_aszkorbinsav.KeyPress += MainForm.OnlyNumber;
                 box_min_citromsav.KeyPress += MainForm.OnlyNumber;
                 box_max_citromsav.KeyPress += MainForm.OnlyNumber;
+                box_termékkód.Leave += box_termékkód_Leave;
                 #endregion
 
 
@@ -771,6 +772,8 @@ namespace Labor
                      combo_megrendelő.Items.Add(item);
                  }
 
+ 
+
                 Button rendben = new Button();
                 rendben.Text = "Rendben";
                 rendben.Size = new System.Drawing.Size(96, 32);
@@ -780,6 +783,7 @@ namespace Labor
                 Controls.Add(rendben);
             }
 
+           
             private void InitializeData()
             {
 
@@ -829,6 +833,14 @@ namespace Labor
             }
 
             #region EventHandlers
+            void box_termékkód_Leave(object sender, EventArgs e)
+            {
+                if(combo_gyümölcsfajta.Items.Count !=0){combo_gyümölcsfajta.Items.Clear();}
+                if(box_termékkód.Text.Length != 4){return;}
+                List<string> gyümölcsfajták = Program.database.Gyümölcsfajták(box_termékkód.Text);
+                foreach(string item in gyümölcsfajták){combo_gyümölcsfajta.Items.Add(item);}
+            }
+
             private void Keresés_Rendben(object _sender, EventArgs _e)
             {
                 if (box_min_sarzs.Text.Length != 0 && box_max_sarzs.Text.Length != 0) if ( MainForm.ConvertOrDie<int>(box_min_sarzs.Text) >  MainForm.ConvertOrDie<int>(box_max_sarzs.Text)) { MessageBox.Show("Sarzs!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
