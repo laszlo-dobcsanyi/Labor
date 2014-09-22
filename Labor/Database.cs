@@ -190,32 +190,32 @@ namespace Labor
             return null;
         }
 
-        public static string Between<T>(T? _min, string _value_field, T? _max) where T : struct
+        public static string Between<T>(MinMaxPair<T?> _filter, string _value_field) where T : struct
         {
             if (typeof(T) != typeof(double))
             {
                 string value = _value_field + " IS NOT NULL AND ";
-                if ((_min != null) && (_max == null)) return value + _min.Value + " <= " + _value_field;
-                if ((_min == null) && (_max != null)) return value + _value_field + " <= " + _max.Value;
-                if ((_min != null) && (_max != null)) return value + _value_field + " BETWEEN " + _min.Value + " AND " + _max.Value;
+                if ((_filter.min != null) && (_filter.max == null)) return value + _filter.min.Value + " <= " + _value_field;
+                if ((_filter.min == null) && (_filter.max != null)) return value + _value_field + " <= " + _filter.max.Value;
+                if ((_filter.min != null) && (_filter.max != null)) return value + _value_field + " BETWEEN " + _filter.min.Value + " AND " + _filter.max.Value;
                 return null;
             }
             else
             {
                 string value = _value_field + " IS NOT NULL AND ";
-                if ((_min != null) && (_max == null)) return value + _min.Value.ToString().Replace(',', '.') + " <= " + _value_field;
-                if ((_min == null) && (_max != null)) return value + _value_field + " <= " + _max.Value.ToString().Replace(',', '.');
-                if ((_min != null) && (_max != null)) return value + _value_field + " BETWEEN " + _min.ToString().Replace(',', '.') + " AND " + _max.Value.ToString().Replace(',', '.');
+                if ((_filter.min != null) && (_filter.max == null)) return value + _filter.min.Value.ToString().Replace(',', '.') + " <= " + _value_field;
+                if ((_filter.min == null) && (_filter.max != null)) return value + _value_field + " <= " + _filter.max.Value.ToString().Replace(',', '.');
+                if ((_filter.min != null) && (_filter.max != null)) return value + _value_field + " BETWEEN " + _filter.min.ToString().Replace(',', '.') + " AND " + _filter.max.Value.ToString().Replace(',', '.');
                 return null;
             }
         }
 
-        public static string BetweenString(string _min, string _value_field, string _max)
+        public static string BetweenString(MinMaxPair<string> _filter, string _value_field)
         {
             string value = _value_field + " IS NOT NULL AND ";
-            if ((_min != null) && (_max == null)) return value + "'" + _min + "' <= " + _value_field;
-            if ((_min == null) && (_max != null)) return value + _value_field + " <= '" + _max + "'";
-            if ((_min != null) && (_max != null)) return value + _value_field + " BETWEEN '" + _min + "' AND '" + _max + "'";
+            if ((_filter.min != null) && (_filter.max == null)) return value + "'" + _filter.min + "' <= " + _value_field;
+            if ((_filter.min == null) && (_filter.max != null)) return value + _value_field + " <= '" + _filter.max + "'";
+            if ((_filter.min != null) && (_filter.max != null)) return value + _value_field + " BETWEEN '" + _filter.min + "' AND '" + _filter.max + "'";
             return null;
         }
         #endregion
@@ -982,18 +982,18 @@ namespace Labor
 
                 // Adatok2
                 data = V(new string[] {
-                Update<string>("FOSARZT", _szűrő.adatok2.min_sarzs), Update<string>("FOSARZI", _szűrő.adatok2.max_sarzs),
-                Update<string>("FOHOSZT", _szűrő.adatok2.min_hordóid), Update<string>("FOHOSZI", _szűrő.adatok2.max_hordóid),
-                Update<double?>("FOBRIXT", _szűrő.adatok2.min_brix), Update<double?>("FOBRIXI", _szűrő.adatok2.max_brix),
-                Update<double?>("FOCSAVT", _szűrő.adatok2.min_citromsav), Update<double?>("FOCSAVI", _szűrő.adatok2.max_citromsav),
-                Update<double?>("FOBOSAT", _szűrő.adatok2.min_borkősav), Update<double?>("FOBOSAI", _szűrő.adatok2.max_borkősav),
-                Update<double?>("FOPEHAT", _szűrő.adatok2.min_ph), Update<double?>("FOPEHAI", _szűrő.adatok2.max_ph),
-                Update<double?>("FOBOSTT", _szűrő.adatok2.min_bostwick), Update<double?>("FOBOSTI", _szűrő.adatok2.max_bostwick),
-                Update<short?>("FOASAVT", _szűrő.adatok2.min_aszkorbinsav), Update<short?>("FOASAVI", _szűrő.adatok2.max_aszkorbinsav),
-                Update<short?>("FONETOT", _szűrő.adatok2.min_nettó_töltet), Update<short?>("FONETOI", _szűrő.adatok2.max_nettó_töltet),
-                Update<byte?>("FOHOFOT", _szűrő.adatok2.min_hőkezelés), Update<byte?>("FOHOFOI", _szűrő.adatok2.max_hőkezelés),
-                Update<byte?>("FOCIADT", _szűrő.adatok2.min_citromsav_ad), Update<byte?>("FOCIADI", _szűrő.adatok2.max_citromsav_ad),
-                Update<byte?>("FOSZATT", _szűrő.adatok2.min_szita_átmérő), Update<byte?>("FOSZATI", _szűrő.adatok2.max_szita_átmérő)});
+                Update<string>("FOSARZT", _szűrő.adatok2.sarzs.min), Update<string>("FOSARZI", _szűrő.adatok2.sarzs.max),
+                Update<string>("FOHOSZT", _szűrő.adatok2.hordó_id.min), Update<string>("FOHOSZI", _szűrő.adatok2.hordó_id.max),
+                Update<double?>("FOBRIXT", _szűrő.adatok2.brix.min), Update<double?>("FOBRIXI", _szűrő.adatok2.brix.max),
+                Update<double?>("FOCSAVT", _szűrő.adatok2.citromsav.min), Update<double?>("FOCSAVI", _szűrő.adatok2.citromsav.max),
+                Update<double?>("FOBOSAT", _szűrő.adatok2.borkősav.min), Update<double?>("FOBOSAI", _szűrő.adatok2.borkősav.max),
+                Update<double?>("FOPEHAT", _szűrő.adatok2.ph.min), Update<double?>("FOPEHAI", _szűrő.adatok2.ph.max),
+                Update<double?>("FOBOSTT", _szűrő.adatok2.bostwick.min), Update<double?>("FOBOSTI", _szűrő.adatok2.bostwick.max),
+                Update<short?>("FOASAVT", _szűrő.adatok2.aszkorbinsav.min), Update<short?>("FOASAVI", _szűrő.adatok2.aszkorbinsav.max),
+                Update<short?>("FONETOT", _szűrő.adatok2.nettó_töltet.min), Update<short?>("FONETOI", _szűrő.adatok2.nettó_töltet.max),
+                Update<byte?>("FOHOFOT", _szűrő.adatok2.hőkezelés.min), Update<byte?>("FOHOFOI", _szűrő.adatok2.hőkezelés.max),
+                Update<byte?>("FOCIADT", _szűrő.adatok2.citromsav_ad.min), Update<byte?>("FOCIADI", _szűrő.adatok2.citromsav_ad.max),
+                Update<byte?>("FOSZATT", _szűrő.adatok2.szita_átmérő.min), Update<byte?>("FOSZATI", _szűrő.adatok2.szita_átmérő.max)});
 
                 if (data != null)
                 {
@@ -1111,20 +1111,20 @@ namespace Labor
                     Is(_szűrő.adatok1.műszak_jele, "VIMUJE"),
                     Is(_szűrő.adatok1.töltőgép_száma, "VITOGE"),
                     Is(_szűrő.adatok1.termékkód, "VITEKO"),
-                    BetweenString(_szűrő.adatok2.min_sarzs, "VISARZ", _szűrő.adatok2.max_sarzs),
-                    BetweenString(_szűrő.adatok2.min_hordóid, "VIHOSZ", _szűrő.adatok2.max_hordóid),
+                    BetweenString(_szűrő.adatok2.sarzs, "VISARZ"),
+                    BetweenString(_szűrő.adatok2.hordó_id, "VIHOSZ"),
 
-                    Between<double>(_szűrő.adatok2.min_brix, "VIBRIX", _szűrő.adatok2.max_brix) ,
-                    Between<double>(_szűrő.adatok2.min_citromsav, "VICSAV", _szűrő.adatok2.max_citromsav) ,
-                    Between<double>(_szűrő.adatok2.min_borkősav, "VIBOSA", _szűrő.adatok2.max_borkősav) ,
-                    Between<double>(_szűrő.adatok2.min_ph, "VIPEHA", _szűrő.adatok2.max_ph) ,
-                    Between<double>(_szűrő.adatok2.min_bostwick, "VIBOST", _szűrő.adatok2.max_bostwick) ,
+                    Between<double>(_szűrő.adatok2.brix, "VIBRIX") ,
+                    Between<double>(_szűrő.adatok2.citromsav, "VICSAV") ,
+                    Between<double>(_szűrő.adatok2.borkősav, "VIBOSA") ,
+                    Between<double>(_szűrő.adatok2.ph, "VIPEHA") ,
+                    Between<double>(_szűrő.adatok2.bostwick, "VIBOST") ,
 
-                    Between<Int16>(_szűrő.adatok2.min_aszkorbinsav, "VIASAV", _szűrő.adatok2.max_aszkorbinsav) ,
-                    Between<Int16>(_szűrő.adatok2.min_nettó_töltet, "VINETO", _szűrő.adatok2.max_nettó_töltet) ,
-                    Between<byte>(_szűrő.adatok2.min_hőkezelés, "VIHOKE", _szűrő.adatok2.max_hőkezelés) ,
-                    Between<byte>(_szűrő.adatok2.min_citromsav_ad, "VICIAD", _szűrő.adatok2.max_citromsav_ad) ,
-                    Between<byte>(_szűrő.adatok2.min_szita_átmérő, "VISZAT", _szűrő.adatok2.max_szita_átmérő) ,
+                    Between<Int16>(_szűrő.adatok2.aszkorbinsav, "VIASAV") ,
+                    Between<Int16>(_szűrő.adatok2.nettó_töltet, "VINETO") ,
+                    Between<byte>(_szűrő.adatok2.hőkezelés, "VIHOKE") ,
+                    Between<byte>(_szűrő.adatok2.citromsav_ad, "VICIAD") ,
+                    Between<byte>(_szűrő.adatok2.szita_átmérő, "VISZAT") ,
 
                 });
          

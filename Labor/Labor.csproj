@@ -33,7 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DocX">
-      <HintPath>obj\Debug\DocX.dll</HintPath>
+      <HintPath>C:\Users\László\Dropbox\Ijász program\0.8.1\Íjász\bin\Debug\DocX.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Database.cs" />
+    <Compile Include="Generics.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
