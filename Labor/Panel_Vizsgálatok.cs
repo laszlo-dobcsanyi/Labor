@@ -189,9 +189,12 @@ namespace Labor
 
         private List<DataToken<Vizsgálat.Azonosító>> vizsgálat_tokenek = new List<DataToken<Vizsgálat.Azonosító>>();
 
+        #region Constructor
         public Panel_Vizsgálatok()
         {
             InitializeContent();
+
+            KeyDown += Panel_Vizsgálatok_KeyDown;
         }
 
         private void InitializeContent()
@@ -349,6 +352,7 @@ namespace Labor
             foreach (DataToken<Vizsgálat.Azonosító> token in kitörlendők) { vizsgálat_tokenek.Remove(token); }
             base.Refresh();
         }
+        #endregion
 
         #region EventHandlers
         private void Vizsgálat_Hozzáadás(object _sender, System.EventArgs _event)
@@ -359,7 +363,7 @@ namespace Labor
             Refresh();
         }
 
-        private void Vizsgálat_Módosítás(object sender, DataGridViewCellEventArgs e)
+        private void Vizsgálat_Módosítás(object _sender, EventArgs _event)
         {
             if (table.SelectedRows.Count != 1) return;
 
@@ -417,6 +421,11 @@ namespace Labor
             table.Columns[Vizsgálat.Azonosító.TableIndexes.megrendelő].Width = 280 - 3 - 100;
             table.Columns[Vizsgálat.Azonosító.TableIndexes.sorszám].Visible = false;
             table.Columns[Vizsgálat.Azonosító.TableIndexes.foglalás].Width = 100;
+        }
+
+        private void Panel_Vizsgálatok_KeyDown(object _sender, KeyEventArgs _event)
+        {
+            if (_event.KeyCode == Keys.Enter) Vizsgálat_Módosítás(_sender, _event);
         }
 
         private void table_UserDeletingRow(object _sender, DataGridViewRowCancelEventArgs _event)

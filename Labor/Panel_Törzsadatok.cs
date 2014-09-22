@@ -44,9 +44,12 @@ namespace Labor
 
         private List<DataToken<Törzsadat>> törzsadat_tokenek = new List<DataToken<Törzsadat>>();
 
+        #region Constructor
         public Panel_Törzsadatok()
         {
             InitializeContent();
+
+            KeyDown += Panel_Törzsadatok_KeyDown;
         }
 
         private void InitializeContent()
@@ -162,7 +165,7 @@ namespace Labor
                         row[0] = token.data.azonosító;
                         row[1] = token.data.megnevezés_2;
                         row[2] = token.data.megnevezés_3;
-                        data.Rows.Add(row);                        
+                        data.Rows.Add(row);
                         break;
 
                     case DataToken<Törzsadat>.TokenType.NOT_FOUND:
@@ -174,50 +177,20 @@ namespace Labor
                                 kitörlendők.Add(token);
                                 break;
                             }
-                        }                        
+                        }
                         break;
                 }
             }
 
             // Nem talált tokenek kivétele
-            foreach (DataToken<Törzsadat> token in kitörlendők) { törzsadat_tokenek.Remove(token); } 
+            foreach (DataToken<Törzsadat> token in kitörlendők) { törzsadat_tokenek.Remove(token); }
 
             base.Refresh();
-        }
-
-        #region EventHandlers
-        private void table_DataBindingComplete(object _sender, DataGridViewBindingCompleteEventArgs _event)
-        {
-            table.DataBindingComplete -= table_DataBindingComplete;
-            table.Columns[0].Width = 150;
-            table.Columns[1].Width = 150;
-            table.Columns[2].Width = 150;
-        }
-
-        private void table_UserDeletingRow(object _sender, DataGridViewRowCancelEventArgs _event)
-        {
-            // Delete lenyomása esetén kitörli az adott sorokat, ezt iktatjuk ki ezzel!
-            _event.Cancel = true;
-            // A saját törlést azért elindítjuk Delete gomb lenyomása után.
-            TörzsadatTörlés(_sender, _event);
-        }
-
-        private void hozzáadás_Click(object sender, System.EventArgs e)
-        {
-            Form_Törzsadatok form = new Form_Törzsadatok(combo_törzsadat.SelectedItem.ToString());
-            form.ShowDialog();
-        }
-
-        private void combo_törzsadat_SelectedIndexChanged(object _sender, EventArgs _event)
-        {
-            data.Rows.Clear();
-            törzsadat_tokenek.Clear();
-            Refresh();
         }
         #endregion
 
 
-        #region asd
+        #region EventHandlers
         private void TörzsadatMódosítás(object _sender, EventArgs _event)
         {
             if (table.SelectedRows.Count != 1) return;
@@ -235,8 +208,44 @@ namespace Labor
             {
                 string azonosító = (string)selected.Cells[0].Value;
                 if (!Program.database.Törzsadat_Törlés(azonosító))
-                    { MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy nem létezik már a törlendő törzsadat (" + azonosító + ")?", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                { MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy nem létezik már a törlendő törzsadat (" + azonosító + ")?", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
             }
+        }
+
+        //
+
+        private void table_DataBindingComplete(object _sender, DataGridViewBindingCompleteEventArgs _event)
+        {
+            table.DataBindingComplete -= table_DataBindingComplete;
+            table.Columns[0].Width = 150;
+            table.Columns[1].Width = 150;
+            table.Columns[2].Width = 150;
+        }
+
+        private void table_UserDeletingRow(object _sender, DataGridViewRowCancelEventArgs _event)
+        {
+            // Delete lenyomása esetén kitörli az adott sorokat, ezt iktatjuk ki ezzel!
+            _event.Cancel = true;
+            // A saját törlést azért elindítjuk Delete gomb lenyomása után.
+            TörzsadatTörlés(_sender, _event);
+        }
+
+        private void hozzáadás_Click(object _sender, EventArgs _event)
+        {
+            Form_Törzsadatok form = new Form_Törzsadatok(combo_törzsadat.SelectedItem.ToString());
+            form.ShowDialog();
+        }
+
+        private void Panel_Törzsadatok_KeyDown(object _sender, KeyEventArgs _event)
+        {
+            if (_event.KeyCode == Keys.Enter) TörzsadatMódosítás(_sender, _event);
+        }
+
+        private void combo_törzsadat_SelectedIndexChanged(object _sender, EventArgs _event)
+        {
+            data.Rows.Clear();
+            törzsadat_tokenek.Clear();
+            Refresh();
         }
         #endregion
 
@@ -244,7 +253,7 @@ namespace Labor
         {
             private Nullable<Törzsadat> törzsadat = null;
 
-            private Label   label_típus;
+            private Label label_típus;
             private TextBox box_azonosító;
             private TextBox box_megnevezés2;
             private TextBox box_megnevezés3;
@@ -356,12 +365,12 @@ namespace Labor
                 if (törzsadat != null)
                 {
                     if (!Program.database.Törzsadat_Módosítás(törzsadat.Value.azonosító, new Törzsadat(label_típus.Text, box_azonosító.Text, box_megnevezés2.Text, box_megnevezés3.Text)))
-                        { MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy a módosítandó törzsadat már nem létezik, vagy van már ilyen magyar megnevezés?", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                    { MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy a módosítandó törzsadat már nem létezik, vagy van már ilyen magyar megnevezés?", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
                 }
                 else
                 {
                     if (!Program.database.Törzsadat_Hozzáadás(new Törzsadat(label_típus.Text, box_azonosító.Text, box_megnevezés2.Text, box_megnevezés3.Text)))
-                        { MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy van már ilyen magyar megnevezés?", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                    { MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy van már ilyen magyar megnevezés?", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
                 }
 
                 Close();

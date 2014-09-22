@@ -37,6 +37,9 @@ namespace Labor
             MinimumSize = ClientSize;
             Text = "Labor";
             StartPosition = FormStartPosition.CenterScreen;
+
+            KeyPreview = true;
+            KeyDown += MainForm_KeyDown;
         }
 
         private void InitializeContent()
@@ -107,7 +110,7 @@ namespace Labor
         /// <summary>
         /// Aktuális panel nevének sötétítése a menüsorban.
         /// </summary>
-        void menu_DrawItem(object _sender, DrawItemEventArgs _event)
+        private void menu_DrawItem(object _sender, DrawItemEventArgs _event)
         {
             StringFormat sf = new StringFormat();
             sf.Alignment = StringAlignment.Center;
@@ -117,6 +120,16 @@ namespace Labor
                 _event.Graphics.DrawString(menu.TabPages[_event.Index].Text, new Font(menu.Font.Name, menu.Font.Size + 1, FontStyle.Bold), new SolidBrush(Color.Black), menu.GetTabRect(_event.Index), sf);
             else
                 _event.Graphics.DrawString(menu.TabPages[_event.Index].Text, _event.Font, new SolidBrush(Color.Black), menu.GetTabRect(_event.Index), sf);
+        }
+
+        private void MainForm_KeyDown(object _sender, KeyEventArgs _event)
+        {
+            if (_event.KeyCode == Keys.F1) { menu.SelectedIndex = 0; return; }
+            if (_event.KeyCode == Keys.F2) { menu.SelectedIndex = 1; return; }
+            if (_event.KeyCode == Keys.F3) { menu.SelectedIndex = 2; return; }
+            if (_event.KeyCode == Keys.F4) { menu.SelectedIndex = 3; return; }
+            if (_event.KeyCode == Keys.F5) { menu.SelectedIndex = 4; return; }
+            if (_event.KeyCode == Keys.F6) { menu.SelectedIndex = 5; return; }
         }
         #endregion
 

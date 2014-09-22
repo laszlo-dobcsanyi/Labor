@@ -200,9 +200,12 @@ namespace Labor
 
         private List<DataToken<Foglalás>> foglalás_tokenek = new List<DataToken<Foglalás>>();
 
+        #region Constructor
         public Panel_Foglalások()
         {
             InitializeContent();
+
+            KeyDown += Panel_Foglalások_KeyDown;
         }
 
         private void InitializeContent()
@@ -347,6 +350,7 @@ namespace Labor
             foreach (DataToken<Foglalás> token in kitörlendők) { foglalás_tokenek.Remove(token); }
             base.Refresh();
         }
+        #endregion
 
         #region EventHandlers
         private void Foglalás_Hozzáadás(object _sender, System.EventArgs _event)
@@ -361,7 +365,7 @@ namespace Labor
         {
         }
 
-        private void Foglalás_Módosítás(object _sender, DataGridViewCellEventArgs _event)
+        private void Foglalás_Módosítás(object _sender, EventArgs _event)
         {
             if (table.SelectedRows.Count != 1) return;
 
@@ -410,6 +414,11 @@ namespace Labor
             table.Columns[Foglalás.TableIndexes.idő].Width = 120;
         }
 
+        private void Panel_Foglalások_KeyDown(object _sender, KeyEventArgs _event)
+        {
+            if (_event.KeyCode == Keys.Enter) Foglalás_Módosítás(_sender, _event);
+        }
+
         private void table_UserDeletingRow(object _sender, DataGridViewRowCancelEventArgs _event)
         {
             // Delete lenyomása esetén kitörli az adott sorokat, ezt iktatjuk ki ezzel!
@@ -427,6 +436,7 @@ namespace Labor
             Label label_készítette;
             Label label_foglalás_ideje;
 
+            #region Constructor
             public Foglalás_Hozzáadó()
             {
                 InitializeForm();
@@ -464,6 +474,7 @@ namespace Labor
 
                 Controls.Add(rendben);
             }
+            #endregion
 
             #region EventHandlers
             private void rendben_Click(object _sender, EventArgs _event)
@@ -488,6 +499,7 @@ namespace Labor
 
             private Foglalás foglalás;
 
+            #region Constructor
             public Foglalás_Szerkesztő(Foglalás _foglalás)
             {
                 foglalás = _foglalás;
@@ -499,10 +511,13 @@ namespace Labor
             private void InitializeForm()
             {
                 Text = "Foglalás adatai";
-                ClientSize = new Size(403 + 96 + 32, 400);
+                ClientSize = new Size(430, 600);
                 MinimumSize = ClientSize;
-                StartPosition = FormStartPosition.CenterScreen;
+                Location = new Point(0 * (430 + 16), 0);
+                StartPosition = FormStartPosition.Manual;
                 FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+
+                Load += Foglalás_Szerkesztő_Load;
             }
 
             private void InitializeContent()
@@ -513,10 +528,9 @@ namespace Labor
                 table.AllowUserToResizeRows = false;
                 table.AllowUserToResizeColumns = false;
                 table.AllowUserToAddRows = false;
-                table.Width = 403;
+                table.Width = 4 * 75 + 3;
                 table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
                 table.ReadOnly = true;
-                table.DataBindingComplete += table_DataBindingComplete;
                 table.UserDeletingRow += table_UserDeletingRow;
                 table.DataSource = CreateSource();
 
@@ -568,8 +582,18 @@ namespace Labor
 
                 return data;
             }
+            #endregion
 
             #region EventHandlers
+            private void Foglalás_Szerkesztő_Load(object _sender, EventArgs _event)
+            {
+                table.Columns[Hordó.TableIndexes.termékkód].Width = 75;
+                table.Columns[Hordó.TableIndexes.sarzs].Width = 75;
+                table.Columns[Hordó.TableIndexes.id].Width = 75;
+                table.Columns[Hordó.TableIndexes.foglalás_száma].Visible = false;
+                table.Columns[Hordó.TableIndexes.gyártási_év].Width = 75;
+            }
+            
             private void Hordó_Törlés(object _sender, EventArgs _event)
             {
                 if (table.SelectedRows.Count != 1) return;
@@ -583,17 +607,6 @@ namespace Labor
 
                 Vizsgálat_Kereső vizsgálat_kereső = new Vizsgálat_Kereső(foglalás);
                 vizsgálat_kereső.ShowDialog();
-            }
-
-            private void table_DataBindingComplete(object _sender, DataGridViewBindingCompleteEventArgs _event)
-            {
-                table.DataBindingComplete -= table_DataBindingComplete;
-
-                table.Columns[Hordó.TableIndexes.termékkód].Width = 100;
-                table.Columns[Hordó.TableIndexes.sarzs].Width = 100;
-                table.Columns[Hordó.TableIndexes.id].Width = 100;
-                table.Columns[Hordó.TableIndexes.foglalás_száma].Visible = false;
-                table.Columns[Hordó.TableIndexes.gyártási_év].Width = 100;
             }
 
             private void table_UserDeletingRow(object _sender, DataGridViewRowCancelEventArgs _event)
@@ -644,6 +657,7 @@ namespace Labor
 
             Foglalás? eredeti = null;
 
+            #region Constructor
             public Vizsgálat_Kereső()
             {
                 Text = "Vizsgálat keresés";
@@ -660,13 +674,16 @@ namespace Labor
                 InitializeForm();
                 InitializeContent();
                 InitializeData(_eredeti);
+
+                KeyDown += Vizsgálat_Kereső_KeyDown;
             }
 
             private void InitializeForm()
             {
-                ClientSize = new Size(500, 588);
+                ClientSize = new Size(430, 600);
                 MinimumSize = ClientSize;
-                StartPosition = FormStartPosition.CenterScreen;
+                Location = new Point(1 * (430 + 16), 0);
+                StartPosition = FormStartPosition.Manual;
                 FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             }
 
@@ -772,28 +789,17 @@ namespace Labor
 
 
                 Button rendben = new Button();
-                rendben.Text = "Rendben";
+                rendben.Text = "Szűrés";
                 rendben.Size = new System.Drawing.Size(96, 32);
                 rendben.Location = new Point(ClientRectangle.Width - rendben.Size.Width - 16, ClientRectangle.Height - rendben.Size.Height - 16);
-                rendben.Click += Keresés_Rendben;
+                rendben.Click += Keresés;
 
                 Controls.Add(rendben);
             }
-
            
             private void InitializeData()
             {
 
-                /*TESZTELÉSHEZ
-                int i = 0;
-                foreach (Control c in this.Controls)
-                {
-                    if (c is TextBox)
-                    {
-                        c.Text = (i++).ToString();
-                    }
-                }
-                */
             }
 
             private void InitializeData(Foglalás _foglalás)
@@ -829,9 +835,10 @@ namespace Labor
                 combo_származási_ország.Text = _foglalás.szűrő.Value.adatok1.származási_ország;
                 box_töltőgép_száma.Text = _foglalás.szűrő.Value.adatok1.töltőgép_száma;
             }
+            #endregion
 
             #region EventHandlers
-            void box_termékkód_Leave(object sender, EventArgs e)
+            private void box_termékkód_Leave(object _sender, EventArgs _event)
             {
                 if(combo_gyümölcsfajta.Items.Count !=0){combo_gyümölcsfajta.Items.Clear();}
                 if(box_termékkód.Text.Length != 4){return;}
@@ -839,7 +846,12 @@ namespace Labor
                 foreach(string item in gyümölcsfajták){combo_gyümölcsfajta.Items.Add(item);}
             }
 
-            private void Keresés_Rendben(object _sender, EventArgs _e)
+            private void Vizsgálat_Kereső_KeyDown(object _sender, KeyEventArgs _event)
+            {
+                if (_event.KeyCode == Keys.Enter) Keresés(_sender, _event);
+            }
+
+            private void Keresés(object _sender, EventArgs _event)
             {
                 if (box_sarzs_min.Text.Length != 0 && box_sarzs_max.Text.Length != 0) if (MainForm.ConvertOrDie<int>(box_sarzs_min.Text) > MainForm.ConvertOrDie<int>(box_sarzs_max.Text)) { MessageBox.Show("Sarzs!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 if (box_brix_min.Text.Length != 0 && box_brix_max.Text.Length != 0) if (MainForm.ConvertOrDie<double>(box_brix_min.Text) > MainForm.ConvertOrDie<double>(box_brix_max.Text)) { MessageBox.Show("brix!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
@@ -910,6 +922,7 @@ namespace Labor
                 private Vizsgalap_Szűrő szűrő;
                 private Foglalás? foglalás = null;
 
+                #region Constructor
                 public Keresés_Eredmény(Vizsgalap_Szűrő _szűrő)
                 {
                     szűrő = _szűrő;
@@ -932,21 +945,22 @@ namespace Labor
                 private void InitializeForm()
                 {
                     Text = "Keresés eredménye";
-                    ClientSize = new Size(500 + 3, 600);
+                    ClientSize = new Size(4 * 75 + 3, 600);
                     MinimumSize = ClientSize;
-                    StartPosition = FormStartPosition.CenterScreen;
+                    Location = new Point(2 * (430 + 16), 0);
+                    StartPosition = FormStartPosition.Manual;
                     FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
                 }
 
                 private void InitializeContent()
                 {
                     table = new DataGridView();
-                    table.Dock = DockStyle.Top;
+                    //table.Dock = DockStyle.Left;
                     table.RowHeadersVisible = false;
                     table.AllowUserToResizeRows = false;
                     table.AllowUserToResizeColumns = false;
                     table.AllowUserToAddRows = false;
-                    table.Width = 500 + 3;
+                    table.Width = 4 * 75 + 3;
                     table.Height = 500;
                     table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
                     table.ReadOnly = true;
@@ -961,6 +975,7 @@ namespace Labor
                     rögzítés.Text = "Rögzítés";
                     rögzítés.Size = new System.Drawing.Size(96, 32);
                     rögzítés.Location = new Point(ClientRectangle.Width - rögzítés.Size.Width - 16, ClientRectangle.Height - rögzítés.Size.Height - 16);
+                    rögzítés.Click += rögzítés_Click;
 
                     //
 
@@ -984,8 +999,8 @@ namespace Labor
 
                     data.Columns.Add(new DataColumn("Termékkód", System.Type.GetType("System.String")));
                     data.Columns.Add(new DataColumn("Sarzs", System.Type.GetType("System.String")));
-                    data.Columns.Add(new DataColumn("Foglalt hordó", System.Type.GetType("System.Int32")));
-                    data.Columns.Add(new DataColumn("Szabad hordó", System.Type.GetType("System.Int32")));
+                    data.Columns.Add(new DataColumn("Foglalt", System.Type.GetType("System.Int32")));
+                    data.Columns.Add(new DataColumn("Szabad", System.Type.GetType("System.Int32")));
 
                     List<Sarzs> sarzsok = Program.database.Sarzsok(szűrő);
                     foreach(Sarzs item in sarzsok)
@@ -1000,15 +1015,16 @@ namespace Labor
 
                     return data;
                 }
+                #endregion
 
                 #region EventHandlers
                 private void table_DataBindingComplete(object _sender, DataGridViewBindingCompleteEventArgs _event)
                 {
                     table.DataBindingComplete -= table_DataBindingComplete;
-                    table.Columns[Sarzs.TableIndexes.termékkód].Width = 125;
-                    table.Columns[Sarzs.TableIndexes.sarzs].Width = 125;
-                    table.Columns[Sarzs.TableIndexes.foglalt].Width = 125;
-                    table.Columns[Sarzs.TableIndexes.szabad].Width = 125;
+                    table.Columns[Sarzs.TableIndexes.termékkód].Width = 75;
+                    table.Columns[Sarzs.TableIndexes.sarzs].Width = 75;
+                    table.Columns[Sarzs.TableIndexes.foglalt].Width = 75;
+                    table.Columns[Sarzs.TableIndexes.szabad].Width = 75;
                 }
 
                 private void table_UserDeletingRow(object _sender, DataGridViewRowCancelEventArgs _event)
@@ -1032,6 +1048,11 @@ namespace Labor
                     else eredmény_hordók = new Eredmény_Hordók(szűrő, sarzs, foglalás.Value);
 
                     eredmény_hordók.ShowDialog();
+                }
+
+                private void rögzítés_Click(object _sender, EventArgs _event)
+                {
+                    Close();
                 }
                 #endregion
 
@@ -1067,10 +1088,11 @@ namespace Labor
 
                     private void InitializeForm()
                     {
-                        Text = "Hordók";
-                        ClientSize = new Size(300 + 3, 500);
+                        Text = "Sarzs(" + sarzs.sarzs + ") hordói";
+                        ClientSize = new Size(4 * 75 + 3, 600);
                         MinimumSize = ClientSize;
-                        StartPosition = FormStartPosition.CenterScreen;
+                        Location = new Point(2 * (430 + 16), 0);
+                        StartPosition = FormStartPosition.Manual;
                         FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
                     }
 
@@ -1083,7 +1105,7 @@ namespace Labor
                         table.AllowUserToResizeColumns = false;
                         table.AllowUserToAddRows = false;
                         table.Width = 300 + 3;
-                        table.Height = 400;
+                        table.Height = 500;
                         table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
                         table.DataBindingComplete += table_DataBindingComplete;
                         table.UserDeletingRow += table_UserDeletingRow;
