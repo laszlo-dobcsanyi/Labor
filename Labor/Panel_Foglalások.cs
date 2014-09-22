@@ -514,7 +514,7 @@ namespace Labor
                 ClientSize = new Size(430, 600);
                 MinimumSize = ClientSize;
                 Location = new Point(0 * (430 + 16), 0);
-                StartPosition = FormStartPosition.Manual;
+                StartPosition = Settings.ManualLocations ? FormStartPosition.Manual : FormStartPosition.CenterParent;
                 FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
 
                 Load += Foglalás_Szerkesztő_Load;
@@ -683,7 +683,7 @@ namespace Labor
                 ClientSize = new Size(430, 600);
                 MinimumSize = ClientSize;
                 Location = new Point(1 * (430 + 16), 0);
-                StartPosition = FormStartPosition.Manual;
+                StartPosition = Settings.ManualLocations ? FormStartPosition.Manual : FormStartPosition.CenterParent;
                 FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             }
 
@@ -948,7 +948,7 @@ namespace Labor
                     ClientSize = new Size(4 * 75 + 3, 600);
                     MinimumSize = ClientSize;
                     Location = new Point(2 * (430 + 16), 0);
-                    StartPosition = FormStartPosition.Manual;
+                    StartPosition = Settings.ManualLocations ? FormStartPosition.Manual : FormStartPosition.CenterParent;
                     FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
                 }
 
@@ -1065,6 +1065,7 @@ namespace Labor
                     private Vizsgalap_Szűrő szűrő;
                     private Foglalás? foglalás = null;
 
+                    #region Constructor
                     public Eredmény_Hordók(Vizsgalap_Szűrő _szűrő, Sarzs _sarsz)
                     {
                         szűrő = _szűrő;
@@ -1092,7 +1093,7 @@ namespace Labor
                         ClientSize = new Size(4 * 75 + 3, 600);
                         MinimumSize = ClientSize;
                         Location = new Point(2 * (430 + 16), 0);
-                        StartPosition = FormStartPosition.Manual;
+                        StartPosition = Settings.ManualLocations ? FormStartPosition.Manual : FormStartPosition.CenterParent;
                         FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
                     }
 
@@ -1194,6 +1195,7 @@ namespace Labor
 
                         return data;
                     }
+                    #endregion
 
                     #region EventHandlers
                     private void table_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)

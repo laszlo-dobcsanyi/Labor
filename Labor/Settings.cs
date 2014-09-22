@@ -11,6 +11,7 @@ namespace Labor
         public static bool Logging = false;
         public static int RefreshTime = 10;
         public static string LoginName = "";
+        public static bool ManualLocations = false;
 
         public static void Configurate()
         {
@@ -36,6 +37,7 @@ namespace Labor
                                     case "logging": Logging = true; break;
                                     case "refresh": RefreshTime = Convert.ToInt32(arguments[1]); break;
                                     case "login_name": LoginName = arguments[1]; break;
+                                    case "manual_locations": ManualLocations = true; break;
                                 }
                             }
                     }
