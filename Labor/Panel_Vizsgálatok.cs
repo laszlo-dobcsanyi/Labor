@@ -302,7 +302,7 @@ namespace Labor
             data.Rows.Add(row);
         }
 
-        protected override void Modify(Vizsgálat.Azonosító _original, Vizsgálat.Azonosító _new)
+        protected override void Modify(Vizsgálat.Azonosító _old, Vizsgálat.Azonosító _new)
         {
             throw new NotImplementedException();
         }

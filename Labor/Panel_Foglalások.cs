@@ -302,7 +302,7 @@ namespace Labor
             data.Rows.Add(row);
         }
 
-        protected override void Modify(Foglalás _original, Foglalás _new)
+        protected override void Modify(Foglalás _old, Foglalás _new)
         {
             throw new NotImplementedException();
         }
@@ -573,6 +573,11 @@ namespace Labor
                 row[Hordó.TableIndexes.foglalás_száma] = _data.foglalás_száma;
                 row[Hordó.TableIndexes.gyártási_év] = _data.gyártási_év;
                 data.Rows.Add(row);
+            }
+
+            protected override void Modify(Hordó _old, Hordó _new)
+            {
+                throw new NotImplementedException();
             }
 
             protected override void Remove(Hordó _data)
@@ -1038,6 +1043,11 @@ namespace Labor
                     data.Rows.Add(row);
                 }
 
+                protected override void Modify(Sarzs _old, Sarzs _new)
+                {
+                    throw new NotImplementedException();
+                }
+
                 protected override void Remove(Sarzs _data)
                 {
                     foreach (DataRow current in data.Rows)
@@ -1244,6 +1254,11 @@ namespace Labor
                             else row[2] = _data.foglalás_száma.Value;
                             data.Rows.Add(row);
                         }
+                    }
+
+                    protected override void Modify(Hordó _old, Hordó _new)
+                    {
+                        throw new NotImplementedException();
                     }
 
                     protected override void Remove(Hordó _data)

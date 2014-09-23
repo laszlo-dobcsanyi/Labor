@@ -138,7 +138,7 @@ namespace Labor
             data.Rows.Add(row);
         }
 
-        protected override void Modify(Törzsadat _original, Törzsadat _new)
+        protected override void Modify(Törzsadat _old, Törzsadat _new)
         {
             throw new NotImplementedException();
         }

@@ -61,7 +61,7 @@ namespace Labor
 
         protected abstract void Add(T _data);
 
-        protected abstract void Modify(T _original, T _new);
+        protected abstract void Modify(T _old, T _new);
 
         protected abstract void Remove(T _data);
         #endregion
@@ -146,6 +146,8 @@ namespace Labor
 
         protected abstract void Add(T _data);
 
+        protected abstract void Modify(T _old, T _new);
+
         protected abstract void Remove(T _data);
         #endregion
 
@@ -167,6 +169,8 @@ namespace Labor
                         // A megtalált token kivétele a keresésből
                         token.type = DataToken<T>.TokenType.FOUND;
                         found = true;
+
+                        if (!item.Equals(token.data)) Modify(token.data, item);
                         break;
                     }
                 }
