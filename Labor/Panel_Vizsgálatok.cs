@@ -181,18 +181,17 @@ namespace Labor
         }
     }
 
-    public sealed class Panel_Vizsgálatok : Control
+    public sealed class Panel_Vizsgálatok : Tokenized_Control<Vizsgálat.Azonosító>
     {
         private DataTable data;
         private DataGridView table;
         private TextBox box_termékkód;
 
-        private List<DataToken<Vizsgálat.Azonosító>> vizsgálat_tokenek = new List<DataToken<Vizsgálat.Azonosító>>();
-
         #region Constructor
         public Panel_Vizsgálatok()
         {
             InitializeContent();
+            InitializeTokens();
 
             KeyDown += Panel_Vizsgálatok_KeyDown;
         }
@@ -264,6 +263,13 @@ namespace Labor
             column.AllowDBNull = true;
             data.Columns.Add(column);
 
+            return data;
+        }
+        #endregion
+
+        #region Tokenizer
+        protected override void InitializeTokens()
+        {
             List<Vizsgálat.Azonosító> vizsgálatok = Program.database.Vizsgálatok();
 
             foreach (Vizsgálat.Azonosító item in vizsgálatok)
@@ -277,80 +283,46 @@ namespace Labor
                 row[Vizsgálat.Azonosító.TableIndexes.szita_átmérő] = item.szita_átmérő;
                 row[Vizsgálat.Azonosító.TableIndexes.megrendelő] = item.megrendelő;
                 row[Vizsgálat.Azonosító.TableIndexes.sorszám] = item.sorszám;
-                if (item.foglalás == null) row[Vizsgálat.Azonosító.TableIndexes.foglalás] =  DBNull.Value;
+                if (item.foglalás == null) row[Vizsgálat.Azonosító.TableIndexes.foglalás] = DBNull.Value;
                 else row[Vizsgálat.Azonosító.TableIndexes.foglalás] = item.foglalás.Value;
                 data.Rows.Add(row);
 
-                vizsgálat_tokenek.Add(new DataToken<Vizsgálat.Azonosító>(item));
+                tokens.Add(new DataToken<Vizsgálat.Azonosító>(item));
             }
-            return data;
         }
 
-        public override void Refresh()
+        protected override List<Vizsgálat.Azonosító> CurrentData()
         {
-            // Összes adat lekérdezése
-            List<Vizsgálat.Azonosító> vizsgálatok = Program.database.Vizsgálatok();
-            // Minden token beállítása a kereséshez
-            foreach (DataToken<Vizsgálat.Azonosító> token in vizsgálat_tokenek) { token.type = DataToken<Vizsgálat.Azonosító>.TokenType.NOT_FOUND; }
+            return Program.database.Vizsgálatok();
+        }
 
-            // A már táblán fennlévő tokenek összevetése a lekért adatokkal
-            foreach (Vizsgálat.Azonosító item in vizsgálatok)
+        protected override void AddToken(DataToken<Vizsgálat.Azonosító> _token)
+        {
+            DataRow row = data.NewRow();
+            row[Vizsgálat.Azonosító.TableIndexes.termékkód] = _token.data.termékkód;
+            row[Vizsgálat.Azonosító.TableIndexes.sarzs] = _token.data.sarzs;
+            row[Vizsgálat.Azonosító.TableIndexes.hordószám] = _token.data.hordószám;
+            row[Vizsgálat.Azonosító.TableIndexes.hordótípus] = _token.data.hordótípus;
+            row[Vizsgálat.Azonosító.TableIndexes.nettó_töltet] = _token.data.nettó_töltet;
+            row[Vizsgálat.Azonosító.TableIndexes.szita_átmérő] = _token.data.szita_átmérő;
+            row[Vizsgálat.Azonosító.TableIndexes.megrendelő] = _token.data.megrendelő;
+            row[Vizsgálat.Azonosító.TableIndexes.sorszám] = _token.data.sorszám;
+            if (_token.data.foglalás == null) row[Vizsgálat.Azonosító.TableIndexes.foglalás] = DBNull.Value;
+            else row[Vizsgálat.Azonosító.TableIndexes.foglalás] = _token.data.foglalás.Value;
+            data.Rows.Add(row);
+        }
+
+        protected override void RemoveToken(DataToken<Vizsgálat.Azonosító> _token)
+        {
+            foreach (DataRow current in data.Rows)
             {
-                bool found = false;
-                foreach (DataToken<Vizsgálat.Azonosító> token in vizsgálat_tokenek)
+                if (_token.data.termékkód == current[0].ToString() && _token.data.sarzs == current[1].ToString()
+                    && _token.data.hordószám == current[2].ToString() && _token.data.hordótípus == current[3].ToString())
                 {
-                    if (item.Equals(token.data))
-                    {
-                        // A megtalált token kivétele a keresésből
-                        token.type = DataToken<Vizsgálat.Azonosító>.TokenType.FOUND;
-                        found = true;
-                        break;
-                    }
-                }
-
-                // Még tokenek között nem szereplő adat hozzáadása
-                if (!found) vizsgálat_tokenek.Add(new DataToken<Vizsgálat.Azonosító>(item));
-            }
-
-            // A tábla kiegésszítése a tokenekből származó adatokkal
-            List<DataToken<Vizsgálat.Azonosító>> kitörlendők = new List<DataToken<Vizsgálat.Azonosító>>();
-            foreach (DataToken<Vizsgálat.Azonosító> token in vizsgálat_tokenek)
-            {
-                switch (token.type)
-                {
-                    case DataToken<Vizsgálat.Azonosító>.TokenType.NEW:
-                        DataRow row = data.NewRow();
-                        row[Vizsgálat.Azonosító.TableIndexes.termékkód] = token.data.termékkód;
-                        row[Vizsgálat.Azonosító.TableIndexes.sarzs] = token.data.sarzs;
-                        row[Vizsgálat.Azonosító.TableIndexes.hordószám] = token.data.hordószám;
-                        row[Vizsgálat.Azonosító.TableIndexes.hordótípus] = token.data.hordótípus;
-                        row[Vizsgálat.Azonosító.TableIndexes.nettó_töltet] = token.data.nettó_töltet;
-                        row[Vizsgálat.Azonosító.TableIndexes.szita_átmérő] = token.data.szita_átmérő;
-                        row[Vizsgálat.Azonosító.TableIndexes.megrendelő] = token.data.megrendelő;
-                        row[Vizsgálat.Azonosító.TableIndexes.sorszám] = token.data.sorszám;
-                        if (token.data.foglalás == null) row[Vizsgálat.Azonosító.TableIndexes.foglalás] = DBNull.Value;
-                        else row[Vizsgálat.Azonosító.TableIndexes.foglalás] = token.data.foglalás.Value;
-                        data.Rows.Add(row);
-                        break;
-
-                    case DataToken<Vizsgálat.Azonosító>.TokenType.NOT_FOUND:
-                        foreach (DataRow current in data.Rows)
-                        {
-                            if (token.data.termékkód == current[0].ToString() && token.data.sarzs == current[1].ToString()
-                                && token.data.hordószám == current[2].ToString() && token.data.hordótípus == current[3].ToString())
-                            {
-                                data.Rows.Remove(current);
-                                kitörlendők.Add(token);
-                                break;
-                            }
-                        }
-                        break;
+                    data.Rows.Remove(current);
+                    break;
                 }
             }
-
-            // Nem talált tokenek kivétele
-            foreach (DataToken<Vizsgálat.Azonosító> token in kitörlendők) { vizsgálat_tokenek.Remove(token); }
-            base.Refresh();
         }
         #endregion
 
