@@ -195,9 +195,6 @@ namespace Labor
 
     public sealed class Panel_Foglalások : Tokenized_Control<Foglalás>
     {
-        private DataTable data;
-        private DataGridView table;
-
         #region Constructor
         public Panel_Foglalások()
         {
@@ -274,16 +271,6 @@ namespace Labor
         #endregion
 
         #region Tokenizer
-        protected override void InitializeTokens()
-        {
-            List<Foglalás> foglalások = Program.database.Foglalások();
-
-            foreach (Foglalás item in foglalások)
-            {
-                AddToken(new DataToken<Foglalás>(item));
-            }
-        }
-
         protected override List<Foglalás> CurrentData()
         {
             return Program.database.Foglalások();
@@ -320,11 +307,12 @@ namespace Labor
             Foglalás_Hozzáadó foglalás_hozzáadó = new Foglalás_Hozzáadó();
             foglalás_hozzáadó.ShowDialog();
 
-            Refresh();
+            Program.RefreshData();
         }
 
         private void Foglalás_Feltöltés(object _sender, EventArgs _event)
         {
+            Program.RefreshData();
         }
 
         private void Foglalás_Módosítás(object _sender, EventArgs _event)
@@ -337,6 +325,8 @@ namespace Labor
 
             Foglalás_Szerkesztő foglalás_szerkesztő = new Foglalás_Szerkesztő(foglalás);
             foglalás_szerkesztő.ShowDialog();
+
+            Program.RefreshData();
         }
 
         private void Foglalás_Törlés(object _sender, EventArgs _event)
@@ -363,7 +353,9 @@ namespace Labor
         private void Vizsgálat_Keresése(object _sender, EventArgs _event)
         {
             Vizsgálat_Kereső vizsgálat_kereső = new Vizsgálat_Kereső();
-            vizsgálat_kereső.ShowDialog();
+            vizsgálat_kereső.ShowDialog(this);
+
+            Program.RefreshData();
         }
 
         private void table_DataBindingComplete(object _sender, DataGridViewBindingCompleteEventArgs _event)
@@ -457,9 +449,6 @@ namespace Labor
 
         public sealed class Foglalás_Szerkesztő : Tokenized_Form<Hordó>
         {
-            private DataTable data;
-            private DataGridView table;
-
             private Foglalás foglalás;
 
             #region Constructor
@@ -537,23 +526,6 @@ namespace Labor
             #endregion
 
             #region Tokenizer
-            protected override void InitializeTokens()
-            {
-                List<Hordó> hordók = Program.database.Foglalás_Hordók(foglalás);
-                foreach (Hordó item in hordók)
-                {
-                    DataRow row = data.NewRow();
-                    row[Hordó.TableIndexes.termékkód] = item.termékkód;
-                    row[Hordó.TableIndexes.sarzs] = item.sarzs;
-                    row[Hordó.TableIndexes.id] = item.id;
-                    row[Hordó.TableIndexes.foglalás_száma] = item.foglalás_száma;
-                    row[Hordó.TableIndexes.gyártási_év] = item.gyártási_év;
-                    data.Rows.Add(row);
-
-                    tokens.Add(new DataToken<Hordó>(item));
-                }
-            }
-
             protected override List<Hordó> CurrentData()
             {
                 return Program.database.Foglalás_Hordók(foglalás);
@@ -597,6 +569,8 @@ namespace Labor
             {
                 if (table.SelectedRows.Count != 1) return;
                 Program.database.Hordó_Foglalás(null, (string)table.SelectedRows[0].Cells[Hordó.TableIndexes.termékkód].Value, (string)table.SelectedRows[0].Cells[Hordó.TableIndexes.sarzs].Value);
+
+                Program.RefreshData();
             }
 
             private void Vizsgálat_Keresés(object _sender, EventArgs _event)
@@ -605,7 +579,9 @@ namespace Labor
                 if (foglalás.szűrő == null) { MessageBox.Show("Hiba a foglalás szűrőjének lekérdezésekor!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
 
                 Vizsgálat_Kereső vizsgálat_kereső = new Vizsgálat_Kereső(foglalás);
-                vizsgálat_kereső.ShowDialog();
+                vizsgálat_kereső.ShowDialog(this);
+
+                Program.RefreshData();
             }
 
             private void table_UserDeletingRow(object _sender, DataGridViewRowCancelEventArgs _event)
@@ -620,7 +596,7 @@ namespace Labor
 
         public sealed class Vizsgálat_Kereső : Form
         {
-            Foglalás? eredeti = null;
+            private Foglalás? eredeti = null;
 
             #region Declaration
             TextBox box_termékkód;
@@ -837,6 +813,13 @@ namespace Labor
             #endregion
 
             #region EventHandlers
+            public override void Refresh()
+            {
+                base.Refresh();
+
+                if (Owner != null) Owner.Refresh();
+            }
+
             private void box_termékkód_Leave(object _sender, EventArgs _event)
             {
                 if(combo_gyümölcsfajta.Items.Count !=0){combo_gyümölcsfajta.Items.Clear();}
@@ -902,22 +885,19 @@ namespace Labor
                 if (eredeti == null)
                 {
                     Keresés_Eredmény keresés_eredmény = new Keresés_Eredmény(new Vizsgalap_Szűrő(adatok1, adatok2));
-                    keresés_eredmény.ShowDialog();
+                    keresés_eredmény.ShowDialog(this);
                 }
                 else
                 {
                     Program.database.Foglalás_Vizsgálat_Szűrő_Hozzáadás(eredeti.Value, new Vizsgalap_Szűrő(adatok1, adatok2));
                     Keresés_Eredmény keresés_eredmény = new Keresés_Eredmény(new Vizsgalap_Szűrő(adatok1, adatok2), eredeti.Value);
-                    keresés_eredmény.ShowDialog();
+                    keresés_eredmény.ShowDialog(this);
                 }
             }
             #endregion
 
             public sealed class Keresés_Eredmény : Tokenized_Form<Sarzs>
             {
-                private DataTable data;
-                private DataGridView table;
-
                 private Vizsgalap_Szűrő szűrő;
                 private Foglalás? foglalás = null;
 
@@ -928,7 +908,7 @@ namespace Labor
 
                     InitializeForm();
                     InitializeContent();
-                    InitializeData();
+                    InitializeTokens();
                 }
 
                 public Keresés_Eredmény(Vizsgalap_Szűrő _szűrő, Foglalás _foglalás)
@@ -938,7 +918,7 @@ namespace Labor
 
                     InitializeForm();
                     InitializeContent();
-                    InitializeData(_foglalás);
+                    InitializeTokens();
                 }
 
                 private void InitializeForm()
@@ -982,16 +962,6 @@ namespace Labor
                     Controls.Add(table);
                 }
 
-                private void InitializeData()
-                {
-
-                }
-
-                private void InitializeData(Foglalás _foglalás)
-                {
-
-                }
-
                 private DataTable CreateSource()
                 {
                     data = new DataTable();
@@ -1006,15 +976,6 @@ namespace Labor
                 #endregion
 
                 #region Tokenizer
-                protected override void InitializeTokens()
-                {
-                    List<Sarzs> sarzsok = Program.database.Sarzsok(szűrő);
-                    foreach (Sarzs item in sarzsok)
-                    {
-                        AddToken(new DataToken<Sarzs>(item));
-                    }
-                }
-
                 protected override List<Sarzs> CurrentData()
                 {
                     return Program.database.Sarzsok(szűrő);
@@ -1072,8 +1033,9 @@ namespace Labor
                     Eredmény_Hordók eredmény_hordók;
                     if (foglalás == null) eredmény_hordók = new Eredmény_Hordók(szűrő, sarzs);
                     else eredmény_hordók = new Eredmény_Hordók(szűrő, sarzs, foglalás.Value);
+                    eredmény_hordók.ShowDialog(this);
 
-                    eredmény_hordók.ShowDialog();
+                    Program.RefreshData();
                 }
 
                 private void rögzítés_Click(object _sender, EventArgs _event)
@@ -1082,11 +1044,8 @@ namespace Labor
                 }
                 #endregion
 
-                public sealed class Eredmény_Hordók : Form
+                public sealed class Eredmény_Hordók : Tokenized_Form<Hordó>
                 {
-                    private DataTable data;
-                    private DataGridView table;
-
                     private Sarzs sarzs;
                     private Vizsgalap_Szűrő szűrő;
                     private Foglalás? foglalás = null;
@@ -1099,9 +1058,9 @@ namespace Labor
 
                         InitializeForm();
                         InitializeContent();
-                        InitializeData();
-
+                        InitializeTokens();
                     }
+
                     public Eredmény_Hordók(Vizsgalap_Szűrő _szűrő, Sarzs _sarsz, Foglalás _foglalás)
                     {
                         szűrő = _szűrő;
@@ -1110,7 +1069,7 @@ namespace Labor
 
                         InitializeForm();
                         InitializeContent();
-                        InitializeData();
+                        InitializeTokens();
                     }
 
                     private void InitializeForm()
@@ -1173,53 +1132,69 @@ namespace Labor
                         Controls.Add(table);
                     }
 
-                    private void InitializeData()
-                    {
-
-                    }
-
                     private DataTable CreateSource()
                     {
                         data = new DataTable();
 
                         data.Columns.Add(new DataColumn("Termékkód", System.Type.GetType("System.String")));
                         data.Columns.Add(new DataColumn("Hordószám", System.Type.GetType("System.String")));
-
                         if (foglalás != null)
                         {
                             DataColumn column = new DataColumn("Foglalva", System.Type.GetType("System.Boolean"));
                             column.ReadOnly = false;
                             data.Columns.Add(column);
-
-                            List<Hordó> hordók = Program.database.Hordók(foglalás.Value, sarzs);
-                            foreach(Hordó item in hordók)
-                            {
-                                DataRow row = data.NewRow();
-                                row[0] = item.termékkód;
-                                row[1] = item.id;
-                                row[2] = item.foglalás_száma == null ? false : true;
-                                data.Rows.Add(row);
-                            }
                         }
                         else
                         {
                             DataColumn column = new DataColumn("Foglalás száma", System.Type.GetType("System.Int32"));
                             column.AllowDBNull = true;
                             data.Columns.Add(column);
-
-                            List<Hordó> hordók = Program.database.Hordók(sarzs);
-                            foreach (Hordó item in hordók)
-                            {
-                                DataRow row = data.NewRow();
-                                row[0] = item.termékkód;
-                                row[1] = item.id;
-                                if (item.foglalás_száma == null) row[2] = DBNull.Value;
-                                else row[2] = item.foglalás_száma.Value;
-                                data.Rows.Add(row);
-                            }
                         }
 
                         return data;
+                    }
+                    #endregion
+
+                    #region Tokenizer
+                    protected override List<Hordó> CurrentData()
+                    {
+                        if (foglalás != null)
+                            return Program.database.Hordók(foglalás.Value, sarzs);
+                        else
+                            return Program.database.Hordók(sarzs);
+                    }
+
+                    protected override void AddToken(DataToken<Hordó> _token)
+                    {
+                        if (foglalás != null)
+                        {
+                            DataRow row = data.NewRow();
+                            row[0] = _token.data.termékkód;
+                            row[1] = _token.data.id;
+                            row[2] = _token.data.foglalás_száma == null ? false : true;
+                            data.Rows.Add(row);
+                        }
+                        else
+                        {
+                            DataRow row = data.NewRow();
+                            row[0] = _token.data.termékkód;
+                            row[1] = _token.data.id;
+                            if (_token.data.foglalás_száma == null) row[2] = DBNull.Value;
+                            else row[2] = _token.data.foglalás_száma.Value;
+                            data.Rows.Add(row);
+                        }
+                    }
+
+                    protected override void RemoveToken(DataToken<Hordó> _token)
+                    {
+                        foreach (DataRow current in data.Rows)
+                        {
+                            if (_token.data.id == (string)current[1])
+                            {
+                                data.Rows.Remove(current);
+                                break;
+                            }
+                        } 
                     }
                     #endregion
 
@@ -1241,17 +1216,21 @@ namespace Labor
                         // Delete lenyomása esetén kitörli az adott sorokat, ezt iktatjuk ki ezzel!
                         _event.Cancel = true;
                         // A saját törlést azért elindítjuk Delete gomb lenyomása után.
-
-                        //Vizsgálat_Törlés(_sender, _event);
                     }
 
                     private void table_CellValueChanged(object _sender, DataGridViewCellEventArgs _event)
                     {
-                        if (_event.ColumnIndex == 2 && _event.RowIndex != -1)
+                        if (foglalás != null)
                         {
-                            int? foglalás_szám = null;
-                            if ((bool)table.Rows[_event.RowIndex].Cells[_event.ColumnIndex].Value) foglalás_szám = foglalás.Value.id;
-                            Program.database.Hordó_Foglalás(foglalás_szám, sarzs.termékkód, sarzs.sarzs);
+                            if (_event.ColumnIndex == 2 && _event.RowIndex != -1)
+                            {
+                                int? foglalás_szám = null;
+                                if ((bool)table.Rows[_event.RowIndex].Cells[_event.ColumnIndex].Value) foglalás_szám = foglalás.Value.id;
+                                Program.database.Hordó_Foglalás(foglalás_szám, sarzs.termékkód, sarzs.sarzs);
+
+                                Form __owner = Owner;
+                                Program.RefreshData();
+                            }
                         }
                     }
 

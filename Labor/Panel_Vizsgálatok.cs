@@ -183,8 +183,6 @@ namespace Labor
 
     public sealed class Panel_Vizsgálatok : Tokenized_Control<Vizsgálat.Azonosító>
     {
-        private DataTable data;
-        private DataGridView table;
         private TextBox box_termékkód;
 
         #region Constructor
@@ -268,29 +266,6 @@ namespace Labor
         #endregion
 
         #region Tokenizer
-        protected override void InitializeTokens()
-        {
-            List<Vizsgálat.Azonosító> vizsgálatok = Program.database.Vizsgálatok();
-
-            foreach (Vizsgálat.Azonosító item in vizsgálatok)
-            {
-                DataRow row = data.NewRow();
-                row[Vizsgálat.Azonosító.TableIndexes.termékkód] = item.termékkód;
-                row[Vizsgálat.Azonosító.TableIndexes.sarzs] = item.sarzs;
-                row[Vizsgálat.Azonosító.TableIndexes.hordószám] = item.hordószám;
-                row[Vizsgálat.Azonosító.TableIndexes.hordótípus] = item.hordótípus;
-                row[Vizsgálat.Azonosító.TableIndexes.nettó_töltet] = item.nettó_töltet;
-                row[Vizsgálat.Azonosító.TableIndexes.szita_átmérő] = item.szita_átmérő;
-                row[Vizsgálat.Azonosító.TableIndexes.megrendelő] = item.megrendelő;
-                row[Vizsgálat.Azonosító.TableIndexes.sorszám] = item.sorszám;
-                if (item.foglalás == null) row[Vizsgálat.Azonosító.TableIndexes.foglalás] = DBNull.Value;
-                else row[Vizsgálat.Azonosító.TableIndexes.foglalás] = item.foglalás.Value;
-                data.Rows.Add(row);
-
-                tokens.Add(new DataToken<Vizsgálat.Azonosító>(item));
-            }
-        }
-
         protected override List<Vizsgálat.Azonosító> CurrentData()
         {
             return Program.database.Vizsgálatok();
@@ -332,7 +307,7 @@ namespace Labor
             Vizsgálati_Lap vizsgálati_lap = new Vizsgálati_Lap();
             vizsgálati_lap.ShowDialog();
 
-            Refresh();
+            Program.RefreshData();
         }
 
         private void Vizsgálat_Módosítás(object _sender, EventArgs _event)
@@ -351,7 +326,7 @@ namespace Labor
             Vizsgálati_Lap vizsgálati_lap = new Vizsgálati_Lap(_vizsgálat.Value);
             vizsgálati_lap.ShowDialog();
 
-            Refresh();
+            Program.RefreshData();
         }
 
         private void Vizsgálat_Törlés(object _sender, EventArgs _event)
@@ -373,10 +348,8 @@ namespace Labor
                       "\nSorszám: " + azonosító.sorszám, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-                else Refresh();
-
+                else Program.RefreshData();
             }
-
         }
 
         //
@@ -411,7 +384,10 @@ namespace Labor
 
         public sealed class Vizsgálati_Lap : Form
         {
-            #region vizsgálati lap
+            private string gyártási_év = "2013";
+            private Vizsgálat? eredeti = null;
+
+            #region Declaration
             TextBox box_termékkód;
 
             TextBox box_szita_átmérő;
@@ -466,21 +442,7 @@ namespace Labor
             ComboBox combo_megrendelő;
             #endregion
 
-            private enum States
-            {
-                NINCS = 0,
-                TERMÉKKÓD = 1,
-                TERMÉKKÓD_BEÁLLÍTÁS = 2,
-                HORDÓSZÁM = 3,
-                KÉSZ = 4
-
-            }
-
-            private string gyártási_év = "2013";
-
-            private States state = States.NINCS;
-            private Vizsgálat? eredeti = null;
-
+            #region Constructor
             public Vizsgálati_Lap()
             {
                 InitializeForm();
@@ -770,6 +732,18 @@ namespace Labor
                 box_termékkód.Enabled = false;
                 box_hordószám.Enabled = false;
             }
+            #endregion
+
+            #region States
+            private enum States
+            {
+                NINCS = 0,
+                TERMÉKKÓD = 1,
+                TERMÉKKÓD_BEÁLLÍTÁS = 2,
+                HORDÓSZÁM = 3,
+                KÉSZ = 4
+            }
+            private States state = States.NINCS;
 
             private void SetState(States _state)
             {
@@ -814,6 +788,7 @@ namespace Labor
                         break;
                 }
             }
+            #endregion
 
             #region EventHandlers
             private void combo_hordótípus_Leave(object _sender, EventArgs _event)

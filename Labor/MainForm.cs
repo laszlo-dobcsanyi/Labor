@@ -104,9 +104,6 @@ namespace Labor
         {
             menu.SelectedTab.Controls[0].Refresh();
 
-            Form active_child = ActiveMdiChild;
-            if (active_child != null) active_child.Refresh();
-
             base.Refresh();
         }
         /// <summary>

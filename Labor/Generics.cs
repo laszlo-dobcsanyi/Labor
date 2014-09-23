@@ -37,11 +37,22 @@ namespace Labor
 
     public abstract class Tokenized_Control<T> : Control
     {
+        protected DataTable data;
+        protected DataGridView table;
         protected List<DataToken<T>> tokens = new List<DataToken<T>>();
 
-        #region Abstract functions
-        protected abstract void InitializeTokens();
+        public void InitializeTokens()
+        {
+            List<T> data = CurrentData();
+            foreach (T item in data)
+            {
+                DataToken<T> token = new DataToken<T>(item);
+                AddToken(token);
+                tokens.Add(token);
+            }
+        }
 
+        #region Abstract functions
         protected abstract List<T> CurrentData();
 
         protected abstract void AddToken(DataToken<T> _token);
@@ -101,11 +112,22 @@ namespace Labor
 
     public abstract class Tokenized_Form<T> : Form
     {
+        protected DataTable data;
+        protected DataGridView table;
         protected List<DataToken<T>> tokens = new List<DataToken<T>>();
 
-        #region Abstract functions
-        protected abstract void InitializeTokens();
+        public void InitializeTokens()
+        {
+            List<T> data = CurrentData();
+            foreach (T item in data)
+            {
+                DataToken<T> token = new DataToken<T>(item);
+                AddToken(token);
+                tokens.Add(token);
+            }       
+        }
 
+        #region Abstract functions
         protected abstract List<T> CurrentData();
 
         protected abstract void AddToken(DataToken<T> _token);
@@ -160,6 +182,8 @@ namespace Labor
             foreach (DataToken<T> token in deletable) { tokens.Remove(token); }
 
             base.Refresh();
+
+            if (Owner != null) Owner.Refresh();
         }
     }
 }

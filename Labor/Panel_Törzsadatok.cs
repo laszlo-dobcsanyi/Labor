@@ -33,8 +33,6 @@ namespace Labor
 
     public sealed class Panel_Törzsadatok : Tokenized_Control<Törzsadat>
     {
-        private DataTable data;
-        private DataGridView table;
         private ComboBox combo_törzsadat;
 
         #region Constructor
@@ -112,22 +110,6 @@ namespace Labor
         #endregion
 
         #region Tokenizer
-        protected override void InitializeTokens()
-        {
-            List<Törzsadat> törzsadatok = Program.database.Törzsadatok(combo_törzsadat.Items[0].ToString());
-
-            foreach (Törzsadat item in törzsadatok)
-            {
-                DataRow row = data.NewRow();
-                row[0] = item.azonosító;
-                row[1] = item.megnevezés_2;
-                row[2] = item.megnevezés_3;
-                data.Rows.Add(row);
-
-                tokens.Add(new DataToken<Törzsadat>(item));
-            }
-        }
-
         protected override List<Törzsadat> CurrentData()
         {
             return Program.database.Törzsadatok(combo_törzsadat.Text);
@@ -163,6 +145,8 @@ namespace Labor
             Form_Törzsadatok form = new Form_Törzsadatok(new Törzsadat(combo_törzsadat.SelectedItem.ToString(),
                 (string)table.SelectedRows[0].Cells[0].Value, (string)table.SelectedRows[0].Cells[1].Value, (string)table.SelectedRows[0].Cells[2].Value));
             form.ShowDialog();
+
+            Program.RefreshData();
         }
 
         private void TörzsadatTörlés(object _sender, EventArgs _event)
@@ -218,13 +202,14 @@ namespace Labor
 
         private sealed class Form_Törzsadatok : Form
         {
-            private Nullable<Törzsadat> törzsadat = null;
+            private Törzsadat? törzsadat = null;
 
             private Label label_típus;
             private TextBox box_azonosító;
             private TextBox box_megnevezés2;
             private TextBox box_megnevezés3;
 
+            #region Constructor
             public Form_Törzsadatok(string _típus)
             {
                 InitializeForm(_típus, false);
@@ -322,7 +307,9 @@ namespace Labor
                 box_megnevezés2.Text = _eredeti.megnevezés_2;
                 box_megnevezés3.Text = _eredeti.megnevezés_3;
             }
+            #endregion
 
+            #region EventHandlers
             private void rendben_Click(object _sender, System.EventArgs _event)
             {
                 if (box_azonosító.Text.Length == 0) { MessageBox.Show("Nem megfelelő a magyar megnevezés hossza!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
@@ -333,19 +320,16 @@ namespace Labor
                 {
                     if (!Program.database.Törzsadat_Módosítás(törzsadat.Value.azonosító, new Törzsadat(label_típus.Text, box_azonosító.Text, box_megnevezés2.Text, box_megnevezés3.Text)))
                     { MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy a módosítandó törzsadat már nem létezik, vagy van már ilyen magyar megnevezés?", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-
-                    Program.RefreshData();
                 }
                 else
                 {
                     if (!Program.database.Törzsadat_Hozzáadás(new Törzsadat(label_típus.Text, box_azonosító.Text, box_megnevezés2.Text, box_megnevezés3.Text)))
                     { MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy van már ilyen magyar megnevezés?", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-
-                    Program.RefreshData();
                 }
 
                 Close();
             }
+            #endregion
         }
     }
 }

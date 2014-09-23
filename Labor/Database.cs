@@ -1052,7 +1052,7 @@ namespace Labor
                 string where = A(new string[] { Update<int>("FOSZAM", _azonosító.id), Update<string>("FONEVE", _azonosító.név), Update<int>("FOFOHO", _azonosító.hordók_száma),
                      Update<string>("FOTIPU", _azonosító.típus) ,Update<string>("FOFENE", _azonosító.készítő) ,Update<string>("FODATE", _azonosító.idő),Update<string>("FOFAJT", _azonosító.típus)  });
 
-                command.CommandText = "DELETE FROM L_FOGLAL WHERE " + where;
+                command.CommandText = "DELETE FROM L_FOGLAL WHERE " + where + "; UPDATE L_VIZSLAP SET FOSZAM = NULL WHERE FOSZAM = " + _azonosító.id;
                 if (command.ExecuteNonQuery() == 0) found = false;
 
                 command.Dispose();
