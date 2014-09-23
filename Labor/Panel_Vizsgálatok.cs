@@ -266,33 +266,52 @@ namespace Labor
         #endregion
 
         #region Tokenizer
+        protected override bool SameKeys(Vizsgálat.Azonosító _1, Vizsgálat.Azonosító _2)
+        {
+            if (_1.termékkód == _2.termékkód && _1.sarzs == _2.sarzs && _1.hordószám == _2.hordószám && _1.hordótípus == _2.hordótípus) return true;
+            return false;
+        }
+
+        protected override bool SameKeys(Vizsgálat.Azonosító _1, DataRow _row)
+        {
+            if (_1.termékkód == (string)_row[Vizsgálat.Azonosító.TableIndexes.termékkód] && _1.sarzs == (string)_row[Vizsgálat.Azonosító.TableIndexes.sarzs] &&
+                    _1.hordószám == (string)_row[Vizsgálat.Azonosító.TableIndexes.hordószám] && _1.hordótípus == (string)_row[Vizsgálat.Azonosító.TableIndexes.hordótípus]) return true;
+            return false;
+        }
+
+        //
+
         protected override List<Vizsgálat.Azonosító> CurrentData()
         {
             return Program.database.Vizsgálatok();
         }
 
-        protected override void AddToken(DataToken<Vizsgálat.Azonosító> _token)
+        protected override void Add(Vizsgálat.Azonosító _data)
         {
             DataRow row = data.NewRow();
-            row[Vizsgálat.Azonosító.TableIndexes.termékkód] = _token.data.termékkód;
-            row[Vizsgálat.Azonosító.TableIndexes.sarzs] = _token.data.sarzs;
-            row[Vizsgálat.Azonosító.TableIndexes.hordószám] = _token.data.hordószám;
-            row[Vizsgálat.Azonosító.TableIndexes.hordótípus] = _token.data.hordótípus;
-            row[Vizsgálat.Azonosító.TableIndexes.nettó_töltet] = _token.data.nettó_töltet;
-            row[Vizsgálat.Azonosító.TableIndexes.szita_átmérő] = _token.data.szita_átmérő;
-            row[Vizsgálat.Azonosító.TableIndexes.megrendelő] = _token.data.megrendelő;
-            row[Vizsgálat.Azonosító.TableIndexes.sorszám] = _token.data.sorszám;
-            if (_token.data.foglalás == null) row[Vizsgálat.Azonosító.TableIndexes.foglalás] = DBNull.Value;
-            else row[Vizsgálat.Azonosító.TableIndexes.foglalás] = _token.data.foglalás.Value;
+            row[Vizsgálat.Azonosító.TableIndexes.termékkód] = _data.termékkód;
+            row[Vizsgálat.Azonosító.TableIndexes.sarzs] = _data.sarzs;
+            row[Vizsgálat.Azonosító.TableIndexes.hordószám] = _data.hordószám;
+            row[Vizsgálat.Azonosító.TableIndexes.hordótípus] = _data.hordótípus;
+            row[Vizsgálat.Azonosító.TableIndexes.nettó_töltet] = _data.nettó_töltet;
+            row[Vizsgálat.Azonosító.TableIndexes.szita_átmérő] = _data.szita_átmérő;
+            row[Vizsgálat.Azonosító.TableIndexes.megrendelő] = _data.megrendelő;
+            row[Vizsgálat.Azonosító.TableIndexes.sorszám] = _data.sorszám;
+            if (_data.foglalás == null) row[Vizsgálat.Azonosító.TableIndexes.foglalás] = DBNull.Value;
+            else row[Vizsgálat.Azonosító.TableIndexes.foglalás] = _data.foglalás.Value;
             data.Rows.Add(row);
         }
 
-        protected override void RemoveToken(DataToken<Vizsgálat.Azonosító> _token)
+        protected override void Modify(Vizsgálat.Azonosító _original, Vizsgálat.Azonosító _new)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void Remove(Vizsgálat.Azonosító _data)
         {
             foreach (DataRow current in data.Rows)
             {
-                if (_token.data.termékkód == current[Vizsgálat.Azonosító.TableIndexes.termékkód].ToString() && _token.data.sarzs == current[Vizsgálat.Azonosító.TableIndexes.sarzs].ToString()
-                    && _token.data.hordószám == current[Vizsgálat.Azonosító.TableIndexes.hordószám].ToString() && _token.data.hordótípus == current[Vizsgálat.Azonosító.TableIndexes.hordótípus].ToString())
+                if (SameKeys(_data, current))
                 {
                     data.Rows.Remove(current);
                     break;

@@ -110,25 +110,44 @@ namespace Labor
         #endregion
 
         #region Tokenizer
+        protected override bool SameKeys(Törzsadat _1, Törzsadat _2)
+        {
+            if (_1.típus == _2.típus && _1.azonosító == _2.azonosító) return true;
+            return false;
+        }
+
+        protected override bool SameKeys(Törzsadat _1, DataRow _row)
+        {
+            if (_1.típus == (string)_row[0] && _1.azonosító == (string)_row[1]) return true;
+            return false;
+        }
+
+        //
+
         protected override List<Törzsadat> CurrentData()
         {
             return Program.database.Törzsadatok(combo_törzsadat.Text);
         }
 
-        protected override void AddToken(DataToken<Törzsadat> _token)
+        protected override void Add(Törzsadat _data)
         {
             DataRow row = data.NewRow();
-            row[0] = _token.data.azonosító;
-            row[1] = _token.data.megnevezés_2;
-            row[2] = _token.data.megnevezés_3;
+            row[0] = _data.azonosító;
+            row[1] = _data.megnevezés_2;
+            row[2] = _data.megnevezés_3;
             data.Rows.Add(row);
         }
 
-        protected override void RemoveToken(DataToken<Törzsadat> _token)
+        protected override void Modify(Törzsadat _original, Törzsadat _new)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void Remove(Törzsadat _data)
         {
             foreach (DataRow current in data.Rows)
             {
-                if (_token.data.azonosító == (string)current[0])
+                if (SameKeys(_data, current))
                 {
                     data.Rows.Remove(current);
                     break;

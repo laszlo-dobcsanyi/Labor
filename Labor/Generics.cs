@@ -17,8 +17,6 @@ namespace Labor
         }
     }
 
-    //
-
     public class DataToken<T>
     {
         public enum TokenType
@@ -47,17 +45,25 @@ namespace Labor
             foreach (T item in data)
             {
                 DataToken<T> token = new DataToken<T>(item);
-                AddToken(token);
+                Add(token.data);
                 tokens.Add(token);
             }
         }
 
         #region Abstract functions
+        protected abstract bool SameKeys(T _1, T _2);
+
+        protected abstract bool SameKeys(T _1, DataRow _row);
+
+        //
+
         protected abstract List<T> CurrentData();
 
-        protected abstract void AddToken(DataToken<T> _token);
+        protected abstract void Add(T _data);
 
-        protected abstract void RemoveToken(DataToken<T> _token);
+        protected abstract void Modify(T _original, T _new);
+
+        protected abstract void Remove(T _data);
         #endregion
 
         public override void Refresh()
@@ -73,11 +79,13 @@ namespace Labor
                 bool found = false;
                 foreach (DataToken<T> token in tokens)
                 {
-                    if (item.Equals(token.data))
+                    if (SameKeys(item, token.data))
                     {
                         // A megtalált token kivétele a keresésből
                         token.type = DataToken<T>.TokenType.FOUND;
                         found = true;
+
+                        if (!item.Equals(token.data)) Modify(token.data, item);
                         break;
                     }
                 }
@@ -93,11 +101,11 @@ namespace Labor
                 switch (token.type)
                 {
                     case DataToken<T>.TokenType.NEW:
-                        AddToken(token);
+                        Add(token.data);
                         break;
 
                     case DataToken<T>.TokenType.NOT_FOUND:
-                        RemoveToken(token);
+                        Remove(token.data);
                         deletable.Add(token);
                         break;
                 }
@@ -128,6 +136,12 @@ namespace Labor
         }
 
         #region Abstract functions
+        protected abstract bool SameKeys(T _1, T _2);
+
+        protected abstract bool SameKeys(T _1, DataRow _row);
+
+        //
+
         protected abstract List<T> CurrentData();
 
         protected abstract void AddToken(DataToken<T> _token);
