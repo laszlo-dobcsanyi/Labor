@@ -280,16 +280,7 @@ namespace Labor
 
             foreach (Foglalás item in foglalások)
             {
-                DataRow row = data.NewRow();
-                row[Foglalás.TableIndexes.id] = item.id;
-                row[Foglalás.TableIndexes.név] = item.név;
-                row[Foglalás.TableIndexes.hordók_száma] = item.hordók_száma;
-                row[Foglalás.TableIndexes.típus] = item.típus;
-                row[Foglalás.TableIndexes.készítő] = item.készítő;
-                row[Foglalás.TableIndexes.idő] = item.idő;
-                data.Rows.Add(row);
-
-                tokens.Add(new DataToken<Foglalás>(item));
+                AddToken(new DataToken<Foglalás>(item));
             }
         }
 
@@ -478,6 +469,7 @@ namespace Labor
 
                 InitializeForm();
                 InitializeContent();
+                InitializeTokens();
             }
 
             private void InitializeForm()
@@ -628,7 +620,9 @@ namespace Labor
 
         public sealed class Vizsgálat_Kereső : Form
         {
-            #region TextBox
+            Foglalás? eredeti = null;
+
+            #region Declaration
             TextBox box_termékkód;
             TextBox box_sarzs_min;
             TextBox box_hordó_id_min;
@@ -661,8 +655,6 @@ namespace Labor
             TextBox box_műszak_jele;
             TextBox box_töltőgép_száma;
             #endregion
-
-            Foglalás? eredeti = null;
 
             #region Constructor
             public Vizsgálat_Kereső()
@@ -921,7 +913,7 @@ namespace Labor
             }
             #endregion
 
-            public sealed class Keresés_Eredmény : Form
+            public sealed class Keresés_Eredmény : Tokenized_Form<Sarzs>
             {
                 private DataTable data;
                 private DataGridView table;
@@ -1009,18 +1001,45 @@ namespace Labor
                     data.Columns.Add(new DataColumn("Foglalt", System.Type.GetType("System.Int32")));
                     data.Columns.Add(new DataColumn("Szabad", System.Type.GetType("System.Int32")));
 
-                    List<Sarzs> sarzsok = Program.database.Sarzsok(szűrő);
-                    foreach(Sarzs item in sarzsok)
-                    {
-                        DataRow row = data.NewRow();
-                        row[Sarzs.TableIndexes.termékkód] = item.termékkód;
-                        row[Sarzs.TableIndexes.sarzs] = item.sarzs;
-                        row[Sarzs.TableIndexes.foglalt] = item.foglalt;
-                        row[Sarzs.TableIndexes.szabad] = item.szabad;
-                        data.Rows.Add(row);
-                    }
-
                     return data;
+                }
+                #endregion
+
+                #region Tokenizer
+                protected override void InitializeTokens()
+                {
+                    List<Sarzs> sarzsok = Program.database.Sarzsok(szűrő);
+                    foreach (Sarzs item in sarzsok)
+                    {
+                        AddToken(new DataToken<Sarzs>(item));
+                    }
+                }
+
+                protected override List<Sarzs> CurrentData()
+                {
+                    return Program.database.Sarzsok(szűrő);
+                }
+
+                protected override void AddToken(DataToken<Sarzs> _token)
+                {
+                    DataRow row = data.NewRow();
+                    row[Sarzs.TableIndexes.termékkód] = _token.data.termékkód;
+                    row[Sarzs.TableIndexes.sarzs] = _token.data.sarzs;
+                    row[Sarzs.TableIndexes.foglalt] = _token.data.foglalt;
+                    row[Sarzs.TableIndexes.szabad] = _token.data.szabad;
+                    data.Rows.Add(row);
+                }
+
+                protected override void RemoveToken(DataToken<Sarzs> _token)
+                {
+                    foreach (DataRow current in data.Rows)
+                    {
+                        if (_token.data.termékkód == (string)current[Sarzs.TableIndexes.termékkód] && _token.data.sarzs == (string)current[Sarzs.TableIndexes.sarzs])
+                        {
+                            data.Rows.Remove(current);
+                            break;
+                        }
+                    }
                 }
                 #endregion
 
