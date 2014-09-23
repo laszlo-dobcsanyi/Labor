@@ -5,7 +5,8 @@ namespace Labor
 {
     public static class Program
     {
-        public static Database database;
+        private static Timer    refresher;
+        public static Database  database;
         public static MainForm  mainform;
 
         [STAThread]
@@ -15,8 +16,26 @@ namespace Labor
 
             database = new Database();
             mainform = new MainForm();
+            
+            refresher = new Timer();
+            refresher.Interval = Settings.RefreshTime * 1000;
+            refresher.Tick += Refresher_Elapsed;
+            refresher.Start();
 
             Application.Run(mainform);
         }
+
+        #region Refresh
+        private static void Refresher_Elapsed(object _sender, EventArgs _event)
+        {
+            RefreshData();
+        }
+
+        public static void RefreshData()
+        {
+            mainform.Refresh();
+            refresher.Start();
+        }
+        #endregion
     }
 }

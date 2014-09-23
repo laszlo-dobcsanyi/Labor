@@ -7,8 +7,6 @@ namespace Labor
 {
     public partial class MainForm : Form
     {
-        public Timer refresher;
-
         public Panel_Törzsadatok    törzsadatok_panel;
         public Panel_Vizsgálatok    vizsgálatok_panel;
         public Panel_Foglalások     foglalások_panel;
@@ -24,11 +22,6 @@ namespace Labor
         {
             InitializeForm();
             InitializeContent();
-
-            refresher = new Timer();
-            refresher.Interval = Settings.RefreshTime * 1000;
-            refresher.Tick += Refresher_Elapsed;
-            refresher.Start();
         }
 
         private void InitializeForm()
@@ -107,6 +100,15 @@ namespace Labor
         #endregion
 
         #region Events
+        public override void Refresh()
+        {
+            menu.SelectedTab.Controls[0].Refresh();
+
+            Form active_child = ActiveMdiChild;
+            if (active_child != null) active_child.Refresh();
+
+            base.Refresh();
+        }
         /// <summary>
         /// Aktuális panel nevének sötétítése a menüsorban.
         /// </summary>
@@ -130,19 +132,6 @@ namespace Labor
             if (_event.KeyCode == Keys.F4) { menu.SelectedIndex = 3; return; }
             if (_event.KeyCode == Keys.F5) { menu.SelectedIndex = 4; return; }
             if (_event.KeyCode == Keys.F6) { menu.SelectedIndex = 5; return; }
-        }
-        #endregion
-
-        #region Refresh
-        private void Refresher_Elapsed(object _sender, EventArgs _event)
-        {
-            RefreshData();
-        }
-
-        public void RefreshData()
-        {
-            menu.SelectedTab.Controls[0].Refresh();
-            refresher.Start();
         }
         #endregion
 
