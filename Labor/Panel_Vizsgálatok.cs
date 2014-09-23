@@ -45,6 +45,33 @@ namespace Labor
                 public const int sorszám = 7;
                 public const int foglalás = 8;
             }
+
+            public static void SetRow(DataRow _row, Azonosító _azonosító)
+            {
+                _row[TableIndexes.termékkód] = _azonosító.termékkód;
+                _row[TableIndexes.sarzs] = _azonosító.sarzs;
+                _row[TableIndexes.hordószám] = _azonosító.hordószám;
+                _row[TableIndexes.hordótípus] = _azonosító.hordótípus;
+                _row[TableIndexes.nettó_töltet] = _azonosító.nettó_töltet;
+                _row[TableIndexes.szita_átmérő] = _azonosító.szita_átmérő;
+                _row[TableIndexes.megrendelő] = _azonosító.megrendelő;
+                _row[TableIndexes.sorszám] = _azonosító.sorszám;
+                if (_azonosító.foglalás == null) _row[TableIndexes.foglalás] = DBNull.Value;
+                else _row[TableIndexes.foglalás] = _azonosító.foglalás.Value;
+            }
+
+            public static bool SameKeys(Vizsgálat.Azonosító _1, Vizsgálat.Azonosító _2)
+            {
+                if (_1.termékkód == _2.termékkód && _1.sarzs == _2.sarzs && _1.hordószám == _2.hordószám && _1.hordótípus == _2.hordótípus) return true;
+                return false;
+            }
+
+            public static bool SameKeys(Vizsgálat.Azonosító _1, DataRow _row)
+            {
+                if (_1.termékkód == (string)_row[TableIndexes.termékkód] && _1.sarzs == (string)_row[TableIndexes.sarzs] &&
+                        _1.hordószám == (string)_row[TableIndexes.hordószám] && _1.hordótípus == (string)_row[TableIndexes.hordótípus]) return true;
+                return false;
+            }
         }
 
         public struct Adatok1
@@ -266,58 +293,13 @@ namespace Labor
         #endregion
 
         #region Tokenizer
-        protected override bool SameKeys(Vizsgálat.Azonosító _1, Vizsgálat.Azonosító _2)
-        {
-            if (_1.termékkód == _2.termékkód && _1.sarzs == _2.sarzs && _1.hordószám == _2.hordószám && _1.hordótípus == _2.hordótípus) return true;
-            return false;
-        }
+        protected override void SetRow(DataRow _row, Vizsgálat.Azonosító _azonosító) { Vizsgálat.Azonosító.SetRow(_row, _azonosító); }
 
-        protected override bool SameKeys(Vizsgálat.Azonosító _1, DataRow _row)
-        {
-            if (_1.termékkód == (string)_row[Vizsgálat.Azonosító.TableIndexes.termékkód] && _1.sarzs == (string)_row[Vizsgálat.Azonosító.TableIndexes.sarzs] &&
-                    _1.hordószám == (string)_row[Vizsgálat.Azonosító.TableIndexes.hordószám] && _1.hordótípus == (string)_row[Vizsgálat.Azonosító.TableIndexes.hordótípus]) return true;
-            return false;
-        }
+        protected override bool SameKeys(Vizsgálat.Azonosító _1, Vizsgálat.Azonosító _2) { return Vizsgálat.Azonosító.SameKeys(_1, _2); }
 
-        //
+        protected override bool SameKeys(Vizsgálat.Azonosító _1, DataRow _row) { return Vizsgálat.Azonosító.SameKeys(_1, _row); }
 
-        protected override List<Vizsgálat.Azonosító> CurrentData()
-        {
-            return Program.database.Vizsgálatok();
-        }
-
-        protected override void Add(Vizsgálat.Azonosító _data)
-        {
-            DataRow row = data.NewRow();
-            row[Vizsgálat.Azonosító.TableIndexes.termékkód] = _data.termékkód;
-            row[Vizsgálat.Azonosító.TableIndexes.sarzs] = _data.sarzs;
-            row[Vizsgálat.Azonosító.TableIndexes.hordószám] = _data.hordószám;
-            row[Vizsgálat.Azonosító.TableIndexes.hordótípus] = _data.hordótípus;
-            row[Vizsgálat.Azonosító.TableIndexes.nettó_töltet] = _data.nettó_töltet;
-            row[Vizsgálat.Azonosító.TableIndexes.szita_átmérő] = _data.szita_átmérő;
-            row[Vizsgálat.Azonosító.TableIndexes.megrendelő] = _data.megrendelő;
-            row[Vizsgálat.Azonosító.TableIndexes.sorszám] = _data.sorszám;
-            if (_data.foglalás == null) row[Vizsgálat.Azonosító.TableIndexes.foglalás] = DBNull.Value;
-            else row[Vizsgálat.Azonosító.TableIndexes.foglalás] = _data.foglalás.Value;
-            data.Rows.Add(row);
-        }
-
-        protected override void Modify(Vizsgálat.Azonosító _old, Vizsgálat.Azonosító _new)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void Remove(Vizsgálat.Azonosító _data)
-        {
-            foreach (DataRow current in data.Rows)
-            {
-                if (SameKeys(_data, current))
-                {
-                    data.Rows.Remove(current);
-                    break;
-                }
-            }
-        }
+        protected override List<Vizsgálat.Azonosító> CurrentData() { return Program.database.Vizsgálatok(); }
         #endregion
 
         #region EventHandlers

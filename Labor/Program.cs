@@ -33,7 +33,7 @@ namespace Labor
 
         public static void RefreshData()
         {
-            Form.ActiveForm.Refresh();
+            if (Form.ActiveForm != null) Form.ActiveForm.Refresh();
             refresher.Start();
         }
         #endregion

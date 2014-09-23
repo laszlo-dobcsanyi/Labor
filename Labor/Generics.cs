@@ -41,53 +41,61 @@ namespace Labor
         protected DataGridView table;
         protected List<DataToken<T>> tokens = new List<DataToken<T>>();
 
-        public void InitializeTokens()
-        {
-            List<T> data = CurrentData();
-            foreach (T item in data)
-            {
-                DataToken<T> token = new DataToken<T>(item);
-                Add(token.data);
-                tokens.Add(token);
-            }
-        }
-
         #region Abstract functions
+        protected abstract void SetRow(DataRow _row, T _data);
+
         protected abstract bool SameKeys(T _1, T _2);
 
         protected abstract bool SameKeys(T _1, DataRow _row);
 
-        //
-
         protected abstract List<T> CurrentData();
-
-        protected abstract void Add(T _data);
-
-        protected abstract void Modify(T _old, T _new);
-
-        protected abstract void Remove(T _data);
         #endregion
+
+        public void InitializeTokens()
+        {
+            List<T> current_data = CurrentData();
+            foreach (T item in current_data)
+            {
+                DataRow row = data.NewRow();
+                SetRow(row, item);
+                data.Rows.Add(row);
+
+                tokens.Add(new DataToken<T>(item));
+            }
+        }
 
         public override void Refresh()
         {
             // Összes adat lekérdezése
-            List<T> data = CurrentData();
+            List<T> current_data = CurrentData();
             // Minden token beállítása a kereséshez
             foreach (DataToken<T> token in tokens) { token.type = DataToken<T>.TokenType.NOT_FOUND; }
 
             // A már táblán fennlévő tokenek összevetése a lekért adatokkal
-            foreach (T item in data)
+            foreach (T item in current_data)
             {
                 bool found = false;
                 foreach (DataToken<T> token in tokens)
                 {
-                    if (item.Equals(token.data))
+                    if (SameKeys(token.data, item))
                     {
                         // A megtalált token kivétele a keresésből
                         token.type = DataToken<T>.TokenType.FOUND;
                         found = true;
 
-                        if (!item.Equals(token.data)) Modify(token.data, item);
+                        if (!item.Equals(token.data))
+                        {
+                            foreach (DataRow current in data.Rows)
+                            {
+                                if (SameKeys(token.data, current))
+                                {
+                                    SetRow(current, item);
+                                    break;
+                                }
+                            }
+
+                            token.data = item;
+                        }
                         break;
                     }
                 }
@@ -103,12 +111,21 @@ namespace Labor
                 switch (token.type)
                 {
                     case DataToken<T>.TokenType.NEW:
-                        Add(token.data);
+                        DataRow row = data.NewRow();
+                        SetRow(row, token.data);
+                        data.Rows.Add(row);
                         break;
 
                     case DataToken<T>.TokenType.NOT_FOUND:
-                        Remove(token.data);
-                        deletable.Add(token);
+                        foreach (DataRow current in data.Rows)
+                        {
+                            if (SameKeys(token.data, current))
+                            {
+                                data.Rows.Remove(current);
+                                deletable.Add(token);
+                                break;
+                            }
+                        }
                         break;
                 }
             }
@@ -128,53 +145,61 @@ namespace Labor
         protected DataGridView table;
         protected List<DataToken<T>> tokens = new List<DataToken<T>>();
 
-        public void InitializeTokens()
-        {
-            List<T> data = CurrentData();
-            foreach (T item in data)
-            {
-                DataToken<T> token = new DataToken<T>(item);
-                Add(token.data);
-                tokens.Add(token);
-            }
-        }
-
         #region Abstract functions
+        protected abstract void SetRow(DataRow _row, T _data);
+
         protected abstract bool SameKeys(T _1, T _2);
 
         protected abstract bool SameKeys(T _1, DataRow _row);
 
-        //
-
         protected abstract List<T> CurrentData();
-
-        protected abstract void Add(T _data);
-
-        protected abstract void Modify(T _old, T _new);
-
-        protected abstract void Remove(T _data);
         #endregion
+
+        public void InitializeTokens()
+        {
+            List<T> current_data = CurrentData();
+            foreach (T item in current_data)
+            {
+                DataRow row = data.NewRow();
+                SetRow(row, item);
+                data.Rows.Add(row);
+
+                tokens.Add(new DataToken<T>(item));
+            }
+        }
 
         public override void Refresh()
         {
             // Összes adat lekérdezése
-            List<T> data = CurrentData();
+            List<T> current_data = CurrentData();
             // Minden token beállítása a kereséshez
             foreach (DataToken<T> token in tokens) { token.type = DataToken<T>.TokenType.NOT_FOUND; }
 
             // A már táblán fennlévő tokenek összevetése a lekért adatokkal
-            foreach (T item in data)
+            foreach (T item in current_data)
             {
                 bool found = false;
                 foreach (DataToken<T> token in tokens)
                 {
-                    if (SameKeys(item, token.data))
+                    if (SameKeys(token.data, item))
                     {
                         // A megtalált token kivétele a keresésből
                         token.type = DataToken<T>.TokenType.FOUND;
                         found = true;
 
-                        if (!item.Equals(token.data)) Modify(token.data, item);
+                        if (!item.Equals(token.data))
+                        {
+                            foreach (DataRow current in data.Rows)
+                            {
+                                if (SameKeys(token.data, current))
+                                {
+                                    SetRow(current, item);
+                                    break;
+                                }
+                            }
+
+                            token.data = item;
+                        }
                         break;
                     }
                 }
@@ -190,19 +215,28 @@ namespace Labor
                 switch (token.type)
                 {
                     case DataToken<T>.TokenType.NEW:
-                        Add(token.data);
+                        DataRow row = data.NewRow();
+                        SetRow(row, token.data);
+                        data.Rows.Add(row);
                         break;
 
                     case DataToken<T>.TokenType.NOT_FOUND:
-                        Remove(token.data);
-                        deletable.Add(token);
+                        foreach (DataRow current in data.Rows)
+                        {
+                            if (SameKeys(token.data, current))
+                            {
+                                data.Rows.Remove(current);
+                                deletable.Add(token);
+                                break;
+                            }
+                        }
                         break;
                 }
             }
 
             // Nem talált tokenek kivétele
-            foreach (DataToken<T> token in deletable) { tokens.Remove(token); } 
-            
+            foreach (DataToken<T> token in deletable) { tokens.Remove(token); }
+
             base.Refresh();
         }
     }

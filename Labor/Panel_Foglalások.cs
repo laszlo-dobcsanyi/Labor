@@ -31,6 +31,27 @@ namespace Labor
             public const int foglalás_száma = 3;
             public const int gyártási_év = 4;
         }
+
+        public static void SetRow(DataRow _row, Hordó _hordó)
+        {
+            _row[TableIndexes.termékkód] = _hordó.termékkód;
+            _row[TableIndexes.sarzs] = _hordó.sarzs;
+            _row[TableIndexes.id] = _hordó.id;
+            _row[TableIndexes.foglalás_száma] = _hordó.foglalás_száma;
+            _row[TableIndexes.gyártási_év] = _hordó.gyártási_év;
+        }
+
+        public static bool SameKeys(Hordó _1, Hordó _2)
+        {
+            if (_1.id == _2.id && _1.sarzs == _2.sarzs) return true;
+            return false;
+        }
+
+        public static bool SameKeys(Hordó _1, DataRow _row)
+        {
+            if (_1.id == (string)_row[TableIndexes.id] && _1.sarzs == (string)_row[TableIndexes.sarzs]) return true;
+            return false;
+        }
     }
 
     public struct Sarzs
@@ -54,6 +75,27 @@ namespace Labor
             public const int sarzs = 1;
             public const int foglalt = 2;
             public const int szabad = 3;
+        }
+
+        public static void SetRow(DataRow _row, Sarzs _sarzs)
+        {
+            _row[Sarzs.TableIndexes.termékkód] = _sarzs.termékkód;
+            _row[Sarzs.TableIndexes.sarzs] = _sarzs.sarzs;
+            _row[Sarzs.TableIndexes.foglalt] = _sarzs.foglalt;
+            _row[Sarzs.TableIndexes.szabad] = _sarzs.szabad;
+        }
+
+
+        public static bool SameKeys(Sarzs _1, Sarzs _2)
+        {
+            if (_1.termékkód == _2.termékkód && _1.sarzs == _2.sarzs) return true;
+            return false;
+        }
+
+        public static bool SameKeys(Sarzs _1, DataRow _row)
+        {
+            if (_1.termékkód == (string)_row[TableIndexes.termékkód] && _1.sarzs == (string)_row[TableIndexes.sarzs]) return true;
+            return false;
         }
     }
 
@@ -99,6 +141,28 @@ namespace Labor
             public const int típus = 3;
             public const int készítő = 4;
             public const int idő = 5;
+        }
+
+        public static void SetRow(DataRow _row, Foglalás _foglalás)
+        {
+            _row[TableIndexes.id] = _foglalás.id;
+            _row[TableIndexes.név] = _foglalás.név;
+            _row[TableIndexes.hordók_száma] = _foglalás.hordók_száma;
+            _row[TableIndexes.típus] = _foglalás.típus;
+            _row[TableIndexes.készítő] = _foglalás.készítő;
+            _row[TableIndexes.idő] = _foglalás.idő;
+        }
+
+        public static bool SameKeys(Foglalás _1, Foglalás _2)
+        {
+            if (_1.id == _2.id) return true;
+            return false;
+        }
+
+        public static bool SameKeys(Foglalás _1, DataRow _row)
+        {
+            if (_1.id == (int)_row[Foglalás.TableIndexes.id]) return true;
+            return false;
         }
     }
 
@@ -271,53 +335,13 @@ namespace Labor
         #endregion
 
         #region Tokenizer
-        protected override bool SameKeys(Foglalás _1, Foglalás _2)
-        {
-            if (_1.id == _2.id) return true;
-            return false;
-        }
+        protected override void SetRow(DataRow _row, Foglalás _foglalás) { Foglalás.SetRow(_row, _foglalás); }
 
-        protected override bool SameKeys(Foglalás _1, DataRow _row)
-        {
-            if (_1.id == (int)_row[Foglalás.TableIndexes.id]) return true;
-            return false;
-        }
+        protected override bool SameKeys(Foglalás _1, Foglalás _2) { return Foglalás.SameKeys(_1, _2); }
 
-        //
+        protected override bool SameKeys(Foglalás _1, DataRow _row) { return Foglalás.SameKeys(_1, _row); }
 
-        protected override List<Foglalás> CurrentData()
-        {
-            return Program.database.Foglalások();
-        }
-
-        protected override void Add(Foglalás _data)
-        {
-            DataRow row = data.NewRow();
-            row[Foglalás.TableIndexes.id] = _data.id;
-            row[Foglalás.TableIndexes.név] = _data.név;
-            row[Foglalás.TableIndexes.hordók_száma] = _data.hordók_száma;
-            row[Foglalás.TableIndexes.típus] = _data.típus;
-            row[Foglalás.TableIndexes.készítő] = _data.készítő;
-            row[Foglalás.TableIndexes.idő] = _data.idő;
-            data.Rows.Add(row);
-        }
-
-        protected override void Modify(Foglalás _old, Foglalás _new)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void Remove(Foglalás _data)
-        {
-            foreach (DataRow current in data.Rows)
-            {
-                if (SameKeys(_data, current))
-                {
-                    data.Rows.Remove(current);
-                    break;
-                }
-            }
-        }
+        protected override List<Foglalás> CurrentData() { return Program.database.Foglalások(); }
         #endregion
 
         #region EventHandlers
@@ -545,51 +569,15 @@ namespace Labor
             #endregion
 
             #region Tokenizer
-            protected override bool SameKeys(Hordó _1, Hordó _2)
-            {
-                if (_1.id == _2.id && _1.sarzs == _2.sarzs) return true;
-                return false;
-            }
+            protected override void SetRow(DataRow _row, Hordó _hordó) { Hordó.SetRow(_row, _hordó); }
 
-            protected override bool SameKeys(Hordó _1, DataRow _row)
-            {
-                if (_1.id == (string)_row[Hordó.TableIndexes.id] && _1.sarzs == (string)_row[Hordó.TableIndexes.sarzs]) return true;
-                return false;
-            }
+            protected override bool SameKeys(Hordó _1, Hordó _2) { return Hordó.SameKeys(_1, _2); }
 
-            //
+            protected override bool SameKeys(Hordó _1, DataRow _row) { return Hordó.SameKeys(_1, _row); }
 
             protected override List<Hordó> CurrentData()
             {
                 return Program.database.Foglalás_Hordók(foglalás);
-            }
-
-            protected override void Add(Hordó _data)
-            {
-                DataRow row = data.NewRow();
-                row[Hordó.TableIndexes.termékkód] = _data.termékkód;
-                row[Hordó.TableIndexes.sarzs] = _data.sarzs;
-                row[Hordó.TableIndexes.id] = _data.id;
-                row[Hordó.TableIndexes.foglalás_száma] = _data.foglalás_száma;
-                row[Hordó.TableIndexes.gyártási_év] = _data.gyártási_év;
-                data.Rows.Add(row);
-            }
-
-            protected override void Modify(Hordó _old, Hordó _new)
-            {
-                throw new NotImplementedException();
-            }
-
-            protected override void Remove(Hordó _data)
-            {
-                foreach (DataRow current in data.Rows)
-                {
-                    if (SameKeys(_data, current))
-                    {
-                        data.Rows.Remove(current);
-                        break;
-                    }
-                }
             }
             #endregion
 
@@ -1014,51 +1002,13 @@ namespace Labor
                 #endregion
 
                 #region Tokenizer
-                protected override bool SameKeys(Sarzs _1, Sarzs _2)
-                {
-                    if (_1.termékkód == _2.termékkód && _1.sarzs == _2.sarzs) return true;
-                    return false;
-                }
+                protected override void SetRow(DataRow _row, Sarzs _sarzs) { Sarzs.SetRow(_row, _sarzs); }
 
-                protected override bool SameKeys(Sarzs _1, DataRow _row)
-                {
-                    if (_1.termékkód == (string)_row[Sarzs.TableIndexes.termékkód] && _1.sarzs == (string)_row[Sarzs.TableIndexes.sarzs]) return true;
-                    return false;
-                }
+                protected override bool SameKeys(Sarzs _1, Sarzs _2) { return Sarzs.SameKeys(_1, _2); }
 
-                //
+                protected override bool SameKeys(Sarzs _1, DataRow _row) { return Sarzs.SameKeys(_1, _row); }
 
-                protected override List<Sarzs> CurrentData()
-                {
-                    return Program.database.Sarzsok(szűrő);
-                }
-
-                protected override void Add(Sarzs _data)
-                {
-                    DataRow row = data.NewRow();
-                    row[Sarzs.TableIndexes.termékkód] = _data.termékkód;
-                    row[Sarzs.TableIndexes.sarzs] = _data.sarzs;
-                    row[Sarzs.TableIndexes.foglalt] = _data.foglalt;
-                    row[Sarzs.TableIndexes.szabad] = _data.szabad;
-                    data.Rows.Add(row);
-                }
-
-                protected override void Modify(Sarzs _old, Sarzs _new)
-                {
-                    throw new NotImplementedException();
-                }
-
-                protected override void Remove(Sarzs _data)
-                {
-                    foreach (DataRow current in data.Rows)
-                    {
-                        if (SameKeys(_data, current))
-                        {
-                            data.Rows.Remove(current);
-                            break;
-                        }
-                    }
-                }
+                protected override List<Sarzs> CurrentData() { return Program.database.Sarzsok(szűrő); }
                 #endregion
 
                 #region EventHandlers
@@ -1213,6 +1163,23 @@ namespace Labor
                     #endregion
 
                     #region Tokenizer
+                    protected override void SetRow(DataRow _row, Hordó _hordó)
+                    {
+                        if (foglalás != null)
+                        {
+                            _row[0] = _hordó.termékkód;
+                            _row[1] = _hordó.id;
+                            _row[2] = _hordó.foglalás_száma == null ? false : true;
+                        }
+                        else
+                        {
+                            _row[0] = _hordó.termékkód;
+                            _row[1] = _hordó.id;
+                            if (_hordó.foglalás_száma == null) _row[2] = DBNull.Value;
+                            else _row[2] = _hordó.foglalás_száma.Value;
+                        }
+                    }
+
                     protected override bool SameKeys(Hordó _1, Hordó _2)
                     {
                         if (_1.termékkód == _2.termékkód && _1.sarzs == _2.sarzs) return true;
@@ -1225,52 +1192,12 @@ namespace Labor
                         return false;
                     }
 
-                    //
-
                     protected override List<Hordó> CurrentData()
                     {
                         if (foglalás != null)
                             return Program.database.Hordók(foglalás.Value, sarzs);
                         else
                             return Program.database.Hordók(sarzs);
-                    }
-
-                    protected override void Add(Hordó _data)
-                    {
-                        if (foglalás != null)
-                        {
-                            DataRow row = data.NewRow();
-                            row[0] = _data.termékkód;
-                            row[1] = _data.id;
-                            row[2] = _data.foglalás_száma == null ? false : true;
-                            data.Rows.Add(row);
-                        }
-                        else
-                        {
-                            DataRow row = data.NewRow();
-                            row[0] = _data.termékkód;
-                            row[1] = _data.id;
-                            if (_data.foglalás_száma == null) row[2] = DBNull.Value;
-                            else row[2] = _data.foglalás_száma.Value;
-                            data.Rows.Add(row);
-                        }
-                    }
-
-                    protected override void Modify(Hordó _old, Hordó _new)
-                    {
-                        throw new NotImplementedException();
-                    }
-
-                    protected override void Remove(Hordó _data)
-                    {
-                        foreach (DataRow current in data.Rows)
-                        {
-                            if (SameKeys(_data, current))
-                            {
-                                data.Rows.Remove(current);
-                                break;
-                            }
-                        } 
                     }
                     #endregion
 
