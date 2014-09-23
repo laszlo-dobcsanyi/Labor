@@ -193,12 +193,10 @@ namespace Labor
         }
     }
 
-    public sealed class Panel_Foglalások : Control
+    public sealed class Panel_Foglalások : Tokenized_Control<Foglalás>
     {
         private DataTable data;
         private DataGridView table;
-
-        private List<DataToken<Foglalás>> foglalás_tokenek = new List<DataToken<Foglalás>>();
 
         #region Constructor
         public Panel_Foglalások()
@@ -270,6 +268,13 @@ namespace Labor
             data.Columns.Add(new DataColumn("Készítette", System.Type.GetType("System.String")));
             data.Columns.Add(new DataColumn("Foglalás ideje", System.Type.GetType("System.String")));
 
+            return data;
+        }
+        #endregion
+
+        #region Tokenizer
+        protected override void InitializeTokens()
+        {
             List<Foglalás> foglalások = Program.database.Foglalások();
 
             foreach (Foglalás item in foglalások)
@@ -283,72 +288,37 @@ namespace Labor
                 row[Foglalás.TableIndexes.idő] = item.idő;
                 data.Rows.Add(row);
 
-                foglalás_tokenek.Add(new DataToken<Foglalás>(item));
+                tokens.Add(new DataToken<Foglalás>(item));
             }
-
-            return data;
         }
 
-        public override void Refresh()
+        protected override List<Foglalás> CurrentData()
         {
-            // Összes adat lekérdezése
-            List<Foglalás> foglalások = Program.database.Foglalások();
-            // Minden token beállítása a kereséshez
-            foreach (DataToken<Foglalás> token in foglalás_tokenek) { token.type = DataToken<Foglalás>.TokenType.NOT_FOUND; }
+            return Program.database.Foglalások();
+        }
 
-            // A már táblán fennlévő tokenek összevetése a lekért adatokkal
-            foreach (Foglalás item in foglalások)
+        protected override void AddToken(DataToken<Foglalás> _token)
+        {
+            DataRow row = data.NewRow();
+            row[Foglalás.TableIndexes.id] = _token.data.id;
+            row[Foglalás.TableIndexes.név] = _token.data.név;
+            row[Foglalás.TableIndexes.hordók_száma] = _token.data.hordók_száma;
+            row[Foglalás.TableIndexes.típus] = _token.data.típus;
+            row[Foglalás.TableIndexes.készítő] = _token.data.készítő;
+            row[Foglalás.TableIndexes.idő] = _token.data.idő;
+            data.Rows.Add(row);
+        }
+
+        protected override void RemoveToken(DataToken<Foglalás> _token)
+        {
+            foreach (DataRow current in data.Rows)
             {
-                bool found = false;
-                foreach (DataToken<Foglalás> token in foglalás_tokenek)
+                if (_token.data.id == (int)current[0])
                 {
-                    if (item.Equals(token.data))
-                    {
-                        // A megtalált token kivétele a keresésből
-                        token.type = DataToken<Foglalás>.TokenType.FOUND;
-                        found = true;
-                        break;
-                    }
-                }
-
-                // Még tokenek között nem szereplő adat hozzáadása
-                if (!found) foglalás_tokenek.Add(new DataToken<Foglalás>(item));
-            }
-
-            // A tábla kiegésszítése a tokenekből származó adatokkal
-            List<DataToken<Foglalás>> kitörlendők = new List<DataToken<Foglalás>>();
-            foreach (DataToken<Foglalás> token in foglalás_tokenek)
-            {
-                switch (token.type)
-                {
-                    case DataToken<Foglalás>.TokenType.NEW:
-                        DataRow row = data.NewRow();
-                        row[Foglalás.TableIndexes.id] = token.data.id;
-                        row[Foglalás.TableIndexes.név] = token.data.név;
-                        row[Foglalás.TableIndexes.hordók_száma] = token.data.hordók_száma;
-                        row[Foglalás.TableIndexes.típus] = token.data.típus;
-                        row[Foglalás.TableIndexes.készítő] = token.data.készítő;
-                        row[Foglalás.TableIndexes.idő] = token.data.idő;
-                        data.Rows.Add(row);
-                        break;
-
-                    case DataToken<Foglalás>.TokenType.NOT_FOUND:
-                        foreach (DataRow current in data.Rows)
-                        {
-                            if (token.data.id == (int)current[0])
-                            {
-                                data.Rows.Remove(current);
-                                kitörlendők.Add(token);
-                                break;
-                            }
-                        }
-                        break;
+                    data.Rows.Remove(current);
+                    break;
                 }
             }
-
-            // Nem talált tokenek kivétele
-            foreach (DataToken<Foglalás> token in kitörlendők) { foglalás_tokenek.Remove(token); }
-            base.Refresh();
         }
         #endregion
 
