@@ -1228,7 +1228,6 @@ namespace Labor
                                 if ((bool)table.Rows[_event.RowIndex].Cells[_event.ColumnIndex].Value) foglalás_szám = foglalás.Value.id;
                                 Program.database.Hordó_Foglalás(foglalás_szám, sarzs.termékkód, sarzs.sarzs);
 
-                                Form __owner = Owner;
                                 Program.RefreshData();
                             }
                         }
