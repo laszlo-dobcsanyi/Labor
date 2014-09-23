@@ -392,8 +392,9 @@ namespace Labor
                 {
                     MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy nem létezik már a törlendő foglalás?\nID: " + azonosító.id + "\nNév: " + azonosító.név, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
+
                 }
-                else Refresh();
+                else Program.RefreshData();
             }
         }
 

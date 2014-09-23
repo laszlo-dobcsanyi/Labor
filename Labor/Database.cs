@@ -431,8 +431,6 @@ namespace Labor
                     command.Dispose();
                     laborconnection.Close();
                 }
-
-                Program.mainform.RefreshData();
                 return true;
             }
         }
@@ -477,8 +475,6 @@ namespace Labor
                     command.Dispose();
                     laborconnection.Close();
                 }
-
-                Program.mainform.RefreshData();
                 return true;
             }
         }
@@ -488,14 +484,17 @@ namespace Labor
             lock (LaborLock)
             {
                 bool found = true;
+
                 laborconnection.Open();
+
                 SqlCommand command = laborconnection.CreateCommand();
                 command.CommandText = "DELETE FROM L_TORZSA WHERE TOAZON= '" + _azonosító + "';";
+
                 if (command.ExecuteNonQuery() == 0) found = false;
+
                 command.Dispose();
                 laborconnection.Close();
 
-                Program.mainform.RefreshData();
                 return found;
             }
         }
@@ -1046,17 +1045,19 @@ namespace Labor
             lock (LaborLock)
             {
                 bool found = true;
+
                 laborconnection.Open();
+
                 SqlCommand command = laborconnection.CreateCommand();
                 string where = A(new string[] { Update<int>("FOSZAM", _azonosító.id), Update<string>("FONEVE", _azonosító.név), Update<int>("FOFOHO", _azonosító.hordók_száma),
                      Update<string>("FOTIPU", _azonosító.típus) ,Update<string>("FOFENE", _azonosító.készítő) ,Update<string>("FODATE", _azonosító.idő),Update<string>("FOFAJT", _azonosító.típus)  });
 
                 command.CommandText = "DELETE FROM L_FOGLAL WHERE " + where;
                 if (command.ExecuteNonQuery() == 0) found = false;
+
                 command.Dispose();
                 laborconnection.Close();
 
-                Program.mainform.RefreshData();
                 return found;
             }
         }

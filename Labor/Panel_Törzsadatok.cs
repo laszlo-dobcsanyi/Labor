@@ -29,25 +29,19 @@ namespace Labor
             megnevezés_2 = _megnevezés_2;
             megnevezés_3 = _megnevezés_3;
         }
-
-        /*public override bool Equals(Object obj)
-        {
-            return true;
-        }*/
     }
 
-    public sealed class Panel_Törzsadatok : Control
+    public sealed class Panel_Törzsadatok : Tokenized_Control<Törzsadat>
     {
         private DataTable data;
         private DataGridView table;
         private ComboBox combo_törzsadat;
 
-        private List<DataToken<Törzsadat>> törzsadat_tokenek = new List<DataToken<Törzsadat>>();
-
         #region Constructor
         public Panel_Törzsadatok()
         {
             InitializeContent();
+            InitializeTokens();
 
             KeyDown += Panel_Törzsadatok_KeyDown;
         }
@@ -113,6 +107,13 @@ namespace Labor
             data.Columns.Add(new DataColumn("Angol", System.Type.GetType("System.String")));
             data.Columns.Add(new DataColumn("Német", System.Type.GetType("System.String")));
 
+            return data;
+        }
+        #endregion
+
+        #region Tokenizer
+        protected override void InitializeTokens()
+        {
             List<Törzsadat> törzsadatok = Program.database.Törzsadatok(combo_törzsadat.Items[0].ToString());
 
             foreach (Törzsadat item in törzsadatok)
@@ -123,72 +124,36 @@ namespace Labor
                 row[2] = item.megnevezés_3;
                 data.Rows.Add(row);
 
-                törzsadat_tokenek.Add(new DataToken<Törzsadat>(item));
+                tokens.Add(new DataToken<Törzsadat>(item));
             }
-            return data;
         }
 
-        public override void Refresh()
+        protected override List<Törzsadat> CurrentData()
         {
-            // Összes adat lekérdezése
-            List<Törzsadat> törzsadatok = Program.database.Törzsadatok(combo_törzsadat.SelectedItem.ToString());
-            // Minden token beállítása a kereséshez
-            foreach (DataToken<Törzsadat> token in törzsadat_tokenek) { token.type = DataToken<Törzsadat>.TokenType.NOT_FOUND; }
+            return Program.database.Törzsadatok(combo_törzsadat.Text);
+        }
 
-            // A már táblán fennlévő tokenek összevetése a lekért adatokkal
-            foreach (Törzsadat item in törzsadatok)
+        protected override void AddToken(DataToken<Törzsadat> _token)
+        {
+            DataRow row = data.NewRow();
+            row[0] = _token.data.azonosító;
+            row[1] = _token.data.megnevezés_2;
+            row[2] = _token.data.megnevezés_3;
+            data.Rows.Add(row);
+        }
+
+        protected override void RemoveToken(DataToken<Törzsadat> _token)
+        {
+            foreach (DataRow current in data.Rows)
             {
-                bool found = false;
-                foreach (DataToken<Törzsadat> token in törzsadat_tokenek)
+                if (_token.data.azonosító == (string)current[0])
                 {
-                    if (item.Equals(token.data))
-                    {
-                        // A megtalált token kivétele a keresésből
-                        token.type = DataToken<Törzsadat>.TokenType.FOUND;
-                        found = true;
-                        break;
-                    }
-                }
-
-                // Még tokenek között nem szereplő adat hozzáadása
-                if (!found) törzsadat_tokenek.Add(new DataToken<Törzsadat>(item));
-            }
-
-            // A tábla kiegésszítése a tokenekből származó adatokkal
-            List<DataToken<Törzsadat>> kitörlendők = new List<DataToken<Törzsadat>>();
-            foreach (DataToken<Törzsadat> token in törzsadat_tokenek)
-            {
-                switch (token.type)
-                {
-                    case DataToken<Törzsadat>.TokenType.NEW:
-                        DataRow row = data.NewRow();
-                        row[0] = token.data.azonosító;
-                        row[1] = token.data.megnevezés_2;
-                        row[2] = token.data.megnevezés_3;
-                        data.Rows.Add(row);
-                        break;
-
-                    case DataToken<Törzsadat>.TokenType.NOT_FOUND:
-                        foreach (DataRow current in data.Rows)
-                        {
-                            if (token.data.azonosító == (string)current[0])
-                            {
-                                data.Rows.Remove(current);
-                                kitörlendők.Add(token);
-                                break;
-                            }
-                        }
-                        break;
+                    data.Rows.Remove(current);
+                    break;
                 }
             }
-
-            // Nem talált tokenek kivétele
-            foreach (DataToken<Törzsadat> token in kitörlendők) { törzsadat_tokenek.Remove(token); }
-
-            base.Refresh();
         }
         #endregion
-
 
         #region EventHandlers
         private void TörzsadatMódosítás(object _sender, EventArgs _event)
@@ -209,6 +174,8 @@ namespace Labor
                 string azonosító = (string)selected.Cells[0].Value;
                 if (!Program.database.Törzsadat_Törlés(azonosító))
                 { MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy nem létezik már a törlendő törzsadat (" + azonosító + ")?", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+                Program.RefreshData();
             }
         }
 
@@ -244,7 +211,7 @@ namespace Labor
         private void combo_törzsadat_SelectedIndexChanged(object _sender, EventArgs _event)
         {
             data.Rows.Clear();
-            törzsadat_tokenek.Clear();
+            tokens.Clear();
             Refresh();
         }
         #endregion
@@ -356,7 +323,7 @@ namespace Labor
                 box_megnevezés3.Text = _eredeti.megnevezés_3;
             }
 
-            void rendben_Click(object sender, System.EventArgs e)
+            private void rendben_Click(object _sender, System.EventArgs _event)
             {
                 if (box_azonosító.Text.Length == 0) { MessageBox.Show("Nem megfelelő a magyar megnevezés hossza!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
                 if (box_megnevezés2.Text.Length == 0) { MessageBox.Show("Nem megfelelő az angol megnevezés hossza!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
@@ -366,11 +333,15 @@ namespace Labor
                 {
                     if (!Program.database.Törzsadat_Módosítás(törzsadat.Value.azonosító, new Törzsadat(label_típus.Text, box_azonosító.Text, box_megnevezés2.Text, box_megnevezés3.Text)))
                     { MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy a módosítandó törzsadat már nem létezik, vagy van már ilyen magyar megnevezés?", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+                    Program.RefreshData();
                 }
                 else
                 {
                     if (!Program.database.Törzsadat_Hozzáadás(new Törzsadat(label_típus.Text, box_azonosító.Text, box_megnevezés2.Text, box_megnevezés3.Text)))
                     { MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy van már ilyen magyar megnevezés?", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+                    Program.RefreshData();
                 }
 
                 Close();
