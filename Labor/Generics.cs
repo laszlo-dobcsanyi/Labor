@@ -130,7 +130,7 @@ namespace Labor
             foreach (T item in data)
             {
                 DataToken<T> token = new DataToken<T>(item);
-                AddToken(token);
+                Add(token.data);
                 tokens.Add(token);
             }       
         }
@@ -144,9 +144,9 @@ namespace Labor
 
         protected abstract List<T> CurrentData();
 
-        protected abstract void AddToken(DataToken<T> _token);
+        protected abstract void Add(T _data);
 
-        protected abstract void RemoveToken(DataToken<T> _token);
+        protected abstract void Remove(T _data);
         #endregion
 
         public override void Refresh()
@@ -182,11 +182,11 @@ namespace Labor
                 switch (token.type)
                 {
                     case DataToken<T>.TokenType.NEW:
-                        AddToken(token);
+                        Add(token.data);
                         break;
 
                     case DataToken<T>.TokenType.NOT_FOUND:
-                        RemoveToken(token);
+                        Remove(token.data);
                         deletable.Add(token);
                         break;
                 }

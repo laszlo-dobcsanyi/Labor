@@ -564,22 +564,22 @@ namespace Labor
                 return Program.database.Foglalás_Hordók(foglalás);
             }
 
-            protected override void AddToken(DataToken<Hordó> _token)
+            protected override void Add(Hordó _data)
             {
                 DataRow row = data.NewRow();
-                row[Hordó.TableIndexes.termékkód] = _token.data.termékkód;
-                row[Hordó.TableIndexes.sarzs] = _token.data.sarzs;
-                row[Hordó.TableIndexes.id] = _token.data.id;
-                row[Hordó.TableIndexes.foglalás_száma] = _token.data.foglalás_száma;
-                row[Hordó.TableIndexes.gyártási_év] = _token.data.gyártási_év;
+                row[Hordó.TableIndexes.termékkód] = _data.termékkód;
+                row[Hordó.TableIndexes.sarzs] = _data.sarzs;
+                row[Hordó.TableIndexes.id] = _data.id;
+                row[Hordó.TableIndexes.foglalás_száma] = _data.foglalás_száma;
+                row[Hordó.TableIndexes.gyártási_év] = _data.gyártási_év;
                 data.Rows.Add(row);
             }
 
-            protected override void RemoveToken(DataToken<Hordó> _token)
+            protected override void Remove(Hordó _data)
             {
                 foreach (DataRow current in data.Rows)
                 {
-                    if (_token.data.id == (string)current[Hordó.TableIndexes.id])
+                    if (SameKeys(_data, current))
                     {
                         data.Rows.Remove(current);
                         break;
@@ -1028,21 +1028,21 @@ namespace Labor
                     return Program.database.Sarzsok(szűrő);
                 }
 
-                protected override void AddToken(DataToken<Sarzs> _token)
+                protected override void Add(Sarzs _data)
                 {
                     DataRow row = data.NewRow();
-                    row[Sarzs.TableIndexes.termékkód] = _token.data.termékkód;
-                    row[Sarzs.TableIndexes.sarzs] = _token.data.sarzs;
-                    row[Sarzs.TableIndexes.foglalt] = _token.data.foglalt;
-                    row[Sarzs.TableIndexes.szabad] = _token.data.szabad;
+                    row[Sarzs.TableIndexes.termékkód] = _data.termékkód;
+                    row[Sarzs.TableIndexes.sarzs] = _data.sarzs;
+                    row[Sarzs.TableIndexes.foglalt] = _data.foglalt;
+                    row[Sarzs.TableIndexes.szabad] = _data.szabad;
                     data.Rows.Add(row);
                 }
 
-                protected override void RemoveToken(DataToken<Sarzs> _token)
+                protected override void Remove(Sarzs _data)
                 {
                     foreach (DataRow current in data.Rows)
                     {
-                        if (_token.data.termékkód == (string)current[Sarzs.TableIndexes.termékkód] && _token.data.sarzs == (string)current[Sarzs.TableIndexes.sarzs])
+                        if (SameKeys(_data, current))
                         {
                             data.Rows.Remove(current);
                             break;
@@ -1225,32 +1225,32 @@ namespace Labor
                             return Program.database.Hordók(sarzs);
                     }
 
-                    protected override void AddToken(DataToken<Hordó> _token)
+                    protected override void Add(Hordó _data)
                     {
                         if (foglalás != null)
                         {
                             DataRow row = data.NewRow();
-                            row[0] = _token.data.termékkód;
-                            row[1] = _token.data.id;
-                            row[2] = _token.data.foglalás_száma == null ? false : true;
+                            row[0] = _data.termékkód;
+                            row[1] = _data.id;
+                            row[2] = _data.foglalás_száma == null ? false : true;
                             data.Rows.Add(row);
                         }
                         else
                         {
                             DataRow row = data.NewRow();
-                            row[0] = _token.data.termékkód;
-                            row[1] = _token.data.id;
-                            if (_token.data.foglalás_száma == null) row[2] = DBNull.Value;
-                            else row[2] = _token.data.foglalás_száma.Value;
+                            row[0] = _data.termékkód;
+                            row[1] = _data.id;
+                            if (_data.foglalás_száma == null) row[2] = DBNull.Value;
+                            else row[2] = _data.foglalás_száma.Value;
                             data.Rows.Add(row);
                         }
                     }
 
-                    protected override void RemoveToken(DataToken<Hordó> _token)
+                    protected override void Remove(Hordó _data)
                     {
                         foreach (DataRow current in data.Rows)
                         {
-                            if (_token.data.id == (string)current[1])
+                            if (SameKeys(_data, current))
                             {
                                 data.Rows.Remove(current);
                                 break;
