@@ -316,8 +316,8 @@ namespace Labor
         {
             foreach (DataRow current in data.Rows)
             {
-                if (_token.data.termékkód == current[0].ToString() && _token.data.sarzs == current[1].ToString()
-                    && _token.data.hordószám == current[2].ToString() && _token.data.hordótípus == current[3].ToString())
+                if (_token.data.termékkód == current[Vizsgálat.Azonosító.TableIndexes.termékkód].ToString() && _token.data.sarzs == current[Vizsgálat.Azonosító.TableIndexes.sarzs].ToString()
+                    && _token.data.hordószám == current[Vizsgálat.Azonosító.TableIndexes.hordószám].ToString() && _token.data.hordótípus == current[Vizsgálat.Azonosító.TableIndexes.hordótípus].ToString())
                 {
                     data.Rows.Remove(current);
                     break;

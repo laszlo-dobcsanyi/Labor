@@ -202,6 +202,7 @@ namespace Labor
         public Panel_Foglalások()
         {
             InitializeContent();
+            InitializeTokens();
 
             KeyDown += Panel_Foglalások_KeyDown;
         }
@@ -313,7 +314,7 @@ namespace Labor
         {
             foreach (DataRow current in data.Rows)
             {
-                if (_token.data.id == (int)current[0])
+                if (_token.data.id == (int)current[Foglalás.TableIndexes.id])
                 {
                     data.Rows.Remove(current);
                     break;
@@ -463,7 +464,7 @@ namespace Labor
             #endregion
         }
 
-        public sealed class Foglalás_Szerkesztő : Form
+        public sealed class Foglalás_Szerkesztő : Tokenized_Form<Hordó>
         {
             private DataTable data;
             private DataGridView table;
@@ -539,6 +540,13 @@ namespace Labor
                 data.Columns.Add(new DataColumn("Foglalás száma", System.Type.GetType("System.String")));
                 data.Columns.Add(new DataColumn("Gyártási év", System.Type.GetType("System.String")));
 
+                return data;
+            }
+            #endregion
+
+            #region Tokenizer
+            protected override void InitializeTokens()
+            {
                 List<Hordó> hordók = Program.database.Foglalás_Hordók(foglalás);
                 foreach (Hordó item in hordók)
                 {
@@ -549,9 +557,37 @@ namespace Labor
                     row[Hordó.TableIndexes.foglalás_száma] = item.foglalás_száma;
                     row[Hordó.TableIndexes.gyártási_év] = item.gyártási_év;
                     data.Rows.Add(row);
-                }
 
-                return data;
+                    tokens.Add(new DataToken<Hordó>(item));
+                }
+            }
+
+            protected override List<Hordó> CurrentData()
+            {
+                return Program.database.Foglalás_Hordók(foglalás);
+            }
+
+            protected override void AddToken(DataToken<Hordó> _token)
+            {
+                DataRow row = data.NewRow();
+                row[Hordó.TableIndexes.termékkód] = _token.data.termékkód;
+                row[Hordó.TableIndexes.sarzs] = _token.data.sarzs;
+                row[Hordó.TableIndexes.id] = _token.data.id;
+                row[Hordó.TableIndexes.foglalás_száma] = _token.data.foglalás_száma;
+                row[Hordó.TableIndexes.gyártási_év] = _token.data.gyártási_év;
+                data.Rows.Add(row);
+            }
+
+            protected override void RemoveToken(DataToken<Hordó> _token)
+            {
+                foreach (DataRow current in data.Rows)
+                {
+                    if (_token.data.id == (string)current[Hordó.TableIndexes.id])
+                    {
+                        data.Rows.Remove(current);
+                        break;
+                    }
+                }
             }
             #endregion
 
@@ -564,7 +600,7 @@ namespace Labor
                 table.Columns[Hordó.TableIndexes.foglalás_száma].Visible = false;
                 table.Columns[Hordó.TableIndexes.gyártási_év].Width = 75;
             }
-            
+
             private void Hordó_Törlés(object _sender, EventArgs _event)
             {
                 if (table.SelectedRows.Count != 1) return;
