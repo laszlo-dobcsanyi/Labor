@@ -1114,29 +1114,34 @@ namespace Labor
                         rendben.Location = new Point(ClientRectangle.Width - rendben.Size.Width - 16, ClientRectangle.Height - rendben.Size.Height - 16);
                         rendben.Click += rendben_Click;
 
-                        Button kijelölés_megfordítása = new Button();
-                        kijelölés_megfordítása.Text = "Kijelölés megfordítása";
-                        kijelölés_megfordítása.Size = new System.Drawing.Size(128, 32);
-                        kijelölés_megfordítása.Location = new Point(ClientRectangle.Width - kijelölés_megfordítása.Size.Width - rendben.Width - 32, ClientRectangle.Height - kijelölés_megfordítása.Size.Height - 16);
-                        kijelölés_megfordítása.Click += kijelölés_megfordítása_Click;
-
-                        Label label_foglalt_hordó = new Label();
-                        label_foglalt_hordó.Text = "Foglalt hordó:      ";
-                        label_foglalt_hordó.Location = new Point(8, kijelölés_megfordítása.Location.Y - 32 - 8);
-
-                        Label vonal = new Label();
-                        vonal.Location = new Point(0, label_foglalt_hordó.Location.Y + 26);
-                        vonal.Height = 3;
-                        vonal.Width = 1000;
-                        vonal.BackColor = Color.Black;
+                        Controls.Add(rendben);
+                        Controls.Add(table);
 
                         //
 
-                        Controls.Add(kijelölés_megfordítása);
-                        Controls.Add(label_foglalt_hordó);
-                        Controls.Add(vonal);
-                        Controls.Add(rendben);
-                        Controls.Add(table);
+                        if (foglalás != null)
+                        {
+
+                            Button kijelölés_megfordítása = new Button();
+                            kijelölés_megfordítása.Text = "Kijelölés megfordítása";
+                            kijelölés_megfordítása.Size = new System.Drawing.Size(128, 32);
+                            kijelölés_megfordítása.Location = new Point(ClientRectangle.Width - kijelölés_megfordítása.Size.Width - rendben.Width - 32, ClientRectangle.Height - kijelölés_megfordítása.Size.Height - 16);
+                            kijelölés_megfordítása.Click += kijelölés_megfordítása_Click;
+
+                            Label label_foglalt_hordó = new Label();
+                            label_foglalt_hordó.Text = "Foglalt hordó:      ";
+                            label_foglalt_hordó.Location = new Point(8, kijelölés_megfordítása.Location.Y - 32 - 8);
+
+                            Label vonal = new Label();
+                            vonal.Location = new Point(0, label_foglalt_hordó.Location.Y + 26);
+                            vonal.Height = 3;
+                            vonal.Width = 1000;
+                            vonal.BackColor = Color.Black;
+
+                            Controls.Add(kijelölés_megfordítása);
+                            Controls.Add(label_foglalt_hordó);
+                            Controls.Add(vonal);
+                        }
                     }
 
                     private DataTable CreateSource()
