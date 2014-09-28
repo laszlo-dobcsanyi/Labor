@@ -341,7 +341,7 @@ namespace Labor
                     (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.sarzs].Value, (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.hordószám].Value,
                     (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.hordótípus].Value, (double)selected.Cells[Vizsgálat.Azonosító.TableIndexes.nettó_töltet].Value,
                     (byte)selected.Cells[Vizsgálat.Azonosító.TableIndexes.szita_átmérő].Value, (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.megrendelő].Value,
-                    (int)selected.Cells[Vizsgálat.Azonosító.TableIndexes.sorszám].Value, (int)selected.Cells[Vizsgálat.Azonosító.TableIndexes.foglalás].Value);
+                    (int)selected.Cells[Vizsgálat.Azonosító.TableIndexes.sorszám].Value, selected.Cells[Vizsgálat.Azonosító.TableIndexes.foglalás].Value == DBNull.Value ? null : (int?)selected.Cells[Vizsgálat.Azonosító.TableIndexes.foglalás].Value);
 
                 if (!Program.database.Vizsgálat_Törlés(azonosító))
                 {

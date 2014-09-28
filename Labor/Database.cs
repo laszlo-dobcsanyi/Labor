@@ -221,6 +221,27 @@ namespace Labor
         #endregion
 
         #region Marillen Adatbázisából
+        public string GetTypeOf(string _table, string _column)
+        {
+            lock (MarillenLock)
+            {
+                string value = null;
+
+                marillenconnection.Open();
+                SqlCommand command = marillenconnection.CreateCommand();
+                command.CommandText = "SELECT DATA_TYPE, CHARACTER_MAXIMUM_LENGTH FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + _table + "' and COLUMN_NAME = '" + _column + "'";
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    value = reader.GetString(0);
+                }
+                command.Dispose();
+                marillenconnection.Close();
+
+                return value;
+            }
+        }
+
         public List<string> Megrendelők()
         {
             lock (MarillenLock)

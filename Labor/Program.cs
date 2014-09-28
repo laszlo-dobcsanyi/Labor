@@ -22,6 +22,8 @@ namespace Labor
             refresher.Tick += Refresher_Elapsed;
             refresher.Start();
 
+            string tmp = database.GetTypeOf("partner", "name");
+
             Application.Run(mainform);
         }
 
