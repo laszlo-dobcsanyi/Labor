@@ -38,18 +38,19 @@ namespace Labor
             _row[TableIndexes.sarzs] = _hordó.sarzs;
             _row[TableIndexes.id] = _hordó.id;
             _row[TableIndexes.foglalás_száma] = _hordó.foglalás_száma;
-            _row[TableIndexes.gyártási_év] = _hordó.gyártási_év;
+            _row[TableIndexes.gyártási_év] = "201" + _hordó.gyártási_év;
         }
 
         public static bool SameKeys(Hordó _1, Hordó _2)
         {
-            if (_1.id == _2.id && _1.sarzs == _2.sarzs) return true;
+            if (_1.termékkód == _2.termékkód && _1.id == _2.id && _1.sarzs == _2.sarzs && _1.gyártási_év == _2.gyártási_év) return true;
             return false;
         }
 
         public static bool SameKeys(Hordó _1, DataRow _row)
         {
-            if (_1.id == (string)_row[TableIndexes.id] && _1.sarzs == (string)_row[TableIndexes.sarzs]) return true;
+            if (_1.termékkód == (string)_row[TableIndexes.termékkód] && _1.id == (string)_row[TableIndexes.id] &&
+                _1.sarzs == (string)_row[TableIndexes.sarzs] && _1.gyártási_év == ((string)_row[TableIndexes.gyártási_év])[3].ToString()) return true;
             return false;
         }
     }
