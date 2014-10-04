@@ -1001,6 +1001,11 @@ namespace Labor
                         MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy már létezik ilyen vizsgálat?\nTermékkód: " + azonosító.termékkód + "\nSarzs: " + azonosító.sarzs + "\nHordószám: " + azonosító.hordószám +
                           "\nSorszám: " + azonosító.sorszám, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
+                    Vizsgálat? temp = Program.database.Vizsgálat(_vizsgálat.azonosító);
+                    if( temp.Value.azonosító.sorszám == 1 )
+                    {
+                        Program.database.ÚjHordók(_vizsgálat);
+                    }
                 }
 
                 Close();

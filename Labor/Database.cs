@@ -77,7 +77,7 @@ namespace Labor
                                 "VIMTS1 varchar(15),VIMTD1 varchar(8),VIMKS1 varchar(15),VIMKD1 varchar(8), VIMKS2 varchar(15), VIMKD2 varchar(8), VIMKS3 varchar(15), VIMKD3 varchar(8), VIMKS4 varchar(15), VIMKD4 varchar(8), " +
                                 "VIMKS5 varchar(15), VIMKD5 varchar(8), VIMKS6 varchar(15), VIMKD6 varchar(8),VILABO varchar(15));" +
 
-                            //"CREATE TABLE L_HORDO(HOTEKO varchar(3), HOSARZ varchar(3), HOSZAM varchar(4), FOSZAM int, VIGYEV varchar(1));" +
+                            "CREATE TABLE L_HORDO(HOTEKO varchar(10), HOSARZ varchar(10), HOSZAM varchar(10), FOSZAM int, VIGYEV varchar(10));" +
 
                             "CREATE TABLE L_FOGLAL (FONEVE varchar(30), FOSZAM int IDENTITY(1,1), FODATE varchar(20), FOTIPU varchar(9), FOFENE varchar(15), FOTEKO varchar(3), FOSARZT varchar(3), FOSARZI varchar(3), FOHOSZT varchar(4)," +
                                 "FOHOSZI varchar(4), FOBRIXT DECIMAL(4,2), FOBRIXI DECIMAL(4,2), FOCSAVT DECIMAL(4,2), FOCSAVI DECIMAL(4,2), FOPEHAT DECIMAL(4,2), FOPEHAI DECIMAL(4,2), FOBOSTT DECIMAL(4,2)," +
@@ -427,18 +427,23 @@ namespace Labor
                 while (reader.Read())
                 {
                     prod_id.Add(reader.GetString(0).Substring(reader.GetString(0).Length - 4));
+                    összhordó++;
                 }
                 reader.Close();
                 marillenconnection.Close();
 
-/*
+
                 laborconnection.Open();
                 SqlCommand command3 = laborconnection.CreateCommand();
-                command3.CommandText = "UPDATE L_VIZSLAP SET VIOSHO = '" + összhordó + "' WHERE VITEKO = '" + _vizsgálat.azonosító.termékkód + "' AND VIHOSZ= '" + _vizsgálat.azonosító.hordószám + "' AND VIGYEV= '" + _vizsgálat.adatok1.gyártási_év + "' AND VISARZ= '" + _vizsgálat.azonosító.sarzs + "' AND VIMSSZ= '" + _vizsgálat.azonosító.sorszám + "';";
+               // command3.CommandText = "UPDATE L_VIZSLAP SET VIOSHO = '" + összhordó + "' WHERE VITEKO = '" + _vizsgálat.azonosító.termékkód + "' AND VIHOSZ= '" + _vizsgálat.azonosító.hordószám + "' AND VIGYEV= '" + _vizsgálat.adatok1.gyártási_év + "' AND VISARZ= '" + _vizsgálat.azonosító.sarzs + "' AND VIMSSZ= '" + _vizsgálat.azonosító.sorszám + "';";
+                foreach (string  item in prod_id)
+                {
+                    command3.CommandText += "INSERT INTO L_HORDO (HOTEKO, HOSARZ, HOSZAM,VIGYEV,FOSZAM) VALUES('" + _vizsgálat.azonosító.termékkód + "','" + _vizsgálat.azonosító.sarzs + "','" + item + "','" + _vizsgálat.adatok1.gyártási_év + "','" + 0 + "');";
+                }
                 command3.ExecuteNonQuery();
                 command3.Dispose();
                 laborconnection.Close();
- */
+
                 return prod_id;
             }
         }
@@ -820,7 +825,7 @@ namespace Labor
                 }
                 if (laborconnection.State != System.Data.ConnectionState.Open) return false;
 
-                //Mérés sorszáma
+                //Mérés sorszáma. EZ ITT FAIL-É?
 
                 int? temp = Vizsgálat_MérésSorszáma(_vizsgálat);
                                  data = V(new string[] { Update<int?>("VIMSSZ",temp)});
