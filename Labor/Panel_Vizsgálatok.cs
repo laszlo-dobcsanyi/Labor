@@ -349,7 +349,11 @@ namespace Labor
                       "\nSorszám: " + azonosító.sorszám, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-                else Program.RefreshData();
+                else
+                {
+                    //TODO Hordók törlés
+                    Program.RefreshData();
+                }
             }
         }
 

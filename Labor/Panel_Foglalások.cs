@@ -1173,9 +1173,19 @@ namespace Labor
                     {
                         if (foglalás != null)
                         {
+                            List<Hordó> temp = Program.database.HordókSztemEz(sarzs);
+                            foreach (Hordó item in temp)
+                            {
+                                _row[0] = item.termékkód;
+                                _row[1] = item.id;
+                                _row[2] = _hordó.foglalás_száma == null ? false : true;
+                            }
+
+                            /*
                             _row[0] = _hordó.termékkód;
                             _row[1] = _hordó.id;
                             _row[2] = _hordó.foglalás_száma == null ? false : true;
+                            */
                         }
                         else
                         {
