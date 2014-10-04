@@ -368,7 +368,7 @@ namespace Labor
                 (string)table.SelectedRows[0].Cells[Foglalás.TableIndexes.készítő].Value, (string)table.SelectedRows[0].Cells[Foglalás.TableIndexes.idő].Value);
 
             Foglalás_Szerkesztő foglalás_szerkesztő = new Foglalás_Szerkesztő(foglalás);
-            foglalás_szerkesztő.ShowDialog();
+            foglalás_szerkesztő.ShowDialog(this);
 
             Program.RefreshData();
         }
@@ -595,7 +595,7 @@ namespace Labor
             private void Hordó_Törlés(object _sender, EventArgs _event)
             {
                 if (table.SelectedRows.Count != 1) return;
-                Program.database.Hordó_Foglalás(null, (string)table.SelectedRows[0].Cells[Hordó.TableIndexes.termékkód].Value, (string)table.SelectedRows[0].Cells[Hordó.TableIndexes.sarzs].Value);
+                Program.database.Hordó_Foglalás(true, foglalás.id, (string)table.SelectedRows[0].Cells[Hordó.TableIndexes.termékkód].Value, (string)table.SelectedRows[0].Cells[Hordó.TableIndexes.sarzs].Value);
 
                 Program.RefreshData();
             }
@@ -1233,9 +1233,7 @@ namespace Labor
                         {
                             if (_event.ColumnIndex == 2 && _event.RowIndex != -1)
                             {
-                                int? foglalás_szám = null;
-                                if ((bool)table.Rows[_event.RowIndex].Cells[_event.ColumnIndex].Value) foglalás_szám = foglalás.Value.id;
-                                Program.database.Hordó_Foglalás(foglalás_szám, sarzs.termékkód, sarzs.sarzs);
+                                Program.database.Hordó_Foglalás(!(bool)table.Rows[_event.RowIndex].Cells[_event.ColumnIndex].Value, foglalás.Value.id, sarzs.termékkód, sarzs.sarzs);
 
                                 Program.RefreshData();
                             }

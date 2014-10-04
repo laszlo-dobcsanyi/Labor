@@ -89,6 +89,7 @@ namespace Labor
 
             menu.DrawItem += menu_DrawItem;
             menu.DrawMode = TabDrawMode.OwnerDrawFixed;
+            menu.Selected += menu_Selected;
             menu.Padding = new Point(18, 5);
             menu.Dock = DockStyle.Fill;
             #endregion
@@ -119,6 +120,11 @@ namespace Labor
                 _event.Graphics.DrawString(menu.TabPages[_event.Index].Text, new Font(menu.Font.Name, menu.Font.Size + 1, FontStyle.Bold), new SolidBrush(Color.Black), menu.GetTabRect(_event.Index), sf);
             else
                 _event.Graphics.DrawString(menu.TabPages[_event.Index].Text, _event.Font, new SolidBrush(Color.Black), menu.GetTabRect(_event.Index), sf);
+        }
+
+        private void menu_Selected(object _sender, EventArgs _event)
+        {
+            Program.RefreshData();
         }
 
         private void MainForm_KeyDown(object _sender, KeyEventArgs _event)

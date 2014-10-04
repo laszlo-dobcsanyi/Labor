@@ -1239,7 +1239,7 @@ namespace Labor
         /// <summary>
         /// Igazzal tér vissza, ha sikeres volt a foglalás!
         /// </summary>
-        public bool Hordó_Foglalás(int? _foglalás_id, string _termékkód, string _sarzs)
+        public bool Hordó_Foglalás(bool _törlés, int _foglalás_id, string _termékkód, string _sarzs)
         {
             lock (LaborLock)
             {
@@ -1248,8 +1248,11 @@ namespace Labor
                 laborconnection.Open();
 
                 command = laborconnection.CreateCommand();
-                command.CommandText = "UPDATE L_VIZSLAP SET FOSZAM = " + (_foglalás_id == null ? "NULL" : "'" + _foglalás_id + "'") +
-                    " WHERE " + ((_foglalás_id == null) ? "" : "FOSZAM IS NULL AND ") + "VITEKO = '" + _termékkód + "' AND VISARZ = '" + _sarzs + "';";
+                command.CommandText = "UPDATE L_FOGLAL SET FOFOHO = FOFOHO " + (_törlés ? "-1" : "+1") + " WHERE FOSZAM = " + _foglalás_id + ";" +
+
+                    "UPDATE L_VIZSLAP " + (_törlés ? "SET FOSZAM = NULL" : "SET FOSZAM = " + _foglalás_id) +
+                    " WHERE " + (_törlés ? "FOSZAM = " + _foglalás_id : "FOSZAM IS NULL") + " AND VITEKO = '" + _termékkód + "' AND VISARZ = '" + _sarzs + "';";
+                    
 
                 int modified = command.ExecuteNonQuery();
 
