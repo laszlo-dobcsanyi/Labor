@@ -61,7 +61,7 @@ namespace Labor
 
                             // Vizsgálat
                             "CREATE TABLE L_VIZSLAP (VITEKO varchar(3) NOT NULL, VISARZ varchar(3) NOT NULL, VIHOSZ varchar(4) NOT NULL, VIHOTI varchar(15), VINETO DECIMAL(14, 2), VISZAT tinyint, VIMEGR varchar(50), " +
-                                "VIMSSZ int IDENTITY(1,1), FOSZAM int, " +
+                                "VIMSSZ int, FOSZAM int, " +
 
                                 // Adatok1
                                 "VITENE varchar(50), VIHOKE tinyint, VIGYEV varchar(1), VIMUJE varchar(1), VITOGE varchar(1),  VISZOR varchar(15), VIFAJT varchar(50), " +
@@ -409,7 +409,7 @@ namespace Labor
         }
 
         // TODO ez miez?
-        public List<Hordó> ÚjHordók(Vizsgálat _vizsgálat)
+        public List<string> ÚjHordók(Vizsgálat _vizsgálat)
         {
             List<Hordó> value = new List<Hordó>();
             lock (MarillenLock)
@@ -417,7 +417,7 @@ namespace Labor
                 int összhordó = 0;
                 List<string> prod_id = new List<string>();
 
-                string iPROD_ID = "12" + _vizsgálat.azonosító.termékkód + _vizsgálat.adatok1.gyártási_év[_vizsgálat.adatok1.gyártási_év.Length - 1];
+                string iPROD_ID = "12" + _vizsgálat.azonosító.termékkód.ToString().Substring(0,2) + "01" +  _vizsgálat.adatok1.gyártási_év[_vizsgálat.adatok1.gyártási_év.Length - 1];
                 marillenconnection.Open();
                 SqlCommand command = new SqlCommand("SELECT tetelek.prod_id FROM tetelek" +
                                       " INNER JOIN folyoprops ON tetelek.serial_nr=folyoprops.serial_nr" +
@@ -426,24 +426,20 @@ namespace Labor
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    összhordó++;
                     prod_id.Add(reader.GetString(0).Substring(reader.GetString(0).Length - 4));
                 }
                 reader.Close();
                 marillenconnection.Close();
 
-                foreach (string item in prod_id)
-                {
-                    value.Add(new Hordó(_vizsgálat.azonosító.termékkód, _vizsgálat.azonosító.sarzs, _vizsgálat.azonosító.hordószám, _vizsgálat.azonosító.sorszám, _vizsgálat.adatok1.gyártási_év));
-                }
-
+/*
                 laborconnection.Open();
                 SqlCommand command3 = laborconnection.CreateCommand();
-                command3.CommandText = "UPDATE L_VIZSLAP SET VIOSHO = '" + összhordó + "' WHERE VITEKO = '" + _vizsgálat.azonosító.termékkód + "' AND VIZSSZ= '" + _vizsgálat.azonosító.hordószám + "' AND VIGYEV= '" + _vizsgálat.adatok1.gyártási_év + "' AND VISARZ= '" + _vizsgálat.azonosító.sarzs + "' AND VIMSSZ= '" + _vizsgálat.azonosító.sorszám + "';";
+                command3.CommandText = "UPDATE L_VIZSLAP SET VIOSHO = '" + összhordó + "' WHERE VITEKO = '" + _vizsgálat.azonosító.termékkód + "' AND VIHOSZ= '" + _vizsgálat.azonosító.hordószám + "' AND VIGYEV= '" + _vizsgálat.adatok1.gyártási_év + "' AND VISARZ= '" + _vizsgálat.azonosító.sarzs + "' AND VIMSSZ= '" + _vizsgálat.azonosító.sorszám + "';";
                 command3.ExecuteNonQuery();
                 command3.Dispose();
                 laborconnection.Close();
-                return value;
+ */
+                return prod_id;
             }
         }
 
@@ -713,6 +709,31 @@ namespace Labor
                 return null;
             }
         }
+        /// <summary>
+        /// Ha a Vizsgálatok táblában (L_VIZSLAP) ennek a terméknek (VITEKO) van már olyan sarzsszámmal (VISARZ) rekord mint amit most rögzít a felhasználó,
+        /// akkor ennek az új rekodnak a mérési sorszáma eggyel nagyobb lesz. (VIMSSZ=L_VIZSLAP.VIMSSZ+1) Ha nincs akkor 1 lesz.
+        /// </summary>
+        public int Vizsgálat_MérésSorszáma(Vizsgálat _vizsgálat)
+        {
+
+            lock (LaborLock)
+            {
+                int? data = null;
+
+                string where = A(new string[] { Update<string>("VITEKO", _vizsgálat.azonosító.termékkód), Update<string>("VISARZ", _vizsgálat.azonosító.sarzs) });
+                SqlCommand command = new SqlCommand("SELECT VIMSSZ FROM L_VIZSLAP WHERE " + where);
+                command.Connection = laborconnection;
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    data = GetNullable<int>(reader, 0);
+                    break;
+                }
+                reader.Close();
+                command.Dispose();
+                return (data==null) ? 1 :  (data.Value)+1; 
+            }
+        }
 
         public bool Vizsgálat_Hozzáadás(Vizsgálat _vizsgálat)
         {
@@ -799,8 +820,22 @@ namespace Labor
                 }
                 if (laborconnection.State != System.Data.ConnectionState.Open) return false;
 
-                laborconnection.Close();
+                //Mérés sorszáma
 
+                int? temp = Vizsgálat_MérésSorszáma(_vizsgálat);
+                                 data = V(new string[] { Update<int?>("VIMSSZ",temp)});
+
+                 if (data != null)
+                 {
+                     command = laborconnection.CreateCommand();
+                     command.CommandText = "UPDATE L_VIZSLAP SET " + data + " WHERE " + where;
+
+                     try { command.ExecuteNonQuery(); command.Dispose(); }
+                     catch (SqlException q) { MessageBox.Show("Vizsgálat_Hozzáadás -> Mérés sorszám hiba:\n" + q.Message); }
+                 }
+                 if (laborconnection.State != System.Data.ConnectionState.Open) return false;
+
+                laborconnection.Close();
                 return true;
             }
         }
