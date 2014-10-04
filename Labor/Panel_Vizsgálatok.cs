@@ -483,7 +483,7 @@ namespace Labor
                 Label termékkód = MainForm.createlabel("Termékkód:", 10, 10, this);
                 termékkód.Font = new System.Drawing.Font(termékkód.Font, FontStyle.Bold);
                 Label szita_átmérő = MainForm.createlabel("Szita átmérő:", termékkód.Location.X, termékkód.Location.Y + sor, this);
-                Label megrendelő = MainForm.createlabel("Megrendelők:", termékkód.Location.X, szita_átmérő.Location.Y + sor, this);
+                Label megrendelő = MainForm.createlabel("Megrendelő:", termékkód.Location.X, szita_átmérő.Location.Y + sor, this);
                 Label hordószám = MainForm.createlabel("Hordószám:", termékkód.Location.X + oszlop, termékkód.Location.Y, this);
                 hordószám.Font = new System.Drawing.Font(hordószám.Font, FontStyle.Bold);
                 Label hőkezelés = MainForm.createlabel("Hőkezelés °C:", hordószám.Location.X, szita_átmérő.Location.Y, this);
@@ -513,8 +513,8 @@ namespace Labor
                 Label terméknév = MainForm.createlabel("Terméknév:", töltőgép_száma.Location.X, termékkód.Location.Y, this);
                 Label hordótípus = MainForm.createlabel("Hordótípus:", töltőgép_száma.Location.X + oszlop - 10, szita_átmérő.Location.Y, this);
                 Label gyümölcsfajta = MainForm.createlabel("Gyümölcsfajta", töltőgép_száma.Location.X, megrendelő.Location.Y, this);
-                Label leoltas = MainForm.createlabel("Leoltás ideje (hh.nn oo:pp,this):", sarzs.Location.X, brix.Location.Y, this);
-                Label ertekeles = MainForm.createlabel("Értékelés dátuma (hh.nn oo:pp,this):", sarzs.Location.X, citromsav.Location.Y, this);
+                Label leoltas = MainForm.createlabel("Leoltás ideje (hh.nn oo:pp):", sarzs.Location.X, brix.Location.Y, this);
+                Label ertekeles = MainForm.createlabel("Értékelés dátuma (hh.nn oo:pp):", sarzs.Location.X, citromsav.Location.Y, this);
                 Label higit_1 = MainForm.createlabel("1. hígítás:", sarzs.Location.X, ph.Location.Y, this);
                 Label higit_2 = MainForm.createlabel("2. hígítás:", sarzs.Location.X, bostwick.Location.Y, this);
                 Label megjegyzes = MainForm.createlabel("Megjegyzés:", sarzs.Location.X, aszkorbinsav.Location.Y, this);
@@ -549,7 +549,7 @@ namespace Labor
                 combo_megrendelő = MainForm.createcombobox(box_termékkód.Location.X, megrendelő.Location.Y, méret[10], this);
                 combo_származási_ország = MainForm.createcombobox(származási_ország.Location.X + származási_ország.Width + köz, származási_ország.Location.Y, méret[4], this);
                 combo_gyümölcsfajta = MainForm.createcombobox(gyümölcsfajta.Location.X + gyümölcsfajta.Width + köz, gyümölcsfajta.Location.Y, méret[4], this);
-                box_brix = MainForm.createtextbox(citromsav_ad.Location.X + citromsav_ad.Width + köz, brix.Location.Y, 4, méret[2], this);
+                box_brix = MainForm.createtextbox(citromsav_ad.Location.X + citromsav_ad.Width + köz + 8, brix.Location.Y, 4, méret[2], this);
 
                 box_citromsav = MainForm.createtextbox(box_brix.Location.X, citromsav.Location.Y, 5, méret[2], this);
                 box_borkősav = MainForm.createtextbox(box_brix.Location.X, borkősav.Location.Y, 5, méret[2], this);
