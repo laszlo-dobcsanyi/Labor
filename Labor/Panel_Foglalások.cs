@@ -1173,14 +1173,10 @@ namespace Labor
                     {
                         if (foglalás != null)
                         {
-                            List<Hordó> temp = Program.database.Hordók(sarzs);
-                            foreach (Hordó item in temp)
-                            {
-                                _row[0] = item.termékkód;
-                                _row[1] = item.id;
-                                _row[2] = _hordó.foglalás_száma == null ? false : true;
-                            }
 
+                            _row[0] = _hordó.termékkód;
+                            _row[1] = _hordó.id;
+                            _row[2] = _hordó.foglalás_száma == null ? false : true;
                             /*
                             _row[0] = _hordó.termékkód;
                             _row[1] = _hordó.id;
@@ -1211,7 +1207,8 @@ namespace Labor
                     protected override List<Hordó> CurrentData()
                     {
                         if (foglalás != null)
-                            return Program.database.Hordók(foglalás.Value, sarzs);
+                            return Program.database.Hordók(sarzs);
+                        //return Program.database.Hordók(foglalás.Value, sarzs);
                         else
                             return Program.database.Hordók(sarzs);
                     }

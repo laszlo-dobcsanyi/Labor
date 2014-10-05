@@ -352,7 +352,7 @@ namespace Labor
                 else
                 {
                     //TODO Hordók törlés
-                    Program.database.Hordó_Törlés(azonosító);
+                    Program.database.Hordók_Törlés(azonosító);
                     Program.RefreshData();
                 }
             }

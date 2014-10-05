@@ -1054,7 +1054,10 @@ namespace Labor
             }
         }
 
-        public bool Hordó_Törlés(Vizsgálat.Azonosító _azonosító)
+        /// <summary>
+        /// ezt még át kell gondolni, bár elméletileg törlés nem nagyon lehet
+        /// </summary>
+        public bool Hordók_Törlés(Vizsgálat.Azonosító _azonosító)
         {
             lock (LaborLock)
             {
