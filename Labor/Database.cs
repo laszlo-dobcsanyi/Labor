@@ -14,22 +14,20 @@ namespace Labor
 
         public Database()
         {
-            marillenconnection = new SqlConnection("Server=" + Settings.server + ";Database=" + Settings.marillen_database + ";Integrated Security=true");
-            laborconnection = new SqlConnection("Server=" + Settings.server + ";Database=" + Settings.labor_database + ";Integrated Security=true");
+            string MarillenConnectionString = @"Data Source=" + Settings.server + ";Initial Catalog=" +  Settings.marillen_database + ";User ID=" +
+                Settings.LoginName + ";Password=" + Settings.Password + ";";
+            
+            marillenconnection = new SqlConnection(MarillenConnectionString);
+            
+
+            string LaborConnectionString = @"Data Source=" + Settings.server + ";Initial Catalog=" +
+                Settings.labor_database + ";User ID=" + Settings.LoginName + ";Password=" + Settings.Password + ";";
+
+            laborconnection = new SqlConnection(LaborConnectionString);
 
             try
             {
                 laborconnection.Open();
-
-                /*try
-                {
-                }
-                catch (Exception )
-                {
-                    laborconnection.Close();
-                    return;
-                }*/
-
                 laborconnection.Close();
             }
             catch

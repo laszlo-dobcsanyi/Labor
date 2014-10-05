@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Windows.Forms;
 
 namespace Labor
 {
@@ -11,6 +12,7 @@ namespace Labor
         public static bool Logging = false;
         public static int RefreshTime = 10;
         public static string LoginName = "";
+        public static string Password = "";
         public static bool ManualLocations = false;
 
         public static void Configurate()
@@ -27,7 +29,7 @@ namespace Labor
                         if (0 < line.Length)
                             if (line[0] != '#')
                             {
-                                string[] arguments = line.ToLower().Split('=');
+                                string[] arguments = line.Split('=');
 
                                 switch (arguments[0])
                                 {
@@ -37,6 +39,7 @@ namespace Labor
                                     case "logging": Logging = true; break;
                                     case "refresh": RefreshTime = Convert.ToInt32(arguments[1]); break;
                                     case "login_name": LoginName = arguments[1]; break;
+                                    case "password": Password = arguments[1]; break;
                                     case "manual_locations": ManualLocations = true; break;
                                 }
                             }
