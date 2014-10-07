@@ -1376,20 +1376,20 @@ namespace Labor
         /// <summary>
         /// Itt lehet megnézni a foglaláshoz tartozó hordókat.
         /// </summary>
-        public List<Hordó> Konszignáció_Hordók(int _fogalás_száma)
+        public List<Hordó> Konszignáció_Hordók(int _foglalás_száma)
         {
             List<Hordó> value = new List<Hordó>();
             lock (LaborLock)
             {
                 laborconnection.Open();
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT HOTEKO, HOGYEV, HOSARZ, HOSZAM FROM L_HORDO WHERE FOSZAM = " + _fogalás_száma;
+                command.CommandText = "SELECT HOTEKO, HOSARZ, HOSZAM, VIGYEV FROM L_HORDO WHERE FOSZAM = " + _foglalás_száma;
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
                     int c = -1;
-                    value.Add(new Hordó(reader.GetString(++c), reader.GetString(++c), reader.GetString(++c), _fogalás_száma, reader.GetString(++c)));
+                    value.Add(new Hordó(reader.GetString(++c), reader.GetString(++c), reader.GetString(++c), _foglalás_száma, reader.GetString(++c)));
                 }
 
                 command.Dispose();

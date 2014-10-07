@@ -28,6 +28,7 @@ namespace Labor
             {
                 public string feladó_név;
                 public string feladó_cím;
+
                 public Feladó(string _feladó_név, string _feladó_cím)
                 {
                     feladó_név = _feladó_név;
@@ -95,23 +96,11 @@ namespace Labor
         public List<Gyümölcstípus> gyümölcstípus;
     }
 
-
-
-
     public sealed class Nyomtat
     {
-        public static void Nyomtat_Konszignáció( Szállítólevél _szlevél,Hordó _hordó )
+        public static void Nyomtat_Konszignáció( Szállítólevél _szlevél, int _foglalás_id)
         {
-            Node_Konszignáció data = new Node_Konszignáció();
-            data.fejléc = new Node_Konszignáció.Fejléc();
-            data.fejléc.vevő = Program.database.Konszignáció_Vevő(_szlevél.vevő);
-            data.fejléc.feladó = new Node_Konszignáció.Fejléc.Feladó("Marillen Gyümölcsfeldolgozó Kft", "Kiskunfélegyháza, VIII. ker. 99/A");
-            data.fejléc.szállítólevél = new Node_Konszignáció.Fejléc.Szlevél(_szlevél);
-            Node_Konszignáció.Gyümölcstípus gyümölcstípus = Program.database.Konszignáció_Gyümöklcstípus_Adatok(_hordó.termékkód);
-            gyümölcstípus.adat = new List<Node_Konszignáció.Gyümölcstípus.Adat>();
-            Node_Konszignáció.Gyümölcstípus.Adat gyadat = new Node_Konszignáció.Gyümölcstípus.Adat();
-
-            gyadat = Program.database.Konszignáció_Hordósor_Adatok(_hordó);
+            
         }
 
     }

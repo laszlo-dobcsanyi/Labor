@@ -168,7 +168,6 @@ namespace Labor
                 new Foglalás( (int)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.foglalás_száma].Value, (string)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.foglalás_neve].Value,
                     (int)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.foglalt_hordók_száma].Value, (string)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.foglalás_típusa].Value,
                     (string)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.készítette].Value, (string)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.foglalás_ideje].Value));
-            form.ShowDialog();
         }
 
         private void table_CellMouseUp(object _sender, DataGridViewCellMouseEventArgs _event)
@@ -231,15 +230,13 @@ namespace Labor
                 foglalás = _foglalás;
                 InitializeForm();
                 InitializeContent();
-                InitializeData();
-
             }
 
             private void InitializeForm()
             {
                 Text = "Nyomtatás";
                 ClientSize = new Size(320, 368);
-                StartPosition = FormStartPosition.CenterScreen;
+                StartPosition = FormStartPosition.CenterParent;
                 MinimumSize = ClientSize;
                 FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             }
@@ -258,6 +255,7 @@ namespace Labor
                 Button rendben;
 
                 label_nyelv = MainForm.createlabel("Nyelv:", 16, 16 + 0 * 32, this);
+
                 label_vevő = MainForm.createlabel("Vevő:", 16, 16 + 1 * 32, this);
                 label_gépkocsi = MainForm.createlabel("Gépkocsi:", 16, 16 + 2 * 32, this);
                 label_szállítólevél = MainForm.createlabel("Szállítólevél:", 16, 16 + 3 * 32, this);
@@ -282,18 +280,25 @@ namespace Labor
                 rendben.Text = "Rendben";
                 rendben.Size = new System.Drawing.Size(96, 32);
                 rendben.Location = new Point(150, 300);
-                rendben.Click += rendben_Click;
 
-                this.Controls.Add(rendben);
-                this.ShowDialog();
-            }
-
-            private void InitializeData()
-            {
                 combo_nyelv.Items.Add("Magyar"); combo_nyelv.Items.Add("Angol"); combo_nyelv.Items.Add("3. label_nyelv"); combo_nyelv.SelectedIndex = 0;
 
                 List<string> megrendelok = Program.database.Megrendelők();
                 foreach (string item in megrendelok) { combo_megrendelők.Items.Add(item); } combo_megrendelők.SelectedIndex = 0;
+
+                /*csak tesztelés miatt!
+                */
+                box_rendszám1.Text = "KTM791";
+                box_rendszám2.Text = "HCS850";
+                box_levél.Text = "levél";
+                box_gyártási_idő.Text = "2014.04.20";
+                box_szín.Text = "Szín";
+                box_íz.Text = "Íz";
+                box_illat.Text = "Illat";
+
+                rendben.Click += rendben_Click;
+                this.Controls.Add(rendben);
+                this.ShowDialog();
             }
             #endregion
 
@@ -307,11 +312,8 @@ namespace Labor
 
                 Program.database.Konszignáció_ÚJSzállítólevél(szállítólevél);
 
-                List<Hordó> hordók = Program.database.Konszignáció_Hordók(foglalás.id);
-                foreach (Hordó item in hordók)
-                {
-                    Nyomtat.Nyomtat_Konszignáció(szállítólevél, item);
-                }
+
+                    Nyomtat.Nyomtat_Konszignáció(szállítólevél, foglalás.id);
                 Close();
             }
             #endregion
@@ -336,7 +338,7 @@ namespace Labor
                 Text = "Hordók megtekintése";
                 ClientSize = new Size(280, 568);
                 MinimumSize = ClientSize;
-                StartPosition = FormStartPosition.CenterScreen;
+                StartPosition = FormStartPosition.CenterParent;
                 FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             }
 
