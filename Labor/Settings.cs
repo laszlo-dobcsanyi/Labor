@@ -10,7 +10,7 @@ namespace Labor
         public static string marillen_database = "marillen2013";
         public static string labor_database = "Labor";
         public static bool Logging = false;
-        public static int RefreshTime = 10;
+        public static int RefreshTime = 5;
         public static string LoginName = "";
         public static string Password = "";
         public static bool ManualLocations = false;

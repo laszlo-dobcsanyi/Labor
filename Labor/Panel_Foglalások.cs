@@ -37,8 +37,8 @@ namespace Labor
             _row[TableIndexes.termékkód] = _hordó.termékkód;
             _row[TableIndexes.sarzs] = _hordó.sarzs;
             _row[TableIndexes.id] = _hordó.id;
-            _row[TableIndexes.foglalás_száma] = _hordó.foglalás_száma;
-            _row[TableIndexes.gyártási_év] = "201" + _hordó.gyártási_év;
+            _row[TableIndexes.foglalás_száma] = _hordó.foglalás_száma == null ? -1 : _hordó.foglalás_száma.Value;
+            _row[TableIndexes.gyártási_év] = _hordó.gyártási_év;
         }
 
         public static bool SameKeys(Hordó _1, Hordó _2)
@@ -50,7 +50,7 @@ namespace Labor
         public static bool SameKeys(Hordó _1, DataRow _row)
         {
             if (_1.termékkód == (string)_row[TableIndexes.termékkód] && _1.id == (string)_row[TableIndexes.id] &&
-                _1.sarzs == (string)_row[TableIndexes.sarzs] && _1.gyártási_év == ((string)_row[TableIndexes.gyártási_év])[3].ToString()) return true;
+                _1.sarzs == (string)_row[TableIndexes.sarzs] && _1.gyártási_év == (string)_row[TableIndexes.gyártási_év]) return true;
             return false;
         }
     }
@@ -576,10 +576,7 @@ namespace Labor
 
             protected override bool SameKeys(Hordó _1, DataRow _row) { return Hordó.SameKeys(_1, _row); }
 
-            protected override List<Hordó> CurrentData()
-            {
-                return Program.database.Foglalás_Hordók(foglalás);
-            }
+            protected override List<Hordó> CurrentData() { return Program.database.Foglalás_Hordók(foglalás); }
             #endregion
 
             #region EventHandlers
@@ -595,7 +592,8 @@ namespace Labor
             private void Hordó_Törlés(object _sender, EventArgs _event)
             {
                 if (table.SelectedRows.Count != 1) return;
-                Program.database.Hordó_Foglalás(true, foglalás.id, (string)table.SelectedRows[0].Cells[Hordó.TableIndexes.termékkód].Value, (string)table.SelectedRows[0].Cells[Hordó.TableIndexes.sarzs].Value);
+                Program.database.Hordó_Foglalás(true, foglalás.id, (string)table.SelectedRows[0].Cells[Hordó.TableIndexes.termékkód].Value,
+                    (string)table.SelectedRows[0].Cells[Hordó.TableIndexes.sarzs].Value, (string)table.SelectedRows[0].Cells[Hordó.TableIndexes.id].Value);
 
                 Program.RefreshData();
             }
@@ -1207,8 +1205,7 @@ namespace Labor
                     protected override List<Hordó> CurrentData()
                     {
                         if (foglalás != null)
-                            return Program.database.Hordók(sarzs);
-                        //return Program.database.Hordók(foglalás.Value, sarzs);
+                            return Program.database.Hordók(foglalás.Value, sarzs);
                         else
                             return Program.database.Hordók(sarzs);
                     }
@@ -1240,7 +1237,8 @@ namespace Labor
                         {
                             if (_event.ColumnIndex == 2 && _event.RowIndex != -1)
                             {
-                                Program.database.Hordó_Foglalás(!(bool)table.Rows[_event.RowIndex].Cells[_event.ColumnIndex].Value, foglalás.Value.id, sarzs.termékkód, sarzs.sarzs);
+                                Program.database.Hordó_Foglalás(!(bool)table.Rows[_event.RowIndex].Cells[_event.ColumnIndex].Value, foglalás.Value.id, sarzs.termékkód,
+                                    sarzs.sarzs, (string)table.Rows[_event.RowIndex].Cells[1].Value);
 
                                 Program.RefreshData();
                             }

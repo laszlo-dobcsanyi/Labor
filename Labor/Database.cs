@@ -59,7 +59,7 @@ namespace Labor
 
                             // Vizsgálat
                             "CREATE TABLE L_VIZSLAP (VITEKO varchar(3) NOT NULL, VISARZ varchar(3) NOT NULL, VIHOSZ varchar(4) NOT NULL, VIHOTI varchar(15), VINETO DECIMAL(14, 2), VISZAT tinyint, VIMEGR varchar(50), " +
-                                "VIMSSZ int, FOSZAM int, " +
+                                "VIMSSZ int, " +
 
                                 // Adatok1
                                 "VITENE varchar(50), VIHOKE tinyint, VIGYEV varchar(1), VIMUJE varchar(1), VITOGE varchar(1),  VISZOR varchar(15), VIFAJT varchar(50), " +
@@ -533,14 +533,14 @@ namespace Labor
                 // Azonosító
                 Vizsgálat.Azonosító? azonosító = null;
                 command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT VITEKO, VISARZ, VIHOSZ, VIHOTI, VINETO, VISZAT, VIMEGR, VIMSSZ, FOSZAM FROM L_VIZSLAP WHERE " + where;
+                command.CommandText = "SELECT VITEKO, VISARZ, VIHOSZ, VIHOTI, VINETO, VISZAT, VIMEGR, VIMSSZ FROM L_VIZSLAP WHERE " + where;
                 try
                 {
                     reader = command.ExecuteReader();
                     while (reader.Read())
                     {
                         azonosító = new Vizsgálat.Azonosító(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), (double)reader.GetDecimal(4), reader.GetByte(5),
-                            reader.GetString(6), reader.GetInt32(7), GetNullable<int>(reader, 8));
+                            reader.GetString(6), reader.GetInt32(7));
                     }
                     reader.Close();
                 }
@@ -631,13 +631,13 @@ namespace Labor
                 laborconnection.Open();
 
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT VITEKO, VISARZ, VIHOSZ, VIHOTI, VINETO, VISZAT, VIMEGR, VIMSSZ, FOSZAM FROM L_VIZSLAP";
+                command.CommandText = "SELECT VITEKO, VISARZ, VIHOSZ, VIHOTI, VINETO, VISZAT, VIMEGR, VIMSSZ FROM L_VIZSLAP";
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
                     data.Add(new Vizsgálat.Azonosító(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), (double)reader.GetDecimal(4), reader.GetByte(5),
-                        reader.GetString(6), reader.GetInt32(7), GetNullable<int>(reader, 8)));
+                        reader.GetString(6), reader.GetInt32(7)));
                 }
                 command.Dispose();
                 laborconnection.Close();
@@ -645,7 +645,6 @@ namespace Labor
                 return data;
             }
         }
-
 
         /// <summary>
         /// Ha a Vizsgálat táblában ennek a vizsgálatnak már van eltérő hordótípusa, akkor az előző típust kell visszaadni, különben null!
@@ -658,7 +657,7 @@ namespace Labor
 
                 string where = A(new string[] { Update<string>("VITEKO", _vizsgálat.azonosító.termékkód), Update<string>("VISARZ", _vizsgálat.azonosító.sarzs), Update<string>("VIGYEV", _vizsgálat.adatok1.gyártási_év) });
 
-                SqlCommand command = new SqlCommand("SELECT VIHOTI FROM L_VIZSLAP WHERE " + where);// "')");
+                SqlCommand command = new SqlCommand("SELECT VIHOTI FROM L_VIZSLAP WHERE " + where);
                 command.Connection = laborconnection;
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
@@ -671,31 +670,6 @@ namespace Labor
                 laborconnection.Close();
 
                 return null;
-            }
-        }
-        /// <summary>
-        /// Ha a Vizsgálatok táblában (L_VIZSLAP) ennek a terméknek (VITEKO) van már olyan sarzsszámmal (VISARZ) rekord mint amit most rögzít a felhasználó,
-        /// akkor ennek az új rekodnak a mérési sorszáma eggyel nagyobb lesz. (VIMSSZ=L_VIZSLAP.VIMSSZ+1) Ha nincs akkor 1 lesz.
-        /// </summary>
-        public int Vizsgálat_MérésSorszáma(Vizsgálat _vizsgálat)
-        {
-
-            lock (LaborLock)
-            {
-                int? data = null;
-
-                string where = A(new string[] { Update<string>("VITEKO", _vizsgálat.azonosító.termékkód), Update<string>("VISARZ", _vizsgálat.azonosító.sarzs) });
-                SqlCommand command = new SqlCommand("SELECT VIMSSZ FROM L_VIZSLAP WHERE " + where);
-                command.Connection = laborconnection;
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    data = GetNullable<int>(reader, 0);
-                    break;
-                }
-                reader.Close();
-                command.Dispose();
-                return (data==null) ? 1 :  (data.Value)+1; 
             }
         }
 
@@ -711,9 +685,10 @@ namespace Labor
 
                 // Azonosító
                 command = laborconnection.CreateCommand();
-                command.CommandText = "INSERT INTO L_VIZSLAP (VITEKO, VISARZ, VIHOSZ, VIHOTI, VINETO, VISZAT, VIMEGR)" +
-                                    " VALUES('" + _vizsgálat.azonosító.termékkód + "', '" + _vizsgálat.azonosító.sarzs + "', '" + _vizsgálat.azonosító.hordószám + "', '" + _vizsgálat.azonosító.hordótípus + "', "
-                                    + _vizsgálat.azonosító.nettó_töltet.ToString().Replace(',', '.') + ", " + _vizsgálat.azonosító.szita_átmérő + ", '" + _vizsgálat.azonosító.megrendelő + "')";
+                command.CommandText = "INSERT INTO L_VIZSLAP (VITEKO, VISARZ, VIHOSZ, VIHOTI, VINETO, VISZAT, VIMEGR, VIMSSZ)" +
+                                    " VALUES('" + _vizsgálat.azonosító.termékkód + "', '" + _vizsgálat.azonosító.sarzs + "', '" + _vizsgálat.azonosító.hordószám + "', '" + _vizsgálat.azonosító.hordótípus + "', " +
+                                    _vizsgálat.azonosító.nettó_töltet.ToString().Replace(',', '.') + ", " + _vizsgálat.azonosító.szita_átmérő + ", '" + _vizsgálat.azonosító.megrendelő + "', " +
+                                    "(SELECT COUNT(*) FROM L_VIZSLAP WHERE " + A(new string[] { Update<string>("VITEKO", _vizsgálat.azonosító.termékkód), Update<string>("VISARZ", _vizsgálat.azonosító.sarzs) }) + ") + 1)";
 
                 try { command.ExecuteNonQuery(); command.Dispose(); }
                 catch (SqlException q) { MessageBox.Show("Vizsgálat_Hozzáadás -> INSERT hiba:\n" + q.Message); }
@@ -784,24 +759,10 @@ namespace Labor
                 }
                 if (laborconnection.State != System.Data.ConnectionState.Open) return false;
 
-                //Mérés sorszáma. EZ ITT FAIL-É?
-
-                int? temp = Vizsgálat_MérésSorszáma(_vizsgálat);
-                                 data = V(new string[] { Update<int?>("VIMSSZ",temp)});
-
-                 if (data != null)
-                 {
-                     command = laborconnection.CreateCommand();
-                     command.CommandText = "UPDATE L_VIZSLAP SET " + data + " WHERE " + where;
-
-                     try { command.ExecuteNonQuery(); command.Dispose(); }
-                     catch (SqlException q) { MessageBox.Show("Vizsgálat_Hozzáadás -> Mérés sorszám hiba:\n" + q.Message); }
-                 }
-                 if (laborconnection.State != System.Data.ConnectionState.Open) return false;
-
                 laborconnection.Close();
-                return true;
             }
+
+            return Hordók_Másolás(_vizsgálat);
         }
 
         public bool Vizsgálat_Módosítás(Vizsgálat _eredeti, Vizsgálat _új)
@@ -906,64 +867,80 @@ namespace Labor
                 command.ExecuteNonQuery();
                 command.Dispose();
                 laborconnection.Close();
-                return true;
             }
+
+            return Hordók_Törlés(_azonosító);
         }
 
         #endregion
 
         #region Hordók
-
-        // TODO ez miez?
-        public List<string> ÚjHordók(Vizsgálat _vizsgálat)
+        public bool Hordók_Másolás(Vizsgálat _vizsgálat)
         {
-            List<Hordó> value = new List<Hordó>();
+            string where = A(new string[] { Update<string>("VITEKO", _vizsgálat.azonosító.termékkód), Update<string>("VISARZ", _vizsgálat.azonosító.sarzs), Update<string>("VIGYEV", _vizsgálat.adatok1.gyártási_év.Substring(3, 1)) });
+            
+            lock(LaborLock)
+            {
+                int count = 0;
+
+                laborconnection.Open();
+                SqlCommand command = laborconnection.CreateCommand();
+                command.CommandText = "SELECT COUNT(*) FROM L_VIZSLAP WHERE " + where;
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    count = reader.GetInt32(0);
+                }
+                reader.Close();
+                laborconnection.Close();
+
+                if (count != 1) return true;
+            }
+
+            List<string> prod_id = new List<string>();
+            string iPROD_ID = "12" + _vizsgálat.azonosító.termékkód.ToString().Substring(0, 2) + "01" + _vizsgálat.adatok1.gyártási_év[_vizsgálat.adatok1.gyártási_év.Length - 1];
+            
             lock (MarillenLock)
             {
-                int összhordó = 0;
-                List<string> prod_id = new List<string>();
-
-                string iPROD_ID = "12" + _vizsgálat.azonosító.termékkód.ToString().Substring(0, 2) + "01" + _vizsgálat.adatok1.gyártási_év[_vizsgálat.adatok1.gyártási_év.Length - 1];
                 marillenconnection.Open();
                 SqlCommand command = new SqlCommand("SELECT tetelek.prod_id FROM tetelek" +
                                       " INNER JOIN folyoprops ON tetelek.serial_nr=folyoprops.serial_nr" +
-                                      " WHERE left(tetelek.prod_id,7) = '" + iPROD_ID + "'AND folyoprops.code= '" + 3 + "' AND folyoprops.propstr = '" + 1 + "'  ;");
+                                      " WHERE left(tetelek.prod_id,7) = '" + iPROD_ID + "' AND folyoprops.code= '" + 3 + "' AND folyoprops.propstr = '" + 1 + "'  ;");
                 command.Connection = marillenconnection;
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
                     prod_id.Add(reader.GetString(0).Substring(reader.GetString(0).Length - 4));
-                    összhordó++;
                 }
                 reader.Close();
                 marillenconnection.Close();
+            }
 
-
+            lock (LaborLock)
+            {
                 laborconnection.Open();
                 SqlCommand command3 = laborconnection.CreateCommand();
                 foreach (string item in prod_id)
                 {
-                    command3.CommandText += "INSERT INTO L_HORDO (HOTEKO, HOSARZ, HOSZAM,VIGYEV,FOSZAM) VALUES('" + _vizsgálat.azonosító.termékkód + "','" + _vizsgálat.azonosító.sarzs + "','" + item + "','" + _vizsgálat.adatok1.gyártási_év + "','" + 0 + "');";
+                    command3.CommandText += "INSERT INTO L_HORDO (HOTEKO, HOSARZ, HOSZAM, VIGYEV) VALUES('" + _vizsgálat.azonosító.termékkód + "','" + _vizsgálat.azonosító.sarzs + "','" + item + "','" + _vizsgálat.adatok1.gyártási_év + "');";
                 }
                 command3.ExecuteNonQuery();
                 command3.Dispose();
                 laborconnection.Close();
-
-                return prod_id;
             }
+
+            return true;
         }
-        /// <summary>
-        /// ez még nem az igazi, ezt is az l_hordóból kéne
-        /// </summary>
+
         public List<Hordó> Foglalás_Hordók(Foglalás _foglalás)
         {
+            List<Hordó> value = new List<Hordó>();
+            
             lock (LaborLock)
             {
-                List<Hordó> value = new List<Hordó>();
-
                 laborconnection.Open();
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT VITEKO, VISARZ, VIHOSZ, VIGYEV FROM L_VIZSLAP WHERE FOSZAM = " + _foglalás.id;
+                command.CommandText = "SELECT HOTEKO, HOSARZ, HOSZAM, VIGYEV FROM L_HORDO WHERE FOSZAM = " + _foglalás.id;
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
@@ -973,9 +950,9 @@ namespace Labor
 
                 command.Dispose();
                 laborconnection.Close();
-
-                return value;
             }
+
+            return value;
         }
 
         public List<Hordó> Hordók(Sarzs _sarzs)
@@ -1003,13 +980,13 @@ namespace Labor
 
         public List<Hordó> Hordók(Foglalás _foglalás, Sarzs _sarzs)
         {
+            List<Hordó> value = new List<Hordó>();
+
             lock (LaborLock)
             {
-                List<Hordó> value = new List<Hordó>();
-
                 laborconnection.Open();
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT VIHOSZ, FOSZAM, VIGYEV FROM L_VIZSLAP WHERE (FOSZAM IS NULL OR FOSZAM = " + _foglalás.id + ") AND VITEKO = '" + _sarzs.termékkód + "' AND VISARZ = '" + _sarzs.sarzs + "';";
+                command.CommandText = "SELECT HOSZAM, FOSZAM, VIGYEV FROM L_HORDO WHERE (FOSZAM IS NULL OR FOSZAM = " + _foglalás.id + ") AND HOTEKO = '" + _sarzs.termékkód + "' AND HOSARZ = '" + _sarzs.sarzs + "';";
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
@@ -1019,15 +996,12 @@ namespace Labor
 
                 command.Dispose();
                 laborconnection.Close();
-
-                return value;
             }
+
+            return value;
         }
 
-        /// <summary>
-        /// Igazzal tér vissza, ha sikeres volt a foglalás!
-        /// </summary>
-        public bool Hordó_Foglalás(bool _törlés, int _foglalás_id, string _termékkód, string _sarzs)
+        public bool Hordó_Foglalás(bool _törlés, int _foglalás_id, string _termékkód, string _sarzs, string _hordó_szám)
         {
             lock (LaborLock)
             {
@@ -1038,9 +1012,8 @@ namespace Labor
                 command = laborconnection.CreateCommand();
                 command.CommandText = "UPDATE L_FOGLAL SET FOFOHO = FOFOHO " + (_törlés ? "-1" : "+1") + " WHERE FOSZAM = " + _foglalás_id + ";" +
 
-                    "UPDATE L_VIZSLAP " + (_törlés ? "SET FOSZAM = NULL" : "SET FOSZAM = " + _foglalás_id) +
-                    " WHERE " + (_törlés ? "FOSZAM = " + _foglalás_id : "FOSZAM IS NULL") + " AND VITEKO = '" + _termékkód + "' AND VISARZ = '" + _sarzs + "';";
-
+                    "UPDATE L_HORDO " + (_törlés ? "SET FOSZAM = NULL" : "SET FOSZAM = " + _foglalás_id) +
+                    " WHERE " + (_törlés ? "FOSZAM = " + _foglalás_id : "FOSZAM IS NULL") + " AND HOTEKO = '" + _termékkód + "' AND HOSARZ = '" + _sarzs + "' AND HOSZAM = '" + _hordó_szám + "';";
 
                 int modified = command.ExecuteNonQuery();
 
@@ -1065,8 +1038,9 @@ namespace Labor
                 command.ExecuteNonQuery();
                 command.Dispose();
                 laborconnection.Close();
-                return true;
             }
+
+            return true;
         }
 
         #endregion
@@ -1261,10 +1235,7 @@ namespace Labor
                 laborconnection.Open();
 
                 SqlCommand command = laborconnection.CreateCommand();
-                string where = A(new string[] { Update<int>("FOSZAM", _azonosító.id), Update<string>("FONEVE", _azonosító.név), Update<int>("FOFOHO", _azonosító.hordók_száma),
-                     Update<string>("FOTIPU", _azonosító.típus) ,Update<string>("FOFENE", _azonosító.készítő) ,Update<string>("FODATE", _azonosító.idő),Update<string>("FOFAJT", _azonosító.típus)  });
-
-                command.CommandText = "DELETE FROM L_FOGLAL WHERE " + where + "; UPDATE L_VIZSLAP SET FOSZAM = NULL WHERE FOSZAM = " + _azonosító.id;
+                command.CommandText = "DELETE FROM L_FOGLAL WHERE FOSZAM = " + _azonosító.id + "; UPDATE L_HORDO SET FOSZAM = NULL WHERE FOSZAM = " + _azonosító.id;
                 if (command.ExecuteNonQuery() == 0) found = false;
 
                 command.Dispose();
@@ -1311,8 +1282,6 @@ namespace Labor
                 SqlCommand command = laborconnection.CreateCommand();
                 command.CommandText = "SELECT VITEKO, VISARZ FROM L_VIZSLAP" + (Filter == null ? "" : " WHERE " + Filter);
 
-
-
                 List<MinMaxPair<string>> data = new List<MinMaxPair<string>>();
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
@@ -1326,13 +1295,13 @@ namespace Labor
                     string where = A(new string[] { Update<string>("HOTEKO", item.min), Update<string>("HOSARZ", item.max)});
 
                     command = laborconnection.CreateCommand();
-                    command.CommandText = "SELECT HOTEKO, HOSARZ, SUM(case when FOSZAM = 0 then 0 else 1 end), SUM(case when FOSZAM = 0 then 1 else 0 end) " +
+                    command.CommandText = "SELECT HOTEKO, HOSARZ, SUM(case when FOSZAM IS NULL then 0 else 1 end), SUM(case when FOSZAM IS NULL then 1 else 0 end) " +
                                         "FROM L_HORDO WHERE " + where + " GROUP BY HOTEKO, HOSARZ;";
                     reader.Close();
                     reader = command.ExecuteReader();
                     while (reader.Read())
                     {
-                       value.Add( new Sarzs(reader.GetString(0),reader.GetString(1), reader.GetInt32(2),reader.GetInt32(3) ));
+                       value.Add( new Sarzs(reader.GetString(0),reader.GetString(1), reader.GetInt32(2), reader.GetInt32(3)));
                     }
                 }
 
@@ -1341,9 +1310,6 @@ namespace Labor
                 return value;
             }
         }
-
-    
-
         #endregion
 
         #region Gyümölcsfajták
