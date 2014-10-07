@@ -1346,13 +1346,15 @@ namespace Labor
 
         #region Konszignáció
         /// <summary>
-        /// azok a foglalások,amik még nem lettek kiszállítva, SZSZAM==0
+        /// Meg kell jeleníteni a rendszerben elmentett foglalásokat, amelyek még nem kerültek kiszállításra, nincs a szállítólevél mezőjük kitöltve (L_FOGLAL.SZSZAM=NULL).
+        /// TODO: Ide majd kell vmi ellenőrzés de még nincs kitalálva
         /// </summary>
         public List<Foglalás> Konszingnáció_Foglalások()
         {
+            List<Foglalás> data = new List<Foglalás>();
+
             lock (LaborLock)
             {
-                List<Foglalás> data = new List<Foglalás>();
                 laborconnection.Open();
 
                 SqlCommand command = laborconnection.CreateCommand();
@@ -1367,34 +1369,36 @@ namespace Labor
                 }
                 command.Dispose();
                 laborconnection.Close();
-                return data;
             }
+                return data;
         }
 
-        public List<Hordó> Konszignáció_Hordók(int _id)
+        /// <summary>
+        /// Itt lehet megnézni a foglaláshoz tartozó hordókat.
+        /// </summary>
+        public List<Hordó> Konszignáció_Hordók(int _fogalás_száma)
         {
+            List<Hordó> value = new List<Hordó>();
             lock (LaborLock)
             {
-                List<Hordó> value = new List<Hordó>();
-
                 laborconnection.Open();
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT VITEKO, VISARZ, VIHOSZ, VIGYEV FROM L_VIZSLAP WHERE FOSZAM = " + _id;
+                command.CommandText = "SELECT HOTEKO, HOGYEV, HOSARZ, HOSZAM FROM L_HORDO WHERE FOSZAM = " + _fogalás_száma;
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    value.Add(new Hordó(reader.GetString(0), reader.GetString(1), reader.GetString(2), _id, reader.GetString(3)));
+                    int c = -1;
+                    value.Add(new Hordó(reader.GetString(++c), reader.GetString(++c), reader.GetString(++c), _fogalás_száma, reader.GetString(++c)));
                 }
 
                 command.Dispose();
                 laborconnection.Close();
-
-                return value;
             }
+            return value;
         }       
 
-        public bool Konszignáció_ÚJSzállítólevél(Szállítólevél _data)
+        public bool Konszignáció_ÚJSzállítólevél(Szállítólevél _szállítólevél)
         {
             lock (LaborLock)
             {
@@ -1402,30 +1406,32 @@ namespace Labor
                 laborconnection.Open();
                 command = laborconnection.CreateCommand();
                 command.CommandText = "INSERT INTO L_SZLEV (SZSZSZ,SZFENE,SZDATE,SZNYEL,SZVEVO,SZGKR1,SZGKR2,FOFOHO,SZGYEV,SZSZIN,SZIZEK,SZILLA)" +  
-                    " VALUES(" + "'" + _data.szlevél +  "','" + _data.fnév + "','" + _data.elszállítás_ideje + "','"+ _data.nyelv + "','" +_data.vevő + "','"+ _data.gépkocsi1 + "','" +_data.gépkocsi2  + "'," + _data.foglalt_hordó + ",'"+ _data.gyártási_idő + "','"+ _data.szín + "','"+ _data.íz + "','"+ _data.illat + "');";
+                    " VALUES(" + "'" + _szállítólevél.szlevél +  "','" + _szállítólevél.fnév + "','" + _szállítólevél.elszállítás_ideje + "','"+ _szállítólevél.nyelv + "','" +_szállítólevél.vevő + "','"+ _szállítólevél.gépkocsi1 + "','" +_szállítólevél.gépkocsi2  + "'," + _szállítólevél.foglalt_hordó + ",'"+ _szállítólevél.gyártási_idő + "','"+ _szállítólevél.szín + "','"+ _szállítólevél.íz + "','"+ _szállítólevél.illat + "');";
 
                 try { command.ExecuteNonQuery(); }
-                catch (Exception e) { MessageBox.Show(e.Message); return false; }
+                catch{ return false; }
                 finally { command.Dispose(); laborconnection.Close(); }
-
                 laborconnection.Close();
                 return true;
             }
         }
 
+        /// <summary>
+        /// Marillenből, vevő adatai
+        /// </summary>
         public Node_Konszignáció.Fejléc.Vevő Konszignáció_Vevő(string _partner)
         {
+            Node_Konszignáció.Fejléc.Vevő data = new Node_Konszignáció.Fejléc.Vevő();
 
             lock (MarillenLock)
             {
-                int c = -1;
-                Node_Konszignáció.Fejléc.Vevő data = new Node_Konszignáció.Fejléc.Vevő();
                 marillenconnection.Open();
                 SqlCommand command = marillenconnection.CreateCommand();
                 command.CommandText = "SELECT name, city, addr FROM partner WHERE partner.name=" + "'" + _partner + "'";
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
+                    int c = -1;
                     data = new Node_Konszignáció.Fejléc.Vevő(reader.GetString(++c), reader.GetString(++c), reader.GetString(++c));
                 }
                 command.Dispose();
@@ -1434,45 +1440,53 @@ namespace Labor
             }
         }
 
-        public Node_Konszignáció.Gyümölcstípus Konszignáció_Gyümöklcstípus_Adatok(string _termékkód)
+        /// <summary>
+        /// Marillenből, gyümölcsnév, vtsz
+        /// </summary>
+        public Node_Konszignáció.Gyümölcstípus Konszignáció_Gyümölcstípus_Adatok(string _termékkód)
         {
+            Node_Konszignáció.Gyümölcstípus data = new Node_Konszignáció.Gyümölcstípus();
             lock (MarillenLock)
             {
-                int c = -1;
-                Node_Konszignáció.Gyümölcstípus data = new Node_Konszignáció.Gyümölcstípus();
                 marillenconnection.Open();
                 SqlCommand command = marillenconnection.CreateCommand();
-                command.CommandText = "SELECT vtsz,name FROM cikkek WHERE cikkek.item_nr=" + "'12" +  _termékkód.Substring(0,2) + "01'" ;
+                command.CommandText = "SELECT vtsz,name FROM cikkek WHERE cikkek.item_nr=" + "'12" + _termékkód.Substring(0, 2) + "01'";
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
+                    int c = -1;
                     data = new Node_Konszignáció.Gyümölcstípus(reader.GetString(++c), reader.GetString(++c));
                 }
                 command.Dispose();
                 marillenconnection.Close();
-                return data;
             }
+            return data;
         }
 
+        /// <summary>
+        /// Sorszám: Folyamatos sorszám, Hordó: L_HORDO.VIGYEV+L_HORDO.HOZSSZ, Sarzs: L_HORDO.HOSARZ, Nettó súly: A SELECT által visszaadott QTY, Hordó típus: Csak a vizsgálati sorban van benne, onnan kell kivenni.
+        /// </summary>
         public Node_Konszignáció.Gyümölcstípus.Adat Konszignáció_Hordósor_Adatok(Hordó _hordó)
         {
+            Node_Konszignáció.Gyümölcstípus.Adat data = new Node_Konszignáció.Gyümölcstípus.Adat();
+            string iProdId = "12" + _hordó.termékkód.Substring(0, 2) + "01" + _hordó.gyártási_év + "_0" + _hordó.gyártási_év + _hordó.id;
+
             lock (MarillenLock)
             {
-                int c = -1;
-                Node_Konszignáció.Gyümölcstípus.Adat data = new Node_Konszignáció.Gyümölcstípus.Adat();
-                string iprod_id = "12" + _hordó.termékkód.Substring(0, 2) + "01" + _hordó.gyártási_év + "_0" + _hordó.gyártási_év + _hordó.id;
+                //Megkeresem a hordót a TETELEK táblában:
                 marillenconnection.Open();
                 SqlCommand command = marillenconnection.CreateCommand();
-                command.CommandText = "SELECT qty, time_ FROM tetelek WHERE (type=300) AND (prod_id LIKE" + "'" + iprod_id +"'" + ")";
+                command.CommandText = "SELECT qty, time_ FROM tetelek WHERE (type=300) AND (prod_id LIKE" + "'" + iProdId + "'" + ")";
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
+                    int c = -1;
                     data = new Node_Konszignáció.Gyümölcstípus.Adat(0, "", Convert.ToInt32(_hordó.gyártási_év.ToString() + _hordó.id.ToString()), _hordó.sarzs, (double?)GetNullable<decimal>(reader, ++c), "", reader.GetDateTime(++c).ToString());
                 }
                 command.Dispose();
                 marillenconnection.Close();
-                return data;
             }
+            return data;
         }
         #endregion
 

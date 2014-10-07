@@ -1,4 +1,4 @@
-#		Labor program konfigurációs adatai
+﻿#		Labor program konfigurációs adatai
 # SQL Szerver elérési címe
 #server=FUSIONW7\SQLEXPRESS
 # Marillen adatbázis neve
@@ -13,4 +13,4 @@ marillen_database=Marillen2013
 #login_name=labor
 # Felugró ablakok rendezése egymás mellé/mindig középre
 #password=labor
-
+manual_locations

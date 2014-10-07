@@ -65,10 +65,13 @@ namespace Labor
         private DataTable data;
         private DataGridView table;
 
+        #region Constructor
+
         public Panel_Konszignáció()
         {
             InitializeContent();
         }
+
         private void InitializeContent()
         {
             table = new DataGridView();
@@ -77,16 +80,15 @@ namespace Labor
             table.AllowUserToResizeRows = false;
             table.AllowUserToResizeColumns = false;
             table.AllowUserToAddRows = false;
-            table.Width = 700;
+            table.Width = 713;
             table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            //table.MultiSelect = false;
             table.ReadOnly = false;
+
+            table.DataSource = CreateSource();
             table.DataBindingComplete += table_DataBindingComplete;
             table.CellDoubleClick += módosítás_Click;
             table.UserDeletingRow += table_UserDeletingRow;
-            table.DataSource = CreateSource();
             table.CellMouseUp += table_CellMouseUp;
-
 
             Button hordók = new Button();
             hordók.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
@@ -106,9 +108,6 @@ namespace Labor
             Controls.Add(hordók);
             Controls.Add(nyomtatás);
         }
-
-
-
 
         private DataTable CreateSource()
         {
@@ -157,18 +156,18 @@ namespace Labor
 
                 data.Rows.Add(row);
             }
-
             return data;
         }
+        #endregion
 
         #region EventHandlers
-
         void nyomtatás_Click(object sender, EventArgs e)
         {
             if (table.Rows.Count == 0) return;
             Konszignáció_Nyomtatás form = new Konszignáció_Nyomtatás(
-                new Foglalás((int)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.foglalás_száma].Value, (string)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.foglalás_neve].Value, (int)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.foglalt_hordók_száma].Value,
-                    (string)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.foglalás_típusa].Value, (string)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.készítette].Value, (string)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.foglalás_ideje].Value));
+                new Foglalás( (int)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.foglalás_száma].Value, (string)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.foglalás_neve].Value,
+                    (int)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.foglalt_hordók_száma].Value, (string)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.foglalás_típusa].Value,
+                    (string)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.készítette].Value, (string)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.foglalás_ideje].Value));
             form.ShowDialog();
         }
 
@@ -185,32 +184,30 @@ namespace Labor
         {
             if (table.Rows.Count == 0) return;
             Konszignáció_Hordók konszignáció_hordók = new Konszignáció_Hordók( (int)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.foglalás_száma].Value );
-            int q = (int)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.foglalás_száma].Value;
+            //EZMIEZ??  int q = (int)table.SelectedRows[0].Cells[Konszignáció_TableIndexes.foglalás_száma].Value;
             konszignáció_hordók.Show();
         }
 
         private void módosítás_Click(object sender, DataGridViewCellEventArgs e)
         {
+            //TODO
         }
 
         void table_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
             table.DataBindingComplete -= table_DataBindingComplete;
-            table.Columns[0].Width = 100;
-            table.Columns[1].Width = 100;
-            table.Columns[2].Width = 100;
+            table.Columns[0].Width = 90;
+            table.Columns[1].Width = 130;
+            table.Columns[2].Width = 140;
             table.Columns[3].Width = 100;
             table.Columns[4].Width = 100;
             table.Columns[5].Width = 100;
-            table.Columns[6].Width = 100;
+            table.Columns[6].Width = 50;
         }
 
         private void table_UserDeletingRow(object _sender, DataGridViewRowCancelEventArgs _event)
         {
-            // Delete lenyomása esetén kitörli az adott sorokat, ezt iktatjuk ki ezzel!
             _event.Cancel = true;
-            // A saját törlést azért elindítjuk Delete gomb lenyomása után.
-            //Vizsgálat_Törlés(_sender, _event);
         }
         #endregion
 
@@ -227,6 +224,8 @@ namespace Labor
             TextBox box_illat;
 
             Foglalás foglalás;
+
+            #region Constructor
             public Konszignáció_Nyomtatás(Foglalás _foglalás)
             {
                 foglalás = _foglalás;
@@ -235,6 +234,7 @@ namespace Labor
                 InitializeData();
 
             }
+
             private void InitializeForm()
             {
                 Text = "Nyomtatás";
@@ -246,7 +246,6 @@ namespace Labor
 
             private void InitializeContent()
             {
-
                 Label label_nyelv;
                 Label label_vevő;
                 Label label_gépkocsi;
@@ -256,9 +255,7 @@ namespace Labor
                 Label label_íz;
                 Label label_illat;
 
-               
                 Button rendben;
-
 
                 label_nyelv = MainForm.createlabel("Nyelv:", 16, 16 + 0 * 32, this);
                 label_vevő = MainForm.createlabel("Vevő:", 16, 16 + 1 * 32, this);
@@ -270,16 +267,11 @@ namespace Labor
                 label_illat = MainForm.createlabel("Illat:", 16, 16 + 7 * 32, this);
 
                 combo_nyelv = MainForm.createcombobox(label_nyelv.Location.X + 48 + label_nyelv.Width, label_nyelv.Location.Y, 200, this);
-                combo_nyelv.Items.Add("Magyar"); combo_nyelv.Items.Add("Angol"); combo_nyelv.Items.Add("3. label_nyelv"); combo_nyelv.SelectedIndex = 0;
-
                 combo_megrendelők = MainForm.createcombobox(combo_nyelv.Location.X, label_vevő.Location.Y, 200, this);
-                List<string> megrendelok = Program.database.Megrendelők();
-                foreach (string item in megrendelok) { combo_megrendelők.Items.Add(item); } combo_megrendelők.SelectedIndex = 0;
-
+                
                 box_rendszám1 = MainForm.createtextbox(combo_nyelv.Location.X, label_gépkocsi.Location.Y, 20, 70, this);
                 box_rendszám2 = MainForm.createtextbox(box_rendszám1.Location.X + box_rendszám1.Width + 8, label_gépkocsi.Location.Y, 20, 70, this);
                 box_levél = MainForm.createtextbox(combo_nyelv.Location.X, label_szállítólevél.Location.Y, 20, 70, this);
-
                 box_gyártási_idő = MainForm.createtextbox(combo_nyelv.Location.X, label_gyártási_idő.Location.Y, 20, 70, this);
                 box_szín = MainForm.createtextbox(combo_nyelv.Location.X, label_szín.Location.Y, 20, 70, this);
                 box_íz = MainForm.createtextbox(combo_nyelv.Location.X, label_íz.Location.Y, 20, 70, this);
@@ -291,48 +283,52 @@ namespace Labor
                 rendben.Size = new System.Drawing.Size(96, 32);
                 rendben.Location = new Point(150, 300);
                 rendben.Click += rendben_Click;
+
                 this.Controls.Add(rendben);
                 this.ShowDialog();
             }
 
+            private void InitializeData()
+            {
+                combo_nyelv.Items.Add("Magyar"); combo_nyelv.Items.Add("Angol"); combo_nyelv.Items.Add("3. label_nyelv"); combo_nyelv.SelectedIndex = 0;
+
+                List<string> megrendelok = Program.database.Megrendelők();
+                foreach (string item in megrendelok) { combo_megrendelők.Items.Add(item); } combo_megrendelők.SelectedIndex = 0;
+            }
+            #endregion
+
+            #region EventHandlers
             void rendben_Click(object sender, EventArgs e)
             {
                 //TODO check jó-é, gyártási idő??
                 string date = DateTime.Now.Year.ToString() + '.'+ DateTime.Now.Month + '.' + DateTime.Now.Day;
-                Szállítólevél temp = new Szállítólevél(0, box_levél.Text, foglalás.készítő , date , combo_nyelv.Text[0].ToString(), combo_megrendelők.Text, box_rendszám1.Text, box_rendszám2.Text, (byte)foglalás.hordók_száma, "??", box_szín.Text, box_íz.Text, box_illat.Text);
 
-                Program.database.Konszignáció_ÚJSzállítólevél(temp);
+                Szállítólevél szállítólevél = new Szállítólevél(0, box_levél.Text, foglalás.készítő , date , combo_nyelv.Text[0].ToString(), combo_megrendelők.Text, box_rendszám1.Text, box_rendszám2.Text, (byte)foglalás.hordók_száma, "??", box_szín.Text, box_íz.Text, box_illat.Text);
+
+                Program.database.Konszignáció_ÚJSzállítólevél(szállítólevél);
 
                 List<Hordó> hordók = Program.database.Konszignáció_Hordók(foglalás.id);
-
                 foreach (Hordó item in hordók)
                 {
-                    Nyomtat.Nyomtat_Konszignáció(temp,item );
+                    Nyomtat.Nyomtat_Konszignáció(szállítólevél, item);
                 }
                 Close();
             }
-
-            private void InitializeData()
-            {
-            }
-
+            #endregion
         }
-
-
 
         public sealed class Konszignáció_Hordók : Form
         {
             public int id;
             private DataTable data;
             private DataGridView table;
-  
+
+            #region Constructor
             public Konszignáció_Hordók(int _id)
             {
                 id = _id;
                 InitializeForm();
                 InitializeContent();
-                InitializeData();
-
             }
 
             private void InitializeForm()
@@ -354,18 +350,15 @@ namespace Labor
                 table.AllowUserToAddRows = false;
                 table.Width = 700;
                 table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-                //table.MultiSelect = false;
                 table.ReadOnly = true;
+                table.DataSource = CreateSource();
+
                 table.DataBindingComplete += table_DataBindingComplete;
                 table.UserDeletingRow += table_UserDeletingRow;
-                table.DataSource = CreateSource();
 
                 Controls.Add(table);
             }
-
-            private void InitializeData()
-            {
-            }
+            #endregion
 
             private DataTable CreateSource()
             {
@@ -377,7 +370,6 @@ namespace Labor
                 data.Columns.Add(new DataColumn("Hordószám", System.Type.GetType("System.String")));
 
                 List<Hordó> hordók = Program.database.Konszignáció_Hordók(id);
-
                 foreach (Hordó item in hordók)
                 {
                     DataRow row = data.NewRow();
@@ -392,8 +384,8 @@ namespace Labor
             }
 
             #region EventHandlers
- 
-            void table_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+
+            void table_DataBindingComplete(object _sender, DataGridViewBindingCompleteEventArgs _event)
             {
                 table.DataBindingComplete -= table_DataBindingComplete;
                 table.Columns[0].Width = 70;
@@ -401,12 +393,10 @@ namespace Labor
                 table.Columns[2].Width = 70;
                 table.Columns[3].Width = 70;
             }
-                 private void table_UserDeletingRow(object _sender, DataGridViewRowCancelEventArgs _event)
+
+            private void table_UserDeletingRow(object _sender, DataGridViewRowCancelEventArgs _event)
             {
-                // Delete lenyomása esetén kitörli az adott sorokat, ezt iktatjuk ki ezzel!
                 _event.Cancel = true;
-                // A saját törlést azért elindítjuk Delete gomb lenyomása után.
-               // Vizsgálat_Törlés(_sender, _event);
             }
             #endregion
         }
