@@ -1056,6 +1056,8 @@ namespace Labor
                     private Vizsgalap_Szűrő szűrő;
                     private Foglalás? foglalás = null;
 
+                    private Label foglalt_hordók;
+
                     #region Constructor
                     public Eredmény_Hordók(Vizsgalap_Szűrő _szűrő, Sarzs _sarsz)
                     {
@@ -1076,6 +1078,8 @@ namespace Labor
                         InitializeForm();
                         InitializeContent();
                         InitializeTokens();
+
+                        Hordók_Számolás();
                     }
 
                     private void InitializeForm()
@@ -1120,7 +1124,6 @@ namespace Labor
 
                         if (foglalás != null)
                         {
-
                             Button kijelölés_megfordítása = new Button();
                             kijelölés_megfordítása.Text = "Kijelölés megfordítása";
                             kijelölés_megfordítása.Size = new System.Drawing.Size(128, 32);
@@ -1128,8 +1131,12 @@ namespace Labor
                             kijelölés_megfordítása.Click += kijelölés_megfordítása_Click;
 
                             Label label_foglalt_hordó = new Label();
-                            label_foglalt_hordó.Text = "Foglalt hordó:      ";
+                            label_foglalt_hordó.Text = "Foglalt hordó:";
                             label_foglalt_hordó.Location = new Point(8, kijelölés_megfordítása.Location.Y - 32 - 8);
+
+                            foglalt_hordók = new Label();
+                            foglalt_hordók.Text = "0 db";
+                            foglalt_hordók.Location = new Point(label_foglalt_hordó.Location.X + label_foglalt_hordó.Size.Width, label_foglalt_hordó.Location.Y);
 
                             Label vonal = new Label();
                             vonal.Location = new Point(0, label_foglalt_hordó.Location.Y + 26);
@@ -1139,6 +1146,7 @@ namespace Labor
 
                             Controls.Add(kijelölés_megfordítása);
                             Controls.Add(label_foglalt_hordó);
+                            Controls.Add(foglalt_hordók);
                             Controls.Add(vonal);
                         }
                     }
@@ -1209,6 +1217,13 @@ namespace Labor
                         else
                             return Program.database.Hordók(sarzs);
                     }
+
+                    public override void Refresh()
+                    {
+                        base.Refresh();
+
+                        if (foglalás != null) Hordók_Számolás();
+                    }
                     #endregion
 
                     #region EventHandlers
@@ -1224,6 +1239,18 @@ namespace Labor
                         table.Columns[2].ReadOnly = (foglalás == null) ? true : false;
                     }
 
+                    private void Hordók_Számolás()
+                    {
+                        int count = 0;
+
+                        foreach (DataRow row in data.Rows)
+                        {
+                            if ((bool)row[2] == true) ++count;
+                        }
+
+                        foglalt_hordók.Text = count + " db";
+                    }
+
                     private void table_UserDeletingRow(object _sender, DataGridViewRowCancelEventArgs _event)
                     {
                         // Delete lenyomása esetén kitörli az adott sorokat, ezt iktatjuk ki ezzel!
@@ -1237,8 +1264,9 @@ namespace Labor
                         {
                             if (_event.ColumnIndex == 2 && _event.RowIndex != -1)
                             {
-                                Program.database.Hordó_Foglalás(!(bool)table.Rows[_event.RowIndex].Cells[_event.ColumnIndex].Value, foglalás.Value.id, sarzs.termékkód,
-                                    sarzs.sarzs, (string)table.Rows[_event.RowIndex].Cells[1].Value);
+                                // TODO Checkbox állítása a művelet eredményére!
+                                Program.database.Hordó_Foglalás(!(bool)table.Rows[_event.RowIndex].Cells[_event.ColumnIndex].Value,
+                                    foglalás.Value.id, sarzs.termékkód, sarzs.sarzs, (string)table.Rows[_event.RowIndex].Cells[1].Value);
 
                                 Program.RefreshData();
                             }
