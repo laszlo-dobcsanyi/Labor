@@ -494,6 +494,8 @@ namespace Labor
         public sealed class Foglalás_Szerkesztő : Tokenized_Form<Hordó>
         {
             private Foglalás foglalás;
+            public TextBox box_foglalás_neve;
+            public TextBox box_foglalás_tipusa;
 
             #region Constructor
             public Foglalás_Szerkesztő(Foglalás _foglalás)
@@ -502,6 +504,7 @@ namespace Labor
 
                 InitializeForm();
                 InitializeContent();
+                InitializeData();
                 InitializeTokens();
             }
 
@@ -520,40 +523,66 @@ namespace Labor
             private void InitializeContent()
             {
                 table = new DataGridView();
-                table.Dock = DockStyle.Left;
+                table.Dock = DockStyle.None;
                 table.RowHeadersVisible = false;
                 table.AllowUserToResizeRows = false;
                 table.AllowUserToResizeColumns = false;
                 table.AllowUserToAddRows = false;
-                table.Width = 4 * 75 + 3;
+                table.Width = 430 ;
                 table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
                 table.ReadOnly = true;
                 table.UserDeletingRow += table_UserDeletingRow;
                 table.DataSource = CreateSource();
-
+                table.Location = new Point(0, 100);
+                table.Height = 400;
+                
                 //
 
                 Button törlés = new Button();
                 törlés.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
                 törlés.Text = "Törlés";
                 törlés.Size = new System.Drawing.Size(96, 32);
-                törlés.Location = new Point(ClientRectangle.Width - törlés.Size.Width - 16, ClientRectangle.Height - törlés.Size.Height - 64);
+                törlés.Location = new Point(ClientRectangle.Width - törlés.Size.Width - 16, ClientRectangle.Height - törlés.Size.Height - 2 * 16);
                 törlés.Click += Hordó_Törlés;
 
                 Button keresés = new Button();
                 keresés.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
                 keresés.Text = "Keresés";
                 keresés.Size = new System.Drawing.Size(96, 32);
-                keresés.Location = new Point(törlés.Location.X, törlés.Location.Y + törlés.Size.Height + 16);
+                keresés.Location = new Point(törlés.Location.X - törlés.Width - 16, törlés.Location.Y );
                 keresés.Click += Vizsgálat_Keresés;
 
+                Label foglalás_neve = MainForm.createlabel("Foglalás neve:", 10, 30, this);
+                Label foglalás_típusa = MainForm.createlabel("Foglalás típusa:", 10, 60, this);
+
+                box_foglalás_neve = MainForm.createtextbox(foglalás_neve.Location.X + foglalás_neve.Width + 16, foglalás_neve.Location.Y, 30, 200, this);
+                box_foglalás_tipusa = MainForm.createtextbox(box_foglalás_neve.Location.X, foglalás_típusa.Location.Y, 9, 100, this);
+
+                this.FormClosing += Foglalás_Szerkesztő_FormClosing;
                 //
 
                 Controls.Add(table);
 
                 Controls.Add(törlés);
                 Controls.Add(keresés);
+                Controls.Add(foglalás_neve);
+                Controls.Add(foglalás_típusa);
             }
+
+            void Foglalás_Szerkesztő_FormClosing(object _sender, FormClosingEventArgs _event)
+            {
+                Program.database.Foglalás_Módosítás(foglalás, new Foglalás(foglalás.id, box_foglalás_neve.Text, foglalás.hordók_száma, box_foglalás_tipusa.Text, foglalás.készítő, foglalás.idő));
+
+            }
+
+
+
+            private void InitializeData()
+            {
+                box_foglalás_neve.Text = foglalás.név;
+                box_foglalás_tipusa.Text = foglalás.típus;
+            }
+
 
             private DataTable CreateSource()
             {
@@ -582,11 +611,11 @@ namespace Labor
             #region EventHandlers
             private void Foglalás_Szerkesztő_Load(object _sender, EventArgs _event)
             {
-                table.Columns[Hordó.TableIndexes.termékkód].Width = 75;
-                table.Columns[Hordó.TableIndexes.sarzs].Width = 75;
-                table.Columns[Hordó.TableIndexes.id].Width = 75;
+                table.Columns[Hordó.TableIndexes.termékkód].Width = 430/4;
+                table.Columns[Hordó.TableIndexes.sarzs].Width = 430 / 4;
+                table.Columns[Hordó.TableIndexes.id].Width = 430 / 4;
                 table.Columns[Hordó.TableIndexes.foglalás_száma].Visible = false;
-                table.Columns[Hordó.TableIndexes.gyártási_év].Width = 75;
+                table.Columns[Hordó.TableIndexes.gyártási_év].Width = 430 / 4 - 1;
             }
 
             private void Hordó_Törlés(object _sender, EventArgs _event)

@@ -1222,6 +1222,17 @@ namespace Labor
         {
             lock (LaborLock)
             {
+                SqlCommand command;
+                string where = A(new string[] { Update<int>("FOSZAM", _eredeti.id)});
+
+                laborconnection.Open();
+
+                command = laborconnection.CreateCommand();
+                command.CommandText = "UPDATE L_FOGLAL SET FONEVE='" + _új.név + "', FOTIPU= '" + _új.típus + "' WHERE " + where + ";";
+                try { command.ExecuteNonQuery(); command.Dispose(); }
+                catch (SqlException q) { MessageBox.Show("Foglalás Módosítás hiba:\n" + q.Message); }
+                if (laborconnection.State != System.Data.ConnectionState.Open) return false;
+                laborconnection.Close();
                 return true;
             }
         }
