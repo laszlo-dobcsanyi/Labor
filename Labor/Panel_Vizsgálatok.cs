@@ -616,7 +616,6 @@ namespace Labor
                 box_k6_datum.Leave += MainForm.OnlyDate;
                 box_leoltas.Leave += MainForm.OnlyTime;
                 box_ertekeles.Leave += MainForm.OnlyTime;
-                combo_hordótípus.Leave += combo_hordótípus_Leave;
                 #endregion
 
                 #region Data
@@ -852,6 +851,10 @@ namespace Labor
                         box_sarzs.Text = fejléc_adatok[3];
                         box_szita_átmérő.Text = fejléc_adatok[4];
 
+                        string hordótípus = Program.database.Vizsgálat_Hordótípus_Ellenőrzés(box_termékkód.Text, gyártási_év, box_sarzs.Text);
+                        if (hordótípus == null) combo_hordótípus.Enabled = false;
+                        else combo_hordótípus.Text = hordótípus;
+
                         SetState(States.KÉSZ);
                     }
                     else
@@ -868,29 +871,6 @@ namespace Labor
                 else
                 {
                     if (state != States.HORDÓSZÁM) SetState(States.HORDÓSZÁM);
-                }
-            }
-
-            private void combo_hordótípus_Leave(object _sender, EventArgs _event)
-            {
-                Vizsgálat temp = new Vizsgálat();
-                temp.azonosító = new Vizsgálat.Azonosító(
-                                        box_termékkód.Text,
-                                        box_sarzs.Text,
-                                        box_hordószám.Text,
-                                        combo_hordótípus.Text,
-                                        Convert.ToDouble(box_nettó_töltet.Text),
-                                        box_szita_átmérő.Text,
-                                        combo_megrendelő.Text,
-                                        eredeti == null ? null : eredeti.Value.azonosító.sorszám);
-                temp.adatok1.gyártási_év = DateTime.Now.Year.ToString();
-
-                string hordótípus = Program.database.Vizsgálat_SarzsEllenőrzés(temp);
-                if (hordótípus != null)
-                {
-                    MessageBox.Show("Nem egyezik meg a hordótípus! (" + hordótípus + ")", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    combo_hordótípus.Focus();
-                    return;
                 }
             }
 
