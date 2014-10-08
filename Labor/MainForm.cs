@@ -38,10 +38,10 @@ namespace Labor
         private void InitializeContent()
         {
             #region Status
-            ToolStripStatusLabel Készítők = new ToolStripStatusLabel("Belinyák Nándor és Társai. \u00A9");
+            ToolStripStatusLabel Készítők = new ToolStripStatusLabel("Belinyák Nándor és Társai. \u00A9 2014");
             Készítők.BorderSides = ToolStripStatusLabelBorderSides.Left;
 
-            ToolStripStatusLabel Bejelentkezve = new ToolStripStatusLabel("Bejelentkezve " + Settings.LoginName + " néven" );
+            ToolStripStatusLabel Bejelentkezve = new ToolStripStatusLabel("Bejelentkezve " + Settings.LoginName + " néven." );
             Bejelentkezve.BorderSides = ToolStripStatusLabelBorderSides.Left;
 
             status = new StatusStrip();

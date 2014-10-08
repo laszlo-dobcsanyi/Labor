@@ -569,20 +569,11 @@ namespace Labor
                 Controls.Add(foglalás_típusa);
             }
 
-            void Foglalás_Szerkesztő_FormClosing(object _sender, FormClosingEventArgs _event)
-            {
-                Program.database.Foglalás_Módosítás(foglalás, new Foglalás(foglalás.id, box_foglalás_neve.Text, foglalás.hordók_száma, box_foglalás_tipusa.Text, foglalás.készítő, foglalás.idő));
-
-            }
-
-
-
             private void InitializeData()
             {
                 box_foglalás_neve.Text = foglalás.név;
                 box_foglalás_tipusa.Text = foglalás.típus;
             }
-
 
             private DataTable CreateSource()
             {
@@ -616,6 +607,12 @@ namespace Labor
                 table.Columns[Hordó.TableIndexes.id].Width = 430 / 4;
                 table.Columns[Hordó.TableIndexes.foglalás_száma].Visible = false;
                 table.Columns[Hordó.TableIndexes.gyártási_év].Width = 430 / 4 - 1;
+            }
+
+            private void Foglalás_Szerkesztő_FormClosing(object _sender, FormClosingEventArgs _event)
+            {
+                Program.database.Foglalás_Módosítás(foglalás, new Foglalás(foglalás.id, box_foglalás_neve.Text, foglalás.hordók_száma, box_foglalás_tipusa.Text, foglalás.készítő, foglalás.idő));
+
             }
 
             private void Hordó_Törlés(object _sender, EventArgs _event)
