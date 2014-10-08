@@ -58,7 +58,7 @@ namespace Labor
                             "CREATE TABLE L_TORZSA (TOTIPU varchar(20) NOT NULL,TOAZON varchar(25) PRIMARY KEY,TOSZO2 varchar(25),TOSZO3 varchar(25));" +
 
                             // Vizsgálat
-                            "CREATE TABLE L_VIZSLAP (VITEKO varchar(3) NOT NULL, VISARZ varchar(3) NOT NULL, VIHOSZ varchar(4) NOT NULL, VIHOTI varchar(15), VINETO DECIMAL(14, 2), VISZAT tinyint, VIMEGR varchar(50), " +
+                            "CREATE TABLE L_VIZSLAP (VITEKO varchar(3) NOT NULL, VISARZ varchar(3) NOT NULL, VIHOSZ varchar(4) NOT NULL, VIHOTI varchar(15), VINETO DECIMAL(14, 2), VISZAT varchar(100), VIMEGR varchar(50), " +
                                 "VIMSSZ int, " +
 
                                 // Adatok1
@@ -284,20 +284,22 @@ namespace Labor
 
         /// <summary>
         /// Termékkód, hordószám megadása után a fejléc adatait kérjük le!
-        /// box_szita_átmérő, nettó_töltet, műszak_jele, töltőgép_száma, sarzs
+        /// nettó_töltet, műszak_jele, töltőgép_száma, sarzs, szita_átmérő
         /// </summary>
-        public List<string> Vizsgálat_Prod_Id(string _prod_id)
+        public List<string> Vizsgálat_Fejlécadatok(string _prod_id)
         {
+            List<string> values = new List<string>();
+
             lock (MarillenLock)
             {
-                List<string> value = new List<string>();
-
                 int iteration;
+                int szita_átmérő_száma = -1;
                 string serial = null;
                 string prodid = null;
 
                 marillenconnection.Open();
 
+                // nettó_töltet
                 SqlCommand command = new SqlCommand("SELECT serial_nr, prod_id, qty FROM tetelek WHERE (type=300) AND (prod_id LIKE '" + _prod_id + "')");
                 command.Connection = marillenconnection;
                 SqlDataReader reader = command.ExecuteReader();
@@ -310,10 +312,9 @@ namespace Labor
 
                     if (iteration == 0)
                     {
-                        //szitaméret
-                        value.Add(prodid[7].ToString());
-                        //nettó töltet
-                        value.Add(netto);
+                        //szita_átmérő_száma
+                        szita_átmérő_száma = Convert.ToInt32(prodid[7].ToString());
+                        values.Add(netto);
                     }
                     else
                         if (iteration == 1) MessageBox.Show("Több szita átmérő, nettó töltet!\nKérem ellenőrizze a Marillen adatbázis tetelek tábláját(serial_nr, prod_id, qty : type=300, prod_id=" + _prod_id +")!", "Ellenőrizze az adatokat!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -321,6 +322,7 @@ namespace Labor
                 }
                 reader.Close();
 
+                // műszak_jele
                 command = new SqlCommand("SELECT propstr FROM folyoprops WHERE (serial_nr = '" + serial + "') AND (code=1)");
                 command.Connection = marillenconnection;
                 reader = command.ExecuteReader();
@@ -330,8 +332,7 @@ namespace Labor
                     string jel = reader.GetString(0).Substring(0, 1);
                     if (iteration == 0)
                     {
-                        //műszak jele
-                        value.Add(jel);
+                        values.Add(jel);
                     }
                     else
                         if (iteration == 1) MessageBox.Show("Több műszak jel!\nKérem ellenőrizze a Marillen adatbázis folyoprops tábláját(propstr : code=1, serial_nr=" + serial + ")!", "Ellenőrizze az adatokat!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -339,6 +340,7 @@ namespace Labor
                 }
                 reader.Close();
 
+                // töltőgép_száma
                 command = new SqlCommand("SELECT propstr FROM folyoprops WHERE (serial_nr = '" + serial + "') AND (code=2)");
                 command.Connection = marillenconnection;
                 reader = command.ExecuteReader();
@@ -348,8 +350,7 @@ namespace Labor
                     string szám = reader.GetString(0);
                     if (iteration == 0)
                     {
-                        //töltőgép száma
-                        value.Add(szám);
+                        values.Add(szám);
                     }
                     else
                         if (iteration == 1) MessageBox.Show("Több töltőgép szám!\nKérem ellenőrizze a Marillen adatbázis folyoprops tábláját(propstr : code=2, serial_nr=" + serial + ")!", "Ellenőrizze az adatokat!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -357,27 +358,46 @@ namespace Labor
                 }
                 reader.Close();
 
+                // sarzs
                 command = new SqlCommand("SELECT propstr FROM folyoprops WHERE (serial_nr = '" + serial + "') AND (code=3)");
                 command.Connection = marillenconnection;
                 reader = command.ExecuteReader();
                 iteration = 0;
                 while (reader.Read())
                 {
-                    //sarzs
                     string sarzs = reader.GetString(0);
                     if (iteration == 0)
                     {
-                        value.Add(sarzs);
+                        values.Add(sarzs);
                     }
                     else
                         if (iteration == 1) MessageBox.Show("Több sarzs!\nKérem ellenőrizze a Marillen adatbázis folyoprops tábláját(propstr : code=3, serial_nr=" + serial + ")!", "Ellenőrizze az adatokat!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     ++iteration;
                 }
                 reader.Close();
-                marillenconnection.Close();
 
-                return value;
+                //szita_átmérő
+                command = new SqlCommand("SELECT name FROM darabossag WHERE code = " + szita_átmérő_száma);
+                command.Connection = marillenconnection;
+                reader = command.ExecuteReader();
+                iteration = 0;
+                while (reader.Read())
+                {
+                    string szita_átmérő = reader.GetString(0);
+                    if (iteration == 0)
+                    {
+                        values.Add(szita_átmérő);
+                    }
+                    else
+                        if (iteration == 1) MessageBox.Show("Több szita átmérő!\nKérem ellenőrizze a Marillen adatbázis darabossag tábláját(name : code=" + szita_átmérő_száma + ")!", "Ellenőrizze az adatokat!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    ++iteration;
+                }
+                reader.Close();
+
+                marillenconnection.Close();
             }
+
+            return values;
         }
 
         /// <summary>
@@ -539,7 +559,7 @@ namespace Labor
                     reader = command.ExecuteReader();
                     while (reader.Read())
                     {
-                        azonosító = new Vizsgálat.Azonosító(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), (double)reader.GetDecimal(4), reader.GetByte(5),
+                        azonosító = new Vizsgálat.Azonosító(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), (double)reader.GetDecimal(4), reader.GetString(5),
                             reader.GetString(6), reader.GetInt32(7));
                     }
                     reader.Close();
@@ -636,7 +656,7 @@ namespace Labor
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    data.Add(new Vizsgálat.Azonosító(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), (double)reader.GetDecimal(4), reader.GetByte(5),
+                    data.Add(new Vizsgálat.Azonosító(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), (double)reader.GetDecimal(4), reader.GetString(5),
                         reader.GetString(6), reader.GetInt32(7)));
                 }
                 command.Dispose();
