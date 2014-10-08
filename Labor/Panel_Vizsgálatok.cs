@@ -851,11 +851,15 @@ namespace Labor
                         box_sarzs.Text = fejléc_adatok[3];
                         box_szita_átmérő.Text = fejléc_adatok[4];
 
-                        string hordótípus = Program.database.Vizsgálat_Hordótípus_Ellenőrzés(box_termékkód.Text, gyártási_év, box_sarzs.Text);
-                        if (hordótípus == null) combo_hordótípus.Enabled = false;
-                        else combo_hordótípus.Text = hordótípus;
-
                         SetState(States.KÉSZ);
+
+                        string hordótípus = Program.database.Vizsgálat_Hordótípus_Ellenőrzés(box_termékkód.Text, gyártási_év[gyártási_év.Length - 1].ToString(), box_sarzs.Text);
+                        if (hordótípus == null) combo_hordótípus.Enabled = true;
+                        else
+                        {
+                            combo_hordótípus.Text = hordótípus;
+                            combo_hordótípus.Enabled = false;
+                        }
                     }
                     else
                     {
