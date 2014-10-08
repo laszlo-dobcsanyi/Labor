@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Novacode;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Labor
 {
@@ -77,7 +79,7 @@ namespace Labor
                 }
             }
 
-            public Gyümölcstípus( string _vtsz, string _megnevezés)
+            public Gyümölcstípus(string _vtsz, string _megnevezés)
             {
                 adat = new List<Adat>();
                 megnevezés = _megnevezés;
@@ -99,8 +101,10 @@ namespace Labor
         public static void Nyomtat_Konszignáció(Konszignáció_Szállítólevél _szállítólevél, int _foglalás_id)
         {
             Node_Konszignáció konszignáció = new Node_Konszignáció();
-            int sorszám = 0;
 
+            #region Data
+
+            int sorszám = 0;
             #region Termékkódok lekérdezése
             List<Hordó> hordók = Program.database.Konszignáció_Hordók(_foglalás_id);
 
@@ -133,6 +137,44 @@ namespace Labor
                     if (innner.megnevezés == Program.database.Name(inner.termékkód)) { innner.adat.Add(Program.database.Konszignáció_Gyümölcstípus_Adatok(inner, sorszám++)); }
                 }
             }
+            #endregion
+
+            string filename = _szállítólevél.szlevél + ".docx";
+            var document = DocX.Create(filename);
+
+            var titleFormat = new Formatting();
+            titleFormat.Size = 14D;
+            titleFormat.Position = 1;
+            titleFormat.Spacing = 5;
+            titleFormat.Bold = true;
+
+            Paragraph title = document.InsertParagraph("Konszignáció\n", false, titleFormat);
+            title.Alignment = Alignment.center;
+            title.Bold();
+            titleFormat.Position = 12;
+
+            #region Fejléc
+            Table table_fejléc = document.AddTable(5, 4);
+
+            table_fejléc.Rows[0].Cells[0].Paragraphs[0].Append("Vevő:");
+            table_fejléc.Rows[3].Cells[0].Paragraphs[0].Append("Gépkocsi");
+            table_fejléc.Rows[0].Cells[2].Paragraphs[0].Append("Feladó:");
+            table_fejléc.Rows[3].Cells[2].Paragraphs[0].Append("Dátum:");
+            table_fejléc.Rows[4].Cells[2].Paragraphs[0].Append("Szállítólevél:");
+            table_fejléc.Rows[0].Cells[1].Paragraphs[0].Append(konszignáció.fejléc.vevő.vevő_név);
+            table_fejléc.Rows[1].Cells[1].Paragraphs[0].Append(konszignáció.fejléc.vevő.vevő_város);
+            table_fejléc.Rows[2].Cells[1].Paragraphs[0].Append(konszignáció.fejléc.vevő.vevő_cím);
+            table_fejléc.Rows[3].Cells[1].Paragraphs[0].Append(konszignáció.fejléc.szállítólevél.rendszámok[0]);
+            table_fejléc.Rows[4].Cells[1].Paragraphs[0].Append(konszignáció.fejléc.szállítólevél.rendszámok[1]);
+            table_fejléc.Rows[0].Cells[3].Paragraphs[0].Append(konszignáció.fejléc.feladó.feladó_név);
+            table_fejléc.Rows[1].Cells[3].Paragraphs[0].Append(konszignáció.fejléc.feladó.feladó_cím);
+            table_fejléc.Rows[3].Cells[3].Paragraphs[0].Append(konszignáció.fejléc.szállítólevél.dátum);
+            table_fejléc.Rows[4].Cells[3].Paragraphs[0].Append(konszignáció.fejléc.szállítólevél.szállítólevél);
+            #endregion
+            document.InsertTable(table_fejléc);
+
+            try { document.Save(); }
+            catch (System.Exception) { MessageBox.Show("A dokumentum meg van nyitva!"); }
 
             /*kiiratas
             foreach (Node_Konszignáció.Gyümölcstípus outer in konszignáció.gyümölcstípusok)
@@ -146,5 +188,15 @@ namespace Labor
             }
              */
         }
+
+        #region SegédFüggvények
+
+        public static void KonszignációsFejlécTáblázatFormázása(Table _table)
+        {
+
+        }
+
+
+        #endregion
     }
 }
