@@ -1488,6 +1488,7 @@ namespace Labor
         /// </summary>
         public Node_Konszignáció.Gyümölcstípus.Adat Konszignáció_Gyümölcstípus_Adatok(Hordó _hordó, int _sorszám)
         {
+            Console.WriteLine("sorszám: " + _sorszám);
             Node_Konszignáció.Gyümölcstípus.Adat data = new Node_Konszignáció.Gyümölcstípus.Adat();
             string iProdId = "12" + _hordó.termékkód.Substring(0, 2) + "01" + _hordó.gyártási_év[3] + "_0" + _hordó.gyártási_év[3] + _hordó.id;
 
@@ -1502,7 +1503,7 @@ namespace Labor
                 while (reader.Read())
                 {
                     int c = -1;
-                    data = new Node_Konszignáció.Gyümölcstípus.Adat(++_sorszám, Convert.ToInt32(_hordó.gyártási_év[3] + _hordó.id), _hordó.sarzs, (double)reader.GetDecimal(++c), "", reader.GetDateTime(++c).ToLongDateString());
+                    data = new Node_Konszignáció.Gyümölcstípus.Adat(_sorszám, Convert.ToInt32(_hordó.gyártási_év[3] + _hordó.id), _hordó.sarzs, (double)reader.GetDecimal(++c), "", reader.GetDateTime(++c).ToLongDateString());
                 }
                 command.Dispose();
                 reader.Close();
@@ -1514,7 +1515,7 @@ namespace Labor
             {
                 laborconnection.Open();
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT VIHOTI FROM L_VIZSLAP WHERE VITEKO = " + _hordó.termékkód + " AND VIHOSZ =" + _hordó.id + " AND VISARZ = " + _hordó.sarzs;
+                command.CommandText = "SELECT VIHOTI FROM L_VIZSLAP WHERE VITEKO = " + _hordó.termékkód +  " AND VISARZ = " + _hordó.sarzs;
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
