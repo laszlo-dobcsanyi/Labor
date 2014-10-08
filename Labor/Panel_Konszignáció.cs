@@ -80,7 +80,7 @@ namespace Labor
             table.AllowUserToResizeRows = false;
             table.AllowUserToResizeColumns = false;
             table.AllowUserToAddRows = false;
-            table.Width = 713;
+            table.Width = 750;
             table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             table.ReadOnly = false;
 
@@ -195,12 +195,12 @@ namespace Labor
         void table_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
             table.DataBindingComplete -= table_DataBindingComplete;
-            table.Columns[0].Width = 90;
-            table.Columns[1].Width = 130;
-            table.Columns[2].Width = 140;
-            table.Columns[3].Width = 100;
-            table.Columns[4].Width = 100;
-            table.Columns[5].Width = 100;
+            table.Columns[0].Width = 100 - 3;
+            table.Columns[1].Width = 120;
+            table.Columns[2].Width = 120;
+            table.Columns[3].Width = 120;
+            table.Columns[4].Width = 120;
+            table.Columns[5].Width = 120;
             table.Columns[6].Width = 50;
         }
 
