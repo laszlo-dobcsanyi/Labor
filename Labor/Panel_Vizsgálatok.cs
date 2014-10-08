@@ -488,11 +488,11 @@ namespace Labor
                 vonal.Height = 3;
                 vonal.Width = 1000;
                 vonal.BackColor = Color.Black;
-                Label brix = MainForm.createlabel("Brix % nn.n:", termékkód.Location.X, vonal.Location.Y + sor, this);
-                Label citromsav = MainForm.createlabel("Citromsav % nn.nn:", termékkód.Location.X, brix.Location.Y + sor, this);
-                Label borkősav = MainForm.createlabel("Borkősav: nn.nn", termékkód.Location.X, citromsav.Location.Y + sor, this);
-                Label ph = MainForm.createlabel("PH: nn.nn", termékkód.Location.X, borkősav.Location.Y + sor, this);
-                Label bostwick = MainForm.createlabel("Bostwick cm/30sec, 20°C nn.n:", termékkód.Location.X, ph.Location.Y + sor, this);
+                Label brix = MainForm.createlabel("Brix %:", termékkód.Location.X, vonal.Location.Y + sor, this);
+                Label citromsav = MainForm.createlabel("Citromsav %:", termékkód.Location.X, brix.Location.Y + sor, this);
+                Label borkősav = MainForm.createlabel("Borkősav:", termékkód.Location.X, citromsav.Location.Y + sor, this);
+                Label ph = MainForm.createlabel("PH:  ", termékkód.Location.X, borkősav.Location.Y + sor, this);
+                Label bostwick = MainForm.createlabel("Bostwick cm/30sec, 20°C:", termékkód.Location.X, ph.Location.Y + sor, this);
                 Label aszkorbinsav = MainForm.createlabel("Aszkorbinsav mg/kg:", termékkód.Location.X, bostwick.Location.Y + sor, this);
                 Label citromsav_ad = MainForm.createlabel("Citromsav adagolás mg/kg:", termékkód.Location.X, aszkorbinsav.Location.Y + sor, this);
                 Label magtöret = MainForm.createlabel("Magtöret db:", termékkód.Location.X, citromsav_ad.Location.Y + sor, this);
@@ -508,7 +508,7 @@ namespace Labor
                 Label töltőgép_száma = MainForm.createlabel("Töltőgép száma:", műszak_jele.Location.X + oszlop, szita_átmérő.Location.Y, this);
                 Label terméknév = MainForm.createlabel("Terméknév:", töltőgép_száma.Location.X, termékkód.Location.Y, this);
                 Label hordótípus = MainForm.createlabel("Hordótípus:", töltőgép_száma.Location.X + oszlop - 10, szita_átmérő.Location.Y, this);
-                Label gyümölcsfajta = MainForm.createlabel("Gyümölcsfajta", töltőgép_száma.Location.X, megrendelő.Location.Y, this);
+                Label gyümölcsfajta = MainForm.createlabel("Gyümölcsfajta:", töltőgép_száma.Location.X, megrendelő.Location.Y, this);
                 Label leoltas = MainForm.createlabel("Leoltás ideje (hh.nn oo:pp):", sarzs.Location.X, brix.Location.Y, this);
                 Label ertekeles = MainForm.createlabel("Értékelés dátuma (hh.nn oo:pp):", sarzs.Location.X, citromsav.Location.Y, this);
                 Label higit_1 = MainForm.createlabel("1. hígítás:", sarzs.Location.X, ph.Location.Y, this);
@@ -519,7 +519,7 @@ namespace Labor
                 Label eleszto = MainForm.createlabel("Élesztő", higit_1.Location.X + oszlop + oszlop / 2, borkősav.Location.Y, this);
                 Label minta_jele = MainForm.createlabel("Minta jele", leoltas.Location.X + 2 * oszlop - 10, brix.Location.Y, this);
                 Label cimzett = MainForm.createlabel("Címzett", minta_jele.Location.X + oszlop / 2, brix.Location.Y, this);
-                Label datum = MainForm.createlabel("Dátum (éé.hh.nn,this)", cimzett.Location.X + oszlop - 50, brix.Location.Y, this);
+                Label datum = MainForm.createlabel("Dátum (éé.hh.nn)", cimzett.Location.X + oszlop - 50, brix.Location.Y, this);
                 Label t = MainForm.createlabel("T", minta_jele.Location.X + 30, citromsav.Location.Y, this);
                 Label k1 = MainForm.createlabel("K", minta_jele.Location.X + 30, citromsav.Location.Y + sor, this);
                 Label k2 = MainForm.createlabel("K", minta_jele.Location.X + 30, citromsav.Location.Y + 2 * sor, this);
@@ -559,7 +559,7 @@ namespace Labor
                 box_szin = MainForm.createtextbox(box_magtöret.Location.X, szin.Location.Y, 60, méret[8], this);
                 box_iz = MainForm.createtextbox(box_magtöret.Location.X, iz.Location.Y, 60, méret[8], this);
                 box_illat = MainForm.createtextbox(box_magtöret.Location.X, illat.Location.Y, 60, méret[8], this);
-                box_leoltas = MainForm.createtextbox(DateTime.Now.ToString("MM.dd hh:mm"), ertekeles.Location.X + ertekeles.Width + köz, leoltas.Location.Y, 11, méret[6], this);
+                box_leoltas = MainForm.createtextbox(DateTime.Now.ToString("MM.dd HH:mm"), ertekeles.Location.X + ertekeles.Width + köz, leoltas.Location.Y, 11, méret[6], this);
                 box_ertekeles = MainForm.createtextbox(ertekeles.Location.X + ertekeles.Width + köz, ertekeles.Location.Y, 11, méret[6], this);
                 box_összcsíra_higit_1 = MainForm.createtextbox("0", összcsira.Location.X, higit_1.Location.Y, 2, méret[1], this);
                 box_penész_higit_1 = MainForm.createtextbox("0", penesz.Location.X, higit_1.Location.Y, 2, méret[1], this);

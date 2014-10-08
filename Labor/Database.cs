@@ -55,7 +55,7 @@ namespace Labor
                     laborconnection = new SqlConnection("Server=" + Settings.server + ";Database=" + Settings.labor_database + ";Integrated Security=true");
                     laborconnection.Open();
                     SqlCommand command = new SqlCommand(
-                            "CREATE TABLE L_TORZSA (TOTIPU varchar(20) NOT NULL,TOAZON varchar(15) PRIMARY KEY,TOSZO2 varchar(15),TOSZO3 varchar(15));" +
+                            "CREATE TABLE L_TORZSA (TOTIPU varchar(20) NOT NULL,TOAZON varchar(25) PRIMARY KEY,TOSZO2 varchar(25),TOSZO3 varchar(25));" +
 
                             // Vizsgálat
                             "CREATE TABLE L_VIZSLAP (VITEKO varchar(3) NOT NULL, VISARZ varchar(3) NOT NULL, VIHOSZ varchar(4) NOT NULL, VIHOTI varchar(15), VINETO DECIMAL(14, 2), VISZAT tinyint, VIMEGR varchar(50), " +

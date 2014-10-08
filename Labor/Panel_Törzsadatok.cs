@@ -262,22 +262,22 @@ namespace Labor
 
                 label_típus = new Label();
                 label_típus.Location = new Point(típus.Location.X + típus.Width + 16, típus.Location.Y);
-                label_típus.Size = new Size(128 + 64, 24);
+                label_típus.Size = new Size(128 + 128, 24);
 
                 box_azonosító = new TextBox();
                 box_azonosító.Location = new Point(megn1.Location.X + megn1.Width + 16, megn1.Location.Y);
                 box_azonosító.Size = new Size(128 + 64, 34);
-                box_azonosító.MaxLength = 15;
+                box_azonosító.MaxLength = 25;
 
                 box_megnevezés2 = new TextBox();
                 box_megnevezés2.Location = new Point(megn2.Location.X + megn2.Width + 16, megn2.Location.Y);
                 box_megnevezés2.Size = box_azonosító.Size;
-                box_megnevezés2.MaxLength = 15;
+                box_megnevezés2.MaxLength = 25;
 
                 box_megnevezés3 = new TextBox();
                 box_megnevezés3.Location = new Point(megn3.Location.X + megn3.Width + 16, megn3.Location.Y);
                 box_megnevezés3.Size = box_azonosító.Size;
-                box_megnevezés3.MaxLength = 15;
+                box_megnevezés3.MaxLength = 25;
 
                 Button rendben = new Button();
                 rendben.Text = "Rendben";
