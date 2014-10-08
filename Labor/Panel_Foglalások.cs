@@ -277,7 +277,7 @@ namespace Labor
             table.AllowUserToResizeRows = false;
             table.AllowUserToResizeColumns = false;
             table.AllowUserToAddRows = false;
-            table.Width = 720 + 3;
+            table.Width = 700;
             table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             table.ReadOnly = true;
             table.DataBindingComplete += table_DataBindingComplete;
@@ -292,12 +292,12 @@ namespace Labor
             törlés.Location = new Point(ClientRectangle.Width - 224 - 16, ClientRectangle.Height - 32 - 16);
             törlés.Click += Foglalás_Törlés;
 
-            Button keresés = new Button();
-            keresés.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
-            keresés.Text = "Keresés";
-            keresés.Size = new System.Drawing.Size(96, 32);
-            keresés.Location = new Point(törlés.Location.X + törlés.Width + 16, törlés.Location.Y);
-            keresés.Click += Vizsgálat_Keresése;
+            Button hozzáadás = new Button();
+            hozzáadás.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
+            hozzáadás.Text = "Hozzáadás";
+            hozzáadás.Size = new System.Drawing.Size(96, 32);
+            hozzáadás.Location = new Point(törlés.Location.X + törlés.Width + 16, törlés.Location.Y);
+            hozzáadás.Click += Foglalás_Hozzáadás;
 
             Button feltöltés = new Button();
             feltöltés.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
@@ -306,18 +306,18 @@ namespace Labor
             feltöltés.Location = new Point(törlés.Location.X + törlés.Width + 16, törlés.Location.Y - törlés.Height - 16);
             feltöltés.Click += Foglalás_Feltöltés;
 
-            Button hozzáadás = new Button();
-            hozzáadás.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
-            hozzáadás.Text = "Hozzáadás";
-            hozzáadás.Size = new System.Drawing.Size(96, 32);
-            hozzáadás.Location = new Point(törlés.Location.X, feltöltés.Location.Y);
-            hozzáadás.Click += Foglalás_Hozzáadás;
+            Button keresés = new Button();
+            keresés.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
+            keresés.Text = "Keresés";
+            keresés.Size = new System.Drawing.Size(96, 32);
+            keresés.Location = new Point(törlés.Location.X, feltöltés.Location.Y);
+            keresés.Click += Vizsgálat_Keresése;
 
             Controls.Add(table);
             Controls.Add(törlés);
-            Controls.Add(keresés);
-            Controls.Add(feltöltés);
             Controls.Add(hozzáadás);
+            Controls.Add(feltöltés);
+            Controls.Add(keresés);
         }
 
         private DataTable CreateSource()
@@ -405,7 +405,7 @@ namespace Labor
         private void table_DataBindingComplete(object _sender, DataGridViewBindingCompleteEventArgs _event)
         {
             table.DataBindingComplete -= table_DataBindingComplete;
-            table.Columns[Foglalás.TableIndexes.id].Width = 120;
+            table.Columns[Foglalás.TableIndexes.id].Width = 100 - 3;
             table.Columns[Foglalás.TableIndexes.név].Width = 120;
             table.Columns[Foglalás.TableIndexes.hordók_száma].Width = 120;
             table.Columns[Foglalás.TableIndexes.típus].Width = 120;

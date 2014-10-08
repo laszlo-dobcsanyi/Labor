@@ -82,7 +82,7 @@ namespace Labor
             table.CellDoubleClick += TörzsadatMódosítás;
 
             Label label_törzsadat = new Label();
-            label_törzsadat.Text = "Törzsadat:";
+            label_törzsadat.Text = "Törzsadat típusa:";
             label_törzsadat.Location = new Point(table.Width + 50, 15);
             label_törzsadat.AutoSize = true;
 

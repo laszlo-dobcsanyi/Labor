@@ -714,7 +714,6 @@ namespace Labor
                 box_k6_cimzett.Text = _vizsgálat.adatok4.címzett_k6;
                 box_k6_datum.Text = _vizsgálat.adatok4.dátum_k6;
                 combo_laboros.SelectedItem = _vizsgálat.adatok4.laboros;
-                combo_gyümölcsfajta.SelectedItem = _vizsgálat.adatok1.gyümölcsfajta;
                 combo_származási_ország.SelectedItem = _vizsgálat.adatok1.szárm_ország;
                 combo_hordótípus.SelectedItem = _vizsgálat.azonosító.hordótípus;
                 combo_megrendelő.SelectedItem = _vizsgálat.azonosító.megrendelő;
@@ -724,7 +723,7 @@ namespace Labor
                 {
                     combo_gyümölcsfajta.Items.Add(item);
                 }
-                combo_gyümölcsfajta.SelectedIndex = 0;
+                combo_gyümölcsfajta.Text = _vizsgálat.adatok1.gyümölcsfajta;
 
                 box_termékkód.Enabled = false;
                 box_hordószám.Enabled = false;
@@ -753,6 +752,7 @@ namespace Labor
                         {
                             control.Enabled = false;
                         }
+                        combo_gyümölcsfajta.Items.Clear();
 
                         box_termékkód.Enabled = true;
                         box_termékkód.Focus();

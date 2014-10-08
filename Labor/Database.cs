@@ -770,10 +770,20 @@ namespace Labor
             lock (LaborLock)
             {
                 string data;
+                string where = A(new string[] { Update<string>("VITEKO", _eredeti.azonosító.termékkód), Update<string>("VIHOSZ", _eredeti.azonosító.hordószám), Update<string>("VISARZ", _eredeti.azonosító.sarzs) });
                 SqlCommand command;
 
                 laborconnection.Open();
 
+                // Azonosító
+
+                command = laborconnection.CreateCommand();
+                command.CommandText = "UPDATE L_VIZSLAP SET VIHOTI = '" + _új.azonosító.hordótípus + "', VIMEGR = '" + _új.azonosító.megrendelő+ "' WHERE " + where;
+
+                try { command.ExecuteNonQuery(); command.Dispose(); }
+                catch (SqlException q) { MessageBox.Show("Vizsgálat_Hozzáadás -> UPDATE #1 hiba:\n" + q.Message); }
+                if (laborconnection.State != System.Data.ConnectionState.Open) return false;
+                
                 // Adatok1
 
                 data = V(new string[] {Update<string>("VITENE", _új.adatok1.terméknév), Update<byte>("VIHOKE", _új.adatok1.hőkezelés),
@@ -782,8 +792,6 @@ namespace Labor
 
                 if (data != null)
                 {
-                    string where = A(new string[] { Update<string>("VITEKO", _eredeti.azonosító.termékkód), Update<string>("VIHOSZ", _eredeti.azonosító.hordószám), Update<string>("VISARZ", _eredeti.azonosító.sarzs) });
-
                     command = laborconnection.CreateCommand();
                     command.CommandText = "UPDATE L_VIZSLAP SET " + data + " WHERE " + where;
 
@@ -802,8 +810,6 @@ namespace Labor
 
                 if (data != null)
                 {
-                    string where = A(new string[] { Update<string>("VITEKO", _eredeti.azonosító.termékkód), Update<string>("VIHOSZ", _eredeti.azonosító.hordószám), Update<string>("VISARZ", _eredeti.azonosító.sarzs) });
-
                     command = laborconnection.CreateCommand();
                     command.CommandText = "UPDATE L_VIZSLAP SET " + data + " WHERE " + where;
 
@@ -821,8 +827,6 @@ namespace Labor
 
                 if (data != null)
                 {
-                    string where = A(new string[] { Update<string>("VITEKO", _eredeti.azonosító.termékkód), Update<string>("VIHOSZ", _eredeti.azonosító.hordószám), Update<string>("VISARZ", _eredeti.azonosító.sarzs) });
-
                     command = laborconnection.CreateCommand();
                     command.CommandText = "UPDATE L_VIZSLAP SET " + data + " WHERE " + where;
 
@@ -841,8 +845,6 @@ namespace Labor
 
                 if (data != null)
                 {
-                    string where = A(new string[] { Update<string>("VITEKO", _eredeti.azonosító.termékkód), Update<string>("VIHOSZ", _eredeti.azonosító.hordószám), Update<string>("VISARZ", _eredeti.azonosító.sarzs) });
-
                     command = laborconnection.CreateCommand();
                     command.CommandText = "UPDATE L_VIZSLAP SET " + data + " WHERE " + where;
 
@@ -1287,14 +1289,22 @@ namespace Labor
                     Between<byte>(_szűrő.adatok2.szita_átmérő, "VISZAT") ,
 
                 });
-         
 
                 laborconnection.Open();
+
+                List<MinMaxPair<string>> filter = new List<MinMaxPair<string>>();
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT VITEKO, VISARZ FROM L_VIZSLAP" + (Filter == null ? "" : " WHERE " + Filter);
+                command.CommandText = "(SELECT DISTINCT VITEKO, VISARZ, VIHOSZ FROM L_VIZSLAP) EXCEPT (SELECT DISTINCT VITEKO, VISARZ, VIHOSZ FROM L_VIZSLAP" + (Filter == null ? "" : " WHERE " + Filter) + ")";
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    filter.Add(new MinMaxPair<string>(reader.GetString(0), reader.GetString(1)));
+                }
+                reader.Close();
 
                 List<MinMaxPair<string>> data = new List<MinMaxPair<string>>();
-                SqlDataReader reader = command.ExecuteReader();
+                command.CommandText = "SELECT DISTINCT VITEKO, VISARZ FROM L_VIZSLAP" + (Filter == null ? "" : " WHERE " + Filter);
+                reader = command.ExecuteReader();
                 while (reader.Read())
                 {
                     data.Add(new MinMaxPair<string>(reader.GetString(0), reader.GetString(1)));
@@ -1302,6 +1312,17 @@ namespace Labor
 
                 foreach (MinMaxPair<string> item in data)
                 {
+                    bool found = false;
+                    foreach(MinMaxPair<string> filtered in filter)
+                    {
+                        if (filtered.min == item.min && filtered.max == item.max)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (found) continue;
+
                     command.Dispose();
                     string where = A(new string[] { Update<string>("HOTEKO", item.min), Update<string>("HOSARZ", item.max)});
 
