@@ -706,7 +706,7 @@ namespace Labor
                 command = laborconnection.CreateCommand();
                 command.CommandText = "INSERT INTO L_VIZSLAP (VITEKO, VISARZ, VIHOSZ, VIHOTI, VINETO, VISZAT, VIMEGR, VIMSSZ)" +
                                     " VALUES('" + _vizsgálat.azonosító.termékkód + "', '" + _vizsgálat.azonosító.sarzs + "', '" + _vizsgálat.azonosító.hordószám + "', '" + _vizsgálat.azonosító.hordótípus + "', " +
-                                    _vizsgálat.azonosító.nettó_töltet.ToString().Replace(',', '.') + ", " + _vizsgálat.azonosító.szita_átmérő + ", '" + _vizsgálat.azonosító.megrendelő + "', " +
+                                    _vizsgálat.azonosító.nettó_töltet.ToString().Replace(',', '.') + ", '" + _vizsgálat.azonosító.szita_átmérő + "', '" + _vizsgálat.azonosító.megrendelő + "', " +
                                     "(SELECT COUNT(*) FROM L_VIZSLAP WHERE " + A(new string[] { Update<string>("VITEKO", _vizsgálat.azonosító.termékkód), Update<string>("VISARZ", _vizsgálat.azonosító.sarzs) }) + ") + 1)";
 
                 try { command.ExecuteNonQuery(); command.Dispose(); }
