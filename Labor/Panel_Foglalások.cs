@@ -612,7 +612,6 @@ namespace Labor
             private void Foglalás_Szerkesztő_FormClosing(object _sender, FormClosingEventArgs _event)
             {
                 Program.database.Foglalás_Módosítás(foglalás, new Foglalás(foglalás.id, box_foglalás_neve.Text, foglalás.hordók_száma, box_foglalás_tipusa.Text, foglalás.készítő, foglalás.idő));
-
             }
 
             private void Hordó_Törlés(object _sender, EventArgs _event)

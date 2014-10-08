@@ -1570,6 +1570,14 @@ namespace Labor
         }
         #endregion
 
+        #region Felhasználók
+        public List<Felhasználó> Felhasználók()
+        {
+            List<Felhasználó> values = new List<Felhasználó>();
+            return values;
+        }
+        #endregion
+
 
         #region Sufni
         private string HardcodedData()
@@ -1704,13 +1712,16 @@ namespace Labor
                     "(98, 168, 40, 1.2, 8.1, 0.2, 3.27)," +
                     "(99, 336, 80, 1.5, 16.5, 0.6, 0);" +
 
-                "INSERT INTO L_TORZSA (TOTIPU, TOAZON, TOSZO2,TOSZO3) VALUES('Származási ország','Magyarország','Hungary','Ungarn')," +
+                "INSERT INTO L_TORZSA (TOTIPU, TOAZON, TOSZO2, TOSZO3) VALUES('Származási ország','Magyarország','Hungary','Ungarn')," +
                     "('Származási ország','Szlovákia','Slovakia','Slowakei')," +
                     "('Származási ország','Románia','Romania','Rumänien')," +
                     "('Hordótípus','Kicsi','Small','Klein')," +
                     "('Hordótípus','Nagy','Big','Groß')," +
                     "('Laboros','Belinyák Máté','Máté Belinyák','Máté Belinyák')," +
-                    "('Laboros','Belinyák Nándor','Nándor Belinyák','Nándor Belinyák');";
+                    "('Laboros','Belinyák Nándor','Nándor Belinyák','Nándor Belinyák');" +
+
+                "INSERT INTO L_FELHASZ (FEFEN1, FEFEN2, FEBEO1, FEBEO2, FEBEKO, FEJELS, FETOHO, FETORO, FETOTO, FEVIHO, FEVIRO, FEVITO, FEFOKE , FEFOFE , FEFOTO , FEFEHO , FEFERO , FEFETO , FEKONY , FEKITO) " +
+                    "VALUES ('Marillen', 'Adminisztrátor', 'Admin', '', 'admin', 'admin', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y')";
         }
         #endregion
     }
