@@ -617,8 +617,10 @@ namespace Labor
             private void Hordó_Törlés(object _sender, EventArgs _event)
             {
                 if (table.SelectedRows.Count != 1) return;
-                Program.database.Hordó_Foglalás(true, foglalás.id, (string)table.SelectedRows[0].Cells[Hordó.TableIndexes.termékkód].Value,
-                    (string)table.SelectedRows[0].Cells[Hordó.TableIndexes.sarzs].Value, (string)table.SelectedRows[0].Cells[Hordó.TableIndexes.id].Value);
+
+                if (!Program.database.Hordó_Foglalás(true, foglalás.id, (string)table.SelectedRows[0].Cells[Hordó.TableIndexes.termékkód].Value,
+                    (string)table.SelectedRows[0].Cells[Hordó.TableIndexes.sarzs].Value, (string)table.SelectedRows[0].Cells[Hordó.TableIndexes.id].Value))
+                { MessageBox.Show("Hiba a hordó lefoglalásakor!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
 
                 Program.RefreshData();
             }

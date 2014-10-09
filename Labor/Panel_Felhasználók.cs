@@ -135,17 +135,33 @@ namespace Labor
         #region EventHandlers
         private void Felhasználó_Hozzáadás(object _sender, EventArgs _event)
         {
+            Felhasználó_Megjelenítő hozzáadó = new Felhasználó_Megjelenítő();
+            hozzáadó.ShowDialog();
 
+            Program.RefreshData();
         }
 
         private void Felhasználó_Módosítás(object _sender, EventArgs _event)
         {
+            if (table.SelectedRows.Count != 1) return;
 
+            Felhasználó? felhasználó = Program.database.Felhasználó((string)table.SelectedRows[0].Cells[Felhasználó.TableIndexes.felhasználó_név].Value);
+            if (felhasználó == null) { MessageBox.Show("Hiba a felhasználó lekérdezésekor!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+            Felhasználó_Megjelenítő módosító = new Felhasználó_Megjelenítő(felhasználó.Value);
+            módosító.ShowDialog();
+
+            Program.RefreshData();
         }
 
         private void Felhasználó_Törlés(object _sender, EventArgs _event)
         {
+            if (table.SelectedRows.Count != 1) return;
 
+            if (!Program.database.Felhasználó_Törlés((string)table.SelectedRows[0].Cells[Felhasználó.TableIndexes.felhasználó_név].Value))
+                { MessageBox.Show("Hiba a felhasználó törlésekor!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+            Program.RefreshData();
         }
 
         //
@@ -166,5 +182,44 @@ namespace Labor
             Felhasználó_Törlés(_sender, _event);
         }
         #endregion
+
+        public class Felhasználó_Megjelenítő : Form
+        {
+            Felhasználó? felhasználó = null;
+
+            #region Constructor
+            public Felhasználó_Megjelenítő()
+            {
+                InitializeForm();
+                InitializeContent();
+                InitializeData();
+            }
+
+            public Felhasználó_Megjelenítő(Felhasználó _felhasználó)
+            {
+                felhasználó = _felhasználó;
+
+                InitializeForm();
+                InitializeContent();
+                InitializeData();
+            }
+
+            public void InitializeForm()
+            {
+
+            }
+            public void InitializeContent()
+            {
+
+            }
+            public void InitializeData()
+            {
+
+            }
+            #endregion
+
+            #region EventHandlers
+            #endregion
+        }
     }
 }

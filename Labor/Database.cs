@@ -1576,6 +1576,16 @@ namespace Labor
             List<Felhasználó> values = new List<Felhasználó>();
             return values;
         }
+
+        public Felhasználó? Felhasználó(string _felhasználó_név)
+        {
+            return null;
+        }
+
+        public bool Felhasználó_Törlés(string _felhasználó_név)
+        {
+            return false;
+        }
         #endregion
 
 
