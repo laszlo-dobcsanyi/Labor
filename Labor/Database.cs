@@ -50,8 +50,6 @@ namespace Labor
 
                 //try
                 {
-                    //MessageBox.Show("Várakozás a Labor adatbázis létrehozására..", "Információ");
-                    System.Threading.Thread.Sleep(5000);
                     laborconnection = new SqlConnection("Server=" + Settings.server + ";Database=" + Settings.labor_database + ";Integrated Security=true");
                     laborconnection.Open();
                     SqlCommand command = new SqlCommand(
@@ -83,7 +81,7 @@ namespace Labor
                                 "FOFAJT varchar(15), FOHOTI varchar(15), FOMEGR varchar(15), FOSZOR varchar(15), FOMUJE varchar(1), FOTOGE varchar(1), FOFOHO tinyint, FOSZSZ tinyint ," +
                                 "FOSZATI varchar(6) , FOSZATT varchar(6), FOBOSAI smallint, FOBOSAT smallint, SZSZAM tinyint);" +
 
-                            "CREATE TABLE L_FELHASZ (FEFEN1 varchar(15), FEFEN2 varchar(15), FEBEO1 varchar(15), FEBEO2 varchar(15), FEBEKO varchar(15), FEJELS varchar(15), FETOHO varchar(1), FETORO varchar(1), FETOTO varchar(1)," +
+                            "CREATE TABLE L_FELHASZ (FEFEN1 varchar(15), FEFEN2 varchar(15), FEBEO1 varchar(15), FEBEO2 varchar(15), FEBEKO varchar(15) PRIMARY KEY, FEJELS varchar(15), FETOHO varchar(1), FETORO varchar(1), FETOTO varchar(1)," +
                                 "FEVIHO varchar(1), FEVIRO varchar(1), FEVITO varchar(1), FEFOKE varchar(1), FEFOFE varchar(1), FEFOTO varchar(1), FEFEHO varchar(1), FEFERO varchar(1), FEFETO varchar(1), FEKONY varchar(1), FEKITO varchar(1));" +
 
                             "CREATE TABLE L_SZLEV (SZSZAM int IDENTITY(1,1), SZSZSZ varchar(50), SZFENE varchar(50), SZDATE varchar(10), SZNYEL varchar(1), SZVEVO varchar(100), SZGKR1 varchar(7), SZGKR2 varchar(7)," +
