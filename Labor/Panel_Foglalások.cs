@@ -431,7 +431,6 @@ namespace Labor
         {
             TextBox box_foglalás_neve;
             TextBox box_foglalás_típusa;
-            Label label_foglalt_hordók;
             Label label_készítette;
             Label label_foglalás_ideje;
 
@@ -445,7 +444,7 @@ namespace Labor
             private void InitializeForm()
             {
                 Text = "Új Foglalás";
-                ClientSize = new Size(400, 250 - 24);
+                ClientSize = new Size(400, 250 - 64);
                 MinimumSize = ClientSize;
                 StartPosition = FormStartPosition.CenterScreen;
                 FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -455,14 +454,12 @@ namespace Labor
             {
                 Label foglalás_neve = MainForm.createlabel("Foglalás neve:", 8, 1 * 32, this);
                 Label foglalás_típusa = MainForm.createlabel("Foglalás típusa:", 8, 2 * 32, this);
-                Label foglalt_hordók = MainForm.createlabel("Foglalt hordók száma:", 8, 3 * 32, this);
-                Label készítette = MainForm.createlabel("Készítette:", 8, 4 * 32, this);
-                Label foglalás_ideje = MainForm.createlabel("Foglalás ideje:", 8, 5 * 32, this);
+                Label készítette = MainForm.createlabel("Készítette:", 8, 3 * 32, this);
+                Label foglalás_ideje = MainForm.createlabel("Foglalás ideje:", 8, 4 * 32, this);
 
-                box_foglalás_neve = MainForm.createtextbox(foglalás_neve.Location.X + 128, foglalás_neve.Location.Y, 10, 240, this);
+                box_foglalás_neve = MainForm.createtextbox(foglalás_neve.Location.X + 128, foglalás_neve.Location.Y, 30, 240, this);
                 box_foglalás_típusa = MainForm.createtextbox(box_foglalás_neve.Location.X, foglalás_típusa.Location.Y, 10, 240, this);
-                label_foglalt_hordók = MainForm.createlabel("0", box_foglalás_neve.Location.X, foglalt_hordók.Location.Y, this);
-                label_készítette = MainForm.createlabel("Felhasználó", box_foglalás_neve.Location.X, készítette.Location.Y, this);
+                label_készítette = MainForm.createlabel(Settings.LoginName, box_foglalás_neve.Location.X, készítette.Location.Y, this);
                 label_foglalás_ideje = MainForm.createlabel(DateTime.Now.ToString(), box_foglalás_neve.Location.X, foglalás_ideje.Location.Y, this);
 
                 Button rendben = new Button();
@@ -478,13 +475,12 @@ namespace Labor
             #region EventHandlers
             private void rendben_Click(object _sender, EventArgs _event)
             {
-                if (!(0 < box_foglalás_neve.Text.Length && box_foglalás_neve.Text.Length <= 30)) { MessageBox.Show("Foglalás neve nem megfelelő(1-30)!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
-                if (!(0 < box_foglalás_típusa.Text.Length && box_foglalás_típusa.Text.Length <= 9)) { MessageBox.Show("Foglalás típusa nem megfelelő(1-9)!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+                // SQL ellenőrzések
+                if (!Database.IsCorrectSQLText(box_foglalás_neve.Text)) { MessageBox.Show("Nem megfelelő karakter a névben!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                if (!Database.IsCorrectSQLText(box_foglalás_típusa.Text)) { MessageBox.Show("Nem megfelelő karakter a típusban!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
 
-                if (!Program.database.Foglalás_Hozzáadás(new Foglalás(0, box_foglalás_neve.Text,  Convert.ToInt32(label_foglalt_hordók.Text), box_foglalás_típusa.Text, label_készítette.Text, label_foglalás_ideje.Text)))
-                {
-                    MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy létezik már ilyen foglalás?", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                if (!Program.database.Foglalás_Hozzáadás(new Foglalás(0, box_foglalás_neve.Text, 0, box_foglalás_típusa.Text, label_készítette.Text, label_foglalás_ideje.Text)))
+                { MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy létezik már ilyen foglalás?", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); }
 
                 Close();
             }
@@ -518,6 +514,7 @@ namespace Labor
                 FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
 
                 Load += Foglalás_Szerkesztő_Load;
+                FormClosing += Foglalás_Szerkesztő_FormClosing;
             }
 
             private void InitializeContent()
@@ -556,9 +553,8 @@ namespace Labor
                 Label foglalás_típusa = MainForm.createlabel("Foglalás típusa:", 10, 60, this);
 
                 box_foglalás_neve = MainForm.createtextbox(foglalás_neve.Location.X + foglalás_neve.Width + 16, foglalás_neve.Location.Y, 30, 200, this);
-                box_foglalás_tipusa = MainForm.createtextbox(box_foglalás_neve.Location.X, foglalás_típusa.Location.Y, 9, 100, this);
+                box_foglalás_tipusa = MainForm.createtextbox(box_foglalás_neve.Location.X, foglalás_típusa.Location.Y, 10, 100, this);
 
-                this.FormClosing += Foglalás_Szerkesztő_FormClosing;
                 //
 
                 Controls.Add(table);
@@ -611,7 +607,14 @@ namespace Labor
 
             private void Foglalás_Szerkesztő_FormClosing(object _sender, FormClosingEventArgs _event)
             {
-                Program.database.Foglalás_Módosítás(foglalás, new Foglalás(foglalás.id, box_foglalás_neve.Text, foglalás.hordók_száma, box_foglalás_tipusa.Text, foglalás.készítő, foglalás.idő));
+                if (foglalás.név != box_foglalás_neve.Text || foglalás.típus != box_foglalás_tipusa.Text)
+                {
+                    // SQL ellenőrzések
+                    if (!Database.IsCorrectSQLText(box_foglalás_neve.Text)) { MessageBox.Show("Nem megfelelő karakter a névben!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                    if (!Database.IsCorrectSQLText(box_foglalás_neve.Text)) { MessageBox.Show("Nem megfelelő karakter a típusban!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+                    Program.database.Foglalás_Módosítás(foglalás, new Foglalás(foglalás.id, box_foglalás_neve.Text, foglalás.hordók_száma, box_foglalás_tipusa.Text, foglalás.készítő, foglalás.idő));
+                }
             }
 
             private void Hordó_Törlés(object _sender, EventArgs _event)
@@ -874,10 +877,11 @@ namespace Labor
 
             private void box_termékkód_Leave(object _sender, EventArgs _event)
             {
-                if(combo_gyümölcsfajta.Items.Count !=0){combo_gyümölcsfajta.Items.Clear();}
-                if(box_termékkód.Text.Length != 4){return;}
+                if(combo_gyümölcsfajta.Items.Count != 0) { combo_gyümölcsfajta.Items.Clear(); }
+
+                if(box_termékkód.Text.Length != 3) { return; }
                 List<string> gyümölcsfajták = Program.database.Gyümölcsfajták(box_termékkód.Text);
-                foreach(string item in gyümölcsfajták){combo_gyümölcsfajta.Items.Add(item);}
+                foreach(string item in gyümölcsfajták) { combo_gyümölcsfajta.Items.Add(item); }
             }
 
             private void Vizsgálat_Kereső_KeyDown(object _sender, KeyEventArgs _event)
@@ -900,19 +904,19 @@ namespace Labor
                 if (box_szita_átmérő_min.Text.Length != 0 && box_szita_átmérő_max.Text.Length != 0) if (MainForm.ConvertOrDie<int>(box_szita_átmérő_min.Text) > MainForm.ConvertOrDie<int>(box_szita_átmérő_max.Text)) { MessageBox.Show("szita_átmérő!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
 
                 Vizsgalap_Szűrő.Adatok1 adatok1 = new Vizsgalap_Szűrő.Adatok1(
-                    MainForm.ConvertOrDieString(combo_gyümölcsfajta.Text),
-                    MainForm.ConvertOrDieString(combo_hordótípus.Text),
-                    MainForm.ConvertOrDieString(combo_megrendelő.Text),
-                    MainForm.ConvertOrDieString(combo_származási_ország.Text),
-                    MainForm.ConvertOrDieString(box_műszak_jele.Text),
-                    MainForm.ConvertOrDieString(box_töltőgép_száma.Text),
-                    MainForm.ConvertOrDieString(box_termékkód.Text));
+                    MainForm.ConvertOrDieSQLString(combo_gyümölcsfajta.Text),
+                    MainForm.ConvertOrDieSQLString(combo_hordótípus.Text),
+                    MainForm.ConvertOrDieSQLString(combo_megrendelő.Text),
+                    MainForm.ConvertOrDieSQLString(combo_származási_ország.Text),
+                    MainForm.ConvertOrDieSQLString(box_műszak_jele.Text),
+                    MainForm.ConvertOrDieSQLString(box_töltőgép_száma.Text),
+                    MainForm.ConvertOrDieSQLString(box_termékkód.Text));
 
                 Vizsgalap_Szűrő.Adatok2 adatok2 = new Vizsgalap_Szűrő.Adatok2(
-                    MainForm.ConvertOrDieString(box_sarzs_min.Text),
-                    MainForm.ConvertOrDieString(box_sarzs_max.Text),
-                    MainForm.ConvertOrDieString(box_hordó_id_min.Text),
-                    MainForm.ConvertOrDieString(box_hordó_id_max.Text),
+                    MainForm.ConvertOrDieSQLString(box_sarzs_min.Text),
+                    MainForm.ConvertOrDieSQLString(box_sarzs_max.Text),
+                    MainForm.ConvertOrDieSQLString(box_hordó_id_min.Text),
+                    MainForm.ConvertOrDieSQLString(box_hordó_id_max.Text),
                     MainForm.ConvertOrDie<double>(box_brix_min.Text),
                     MainForm.ConvertOrDie<double>(box_brix_max.Text),
                     MainForm.ConvertOrDie<double>(box_citromsav_min.Text),
@@ -941,7 +945,9 @@ namespace Labor
                 }
                 else
                 {
-                    Program.database.Foglalás_Vizsgálat_Szűrő_Hozzáadás(eredeti.Value, new Vizsgalap_Szűrő(adatok1, adatok2));
+                    if (!Program.database.Foglalás_Vizsgálat_Szűrő_Hozzáadás(eredeti.Value, new Vizsgalap_Szűrő(adatok1, adatok2)))
+                        { MessageBox.Show("Nem sikerült hozzáadni a foglaláshoz az aktuális vizsgálati lap szűrőt!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; } 
+
                     Keresés_Eredmény keresés_eredmény = new Keresés_Eredmény(new Vizsgalap_Szűrő(adatok1, adatok2), eredeti.Value);
                     keresés_eredmény.ShowDialog(this);
                 }

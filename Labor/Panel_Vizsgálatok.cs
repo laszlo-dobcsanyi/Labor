@@ -533,10 +533,9 @@ namespace Labor
 
                 box_termékkód = MainForm.createtextbox(termékkód.Location.X + termékkód.Width + köz, termékkód.Location.Y, 3, méret[0], this);
                 box_hordószám = MainForm.createtextbox(hordószám.Location.X + hordószám.Width + köz, termékkód.Location.Y, 4, méret[0], this);
-                box_sarzs = MainForm.createtextbox(sarzs.Location.X + sarzs.Width + köz + 28, termékkód.Location.Y, 4, méret[0], this);
+                box_sarzs = MainForm.createtextbox(sarzs.Location.X + sarzs.Width + köz + 28, termékkód.Location.Y, 3, méret[0], this);
                 box_terméknév = MainForm.createtextbox(terméknév.Location.X + terméknév.Width + köz, termékkód.Location.Y, 35, méret[9], this);
-                box_szita_átmérő = MainForm.createtextbox(box_termékkód.Location.X, szita_átmérő.Location.Y, 6, méret[0], this);
-                box_szita_átmérő.Width = box_hordószám.Width;
+                box_szita_átmérő = MainForm.createtextbox(box_termékkód.Location.X, szita_átmérő.Location.Y, 10, méret[0], this);
                 box_hőkezelés = MainForm.createtextbox("110", box_hordószám.Location.X, box_szita_átmérő.Location.Y, 3, méret[0], this);
                 box_nettó_töltet = MainForm.createtextbox(box_sarzs.Location.X, nettó_töltet.Location.Y, 6, méret[0], this);
                 box_műszak_jele = MainForm.createtextbox(műszak_jele.Location.X + műszak_jele.Width + köz, szita_átmérő.Location.Y, 1, méret[3], this);
@@ -791,6 +790,8 @@ namespace Labor
             {
                 if (box_termékkód.Text.Length == 3 && state != States.KÉSZ)
                 {
+                    if (!Database.IsCorrectSQLText(box_termékkód.Text)) { MessageBox.Show("Nem megfelelő karakter a termékkódban!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
                     List<string> temp = Program.database.Termékkódok(box_termékkód.Text);
                     if (temp.Count == 0) { MessageBox.Show("Nem található ilyen termékkódú cikk!", "Figyelmeztetés", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
 
@@ -842,6 +843,9 @@ namespace Labor
                 if (box_hordószám.Text.Length == 4)
                 {
                     string prodid = "12" + box_termékkód.Text.Substring(0, 2) + "01" + gyártási_év[gyártási_év.Length - 1] + "_0" + gyártási_év[gyártási_év.Length - 1] + box_hordószám.Text;
+
+                    if (!Database.IsCorrectSQLText(prodid)) { MessageBox.Show("Nem megfelelő karakter a lekérdezésben!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
                     List<string> fejléc_adatok = Program.database.Vizsgálat_Fejlécadatok(prodid);
                     if (fejléc_adatok.Count != 0)
                     {
@@ -895,11 +899,6 @@ namespace Labor
 
             private void rendben_Click(object _sender, System.EventArgs _event)
             {
-                if (box_termékkód.Text == "") { MessageBox.Show("Termékkód kitöltése kötelező!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
-                if (box_hordószám.Text == "") { MessageBox.Show("Hordószám kitöltése kötelező!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
-                if (box_sarzs.Text == "") { MessageBox.Show("Sarzs kitöltése kötelező!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
-                //if (box_hőkezelés.Text == "") { MessageBox.Show("Hőkezelés kitöltése kötelező!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; } // TODO kell vagy nem!?
-
                 Vizsgálat.Azonosító azonosító = new Vizsgálat.Azonosító(
                         box_termékkód.Text,
                         box_sarzs.Text,
@@ -930,37 +929,37 @@ namespace Labor
                     MainForm.ConvertOrDie<byte>(box_magtöret.Text),
                     MainForm.ConvertOrDie<byte>(box_feketepont.Text),
                     MainForm.ConvertOrDie<byte>(box_barnapont.Text),
-                    MainForm.ConvertOrDieString(box_szin.Text),
-                    MainForm.ConvertOrDieString(box_iz.Text),
-                    MainForm.ConvertOrDieString(box_illat.Text));
+                    MainForm.ConvertOrDieSQLString(box_szin.Text),
+                    MainForm.ConvertOrDieSQLString(box_iz.Text),
+                    MainForm.ConvertOrDieSQLString(box_illat.Text));
 
                 Vizsgálat.Adatok3 adatok3 = new Vizsgálat.Adatok3(
-                    MainForm.ConvertOrDieString(box_leoltas.Text),
-                    MainForm.ConvertOrDieString(box_ertekeles.Text),
+                    MainForm.ConvertOrDieSQLString(box_leoltas.Text),
+                    MainForm.ConvertOrDieSQLString(box_ertekeles.Text),
                     MainForm.ConvertOrDie<byte>(box_összcsíra_higit_1.Text),
                     MainForm.ConvertOrDie<byte>(box_összcsíra_higit_2.Text),
                     MainForm.ConvertOrDie<byte>(box_penész_higit_1.Text),
                     MainForm.ConvertOrDie<byte>(box_penész_higit_2.Text),
                     MainForm.ConvertOrDie<byte>(box_élesztő_higit_1.Text),
                     MainForm.ConvertOrDie<byte>(box_élesztő_higit_2.Text),
-                    MainForm.ConvertOrDieString(box_megjegyzes.Text));
+                    MainForm.ConvertOrDieSQLString(box_megjegyzes.Text));
 
                 Vizsgálat.Adatok4 adatok4 = new Vizsgálat.Adatok4(
-                    MainForm.ConvertOrDieString(box_t_cimzett.Text),
-                    MainForm.ConvertOrDieString(box_t_datum.Text),
-                    MainForm.ConvertOrDieString(box_k1_cimzett.Text),
-                    MainForm.ConvertOrDieString(box_k1_datum.Text),
-                    MainForm.ConvertOrDieString(box_k2_cimzett.Text),
-                    MainForm.ConvertOrDieString(box_k2_datum.Text),
-                    MainForm.ConvertOrDieString(box_k3_cimzett.Text),
-                    MainForm.ConvertOrDieString(box_k3_datum.Text),
-                    MainForm.ConvertOrDieString(box_k4_cimzett.Text),
-                    MainForm.ConvertOrDieString(box_k4_datum.Text),
-                    MainForm.ConvertOrDieString(box_k5_cimzett.Text),
-                    MainForm.ConvertOrDieString(box_k5_datum.Text),
-                    MainForm.ConvertOrDieString(box_k6_cimzett.Text),
-                    MainForm.ConvertOrDieString(box_k6_datum.Text),
-                    MainForm.ConvertOrDieString(combo_laboros.Text));
+                    MainForm.ConvertOrDieSQLString(box_t_cimzett.Text),
+                    MainForm.ConvertOrDieSQLString(box_t_datum.Text),
+                    MainForm.ConvertOrDieSQLString(box_k1_cimzett.Text),
+                    MainForm.ConvertOrDieSQLString(box_k1_datum.Text),
+                    MainForm.ConvertOrDieSQLString(box_k2_cimzett.Text),
+                    MainForm.ConvertOrDieSQLString(box_k2_datum.Text),
+                    MainForm.ConvertOrDieSQLString(box_k3_cimzett.Text),
+                    MainForm.ConvertOrDieSQLString(box_k3_datum.Text),
+                    MainForm.ConvertOrDieSQLString(box_k4_cimzett.Text),
+                    MainForm.ConvertOrDieSQLString(box_k4_datum.Text),
+                    MainForm.ConvertOrDieSQLString(box_k5_cimzett.Text),
+                    MainForm.ConvertOrDieSQLString(box_k5_datum.Text),
+                    MainForm.ConvertOrDieSQLString(box_k6_cimzett.Text),
+                    MainForm.ConvertOrDieSQLString(box_k6_datum.Text),
+                    MainForm.ConvertOrDieSQLString(combo_laboros.Text));
 
                 Vizsgálat _vizsgálat = new Vizsgálat(azonosító, adatok1, adatok2, adatok3, adatok4);
 
