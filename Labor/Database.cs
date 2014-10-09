@@ -1528,7 +1528,6 @@ namespace Labor
         /// </summary>
         public Node_Konszignáció.Gyümölcstípus.Adat Konszignáció_Gyümölcstípus_Adatok(Hordó _hordó, int _sorszám)
         {
-            Console.WriteLine("sorszám: " + _sorszám);
             Node_Konszignáció.Gyümölcstípus.Adat data = new Node_Konszignáció.Gyümölcstípus.Adat();
             string iProdId = "12" + _hordó.termékkód.Substring(0, 2) + "01" + _hordó.gyártási_év[3] + "_0" + _hordó.gyártási_év[3] + _hordó.id;
 
@@ -1568,6 +1567,67 @@ namespace Labor
 
             return data;
         }
+        #endregion
+
+        #region MinőségBizonylat
+
+        public Node_MinőségBizonylat.VizsgálatiLap MinőségBizonylat(int _id)
+        {
+            Node_MinőségBizonylat.VizsgálatiLap data = new Node_MinőségBizonylat.VizsgálatiLap();
+            lock (LaborLock)
+            {
+                laborconnection.Open();
+
+                SqlCommand command = laborconnection.CreateCommand();
+                command.CommandText = "SELECT  MIN(vibrix), MAX(vibrix), MIN(vicsav), MAX(vicsav), MIN(vipeha), MAX(vipeha), MIN(vibost), MAX(vibost),  MIN(viciad), MAX(viciad), MAX(viasav), hoteko, hosarz , vitene, viszat, vihoti, viszor " +
+                    "FROM l_hordo " +
+                    "INNER JOIN l_vizslap ON l_hordo.hoteko= l_vizslap.viteko AND l_hordo.hosarz= l_vizslap.visarz " +
+                    "WHERE l_hordo.foszam= " + _id + " group by l_hordo.hosarz, l_hordo.hoteko, vitene, viszat, vihoti, viszor ";
+
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    data = new Node_MinőségBizonylat.VizsgálatiLap(
+                    (double?)GetNullable<decimal>(reader, 0), (double?)GetNullable<decimal>(reader, 1),
+                    (double?)GetNullable<decimal>(reader, 2), (double?)GetNullable<decimal>(reader, 3),
+                    (double?)GetNullable<decimal>(reader, 4), (double?)GetNullable<decimal>(reader, 5),
+                    (double?)GetNullable<decimal>(reader, 6), (double?)GetNullable<decimal>(reader, 7),
+                    (double?)GetNullable<byte>(reader, 8), (double?)GetNullable<byte>(reader, 9),
+                    (double?)GetNullable<byte>(reader, 10),
+                    reader.GetString(12),reader.GetString(13),reader.GetString(14),reader.GetString(15),reader.GetString(16));
+                }
+
+                command.Dispose();
+                laborconnection.Close();
+            }
+            return data;
+        }
+
+        public Node_MinőségBizonylat.Tápérték MinBiz_Tápérték( string _id )
+        {
+            Node_MinőségBizonylat.Tápérték data = new Node_MinőségBizonylat.Tápérték();
+            lock (LaborLock)
+            {
+                laborconnection.Open();
+
+                SqlCommand command = laborconnection.CreateCommand();
+                command.CommandText = "SELECT takio, takcal, tafehe, taszhi, tazsir, taelro FROM l_tapertek WHERE " + _id.Substring(0, 2) + " = l_tapertek.tateko";
+
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    data = new Node_MinőségBizonylat.Tápérték(
+                    GetNullable<short>(reader, 0), GetNullable<short>(reader, 1),
+                    (double)GetNullable<decimal>(reader, 2), (double)GetNullable<decimal>(reader, 3),
+                    (double)GetNullable<decimal>(reader, 4), (double)GetNullable<decimal>(reader, 5));
+                }
+                command.Dispose();
+                laborconnection.Close();
+            }
+            return data;
+        }
+
+
         #endregion
 
         #region Felhasználók

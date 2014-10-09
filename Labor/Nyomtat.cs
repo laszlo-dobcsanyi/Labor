@@ -101,6 +101,127 @@ namespace Labor
         public List<Gyümölcstípus> gyümölcstípusok;
     }
 
+    public struct Node_MinőségBizonylat
+    {
+        public struct Szállítólevél
+        {
+            public byte szlevél_szám;
+            public string vevő;
+            public string gyártási_idő;
+            public string szín;
+            public string íz;
+            public string illat;
+
+            public Szállítólevél(Konszignáció_Szállítólevél _szállítólevél)
+            {
+                szlevél_szám = _szállítólevél.szlevél_szám;
+                vevő = _szállítólevél.vevő;
+                gyártási_idő = _szállítólevél.gyártási_idő;
+                szín = _szállítólevél.szín;
+                íz = _szállítólevél.íz;
+                illat = _szállítólevél.illat;
+            }
+
+        }
+
+        public struct VizsgálatiLap
+        {
+            public MinMaxPair<double?> brix;
+            public MinMaxPair<double?> citromsav;
+            public MinMaxPair<double?> ph;
+            public MinMaxPair<double?> bostwick;
+            public MinMaxPair<double?> citromsavad;
+            public double? aszkorbinsav;
+            public string sarzs;
+            public string megnevezés;
+            public string passzírozottság;
+            public string csomagolás;
+            public string származási_hely;
+
+            public VizsgálatiLap(double? _minbrix, double? _maxbrix, double? _mincitromasav, double? _maxcitromsav, double? _minph, double? _maxph, double? _minbostwick, double? _maxbostwick, double? _mincitromsavad, double? _maxcitromsavad, double? _aszkorbinsav, string _sarzs, string _megnevezés, string _passzírozottság, string _csomagolás, string _származási_hely)
+            {
+                brix = new MinMaxPair<double?>(_minbrix, _maxbrix);
+                citromsav = new MinMaxPair<double?>(_mincitromasav, _maxcitromsav);
+                ph = new MinMaxPair<double?>(_minph, _maxph);
+                bostwick = new MinMaxPair<double?>(_minbostwick, _maxbostwick);
+                citromsavad = new MinMaxPair<double?>(_mincitromasav, _maxcitromsavad);
+                aszkorbinsav = _aszkorbinsav;
+                sarzs = _sarzs;
+                megnevezés = _megnevezés;
+                passzírozottság = _passzírozottság;
+                csomagolás = _csomagolás;
+                származási_hely = _származási_hely;
+            }
+        } //kész
+
+        public struct Tápérték
+        {
+            public Int16? energia_tartalom1;
+            public Int16? energia_tartalom2;
+            public double? fehérje;
+            public double? szénhidrát;
+            public double? zsír;
+            public double? élelmi_rost;
+
+            public Tápérték(Int16? _energia_tartalom1,Int16? _energia_tartalom2, double? _fehérje, double? _szénhidrát, double? _zsír, double? _élelmi_rost)
+            {
+                energia_tartalom1 = _energia_tartalom1;
+                energia_tartalom2 = _energia_tartalom2;
+                fehérje = _fehérje;
+                szénhidrát = _szénhidrát;
+                zsír = _zsír;
+                élelmi_rost = _élelmi_rost;
+            }
+        }//kész
+
+        public struct FixString
+        {
+            public string hozzáadott_cukor;
+            public string hozzáadott_színezék;
+            public string hozzáadott_aroma;
+            public string hozzáadott_tartósítószer;
+            public string mikrobiológia;
+            public string minőségét_megőrzi;
+            public string nettó_tömeg;
+            public string tárolás;
+            public string Ethanol;
+            public string HMF;
+
+            public FixString()
+            {
+                hozzáadott_cukor = "nincs";
+                hozzáadott_színezék = "nincs";
+                hozzáadott_aroma = "nincs";
+                hozzáadott_tartósítószer = "nincs";
+                mikrobiológia = "technológiailag steril";
+                minőségét_megőrzi = "a hordó címkéjén feltüntetett időpontig";
+                nettó_tömeg = "a hordó címkéjén szereplő töltőtömeg";
+                tárolás = "0 - 20°C közötti hőmérsékleten, felbontás nélkül";
+                Ethanol = "0 - 20°C közötti hőmérsékleten, felbontás nélkül";
+                HMF = "max. 5 mg/l";
+            }
+        } // kész
+
+        public struct Felhasználó
+        {
+            public string felhasználó_neve;
+            public string felhasználó_beosztása;
+
+            public Felhasználó(string _felhasználó_neve, string _felhasználó_beosztása)
+            {
+                felhasználó_neve = _felhasználó_neve;
+                felhasználó_beosztása = _felhasználó_beosztása;
+            }
+        }
+
+        public Szállítólevél szállítólevél;
+        public VizsgálatiLap vizsgálatilap;
+        public Tápérték tápérték;
+        public FixString fixstring;
+        public Felhasználó felhasználó;
+
+    }
+
     public sealed class Nyomtat
     {
         public static void Nyomtat_Konszignáció(Konszignáció_Szállítólevél _szállítólevél, int _foglalás_id)
@@ -156,7 +277,6 @@ namespace Labor
                     tempgy.összsúly = tempsuly;
                     konszignáció.gyümölcstípusok[i] = tempgy;
             }
-            Console.WriteLine("sorok: " + sorok_száma); 
             #endregion
 
             string filename = _szállítólevél.szlevél + ".docx";
@@ -242,8 +362,6 @@ namespace Labor
                     data_table.Rows[c].Cells[5].Paragraphs[0].Append(inner.hordó_típus);
                     data_table.Rows[c].Cells[6].Paragraphs[0].Append(inner.gyártás_dátum);
                     c++;
-                    //Console.WriteLine(outer.megnevezés + "  " + outer.vtsz);
-                    //Console.WriteLine("    " + inner.sorszám + " " + outer.megnevezés + " " + inner.hordó + " " + inner.sarzs + " " + inner.nettó_súly + " " + inner.hordó_típus + " " + inner.gyártás_dátum);
                 }
                 data_table.Rows[c].Cells[1].Paragraphs[0].Append("Kajszibarackvelő összesen:").Bold();
                 data_table.Rows[c].Cells[4].Paragraphs[0].Append( outer.összsúly + " kg").Bold();
@@ -263,18 +381,14 @@ namespace Labor
 
             try { document.Save(); }
             catch (System.Exception) { MessageBox.Show("A dokumentum meg van nyitva!"); }
-            Process.Start(filename);
-            /*kiiratas
-            foreach (Node_Konszignáció.Gyümölcstípus outer in konszignáció.gyümölcstípusok)
-            {
-                Console.WriteLine(outer.megnevezés + "  " + outer.vtsz);
+        }
 
-                foreach (Node_Konszignáció.Gyümölcstípus.Adat inner in outer.adat)
-                {
-                    Console.WriteLine("    " + inner.sorszám + " " + outer.megnevezés + " " + inner.hordó + " " + inner.sarzs + " " + inner.nettó_súly + " " + inner.hordó_típus + " " + inner.gyártás_dátum);
-                }
-            }
-             */
+        public static void Nyomtat_MinőségBizonylat( Konszignáció_Szállítólevél _szállítólevél, int foglalás_id )
+        {
+            Node_MinőségBizonylat data = new Node_MinőségBizonylat();
+            data.szállítólevél = new Node_MinőségBizonylat.Szállítólevél(_szállítólevél);
+           // data.fixstring = new Node_MinőségBizonylat.FixString("nincs","nincs","nincs","nincs");
+            data.felhasználó = new Node_MinőségBizonylat.Felhasználó("név", "beosztás");
         }
 
         #region SegédFüggvények
