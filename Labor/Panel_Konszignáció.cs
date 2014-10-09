@@ -302,6 +302,7 @@ namespace Labor
 
                 Nyomtat.Nyomtat_Konszignáció(szállítólevél, foglalás.id);
 
+                Nyomtat.Nyomtat_MinőségBizonylat(szállítólevél, foglalás.id);
                 Close();
             }
             #endregion

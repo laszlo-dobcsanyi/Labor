@@ -1592,6 +1592,7 @@ namespace Labor
                     (double?)GetNullable<decimal>(reader, 6), (double?)GetNullable<decimal>(reader, 7),
                     (double?)GetNullable<byte>(reader, 8), (double?)GetNullable<byte>(reader, 9),
                     (double?)GetNullable<byte>(reader, 10),
+                    reader.GetString(11),
                     reader.GetString(12),reader.GetString(13),reader.GetString(14),reader.GetString(15),reader.GetString(16));
                 }
 
@@ -1601,7 +1602,7 @@ namespace Labor
             return data;
         }
 
-        public Node_MinőségBizonylat.Tápérték MinBiz_Tápérték( string _id )
+        public Node_MinőségBizonylat.Tápérték MinBiz_Tápérték( string _hoteko)
         {
             Node_MinőségBizonylat.Tápérték data = new Node_MinőségBizonylat.Tápérték();
             lock (LaborLock)
@@ -1609,7 +1610,7 @@ namespace Labor
                 laborconnection.Open();
 
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT takio, takcal, tafehe, taszhi, tazsir, taelro FROM l_tapertek WHERE " + _id.Substring(0, 2) + " = l_tapertek.tateko";
+                command.CommandText = "SELECT takio, takcal, tafehe, taszhi, tazsir, taelro FROM l_tapertek WHERE " + _hoteko.Substring(0, 2) + " = l_tapertek.tateko";
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
