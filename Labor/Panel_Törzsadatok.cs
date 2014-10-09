@@ -316,9 +316,15 @@ namespace Labor
             #region EventHandlers
             private void rendben_Click(object _sender, System.EventArgs _event)
             {
+                // Hossz ellenőrzések
                 if (box_azonosító.Text.Length == 0) { MessageBox.Show("Nem megfelelő a magyar megnevezés hossza!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
                 if (box_megnevezés2.Text.Length == 0) { MessageBox.Show("Nem megfelelő az angol megnevezés hossza!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
                 if (box_megnevezés3.Text.Length == 0) { MessageBox.Show("Nem megfelelő a német megnevezés hossza!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+                // SQL ellenőrzések
+                if (!Database.IsCorrectSQLText(box_azonosító.Text)) { MessageBox.Show("Nem megfelelő karakter a magyar megnevezésben!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                if (!Database.IsCorrectSQLText(box_megnevezés2.Text)) { MessageBox.Show("Nem megfelelő karakter az angol megnevezésben!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                if (!Database.IsCorrectSQLText(box_megnevezés3.Text)) { MessageBox.Show("Nem megfelelő karakter a német megnevezésben!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
 
                 if (törzsadat != null)
                 {

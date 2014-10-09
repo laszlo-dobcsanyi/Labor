@@ -183,9 +183,9 @@ namespace Labor
             if (!DateTime.TryParseExact(box.Text, "MM.dd hh:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out dt)) { box.Focus(); return; }
         }
 
-        public static string ConvertOrDieString(string _text)
+        public static string ConvertOrDieSQLString(string _text)
         {
-            if (_text == "") return null;
+            if (_text == "" || !Database.IsCorrectSQLText(_text)) return null;
             return _text;
         }
 
