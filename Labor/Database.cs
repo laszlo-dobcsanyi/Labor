@@ -56,7 +56,7 @@ namespace Labor
                             "CREATE TABLE L_TORZSA (TOTIPU varchar(20) NOT NULL,TOAZON varchar(25) PRIMARY KEY,TOSZO2 varchar(25),TOSZO3 varchar(25));" +
 
                             // Vizsgálat
-                            "CREATE TABLE L_VIZSLAP (VITEKO varchar(3) NOT NULL, VISARZ varchar(3) NOT NULL, VIHOSZ varchar(4) NOT NULL, VIHOTI varchar(15), VINETO DECIMAL(14, 2), VISZAT varchar(100), VIMEGR varchar(50), " +
+                            "CREATE TABLE L_VIZSLAP (VITEKO varchar(3) NOT NULL, VISARZ varchar(3) NOT NULL, VIHOSZ varchar(4) NOT NULL, VIHOTI varchar(25), VINETO DECIMAL(14, 2), VISZAT varchar(100), VIMEGR varchar(50), " +
                                 "VIMSSZ int, " +
 
                                 // Adatok1

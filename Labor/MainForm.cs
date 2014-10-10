@@ -180,8 +180,10 @@ namespace Labor
             if (box.Text.Length == 0) return;
 
             DateTime dt;
-            if (!DateTime.TryParseExact(box.Text, "MM.dd hh:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out dt)) { box.Focus(); return; }
+            if (!DateTime.TryParseExact(box.Text, "MMdd HHmm", CultureInfo.InvariantCulture, DateTimeStyles.None, out dt)) { box.Focus(); return; }
         }
+
+
 
         public static string ConvertOrDieSQLString(string _text)
         {
