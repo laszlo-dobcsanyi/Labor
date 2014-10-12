@@ -382,7 +382,7 @@ namespace Labor
 
         public sealed class Vizsgálati_Lap : Form
         {
-            private string gyártási_év = "2014";
+            private string gyártási_év = "2013";
             private Vizsgálat? eredeti = null;
 
             #region Declaration
@@ -864,7 +864,7 @@ namespace Labor
             {
                 if (box_hordószám.Text.Length == 4)
                 {
-                    string prodid = "12" + box_termékkód.Text.Substring(0, 2) + "01" + gyártási_év[gyártási_év.Length - 1] + "_0" + gyártási_év[gyártási_év.Length - 1] + box_hordószám.Text;
+                    string prodid = "12" + box_termékkód.Text.Substring(0, 2) + "01" + box_termékkód.Text.Substring(2, 1) + "_0" + box_termékkód.Text.Substring(2, 1) + box_hordószám.Text;
 
                     if (!Database.IsCorrectSQLText(prodid)) { MessageBox.Show("Nem megfelelő karakter a lekérdezésben!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
 
@@ -984,6 +984,7 @@ namespace Labor
                     MainForm.ConvertOrDieSQLString(combo_laboros.Text));
 
                 Vizsgálat _vizsgálat = new Vizsgálat(azonosító, adatok1, adatok2, adatok3, adatok4);
+
 
                 if (eredeti != null)
                 {
