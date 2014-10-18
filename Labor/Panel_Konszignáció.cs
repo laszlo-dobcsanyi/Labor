@@ -298,7 +298,11 @@ namespace Labor
 
                 Program.database.Konszignáció_ÚJSzállítólevél(szállítólevél);
 
+                Program.database.MinőségBizonylat(foglalás.id);
+
                 Nyomtat.Nyomtat_Konszignáció(szállítólevél, foglalás.id);
+
+                Nyomtat.Nyomtat_MinőségBizonylat(szállítólevél, foglalás.id);
                 Close();
             }
             #endregion

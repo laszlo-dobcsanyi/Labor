@@ -3,6 +3,7 @@ using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Labor
 {
@@ -224,7 +225,7 @@ namespace Labor
             table.AllowUserToResizeRows = false;
             table.AllowUserToResizeColumns = false;
             table.AllowUserToAddRows = false;
-            table.Width = 700;
+            table.Width = 750;
             table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             table.ReadOnly = true;
             table.DataBindingComplete += table_DataBindingComplete;
@@ -358,7 +359,7 @@ namespace Labor
             table.Columns[Vizsgálat.Azonosító.TableIndexes.termékkód].Width = 70;
             table.Columns[Vizsgálat.Azonosító.TableIndexes.sarzs].Width = 70;
             table.Columns[Vizsgálat.Azonosító.TableIndexes.hordószám].Width = 70;
-            table.Columns[Vizsgálat.Azonosító.TableIndexes.hordótípus].Width = 70;
+            table.Columns[Vizsgálat.Azonosító.TableIndexes.hordótípus].Width = 120;
             table.Columns[Vizsgálat.Azonosító.TableIndexes.nettó_töltet].Width = 70;
             table.Columns[Vizsgálat.Azonosító.TableIndexes.szita_átmérő].Width = 70;
             table.Columns[Vizsgálat.Azonosító.TableIndexes.megrendelő].Width = 280 - 3;
@@ -491,7 +492,7 @@ namespace Labor
                 Label brix = MainForm.createlabel("Brix %:", termékkód.Location.X, vonal.Location.Y + sor, this);
                 Label citromsav = MainForm.createlabel("Citromsav %:", termékkód.Location.X, brix.Location.Y + sor, this);
                 Label borkősav = MainForm.createlabel("Borkősav:", termékkód.Location.X, citromsav.Location.Y + sor, this);
-                Label ph = MainForm.createlabel("PH:  ", termékkód.Location.X, borkősav.Location.Y + sor, this);
+                Label ph = MainForm.createlabel("pH:  ", termékkód.Location.X, borkősav.Location.Y + sor, this);
                 Label bostwick = MainForm.createlabel("Bostwick cm/30sec, 20°C:", termékkód.Location.X, ph.Location.Y + sor, this);
                 Label aszkorbinsav = MainForm.createlabel("Aszkorbinsav mg/kg:", termékkód.Location.X, bostwick.Location.Y + sor, this);
                 Label citromsav_ad = MainForm.createlabel("Citromsav adagolás mg/kg:", termékkód.Location.X, aszkorbinsav.Location.Y + sor, this);
@@ -507,10 +508,10 @@ namespace Labor
                 Label műszak_jele = MainForm.createlabel("Műszak jele:", sarzs.Location.X + oszlop, szita_átmérő.Location.Y, this);
                 Label töltőgép_száma = MainForm.createlabel("Töltőgép száma:", műszak_jele.Location.X + oszlop, szita_átmérő.Location.Y, this);
                 Label terméknév = MainForm.createlabel("Terméknév:", töltőgép_száma.Location.X, termékkód.Location.Y, this);
-                Label hordótípus = MainForm.createlabel("Hordótípus:", töltőgép_száma.Location.X + oszlop - 10, szita_átmérő.Location.Y, this);
-                Label gyümölcsfajta = MainForm.createlabel("Gyümölcsfajta:", töltőgép_száma.Location.X, megrendelő.Location.Y, this);
-                Label leoltas = MainForm.createlabel("Leoltás ideje (hh.nn oo:pp):", sarzs.Location.X, brix.Location.Y, this);
-                Label ertekeles = MainForm.createlabel("Értékelés dátuma (hh.nn oo:pp):", sarzs.Location.X, citromsav.Location.Y, this);
+                Label hordótípus = MainForm.createlabel("Hordótípus:", töltőgép_száma.Location.X, megrendelő.Location.Y, this);
+                Label gyümölcsfajta = MainForm.createlabel("Gyümölcsfajta:",töltőgép_száma.Location.X + oszlop - 10, szita_átmérő.Location.Y, this);
+                Label leoltas = MainForm.createlabel("Leoltás ideje (hhnn oopp):", sarzs.Location.X, brix.Location.Y, this);
+                Label ertekeles = MainForm.createlabel("Értékelés dátuma (hhnn oopp):", sarzs.Location.X, citromsav.Location.Y, this);
                 Label higit_1 = MainForm.createlabel("1. hígítás:", sarzs.Location.X, ph.Location.Y, this);
                 Label higit_2 = MainForm.createlabel("2. hígítás:", sarzs.Location.X, bostwick.Location.Y, this);
                 Label megjegyzes = MainForm.createlabel("Megjegyzés:", sarzs.Location.X, aszkorbinsav.Location.Y, this);
@@ -540,7 +541,7 @@ namespace Labor
                 box_nettó_töltet = MainForm.createtextbox(box_sarzs.Location.X, nettó_töltet.Location.Y, 6, méret[0], this);
                 box_műszak_jele = MainForm.createtextbox(műszak_jele.Location.X + műszak_jele.Width + köz, szita_átmérő.Location.Y, 1, méret[3], this);
                 box_töltőgép_száma = MainForm.createtextbox(töltőgép_száma.Location.X + töltőgép_száma.Width + köz, töltőgép_száma.Location.Y, 1, méret[3], this);
-                combo_hordótípus = MainForm.createcombobox(hordótípus.Location.X + hordótípus.Width + köz, hordótípus.Location.Y, méret[4], this);
+                combo_hordótípus = MainForm.createcombobox(hordótípus.Location.X + hordótípus.Width + köz, hordótípus.Location.Y, méret[10], this);
                 combo_megrendelő = MainForm.createcombobox(box_termékkód.Location.X, megrendelő.Location.Y, méret[10], this);
                 combo_származási_ország = MainForm.createcombobox(származási_ország.Location.X + származási_ország.Width + köz, származási_ország.Location.Y, méret[4], this);
                 combo_gyümölcsfajta = MainForm.createcombobox(gyümölcsfajta.Location.X + gyümölcsfajta.Width + köz, gyümölcsfajta.Location.Y, méret[4], this);
@@ -558,7 +559,7 @@ namespace Labor
                 box_szin = MainForm.createtextbox(box_magtöret.Location.X, szin.Location.Y, 60, méret[8], this);
                 box_iz = MainForm.createtextbox(box_magtöret.Location.X, iz.Location.Y, 60, méret[8], this);
                 box_illat = MainForm.createtextbox(box_magtöret.Location.X, illat.Location.Y, 60, méret[8], this);
-                box_leoltas = MainForm.createtextbox(DateTime.Now.ToString("MM.dd HH:mm"), ertekeles.Location.X + ertekeles.Width + köz, leoltas.Location.Y, 11, méret[6], this);
+                box_leoltas = MainForm.createtextbox(DateTime.Now.ToString("MMdd HHmm"), ertekeles.Location.X + ertekeles.Width + köz, leoltas.Location.Y, 11, méret[6], this);
                 box_ertekeles = MainForm.createtextbox(ertekeles.Location.X + ertekeles.Width + köz, ertekeles.Location.Y, 11, méret[6], this);
                 box_összcsíra_higit_1 = MainForm.createtextbox("0", összcsira.Location.X, higit_1.Location.Y, 2, méret[1], this);
                 box_penész_higit_1 = MainForm.createtextbox("0", penesz.Location.X, higit_1.Location.Y, 2, méret[1], this);
@@ -606,6 +607,15 @@ namespace Labor
                 box_magtöret.KeyPress += MainForm.OnlyNumber;
                 box_feketepont.KeyPress += MainForm.OnlyNumber;
                 box_barnapont.KeyPress += MainForm.OnlyNumber;
+
+                box_t_cimzett.Leave += CímzettLeave;
+                box_k1_cimzett.Leave += CímzettLeave;
+                box_k2_cimzett.Leave += CímzettLeave;
+                box_k3_cimzett.Leave += CímzettLeave;
+                box_k4_cimzett.Leave += CímzettLeave;
+                box_k5_cimzett.Leave += CímzettLeave;
+                box_k6_cimzett.Leave += CímzettLeave;
+
                 box_t_datum.Leave += MainForm.OnlyDate;
                 box_k1_datum.Leave += MainForm.OnlyDate;
                 box_k2_datum.Leave += MainForm.OnlyDate;
@@ -786,6 +796,18 @@ namespace Labor
             #endregion
 
             #region EventHandlers
+            void CímzettLeave(object _sender, EventArgs _event)
+            {
+                string DateTimeNow = DateTime.Now.ToString("yy.MM.dd");
+
+                if (_sender as TextBox == box_t_cimzett) { if (box_t_datum.Text == "") { box_t_datum.Text = DateTimeNow; } }
+                if (_sender as TextBox == box_k1_cimzett) { if (box_k1_datum.Text == "") { box_k1_datum.Text = DateTimeNow; } }
+                if (_sender as TextBox == box_k2_cimzett) { if (box_k2_datum.Text == "") { box_k2_datum.Text = DateTimeNow; } }
+                if (_sender as TextBox == box_k4_cimzett) { if (box_k3_datum.Text == "") { box_k3_datum.Text = DateTimeNow; } }
+                if (_sender as TextBox == box_k5_cimzett) { if (box_k4_datum.Text == "") { box_k4_datum.Text = DateTimeNow; } }
+                if (_sender as TextBox == box_k6_cimzett) { if (box_k5_datum.Text == "") { box_k5_datum.Text = DateTimeNow; } }
+            }
+
             private void box_termékkód_TextChanged(object _sender, EventArgs _event)
             {
                 if (box_termékkód.Text.Length == 3 && state != States.KÉSZ)
@@ -842,7 +864,7 @@ namespace Labor
             {
                 if (box_hordószám.Text.Length == 4)
                 {
-                    string prodid = "12" + box_termékkód.Text.Substring(0, 2) + "01" + gyártási_év[gyártási_év.Length - 1] + "_0" + gyártási_év[gyártási_év.Length - 1] + box_hordószám.Text;
+                    string prodid = "12" + box_termékkód.Text.Substring(0, 2) + "01" + box_termékkód.Text.Substring(2, 1) + "_0" + box_termékkód.Text.Substring(2, 1) + box_hordószám.Text;
 
                     if (!Database.IsCorrectSQLText(prodid)) { MessageBox.Show("Nem megfelelő karakter a lekérdezésben!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
 
@@ -963,6 +985,7 @@ namespace Labor
                     MainForm.ConvertOrDieSQLString(combo_laboros.Text));
 
                 Vizsgálat _vizsgálat = new Vizsgálat(azonosító, adatok1, adatok2, adatok3, adatok4);
+
 
                 if (eredeti != null)
                 {

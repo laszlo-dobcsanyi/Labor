@@ -74,7 +74,7 @@ namespace Labor
             table.AllowUserToResizeRows = false;
             table.AllowUserToResizeColumns = false;
             table.AllowUserToAddRows = false;
-            table.Width = 450 + 3;
+            table.Width = 600 + 3;
             table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             table.UserDeletingRow += table_UserDeletingRow;
             table.ReadOnly = true;
@@ -172,9 +172,9 @@ namespace Labor
         private void table_DataBindingComplete(object _sender, DataGridViewBindingCompleteEventArgs _event)
         {
             table.DataBindingComplete -= table_DataBindingComplete;
-            table.Columns[0].Width = 150;
-            table.Columns[1].Width = 150;
-            table.Columns[2].Width = 150;
+            table.Columns[0].Width = 200;
+            table.Columns[1].Width = 200;
+            table.Columns[2].Width = 200;
         }
 
         private void table_UserDeletingRow(object _sender, DataGridViewRowCancelEventArgs _event)
