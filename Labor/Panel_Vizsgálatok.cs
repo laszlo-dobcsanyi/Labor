@@ -888,13 +888,14 @@ namespace Labor
                 {
                     try
                     {
-                        box_borkősav.Text = Convert.ToDouble(((Convert.ToDouble(box_citromsav.Text) * 1.171875))).ToString();
+                        box_borkősav.Text = Convert.ToDouble(((Convert.ToDouble(box_citromsav.Text) * 1.171875))).ToString("F2");
                     }
                     catch (Exception)
                     {
                         box_citromsav.Focus();
                     }
                 }
+                else box_borkősav.Text = "";
             }
 
             private void rendben_Click(object _sender, System.EventArgs _event)

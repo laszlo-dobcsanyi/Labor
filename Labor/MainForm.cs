@@ -41,12 +41,16 @@ namespace Labor
             ToolStripStatusLabel Készítők = new ToolStripStatusLabel("Belinyák Nándor és Társai. \u00A9 2014");
             Készítők.BorderSides = ToolStripStatusLabelBorderSides.Left;
 
+            ToolStripStatusLabel Verzió = new ToolStripStatusLabel("Verzió: 0.4.3-2014.10.18");
+            Verzió.BorderSides = ToolStripStatusLabelBorderSides.Left;
+
             ToolStripStatusLabel Bejelentkezve = new ToolStripStatusLabel("Bejelentkezve " + Settings.LoginName + " néven." );
             Bejelentkezve.BorderSides = ToolStripStatusLabelBorderSides.Left;
 
             status = new StatusStrip();
             status.Items.Add(new ToolStripStatusLabel("Marillen Gyümölcsfeldolgozó Kft."));
             status.Items.Add(Készítők);
+            status.Items.Add(Verzió);
             status.Items.Add(Bejelentkezve);
             #endregion
 
