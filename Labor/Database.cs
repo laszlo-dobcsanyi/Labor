@@ -73,7 +73,7 @@ namespace Labor
                                 "VIMTS1 varchar(15),VIMTD1 varchar(8),VIMKS1 varchar(15),VIMKD1 varchar(8), VIMKS2 varchar(15), VIMKD2 varchar(8), VIMKS3 varchar(15), VIMKD3 varchar(8), VIMKS4 varchar(15), VIMKD4 varchar(8), " +
                                 "VIMKS5 varchar(15), VIMKD5 varchar(8), VIMKS6 varchar(15), VIMKD6 varchar(8),VILABO varchar(15));" +
 
-                            "CREATE TABLE L_HORDO(HOTEKO varchar(10), HOSARZ varchar(10), HOSZAM varchar(10), FOSZAM int, VIGYEV varchar(10));" +
+                            "CREATE TABLE L_HORDO(HOTEKO varchar(10), HOSARZ varchar(10), HOSZAM varchar(10), FOSZAM int, VIGYEV varchar(10), HOQTY decimal(14, 2), HOTIME char(4));" +
 
                             "CREATE TABLE L_FOGLAL (FONEVE varchar(30), FOSZAM int IDENTITY(1,1), FODATE varchar(20), FOTIPU varchar(10), FOFENE varchar(15), FOTEKO varchar(3), FOSARZT varchar(3), FOSARZI varchar(3), FOHOSZT varchar(4)," +
                                 "FOHOSZI varchar(4), FOBRIXT DECIMAL(4,2), FOBRIXI DECIMAL(4,2), FOCSAVT DECIMAL(4,2), FOCSAVI DECIMAL(4,2), FOPEHAT DECIMAL(4,2), FOPEHAI DECIMAL(4,2), FOBOSTT DECIMAL(4,2)," +
@@ -314,8 +314,7 @@ namespace Labor
                         szita_átmérő_száma = Convert.ToInt32(prodid[7].ToString());
                         values.Add(netto);
                     }
-                    else
-                        if (iteration == 1) MessageBox.Show("Több szita átmérő, nettó töltet!\nKérem ellenőrizze a Marillen adatbázis tetelek tábláját(serial_nr, prod_id, qty : type=300, prod_id=" + _prod_id +")!", "Ellenőrizze az adatokat!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
                     ++iteration;
                 }
                 reader.Close();
@@ -332,8 +331,7 @@ namespace Labor
                     {
                         values.Add(jel);
                     }
-                    else
-                        if (iteration == 1) MessageBox.Show("Több műszak jel!\nKérem ellenőrizze a Marillen adatbázis folyoprops tábláját(propstr : code=1, serial_nr=" + serial + ")!", "Ellenőrizze az adatokat!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
                     ++iteration;
                 }
                 reader.Close();
@@ -350,8 +348,7 @@ namespace Labor
                     {
                         values.Add(szám);
                     }
-                    else
-                        if (iteration == 1) MessageBox.Show("Több töltőgép szám!\nKérem ellenőrizze a Marillen adatbázis folyoprops tábláját(propstr : code=2, serial_nr=" + serial + ")!", "Ellenőrizze az adatokat!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
                     ++iteration;
                 }
                 reader.Close();
@@ -368,8 +365,6 @@ namespace Labor
                     {
                         values.Add(sarzs);
                     }
-                    else
-                        if (iteration == 1) MessageBox.Show("Több sarzs!\nKérem ellenőrizze a Marillen adatbázis folyoprops tábláját(propstr : code=3, serial_nr=" + serial + ")!", "Ellenőrizze az adatokat!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     ++iteration;
                 }
                 reader.Close();
@@ -386,8 +381,7 @@ namespace Labor
                     {
                         values.Add(szita_átmérő);
                     }
-                    else
-                        if (iteration == 1) MessageBox.Show("Több szita átmérő!\nKérem ellenőrizze a Marillen adatbázis darabossag tábláját(name : code=" + szita_átmérő_száma + ")!", "Ellenőrizze az adatokat!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
                     ++iteration;
                 }
                 reader.Close();
@@ -415,7 +409,6 @@ namespace Labor
                 {
                     string terméknév = reader.GetString(0);
                     if (iteration == 0) value = terméknév;
-                    else if (iteration == 1) MessageBox.Show("Több terméknév!\nKérem ellenőrizze a Marillen adatbázis cikkek tábláját(name : item_nr='12" + _termékkód.Substring(0, 2) + "01')!", "Ellenőrizze az adatokat!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     ++iteration;
                 }
                 reader.Close();
@@ -894,6 +887,20 @@ namespace Labor
         #endregion
 
         #region Hordók
+        private struct Hordó_Adat
+        {
+            public string szám;
+            public decimal tömeg;
+            public string év;
+
+            public Hordó_Adat(string _szám, decimal _tömeg, string _év)
+            {
+                szám = _szám;
+                tömeg = _tömeg;
+                év = _év;
+            }
+        };
+
         public bool Hordók_Másolás(Vizsgálat _vizsgálat)
         {
             string where = A(new string[] { Update<string>("VITEKO", _vizsgálat.azonosító.termékkód), Update<string>("VISARZ", _vizsgálat.azonosító.sarzs), Update<string>("VIGYEV", _vizsgálat.adatok1.gyártási_év.Substring(3, 1)) });
@@ -916,21 +923,37 @@ namespace Labor
                 if (count != 1) return true;
             }
 
-            List<string> prod_id = new List<string>();
+            List<Hordó_Adat> hordó_adatok = new List<Hordó_Adat>();
             string iPROD_ID = "12" + _vizsgálat.azonosító.termékkód.ToString().Substring(0, 2) + "01" + _vizsgálat.adatok1.gyártási_év[_vizsgálat.adatok1.gyártási_év.Length - 1];
             
             lock (MarillenLock)
             {
+                string előző = null;
+
                 marillenconnection.Open();
-                SqlCommand command = new SqlCommand("SELECT tetelek.prod_id FROM tetelek" +
+                SqlCommand command = new SqlCommand("SELECT tetelek.prod_id, tetelek.qty, tetelek.time_ FROM tetelek" +
                                       " INNER JOIN folyoprops ON tetelek.serial_nr=folyoprops.serial_nr" +
-                                      " WHERE left(tetelek.prod_id,7) = '" + iPROD_ID + "' AND folyoprops.code= '" + 3 + "' AND folyoprops.propstr = '" + 1 + "'  ;");
+                                      " WHERE left(tetelek.prod_id,7) = '" + iPROD_ID + "' AND folyoprops.code= '3' AND folyoprops.propstr = '1' ORDER BY tetelek.prod_id;");
                 command.Connection = marillenconnection;
                 SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
+
+                if (reader.Read())
                 {
-                    prod_id.Add(reader.GetString(0).Substring(reader.GetString(0).Length - 4));
+                    előző = reader.GetString(0).Substring(reader.GetString(0).Length - 4);
+                    hordó_adatok.Add(new Hordó_Adat(előző, reader.GetDecimal(1), reader.GetDateTime(2).Year.ToString()));
+                    
+                    while (reader.Read())
+                    {
+                        string szám = reader.GetString(0).Substring(reader.GetString(0).Length - 4);
+                        if (szám != előző)
+                        {
+                            hordó_adatok.Add(new Hordó_Adat(szám, reader.GetDecimal(1), reader.GetDateTime(2).Year.ToString()));
+                        }
+
+                        előző = szám;
+                    }
                 }
+
                 reader.Close();
                 marillenconnection.Close();
             }
@@ -939,9 +962,10 @@ namespace Labor
             {
                 laborconnection.Open();
                 SqlCommand command3 = laborconnection.CreateCommand();
-                foreach (string item in prod_id)
+                foreach (Hordó_Adat adat in hordó_adatok)
                 {
-                    command3.CommandText += "INSERT INTO L_HORDO (HOTEKO, HOSARZ, HOSZAM, VIGYEV) VALUES('" + _vizsgálat.azonosító.termékkód + "','" + _vizsgálat.azonosító.sarzs + "','" + item + "','" + _vizsgálat.adatok1.gyártási_év + "');";
+                    command3.CommandText += "INSERT INTO L_HORDO (HOTEKO, HOSARZ, HOSZAM, VIGYEV, HOQTY, HOTIME) VALUES('" + _vizsgálat.azonosító.termékkód + "','" + _vizsgálat.azonosító.sarzs + "','" +
+                        adat.szám + "','" + _vizsgálat.adatok1.gyártási_év + "', " + adat.tömeg.ToString("F2").Replace(',', '.') + ", '" + adat.év + "');";
                 }
                 command3.ExecuteNonQuery();
                 command3.Dispose();
@@ -1534,7 +1558,7 @@ namespace Labor
                 //Megkeresem a hordót a TETELEK táblában:
                 marillenconnection.Open();
                 SqlCommand command = marillenconnection.CreateCommand();
-                command.CommandText = "SELECT qty, time_ FROM tetelek, cikkek WHERE (type=300) AND (prod_id LIKE" + "'" + iProdId + "'" + ") AND [marillen2013].[dbo].[cikkek].[item_nr] = '12" + _hordó.termékkód.Substring(0, 2) + "01'" + ";";
+                command.CommandText = "SELECT qty, time_ FROM tetelek, cikkek WHERE (type=300) AND (prod_id LIKE" + "'" + iProdId + "'" + ") AND [cikkek].[item_nr] = '12" + _hordó.termékkód.Substring(0, 2) + "01'" + ";";
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())

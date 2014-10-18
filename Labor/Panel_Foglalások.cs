@@ -525,7 +525,7 @@ namespace Labor
                 table.AllowUserToResizeRows = false;
                 table.AllowUserToResizeColumns = false;
                 table.AllowUserToAddRows = false;
-                table.Width = 430 ;
+                table.Width = 430;
                 table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
                 table.ReadOnly = true;
                 table.UserDeletingRow += table_UserDeletingRow;
@@ -598,7 +598,7 @@ namespace Labor
             #region EventHandlers
             private void Foglalás_Szerkesztő_Load(object _sender, EventArgs _event)
             {
-                table.Columns[Hordó.TableIndexes.termékkód].Width = 430/4;
+                table.Columns[Hordó.TableIndexes.termékkód].Width = 430 / 4;
                 table.Columns[Hordó.TableIndexes.sarzs].Width = 430 / 4;
                 table.Columns[Hordó.TableIndexes.id].Width = 430 / 4;
                 table.Columns[Hordó.TableIndexes.foglalás_száma].Visible = false;
@@ -1089,6 +1089,7 @@ namespace Labor
                     private Vizsgalap_Szűrő szűrő;
                     private Foglalás? foglalás = null;
 
+                    private bool kijelölés_összes;
                     private Label foglalt_hordók;
 
                     #region Constructor
@@ -1157,15 +1158,15 @@ namespace Labor
 
                         if (foglalás != null)
                         {
-                            Button kijelölés_megfordítása = new Button();
-                            kijelölés_megfordítása.Text = "Kijelölés megfordítása";
-                            kijelölés_megfordítása.Size = new System.Drawing.Size(128, 32);
-                            kijelölés_megfordítása.Location = new Point(ClientRectangle.Width - kijelölés_megfordítása.Size.Width - rendben.Width - 32, ClientRectangle.Height - kijelölés_megfordítása.Size.Height - 16);
-                            kijelölés_megfordítása.Click += kijelölés_megfordítása_Click;
+                            Button kijelölés_váltás = new Button();
+                            kijelölés_váltás.Text = "Kijelölés váltás";
+                            kijelölés_váltás.Size = new System.Drawing.Size(128, 32);
+                            kijelölés_váltás.Location = new Point(ClientRectangle.Width - kijelölés_váltás.Size.Width - rendben.Width - 32, ClientRectangle.Height - kijelölés_váltás.Size.Height - 16);
+                            kijelölés_váltás.Click += kijelölés_váltás_Click;
 
                             Label label_foglalt_hordó = new Label();
                             label_foglalt_hordó.Text = "Foglalt hordó:";
-                            label_foglalt_hordó.Location = new Point(8, kijelölés_megfordítása.Location.Y - 32 - 8);
+                            label_foglalt_hordó.Location = new Point(8, kijelölés_váltás.Location.Y - 32 - 8);
 
                             foglalt_hordók = new Label();
                             foglalt_hordók.Text = "0 db";
@@ -1177,7 +1178,7 @@ namespace Labor
                             vonal.Width = 1000;
                             vonal.BackColor = Color.Black;
 
-                            Controls.Add(kijelölés_megfordítása);
+                            Controls.Add(kijelölés_váltás);
                             Controls.Add(label_foglalt_hordó);
                             Controls.Add(foglalt_hordók);
                             Controls.Add(vonal);
@@ -1212,15 +1213,9 @@ namespace Labor
                     {
                         if (foglalás != null)
                         {
-
                             _row[0] = _hordó.termékkód;
                             _row[1] = _hordó.id;
                             _row[2] = _hordó.foglalás_száma == null ? false : true;
-                            /*
-                            _row[0] = _hordó.termékkód;
-                            _row[1] = _hordó.id;
-                            _row[2] = _hordó.foglalás_száma == null ? false : true;
-                            */
                         }
                         else
                         {
@@ -1233,13 +1228,13 @@ namespace Labor
 
                     protected override bool SameKeys(Hordó _1, Hordó _2)
                     {
-                        if (_1.termékkód == _2.termékkód && _1.sarzs == _2.sarzs) return true;
+                        if (_1.termékkód == _2.termékkód && _1.id == _2.id) return true;
                         return false;
                     }
 
                     protected override bool SameKeys(Hordó _1, DataRow _row)
                     {
-                        if (_1.termékkód == (string)_row[Sarzs.TableIndexes.termékkód] && _1.sarzs == (string)_row[Sarzs.TableIndexes.sarzs]) return true;
+                        if (_1.termékkód == (string)_row[Hordó.TableIndexes.termékkód] && _1.id == (string)_row[1]) return true;
                         return false;
                     }
 
@@ -1275,10 +1270,15 @@ namespace Labor
                     private void Hordók_Számolás()
                     {
                         int count = 0;
+                        kijelölés_összes = true;
 
                         foreach (DataRow row in data.Rows)
                         {
-                            if ((bool)row[2] == true) ++count;
+                            if ((bool)row[2] == true)
+                            {
+                                ++count;
+                                kijelölés_összes = false;
+                            }
                         }
 
                         foglalt_hordók.Text = count + " db";
@@ -1315,14 +1315,30 @@ namespace Labor
                         }
                     }
 
+                    private void kijelölés_váltás_Click(object _sender, EventArgs _event)
+                    {
+                        foreach(DataGridViewRow row in table.Rows)
+                        {
+                            if ((bool)row.Cells[2].Value == true)
+                            {
+                                if (!kijelölés_összes)
+                                    if (!Program.database.Hordó_Foglalás(true, foglalás.Value.id, sarzs.termékkód, sarzs.sarzs, (string)row.Cells[1].Value))
+                                    { MessageBox.Show("Hiba a hordó lefoglalásakor!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                            }
+                            else
+                            {
+                                if (kijelölés_összes)
+                                    if (!Program.database.Hordó_Foglalás(false, foglalás.Value.id, sarzs.termékkód, sarzs.sarzs, (string)row.Cells[1].Value))
+                                    { MessageBox.Show("Hiba a hordó lefoglalásakor!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                            }
+                        }
+
+                        Program.RefreshData();
+                    }
+
                     private void rendben_Click(object _sender, EventArgs _event)
                     {
                         Close();
-                    }
-
-                    private void kijelölés_megfordítása_Click(object _sender, EventArgs _event)
-                    {
-
                     }
                     #endregion
                 }
