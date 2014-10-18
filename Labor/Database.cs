@@ -1039,7 +1039,7 @@ namespace Labor
                 command.Dispose();
                 laborconnection.Close();
 
-                if (modified != 1) return false;
+                if (modified != 2) return false;
                 return true;
             }
         }
