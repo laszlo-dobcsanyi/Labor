@@ -70,7 +70,6 @@ namespace Labor
             table.AllowUserToAddRows = false;
             table.Width = 750;
             table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            table.ReadOnly = false;
             table.DataSource = CreateSource();
             table.DataBindingComplete += table_DataBindingComplete;
             table.UserDeletingRow += table_UserDeletingRow;
@@ -99,32 +98,13 @@ namespace Labor
         {
             data = new DataTable();
 
-            DataColumn column = new DataColumn("Foglalás száma", System.Type.GetType("System.Int32"));
-            data.Columns.Add(column);
-
-            column = new DataColumn("Foglalás neve", System.Type.GetType("System.String"));
-            data.Columns.Add(column);
-            column.ReadOnly = true;
-
-            column = new DataColumn("Foglalt hordók száma", System.Type.GetType("System.Int32"));
-            data.Columns.Add(column);
-            column.ReadOnly = true;
-
-            column = new DataColumn("Foglalás típusa", System.Type.GetType("System.String"));
-            data.Columns.Add(column);
-            column.ReadOnly = true;
-
-            column = new DataColumn("Készítette", System.Type.GetType("System.String"));
-            data.Columns.Add(column);
-            column.ReadOnly = true;
-
-            column = new DataColumn("Foglalás ideje", System.Type.GetType("System.String"));
-            data.Columns.Add(column);
-            column.ReadOnly = true;
-
-            column = new DataColumn("Kijelölés", System.Type.GetType("System.Boolean"));
-            data.Columns.Add(column);
-            column.ReadOnly = false;
+            data.Columns.Add(new DataColumn("Foglalás száma", System.Type.GetType("System.Int32")));
+            data.Columns.Add(new DataColumn("Foglalás neve", System.Type.GetType("System.String")));
+            data.Columns.Add(new DataColumn("Foglalt hordók száma", System.Type.GetType("System.Int32")));
+            data.Columns.Add(new DataColumn("Foglalás típusa", System.Type.GetType("System.String")));
+            data.Columns.Add(new DataColumn("Készítette", System.Type.GetType("System.String")));
+            data.Columns.Add(new DataColumn("Foglalás ideje", System.Type.GetType("System.String")));
+            data.Columns.Add(new DataColumn("Kijelölés", System.Type.GetType("System.Boolean")));
 
             return data;
         }
@@ -178,16 +158,23 @@ namespace Labor
             Program.RefreshData();
         }
 
-        private void table_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        private void table_DataBindingComplete(object _sender, DataGridViewBindingCompleteEventArgs _event)
         {
             table.DataBindingComplete -= table_DataBindingComplete;
             table.Columns[0].Width = 100 - 3;
+            table.Columns[0].ReadOnly = true;
             table.Columns[1].Width = 120;
+            table.Columns[1].ReadOnly = true;
             table.Columns[2].Width = 120;
+            table.Columns[2].ReadOnly = true;
             table.Columns[3].Width = 120;
+            table.Columns[3].ReadOnly = true;
             table.Columns[4].Width = 120;
+            table.Columns[4].ReadOnly = true;
             table.Columns[5].Width = 120;
+            table.Columns[5].ReadOnly = true;
             table.Columns[6].Width = 50;
+            table.Columns[6].ReadOnly = false;
         }
 
         private void table_UserDeletingRow(object _sender, DataGridViewRowCancelEventArgs _event)
