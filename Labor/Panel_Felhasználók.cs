@@ -185,7 +185,7 @@ namespace Labor
 
         public class Felhasználó_Megjelenítő : Form
         {
-            Felhasználó? felhasználó = null;
+            private Felhasználó? felhasználó = null;
 
             #region Constructor
             public Felhasználó_Megjelenítő()

@@ -1008,15 +1008,15 @@ namespace Labor
 
                     //
 
-                    Button rögzítés = new Button();
-                    rögzítés.Text = "Rögzítés";
-                    rögzítés.Size = new System.Drawing.Size(96, 32);
-                    rögzítés.Location = new Point(ClientRectangle.Width - rögzítés.Size.Width - 16, ClientRectangle.Height - rögzítés.Size.Height - 16);
-                    rögzítés.Click += rögzítés_Click;
+                    Button rendben = new Button();
+                    rendben.Text = "Rendben";
+                    rendben.Size = new System.Drawing.Size(96, 32);
+                    rendben.Location = new Point(ClientRectangle.Width - rendben.Size.Width - 16, ClientRectangle.Height - rendben.Size.Height - 16);
+                    rendben.Click += rendben_Click;
 
                     //
 
-                    Controls.Add(rögzítés);
+                    Controls.Add(rendben);
                     Controls.Add(table);
                 }
 
@@ -1077,7 +1077,7 @@ namespace Labor
                     Program.RefreshData();
                 }
 
-                private void rögzítés_Click(object _sender, EventArgs _event)
+                private void rendben_Click(object _sender, EventArgs _event)
                 {
                     Close();
                 }
