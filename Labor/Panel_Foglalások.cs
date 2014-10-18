@@ -1297,7 +1297,6 @@ namespace Labor
                         {
                             if (_event.ColumnIndex == 2 && _event.RowIndex != -1)
                             {
-                                // TODO Checkbox állítása a művelet eredményére!
                                 if (!Program.database.Hordó_Foglalás(!(bool)table.Rows[_event.RowIndex].Cells[_event.ColumnIndex].Value,
                                     foglalás.Value.id, sarzs.termékkód, sarzs.sarzs, (string)table.Rows[_event.RowIndex].Cells[1].Value))
                                 { MessageBox.Show("Hiba a hordó lefoglalásakor!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }

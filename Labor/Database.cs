@@ -298,7 +298,7 @@ namespace Labor
                 marillenconnection.Open();
 
                 // nettó_töltet
-                SqlCommand command = new SqlCommand("SELECT serial_nr, prod_id, qty FROM tetelek WHERE (type=300) AND (prod_id LIKE '" + _prod_id + "')");
+                SqlCommand command = new SqlCommand("SELECT serial_nr, prod_id, qty FROM tetelek WHERE (type=300) AND (prod_id LIKE '" + _prod_id + "') AND (qty > 0) ORDER BY serial_nr");
                 command.Connection = marillenconnection;
                 SqlDataReader reader = command.ExecuteReader();
                 iteration = 0;
