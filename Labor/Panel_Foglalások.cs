@@ -434,7 +434,7 @@ namespace Labor
         public sealed class Foglalás_Hozzáadó : Form
         {
             TextBox box_foglalás_neve;
-            TextBox box_foglalás_típusa;
+            Label label_foglalás_típusa;
             Label label_készítette;
             Label label_foglalás_ideje;
 
@@ -462,7 +462,7 @@ namespace Labor
                 Label foglalás_ideje = MainForm.createlabel("Foglalás ideje:", 8, 4 * 32, this);
 
                 box_foglalás_neve = MainForm.createtextbox(foglalás_neve.Location.X + 128, foglalás_neve.Location.Y, 30, 240, this);
-                box_foglalás_típusa = MainForm.createtextbox(box_foglalás_neve.Location.X, foglalás_típusa.Location.Y, 10, 240, this);
+                label_foglalás_típusa = MainForm.createlabel("Keresés", box_foglalás_neve.Location.X, foglalás_típusa.Location.Y, this);
                 label_készítette = MainForm.createlabel(Settings.LoginName, box_foglalás_neve.Location.X, készítette.Location.Y, this);
                 label_foglalás_ideje = MainForm.createlabel(DateTime.Now.ToString(), box_foglalás_neve.Location.X, foglalás_ideje.Location.Y, this);
 
@@ -481,9 +481,9 @@ namespace Labor
             {
                 // SQL ellenőrzések
                 if (!Database.IsCorrectSQLText(box_foglalás_neve.Text)) { MessageBox.Show("Nem megfelelő karakter a névben!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-                if (!Database.IsCorrectSQLText(box_foglalás_típusa.Text)) { MessageBox.Show("Nem megfelelő karakter a típusban!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                if (!Database.IsCorrectSQLText(label_foglalás_típusa.Text)) { MessageBox.Show("Nem megfelelő karakter a típusban!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
 
-                if (!Program.database.Foglalás_Hozzáadás(new Foglalás(0, box_foglalás_neve.Text, 0, box_foglalás_típusa.Text, label_készítette.Text, label_foglalás_ideje.Text)))
+                if (!Program.database.Foglalás_Hozzáadás(new Foglalás(0, box_foglalás_neve.Text, 0, label_foglalás_típusa.Text, label_készítette.Text, label_foglalás_ideje.Text)))
                 { MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy létezik már ilyen foglalás?", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); }
 
                 Close();
@@ -495,7 +495,6 @@ namespace Labor
         {
             private Foglalás foglalás;
             public TextBox box_foglalás_neve;
-            public TextBox box_foglalás_tipusa;
 
             #region Constructor
             public Foglalás_Szerkesztő(Foglalás _foglalás)
@@ -554,10 +553,8 @@ namespace Labor
                 keresés.Click += Vizsgálat_Keresés;
 
                 Label foglalás_neve = MainForm.createlabel("Foglalás neve:", 10, 30, this);
-                Label foglalás_típusa = MainForm.createlabel("Foglalás típusa:", 10, 60, this);
 
                 box_foglalás_neve = MainForm.createtextbox(foglalás_neve.Location.X + foglalás_neve.Width + 16, foglalás_neve.Location.Y, 30, 200, this);
-                box_foglalás_tipusa = MainForm.createtextbox(box_foglalás_neve.Location.X, foglalás_típusa.Location.Y, 10, 100, this);
 
                 //
 
@@ -566,13 +563,11 @@ namespace Labor
                 Controls.Add(törlés);
                 Controls.Add(keresés);
                 Controls.Add(foglalás_neve);
-                Controls.Add(foglalás_típusa);
             }
 
             private void InitializeData()
             {
                 box_foglalás_neve.Text = foglalás.név;
-                box_foglalás_tipusa.Text = foglalás.típus;
             }
 
             private DataTable CreateSource()
@@ -611,13 +606,12 @@ namespace Labor
 
             private void Foglalás_Szerkesztő_FormClosing(object _sender, FormClosingEventArgs _event)
             {
-                if (foglalás.név != box_foglalás_neve.Text || foglalás.típus != box_foglalás_tipusa.Text)
+                if (foglalás.név != box_foglalás_neve.Text )
                 {
                     // SQL ellenőrzések
                     if (!Database.IsCorrectSQLText(box_foglalás_neve.Text)) { MessageBox.Show("Nem megfelelő karakter a névben!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-                    if (!Database.IsCorrectSQLText(box_foglalás_neve.Text)) { MessageBox.Show("Nem megfelelő karakter a típusban!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
 
-                    Program.database.Foglalás_Módosítás(foglalás, new Foglalás(foglalás.id, box_foglalás_neve.Text, foglalás.hordók_száma, box_foglalás_tipusa.Text, foglalás.készítő, foglalás.idő));
+                    Program.database.Foglalás_Módosítás(foglalás, new Foglalás(foglalás.id, box_foglalás_neve.Text, foglalás.hordók_száma,foglalás.típus, foglalás.készítő, foglalás.idő));
                 }
             }
 

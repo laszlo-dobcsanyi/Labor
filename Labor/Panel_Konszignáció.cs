@@ -123,13 +123,19 @@ namespace Labor
         #region EventHandlers
         private void nyomtatás_Click(object _sender, EventArgs _event)
         {
-            if (table.Rows.Count != 1) return;
+            List<Foglalás> foglalások = new List<Foglalás>();
 
-            Foglalás foglalás = new Foglalás((int)table.SelectedRows[0].Cells[Foglalás.TableIndexes.id].Value, (string)table.SelectedRows[0].Cells[Foglalás.TableIndexes.név].Value,
-                (int)table.SelectedRows[0].Cells[Foglalás.TableIndexes.hordók_száma].Value, (string)table.SelectedRows[0].Cells[Foglalás.TableIndexes.típus].Value,
-                (string)table.SelectedRows[0].Cells[Foglalás.TableIndexes.készítő].Value, (string)table.SelectedRows[0].Cells[Foglalás.TableIndexes.idő].Value);
+            foreach (DataGridViewRow item in table.Rows)
+            {
+                if(  (bool)item.Cells[6].Value  == true)
+                {
+                    foglalások.Add(new Foglalás((int)item.Cells[Foglalás.TableIndexes.id].Value, (string)item.Cells[Foglalás.TableIndexes.név].Value,
+                (int)item.Cells[Foglalás.TableIndexes.hordók_száma].Value, (string)item.Cells[Foglalás.TableIndexes.típus].Value,
+                (string)item.Cells[Foglalás.TableIndexes.készítő].Value, (string)item.Cells[Foglalás.TableIndexes.idő].Value));
+                }
+            }
 
-            Konszignáció_Nyomtatás nyomtató = new Konszignáció_Nyomtatás(foglalás);
+             Konszignáció_Nyomtatás nyomtató = new Konszignáció_Nyomtatás(foglalások);
             nyomtató.ShowDialog();
 
             Program.RefreshData();
@@ -195,12 +201,12 @@ namespace Labor
             TextBox box_íz;
             TextBox box_illat;
 
-            Foglalás foglalás;
+            List<Foglalás> foglalások;
 
             #region Constructor
-            public Konszignáció_Nyomtatás(Foglalás _foglalás)
+            public Konszignáció_Nyomtatás(List<Foglalás> _foglalások)
             {
-                foglalás = _foglalás;
+                foglalások = _foglalások;
 
                 InitializeForm();
                 InitializeContent();
@@ -281,15 +287,17 @@ namespace Labor
                 //TODO check jó-é, gyártási idő??
                 string date = DateTime.Now.Year.ToString() + '.'+ DateTime.Now.Month + '.' + DateTime.Now.Day;
 
-                Konszignáció_Szállítólevél szállítólevél = new Konszignáció_Szállítólevél(0, box_levél.Text, foglalás.készítő, date, combo_nyelv.Text[0].ToString(), combo_megrendelők.Text, box_rendszám1.Text, box_rendszám2.Text, (byte)foglalás.hordók_száma, "??", box_szín.Text, box_íz.Text, box_illat.Text);
-
+                Konszignáció_Szállítólevél szállítólevél = new Konszignáció_Szállítólevél(0, box_levél.Text, foglalások[0].készítő, date, combo_nyelv.Text[0].ToString(), combo_megrendelők.Text, box_rendszám1.Text, box_rendszám2.Text, (byte)foglalások[0].hordók_száma, "??", box_szín.Text, box_íz.Text, box_illat.Text);
                 Program.database.Konszignáció_ÚJSzállítólevél(szállítólevél);
+                Program.database.MinőségBizonylat(foglalások[0].id);
 
-                Program.database.MinőségBizonylat(foglalás.id);
 
+
+
+                /*
                 Nyomtat.Nyomtat_Konszignáció(szállítólevél, foglalás.id);
-
                 Nyomtat.Nyomtat_MinőségBizonylat(szállítólevél, foglalás.id);
+                 */
                 Close();
             }
             #endregion
