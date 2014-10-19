@@ -267,11 +267,19 @@ namespace Labor
                     {
                         if (konszignáció.gyümölcstípusok[i].megnevezés == Program.database.Name(inner.termékkód))
                         {
-                            Node_Konszignáció.Gyümölcstípus.Adat temp = Program.database.Konszignáció_Gyümölcstípus_Adatok(inner, ++sorszám);
-                            sorok_száma++;
-                            konszignáció.gyümölcstípusok[i].adat.Add(temp);
-                            tempsuly += temp.nettó_súly;
 
+                            Node_Konszignáció.Gyümölcstípus.Adat temp = new Node_Konszignáció.Gyümölcstípus.Adat(++sorszám, Convert.ToInt32(inner.id), inner.sarzs, Convert.ToDouble(inner.mennyiség), "", inner.time);
+                            sorok_száma++;
+                            tempsuly += temp.nettó_súly;
+                            List<Vizsgálat.Azonosító> vizsgálatok = Program.database.Vizsgálatok();
+                            foreach (Vizsgálat.Azonosító item in vizsgálatok)
+                            {
+                                if (item.termékkód == inner.termékkód && item.sarzs == inner.sarzs)
+                                {
+                                    temp.hordó_típus = item.hordótípus;
+                                }
+                            }
+                            konszignáció.gyümölcstípusok[i].adat.Add(temp);
                         }
                     }
                     sorok_száma += 2;

@@ -989,12 +989,12 @@ namespace Labor
             {
                 laborconnection.Open();
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT HOTEKO, HOSARZ, HOSZAM, VIGYEV FROM L_HORDO WHERE FOSZAM = " + _foglalás.id;
+                command.CommandText = "SELECT HOTEKO, HOSARZ, HOSZAM, VIGYEV, HOQTY, HOTIME FROM L_HORDO WHERE FOSZAM = " + _foglalás.id;
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    value.Add(new Hordó(reader.GetString(0), reader.GetString(1), reader.GetString(2), _foglalás.id, reader.GetString(3)));
+                    value.Add(new Hordó(reader.GetString(0), reader.GetString(1), reader.GetString(2), _foglalás.id, reader.GetString(3),reader.GetDecimal(4),reader.GetString(5)));
                 }
 
                 command.Dispose();
@@ -1012,12 +1012,12 @@ namespace Labor
 
                 laborconnection.Open();
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT HOTEKO, HOSARZ, HOSZAM, VIGYEV, FOSZAM FROM L_HORDO WHERE HOTEKO = '" + _sarzs.termékkód + "' AND HOSARZ = '" + _sarzs.sarzs + "';";
+                command.CommandText = "SELECT HOTEKO, HOSARZ, HOSZAM, VIGYEV, FOSZAM, HOQTY, HOTIME FROM L_HORDO WHERE HOTEKO = '" + _sarzs.termékkód + "' AND HOSARZ = '" + _sarzs.sarzs + "';";
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    value.Add(new Hordó(reader.GetString(0), reader.GetString(1), reader.GetString(2), GetNullable<int>(reader, 4), reader.GetString(3)));
+                    value.Add(new Hordó(reader.GetString(0), reader.GetString(1), reader.GetString(2), GetNullable<int>(reader, 4), reader.GetString(3),reader.GetDecimal(5),reader.GetString(6)));
                 }
 
                 command.Dispose();
@@ -1035,12 +1035,12 @@ namespace Labor
             {
                 laborconnection.Open();
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT HOSZAM, FOSZAM, VIGYEV FROM L_HORDO WHERE (FOSZAM IS NULL OR FOSZAM = " + _foglalás.id + ") AND HOTEKO = '" + _sarzs.termékkód + "' AND HOSARZ = '" + _sarzs.sarzs + "';";
+                command.CommandText = "SELECT HOSZAM, FOSZAM, VIGYEV, HOQTY, HOTIME FROM L_HORDO WHERE (FOSZAM IS NULL OR FOSZAM = " + _foglalás.id + ") AND HOTEKO = '" + _sarzs.termékkód + "' AND HOSARZ = '" + _sarzs.sarzs + "';";
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    value.Add(new Hordó(_sarzs.termékkód, _sarzs.sarzs, reader.GetString(0), GetNullable<int>(reader, 1), reader.GetString(2)));
+                    value.Add(new Hordó(_sarzs.termékkód, _sarzs.sarzs, reader.GetString(0), GetNullable<int>(reader, 1), reader.GetString(2),reader.GetDecimal(3),reader.GetString(4)));
                 }
 
                 command.Dispose();
@@ -1451,13 +1451,13 @@ namespace Labor
             {
                 laborconnection.Open();
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT HOTEKO, HOSARZ, HOSZAM, VIGYEV FROM L_HORDO WHERE FOSZAM = " + _foglalás_száma;
+                command.CommandText = "SELECT HOTEKO, HOSARZ, HOSZAM, VIGYEV, HOQTY,HOTIME FROM L_HORDO WHERE FOSZAM = " + _foglalás_száma;
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
                     int c = -1;
-                    value.Add(new Hordó(reader.GetString(++c), reader.GetString(++c), reader.GetString(++c), _foglalás_száma, reader.GetString(++c)));
+                    value.Add(new Hordó(reader.GetString(++c), reader.GetString(++c), reader.GetString(++c), _foglalás_száma, reader.GetString(++c),reader.GetDecimal(++c),reader.GetString(++c)));
                 }
 
                 command.Dispose();

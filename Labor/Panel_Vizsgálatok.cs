@@ -680,8 +680,8 @@ namespace Labor
                 else
                 {
                     MessageBox.Show("Ennek a terméknek erre a gyártási évre már van ileny sarzsszámmal rekord és annak más a hordótípusa: " + hordótípus, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return;
-                    combo_hordótípus.Text = hordótípus;
-                    combo_hordótípus.Enabled = false;
+                    //combo_hordótípus.Text = hordótípus;
+                    //combo_hordótípus.Enabled = false;
                 }
                 
             }

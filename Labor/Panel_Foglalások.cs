@@ -13,14 +13,18 @@ namespace Labor
         public string id;
         public int? foglalás_száma;
         public string gyártási_év;
+        public decimal mennyiség;
+        public string time;
 
-        public Hordó(string _termékkód, string _sarzs, string _id, int? _foglalás_száma, string _gyártási_év)
+        public Hordó(string _termékkód, string _sarzs, string _id, int? _foglalás_száma, string _gyártási_év, decimal _mennyiség, string _time)
         {
             termékkód = _termékkód;
             sarzs = _sarzs;
             id = _id;
             foglalás_száma = _foglalás_száma;
             gyártási_év = _gyártási_év;
+            mennyiség = _mennyiség;
+            time = _time;
         }
 
         public struct TableIndexes
