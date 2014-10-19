@@ -658,6 +658,12 @@ namespace Labor
         /// <summary>
         /// Ha a Vizsgálat táblában ennek a vizsgálatnak már van eltérő hordótípusa, akkor az előző típust kell visszaadni, különben null!
         /// </summary>
+        /// 
+        /*
+        Ha a Vizsgálatok táblában (L_VIZSLAP) ennek a terméknek (VITEKO) erre a gyártási évre (VIGYEV) van már olyan sarzsszámmal (VISARZ) rekord
+         * mint amit most rögzít a felhasználó, és annak más a hordótípusa (VIHOTI) akkor egy ablakban küldjön egy figyelmeztetést, hogy nem egyezik meg a hordótipus. 
+         * Az ablakban jelenítse meg, hogy az előzőnek mi volt a hordótípusa.
+        */
         public string Vizsgálat_Hordótípus_Ellenőrzés(string _termékkód, string _gyártási_év, string _sarzs)
         {
             string hordó_típus = null;

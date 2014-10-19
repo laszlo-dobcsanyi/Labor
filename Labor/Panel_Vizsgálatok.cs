@@ -625,6 +625,9 @@ namespace Labor
                 box_k6_datum.Leave += MainForm.OnlyDate;
                 box_leoltas.Leave += MainForm.OnlyTime;
                 box_ertekeles.Leave += MainForm.OnlyTime;
+
+                combo_hordótípus.SelectedIndexChanged += combo_hordótípus_SelectedIndexChanged;
+
                 #endregion
 
                 #region Data
@@ -668,6 +671,19 @@ namespace Labor
 
                 Controls.Add(rendben);
                 Controls.Add(vonal);
+            }
+
+            void combo_hordótípus_SelectedIndexChanged(object sender, EventArgs e)
+            {
+                string hordótípus = Program.database.Vizsgálat_Hordótípus_Ellenőrzés(box_termékkód.Text, gyártási_év[gyártási_év.Length - 1].ToString(), box_sarzs.Text);
+                if (hordótípus == null) combo_hordótípus.Enabled = true;
+                else
+                {
+                    MessageBox.Show("Ennek a terméknek erre a gyártási évre már van ileny sarzsszámmal rekord és annak más a hordótípusa: " + hordótípus, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return;
+                    combo_hordótípus.Text = hordótípus;
+                    combo_hordótípus.Enabled = false;
+                }
+                
             }
 
             private void InitializeData()
@@ -879,13 +895,6 @@ namespace Labor
 
                         SetState(States.KÉSZ);
 
-                        string hordótípus = Program.database.Vizsgálat_Hordótípus_Ellenőrzés(box_termékkód.Text, gyártási_év[gyártási_év.Length - 1].ToString(), box_sarzs.Text);
-                        if (hordótípus == null) combo_hordótípus.Enabled = true;
-                        else
-                        {
-                            combo_hordótípus.Text = hordótípus;
-                            combo_hordótípus.Enabled = false;
-                        }
                     }
                     else
                     {
