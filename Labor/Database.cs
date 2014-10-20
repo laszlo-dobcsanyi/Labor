@@ -1570,7 +1570,7 @@ namespace Labor
                 while (reader.Read())
                 {
                     int c = -1;
-                    data = new Node_Konszignáció.Gyümölcstípus.Adat(_sorszám, Convert.ToInt32(_hordó.gyártási_év[3] + _hordó.id), _hordó.sarzs, (double)reader.GetDecimal(++c), "", reader.GetDateTime(++c).ToLongDateString());
+                    data = new Node_Konszignáció.Gyümölcstípus.Adat(_sorszám, (_hordó.gyártási_év[3] + _hordó.id), _hordó.sarzs, (double)reader.GetDecimal(++c), "", reader.GetDateTime(++c).ToLongDateString());
                 }
                 command.Dispose();
                 reader.Close();

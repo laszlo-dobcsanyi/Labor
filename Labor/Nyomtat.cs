@@ -65,13 +65,13 @@ namespace Labor
             public struct Adat
             {
                 public int sorszám;
-                public int hordó;
+                public string hordó;
                 public string sarzs;
                 public double nettó_súly;
                 public string hordó_típus;
                 public string gyártás_dátum;
 
-                public Adat(int _sorszám, int _hordó, string _sarzs, double _nettó_súly, string _hordó_típus, string _gyártás_dátum)
+                public Adat(int _sorszám, string _hordó, string _sarzs, double _nettó_súly, string _hordó_típus, string _gyártás_dátum)
                 {
                     sorszám = _sorszám;
                     hordó = _hordó;
@@ -226,51 +226,46 @@ namespace Labor
 
     public sealed class Nyomtat
     {
-        public static void Nyomtat_Konszignáció(Konszignáció_Szállítólevél _szállítólevél, int _foglalás_id)
+        public static void Nyomtat_Konszignáció(Konszignáció_Szállítólevél _szállítólevél, List<Foglalás> _foglalások)
         {
             Node_Konszignáció konszignáció = new Node_Konszignáció();
-
-            #region Data
-
-            int sorszám = 0;
-            int sorok_száma = 3;
-            double összes_súly = 0;
-            #region Termékkódok lekérdezése
-            List<Hordó> hordók = Program.database.Konszignáció_Hordók(_foglalás_id);
-
-            List<string> hordó_termékkódok = new List<string>();
-            hordó_termékkódok.Add(hordók[0].termékkód);
-            for (int i = 0; i < hordók.Count; i++)
-            {
-                bool found = false;
-                for (int j = 0; j < hordó_termékkódok.Count; j++)
-                {
-                    if (hordók[i].termékkód == hordó_termékkódok[j]) { found = true; break; }
-                }
-                if (!found) hordó_termékkódok.Add(hordók[i].termékkód);
-            }
-            #endregion
 
             konszignáció.fejléc = new Node_Konszignáció.Fejléc();
             konszignáció.fejléc.feladó = new Node_Konszignáció.Fejléc.Feladó("Marillen Gyümölcsfeldolgozó Kft", "Kiskunfélegyháza, VIII. ker. 99/A");
             konszignáció.fejléc.vevő = Program.database.Konszignáció_Vevő(_szállítólevél.vevő);
             konszignáció.fejléc.szállítólevél = new Node_Konszignáció.Fejléc.Szállítólevél(_szállítólevél);
-
             konszignáció.gyümölcstípusok = new List<Node_Konszignáció.Gyümölcstípus>();
-            foreach (string item in hordó_termékkódok) { konszignáció.gyümölcstípusok.Add(Program.database.Konszignáció_Gyümölcstípus(item)); }
 
-            List<Node_Konszignáció.Gyümölcstípus.Adat> gyümölcstípus_adat = new List<Node_Konszignáció.Gyümölcstípus.Adat>();
-            for (int i = 0; i < konszignáció.gyümölcstípusok.Count;i++ )
+            int sorok_száma = 3;
+            int sorszám = 0;
+            double összes_súly = 0;
+            foreach (Foglalás foglalás_iterator in _foglalások)
             {
-                    double tempsuly = 0;
+                összes_súly = 0;
+
+                List<Hordó> hordók = Program.database.Konszignáció_Hordók(foglalás_iterator.id);
+                List<string> hordó_termékkódok = new List<string>();
+
+                for (int i = 0; i < hordók.Count; i++)
+                {
+                    bool found = false;
+                    for (int j = 0; j < hordó_termékkódok.Count; j++)
+                    {
+                        if (hordók[i].termékkód == hordó_termékkódok[j]) { found = true; break; }
+                    }
+                    if (!found) hordó_termékkódok.Add(hordók[i].termékkód);
+                }
+
+                foreach (string item in hordó_termékkódok) { konszignáció.gyümölcstípusok.Add(Program.database.Konszignáció_Gyümölcstípus(item)); }
+
+                for (int i = 0; i < konszignáció.gyümölcstípusok.Count; i++)
+                {
                     foreach (Hordó inner in hordók)
                     {
                         if (konszignáció.gyümölcstípusok[i].megnevezés == Program.database.Name(inner.termékkód))
                         {
-
-                            Node_Konszignáció.Gyümölcstípus.Adat temp = new Node_Konszignáció.Gyümölcstípus.Adat(++sorszám, Convert.ToInt32(inner.id), inner.sarzs, Convert.ToDouble(inner.mennyiség), "", inner.time);
+                            Node_Konszignáció.Gyümölcstípus.Adat temp = new Node_Konszignáció.Gyümölcstípus.Adat(++sorszám,inner.id, inner.sarzs, Convert.ToDouble(inner.mennyiség), "", inner.time);
                             sorok_száma++;
-                            tempsuly += temp.nettó_súly;
                             List<Vizsgálat.Azonosító> vizsgálatok = Program.database.Vizsgálatok();
                             foreach (Vizsgálat.Azonosító item in vizsgálatok)
                             {
@@ -280,21 +275,21 @@ namespace Labor
                                 }
                             }
                             konszignáció.gyümölcstípusok[i].adat.Add(temp);
+                            Node_Konszignáció.Gyümölcstípus tempgy = konszignáció.gyümölcstípusok[i];
+                            tempgy.összsúly += temp.nettó_súly;
+                            konszignáció.gyümölcstípusok[i] = tempgy;
                         }
                     }
                     sorok_száma += 2;
-                    Node_Konszignáció.Gyümölcstípus tempgy = konszignáció.gyümölcstípusok[i];
-                    tempgy.összsúly = tempsuly;
-                    konszignáció.gyümölcstípusok[i] = tempgy;
+                }
             }
-            #endregion
 
-            if(!Directory.Exists("Listák"))
+            if (!Directory.Exists("Listák"))
             {
                 Directory.CreateDirectory("Listák");
             }
 
-            string filename = "Listák//" +  _szállítólevél.szlevél + ".docx";
+            string filename = "Listák//" + _szállítólevél.szlevél + ".docx";
             var document = DocX.Create(filename);
 
             var titleFormat = new Formatting();
@@ -314,7 +309,7 @@ namespace Labor
 
                 Novacode.Image img = document.AddImage(ms); // Create image.
 
-                Picture pic1 = img.CreatePicture(100,150);     // Create picture.
+                Picture pic1 = img.CreatePicture(100, 150);     // Create picture.
                 pic1.SetPictureShape(BasicShapes.cube); // Set picture shape (if needed)
 
                 title.InsertPicture(pic1, 20); // Insert picture into paragraph.
@@ -336,9 +331,9 @@ namespace Labor
             table_fejléc.Rows[0].Cells[1].Paragraphs[0].Append(konszignáció.fejléc.vevő.vevő_név);
             table_fejléc.Rows[0].Cells[1].Paragraphs[0].AppendLine(konszignáció.fejléc.vevő.vevő_név);
             table_fejléc.Rows[0].Cells[1].Paragraphs[0].AppendLine(konszignáció.fejléc.vevő.vevő_cím);
-            
+
             table_fejléc.Rows[1].Cells[1].Paragraphs[0].Append(konszignáció.fejléc.szállítólevél.rendszámok[0]);
-             table_fejléc.Rows[1].Cells[1].Paragraphs[0].AppendLine(konszignáció.fejléc.szállítólevél.rendszámok[1]);
+            table_fejléc.Rows[1].Cells[1].Paragraphs[0].AppendLine(konszignáció.fejléc.szállítólevél.rendszámok[1]);
 
             table_fejléc.Rows[0].Cells[3].Paragraphs[0].Append(konszignáció.fejléc.feladó.feladó_név);
             table_fejléc.Rows[0].Cells[3].Paragraphs[0].AppendLine(konszignáció.fejléc.feladó.feladó_cím);
@@ -378,12 +373,12 @@ namespace Labor
                     data_table.Rows[c].Cells[6].Paragraphs[0].Append(inner.gyártás_dátum);
                     c++;
                 }
-                data_table.Rows[c].Cells[1].Paragraphs[0].Append("Kajszibarackvelő összesen:").Bold();
-                data_table.Rows[c].Cells[4].Paragraphs[0].Append( outer.összsúly + " kg").Bold();
+                data_table.Rows[c].Cells[1].Paragraphs[0].Append(outer.megnevezés + " összesen:").Bold();
+                data_table.Rows[c].Cells[4].Paragraphs[0].Append(outer.összsúly + " kg").Bold();
                 összes_súly += outer.összsúly;
                 data_table.Rows[c].Cells[5].Paragraphs[0].Append("VTSZ:").Bold();
                 data_table.Rows[c].Cells[6].Paragraphs[0].Append(outer.vtsz).Bold();
-                c+=2;
+                c += 2;
             }
             data_table.Rows[c].Cells[1].Paragraphs[0].Append("Összes elszállítás:").Bold();
             data_table.Rows[c].Cells[4].Paragraphs[0].Append(összes_súly + " kg").Bold();

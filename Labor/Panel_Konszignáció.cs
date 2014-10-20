@@ -127,7 +127,7 @@ namespace Labor
 
             foreach (DataGridViewRow item in table.Rows)
             {
-                if(  (bool)item.Cells[6].Value  == true)
+                if( item.Cells[6].Value.ToString() != "" && Convert.ToBoolean(item.Cells[6].Value)== true)
                 {
                     foglalások.Add(new Foglalás((int)item.Cells[Foglalás.TableIndexes.id].Value, (string)item.Cells[Foglalás.TableIndexes.név].Value,
                 (int)item.Cells[Foglalás.TableIndexes.hordók_száma].Value, (string)item.Cells[Foglalás.TableIndexes.típus].Value,
@@ -135,8 +135,11 @@ namespace Labor
                 }
             }
 
-             Konszignáció_Nyomtatás nyomtató = new Konszignáció_Nyomtatás(foglalások);
-            nyomtató.ShowDialog();
+            if(foglalások.Count!=0)
+            {
+                Konszignáció_Nyomtatás nyomtató = new Konszignáció_Nyomtatás(foglalások);
+                nyomtató.ShowDialog();
+            }
 
             Program.RefreshData();
         }
@@ -291,11 +294,11 @@ namespace Labor
                 Program.database.Konszignáció_ÚJSzállítólevél(szállítólevél);
                 Program.database.MinőségBizonylat(foglalások[0].id);
 
+                
 
 
-
+                Nyomtat.Nyomtat_Konszignáció(szállítólevél, foglalások);
                 /*
-                Nyomtat.Nyomtat_Konszignáció(szállítólevél, foglalás.id);
                 Nyomtat.Nyomtat_MinőségBizonylat(szállítólevél, foglalás.id);
                  */
                 Close();
