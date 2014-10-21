@@ -206,7 +206,7 @@ namespace Labor
 
     public sealed class Panel_Vizsgálatok : Tokenized_Control<Vizsgálat.Azonosító>
     {
-        private TextBox box_termékkód;
+        private TextBox box_kereső;
 
         #region Constructor
         public Panel_Vizsgálatok()
@@ -235,13 +235,14 @@ namespace Labor
 
             //
 
-            Label label_zsák = new Label();
-            label_zsák.Text = "Termékkód:";
-            label_zsák.Location = new Point(table.Width + 50, 15);
-            label_zsák.AutoSize = true;
+            Label label_kereső = new Label();
+            label_kereső.Text = "Termékkód:";
+            label_kereső.Location = new Point(table.Width + 50, 15);
+            label_kereső.AutoSize = true;
 
-            box_termékkód = new TextBox();
-            box_termékkód.Location = new Point(label_zsák.Location.X + 100, label_zsák.Location.Y);
+            box_kereső = new TextBox();
+            box_kereső.Location = new Point(label_kereső.Location.X + 100, label_kereső.Location.Y);
+            box_kereső.TextChanged += box_kereső_TextChanged;
 
             //
 
@@ -264,8 +265,36 @@ namespace Labor
             Controls.Add(table);
             Controls.Add(törlés);
             Controls.Add(hozzáadás);
-            Controls.Add(label_zsák);
-            Controls.Add(box_termékkód);
+            Controls.Add(label_kereső);
+            Controls.Add(box_kereső);
+        }
+
+        void box_kereső_TextChanged(object sender, EventArgs e)
+        {
+            foreach (DataGridViewRow row in table.Rows)
+            {
+                int talált = 0;
+                for (int i = 0; i < box_kereső.Text.Length; i++)
+                {
+                    if (row.Cells[0].Value.ToString().Length < box_kereső.Text.Length)
+                    {
+                        break;
+                    }
+                    if (row.Cells[0].Value.ToString()[i] == box_kereső.Text[i] || row.Cells[0].Value.ToString()[i] == Char.ToUpper(box_kereső.Text[i]))
+                    {
+                        talált++;
+                    }
+                }
+                if (talált == box_kereső.Text.Length)
+                {
+                    foreach (DataGridViewRow row2 in table.SelectedRows)
+                        row2.Selected = false;
+
+                    table.Rows[row.Index].Selected = true;
+                    table.FirstDisplayedScrollingRowIndex = row.Index;
+                    return;
+                }
+            }
         }
 
         private DataTable CreateSource()
@@ -679,7 +708,7 @@ namespace Labor
                 if (hordótípus == null) combo_hordótípus.Enabled = true;
                 else
                 {
-                    MessageBox.Show("Ennek a terméknek erre a gyártási évre már van ileny sarzsszámmal rekord és annak más a hordótípusa: " + hordótípus, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return;
+                    MessageBox.Show("Ennek a terméknek erre a gyártási évre már van ilyen sarzsszámmal rekord és annak más a hordótípusa: " + hordótípus, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning); return;
                     //combo_hordótípus.Text = hordótípus;
                     //combo_hordótípus.Enabled = false;
                 }

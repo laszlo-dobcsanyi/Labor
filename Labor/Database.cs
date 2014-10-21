@@ -1551,51 +1551,6 @@ namespace Labor
             return name;
         }
 
-        /* <summary>
-        /// Sorszám: Folyamatos sorszám, Hordó: L_HORDO.VIGYEV+L_HORDO.HOZSSZ, Sarzs: L_HORDO.HOSARZ, Nettó súly: A SELECT által visszaadott QTY, Hordó típus: Csak a vizsgálati sorban van benne, onnan kell kivenni.
-        /// </summary>
-        public Node_Konszignáció.Gyümölcstípus.Adat Konszignáció_Gyümölcstípus_Adatok(Hordó _hordó, int _sorszám)
-        {
-            Node_Konszignáció.Gyümölcstípus.Adat data = new Node_Konszignáció.Gyümölcstípus.Adat();
-            string iProdId = "12" + _hordó.termékkód.Substring(0, 2) + "01" + _hordó.gyártási_év[3] + "_0" + _hordó.gyártási_év[3] + _hordó.id;
-
-            lock (MarillenLock)
-            {
-                //Megkeresem a hordót a TETELEK táblában:
-                marillenconnection.Open();
-                SqlCommand command = marillenconnection.CreateCommand();
-                command.CommandText = "SELECT qty, time_ FROM tetelek, cikkek WHERE (type=300) AND (prod_id LIKE" + "'" + iProdId + "'" + ") AND [cikkek].[item_nr] = '12" + _hordó.termékkód.Substring(0, 2) + "01'" + ";";
-
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    int c = -1;
-                    data = new Node_Konszignáció.Gyümölcstípus.Adat(_sorszám, (_hordó.gyártási_év[3] + _hordó.id), _hordó.sarzs, (double)reader.GetDecimal(++c), "", reader.GetDateTime(++c).ToLongDateString());
-                }
-                command.Dispose();
-                reader.Close();
-                marillenconnection.Close();
-                
-            }
-
-            lock (LaborLock)
-            {
-                laborconnection.Open();
-                SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT VIHOTI FROM L_VIZSLAP WHERE VITEKO = " + _hordó.termékkód +  " AND VISARZ = " + _hordó.sarzs;
-
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    data.hordó_típus = reader.GetString(0);
-                }
-                command.Dispose();
-                laborconnection.Close();
-            }
-
-            return data;
-        }
-         */
 
         /// <summary>
         /// a kinyomtatott foglalások szállítólevél mezőjét (L_FOGLAL.SZSZAM) kitölti a megadott értékkel hogy a következő foglalás alkalmával ne vegye őket figyelembe 
@@ -1638,6 +1593,7 @@ namespace Labor
             }
         }
         #endregion
+
 
         #region MinőségBizonylat
 

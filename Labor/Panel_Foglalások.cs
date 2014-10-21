@@ -727,7 +727,7 @@ namespace Labor
                 Label brix = MainForm.createlabel("Brix %:", termékkód.Location.X, hordószám.Location.Y + sor, this);
                 Label citromsav = MainForm.createlabel("Citromsav %:", termékkód.Location.X, brix.Location.Y + sor, this);
                 Label borkősav = MainForm.createlabel("Borkősav:", termékkód.Location.X, citromsav.Location.Y + sor, this);
-                Label ph = MainForm.createlabel("PH:", termékkód.Location.X, borkősav.Location.Y + sor, this);
+                Label ph = MainForm.createlabel("pH:", termékkód.Location.X, borkősav.Location.Y + sor, this);
                 Label bostwick = MainForm.createlabel("Bostwick cm/30sec, 20°C:", termékkód.Location.X, ph.Location.Y + sor, this);
                 Label aszkorbinsav = MainForm.createlabel("Aszkorbinsav mg/kg:", termékkód.Location.X, bostwick.Location.Y + sor, this);
                 Label nettó_töltet = MainForm.createlabel("Nettó töltet kg:", termékkód.Location.X, aszkorbinsav.Location.Y + sor, this);
