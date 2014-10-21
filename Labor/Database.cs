@@ -73,7 +73,7 @@ namespace Labor
                                 "VIMTS1 varchar(15),VIMTD1 varchar(8),VIMKS1 varchar(15),VIMKD1 varchar(8), VIMKS2 varchar(15), VIMKD2 varchar(8), VIMKS3 varchar(15), VIMKD3 varchar(8), VIMKS4 varchar(15), VIMKD4 varchar(8), " +
                                 "VIMKS5 varchar(15), VIMKD5 varchar(8), VIMKS6 varchar(15), VIMKD6 varchar(8),VILABO varchar(15));" +
 
-                            "CREATE TABLE L_HORDO(HOTEKO varchar(10), HOSARZ varchar(10), HOSZAM varchar(10), FOSZAM int, VIGYEV varchar(10), HOQTY decimal(14, 2), HOTIME char(4));" +
+                            "CREATE TABLE L_HORDO(HOTEKO varchar(10), HOSARZ varchar(10), HOSZAM varchar(10), FOSZAM int, VIGYEV varchar(10), HOQTY decimal(14, 2), HOTIME char(30));" +
 
                             "CREATE TABLE L_FOGLAL (FONEVE varchar(30), FOSZAM int IDENTITY(1,1), FODATE varchar(20), FOTIPU varchar(10), FOFENE varchar(15), FOTEKO varchar(3), FOSARZT varchar(3), FOSARZI varchar(3), FOHOSZT varchar(4)," +
                                 "FOHOSZI varchar(4), FOBRIXT DECIMAL(4,2), FOBRIXI DECIMAL(4,2), FOCSAVT DECIMAL(4,2), FOCSAVI DECIMAL(4,2), FOPEHAT DECIMAL(4,2), FOPEHAI DECIMAL(4,2), FOBOSTT DECIMAL(4,2)," +
@@ -946,14 +946,14 @@ namespace Labor
                 if (reader.Read())
                 {
                     előző = reader.GetString(0).Substring(reader.GetString(0).Length - 4);
-                    hordó_adatok.Add(new Hordó_Adat(előző, reader.GetDecimal(1), reader.GetDateTime(2).Year.ToString()));
+                    hordó_adatok.Add(new Hordó_Adat(előző, reader.GetDecimal(1), reader.GetDateTime(2).ToString()));
                     
                     while (reader.Read())
                     {
                         string szám = reader.GetString(0).Substring(reader.GetString(0).Length - 4);
                         if (szám != előző)
                         {
-                            hordó_adatok.Add(new Hordó_Adat(szám, reader.GetDecimal(1), reader.GetDateTime(2).Year.ToString()));
+                            hordó_adatok.Add(new Hordó_Adat(szám, reader.GetDecimal(1), reader.GetDateTime(2).ToString()));
                         }
 
                         előző = szám;
@@ -1551,7 +1551,7 @@ namespace Labor
             return name;
         }
 
-        /// <summary>
+        /* <summary>
         /// Sorszám: Folyamatos sorszám, Hordó: L_HORDO.VIGYEV+L_HORDO.HOZSSZ, Sarzs: L_HORDO.HOSARZ, Nettó súly: A SELECT által visszaadott QTY, Hordó típus: Csak a vizsgálati sorban van benne, onnan kell kivenni.
         /// </summary>
         public Node_Konszignáció.Gyümölcstípus.Adat Konszignáció_Gyümölcstípus_Adatok(Hordó _hordó, int _sorszám)
@@ -1594,6 +1594,48 @@ namespace Labor
             }
 
             return data;
+        }
+         */
+
+        /// <summary>
+        /// a kinyomtatott foglalások szállítólevél mezőjét (L_FOGLAL.SZSZAM) kitölti a megadott értékkel hogy a következő foglalás alkalmával ne vegye őket figyelembe 
+        /// </summary>
+        public bool Konszignáció_FoglalásokKiszállítása(int _szállítólevélszám, List<Foglalás> _foglalások)
+        {
+            string where = null;
+
+            for (int i = 0; i < _foglalások.Count; i++)
+            {
+                if(i!=_foglalások.Count-1)
+                {
+                    where += Update<int>("FOSZAM", _foglalások[i].id) + " or ";
+                }
+                else
+                {
+                    where += Update<int>("FOSZAM", _foglalások[i].id);
+                }
+            }
+
+            lock (LaborLock)
+            {
+                laborconnection.Open();
+                SqlCommand command = laborconnection.CreateCommand();
+                command.CommandText = "UPDATE L_FOGLAL SET SZSZAM='" + _szállítólevélszám + "' WHERE " + where;
+                try
+                {
+                    command.ExecuteNonQuery();
+                }
+                catch (System.Exception)
+                {
+                    return false;
+                }
+                finally
+                {
+                    command.Dispose();
+                    laborconnection.Close();
+                }
+                return true;
+            }
         }
         #endregion
 

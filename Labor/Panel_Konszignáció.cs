@@ -298,6 +298,9 @@ namespace Labor
 
 
                 Nyomtat.Nyomtat_Konszignáció(szállítólevél, foglalások);
+
+                Program.database.Konszignáció_FoglalásokKiszállítása(szállítólevél.szlevél_szám, foglalások);
+
                 /*
                 Nyomtat.Nyomtat_MinőségBizonylat(szállítólevél, foglalás.id);
                  */

@@ -264,7 +264,7 @@ namespace Labor
                     {
                         if (konszignáció.gyümölcstípusok[i].megnevezés == Program.database.Name(inner.termékkód))
                         {
-                            Node_Konszignáció.Gyümölcstípus.Adat temp = new Node_Konszignáció.Gyümölcstípus.Adat(++sorszám,inner.id, inner.sarzs, Convert.ToDouble(inner.mennyiség), "", inner.time);
+                            Node_Konszignáció.Gyümölcstípus.Adat temp = new Node_Konszignáció.Gyümölcstípus.Adat(++sorszám,inner.gyártási_év[3] + inner.id, inner.sarzs, Convert.ToDouble(inner.mennyiség), "", inner.time.Substring(0,11));
                             sorok_száma++;
                             List<Vizsgálat.Azonosító> vizsgálatok = Program.database.Vizsgálatok();
                             foreach (Vizsgálat.Azonosító item in vizsgálatok)
