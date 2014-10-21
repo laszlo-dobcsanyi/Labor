@@ -656,14 +656,8 @@ namespace Labor
         }
 
         /// <summary>
-        /// Ha a Vizsgálat táblában ennek a vizsgálatnak már van eltérő hordótípusa, akkor az előző típust kell visszaadni, különben null!
+        /// Ha a Vizsgálatok táblában (L_VIZSLAP) ennek a terméknek (VITEKO) erre a gyártási évre (VIGYEV) van már olyan sarzsszámmal (VISARZ) rekord mint amit most rögzít a felhasználó, és annak más a hordótípusa (VIHOTI) akkor egy ablakban küldjön egy figyelmeztetést, hogy nem egyezik meg a hordótipus.  Az ablakban jelenítse meg, hogy az előzőnek mi volt a hordótípusa.
         /// </summary>
-        /// 
-        /*
-        Ha a Vizsgálatok táblában (L_VIZSLAP) ennek a terméknek (VITEKO) erre a gyártási évre (VIGYEV) van már olyan sarzsszámmal (VISARZ) rekord
-         * mint amit most rögzít a felhasználó, és annak más a hordótípusa (VIHOTI) akkor egy ablakban küldjön egy figyelmeztetést, hogy nem egyezik meg a hordótipus. 
-         * Az ablakban jelenítse meg, hogy az előzőnek mi volt a hordótípusa.
-        */
         public string Vizsgálat_Hordótípus_Ellenőrzés(string _termékkód, string _gyártási_év, string _sarzs)
         {
             string hordó_típus = null;
@@ -889,7 +883,6 @@ namespace Labor
 
             return Hordók_Törlés(_azonosító);
         }
-
         #endregion
 
         #region Hordók
@@ -1389,6 +1382,63 @@ namespace Labor
                 return value;
             }
         }
+
+        public string  Foglalás_Feltöltés_Ellenőrzés(Import _import)
+        {
+            string hibák = null;
+            lock (MarillenLock)
+            {
+                string iProdId = "12" + _import.termékkód.Substring(0, 2) + "01" + _import.gyártási_év + _import.hordószám;
+                string serial_nr=null;
+                string isarz = null;
+                string vigyev = null;
+
+                marillenconnection.Open();
+
+                SqlCommand command = new SqlCommand("SELECT serial_nr, prod_id, qty FROM tetelek WHERE (type=300) AND (prod_id like "+ iProdId +  ") AND (qty > 0) ORDER BY serial_nr");
+                command.Connection = marillenconnection;
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    serial_nr = reader.GetString(0);
+                }
+
+                if( serial_nr == null )
+                {
+                    hibák = _import.termékkód + " " + _import.hordószám + " -nincs ilyen hordó";
+                    return hibák;
+                }
+                else
+                {
+                    command = new SqlCommand("SELECT propstr FROM folyoprops WHERE (tetelek.serial_nr= " + serial_nr + " ) AND (code=3)");
+                    command.Connection = marillenconnection;
+                    reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        isarz = reader.GetString(0);
+                    }
+                }
+
+                command = new SqlCommand("SELECT vigyev FROM l_vizslap WHERE (l_tetelek.viteko=" + _import.termékkód + ") AND (l_vizslap.visarz= " + isarz + ");");
+                command.Connection = marillenconnection;
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    vigyev = reader.GetString(0);
+                }
+
+                if (vigyev == null)
+                {
+                    hibák = _import.termékkód + " " + _import.hordószám + " -nincs vizsgálati lap";
+                    return hibák;
+                }
+
+                reader.Close();
+                marillenconnection.Close();
+                return hibák;
+            }
+        }
+
         #endregion
 
         #region Gyümölcsfajták
@@ -1593,7 +1643,6 @@ namespace Labor
             }
         }
         #endregion
-
 
         #region MinőségBizonylat
 

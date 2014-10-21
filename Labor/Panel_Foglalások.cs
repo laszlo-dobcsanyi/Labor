@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 
 namespace Labor
@@ -262,6 +263,21 @@ namespace Labor
         }
     }
 
+    public struct Import
+    {
+        public string sorszám;
+        public string termékkód;
+        public string gyártási_év;
+        public string hordószám;
+
+        public Import(string _sorszám, string _termékkód, string _gyártási_év, string _hordószám)
+        {
+            sorszám = _sorszám;
+            termékkód = _termékkód;
+            gyártási_év = _gyártási_év;
+            hordószám = _hordószám;
+        }
+    }
     public sealed class Panel_Foglalások : Tokenized_Control<Foglalás>
     {
         #region Constructor
@@ -308,7 +324,7 @@ namespace Labor
             feltöltés.Text = "Feltöltés";
             feltöltés.Size = new System.Drawing.Size(96, 32);
             feltöltés.Location = new Point(törlés.Location.X + törlés.Width + 16, törlés.Location.Y - törlés.Height - 16);
-            feltöltés.Click += Foglalás_Feltöltés;
+            feltöltés.Click += Foglalás_Feltöltése;
 
             Button keresés = new Button();
             keresés.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
@@ -358,8 +374,12 @@ namespace Labor
             Program.RefreshData();
         }
 
-        private void Foglalás_Feltöltés(object _sender, EventArgs _event)
+        private void Foglalás_Feltöltése(object _sender, EventArgs _event)
         {
+            Foglalás_Feltöltés foglalás_feltöltés = new Foglalás_Feltöltés();
+            foglalás_feltöltés.ShowDialog();
+
+
             Program.RefreshData();
         }
 
@@ -1341,6 +1361,98 @@ namespace Labor
                     #endregion
                 }
             }
+        }
+
+        public sealed class Foglalás_Feltöltés:Form
+        {
+            TextBox box_foglalás_neve;
+            
+            #region Declaration
+            
+            #endregion
+
+            #region Constructor
+            public Foglalás_Feltöltés()
+            {
+                Text = "Foglalás Feltöltés";
+                InitializeForm();
+                InitializeContent();
+                InitializeData();
+            }
+
+
+            private void InitializeForm()
+            {
+                ClientSize = new Size(400, 250 - 64);
+                MinimumSize = ClientSize;
+                Location = new Point(1 * (430 + 16), 0);
+                StartPosition = FormStartPosition.CenterScreen;
+                FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            }
+
+            private void InitializeContent()
+            {
+                Label foglalás_neve = MainForm.createlabel("Foglalás neve:", 8, 1 * 32, this);
+                Label foglalás_típusa = MainForm.createlabel("Foglalás típusa:", 8, 2 * 32, this);
+                Label label_file = MainForm.createlabel("File:", 8, 3 * 32, this);
+                Label készítette = MainForm.createlabel("Készítette:", 8, 4 * 32, this);
+                Label foglalás_ideje = MainForm.createlabel("Foglalás ideje:", 8, 5 * 32, this);
+
+
+                box_foglalás_neve = MainForm.createtextbox(foglalás_neve.Location.X + 128, foglalás_neve.Location.Y, 30, 240, this);
+                Label label_foglalás_típusa = MainForm.createlabel("Keresés", box_foglalás_neve.Location.X, foglalás_típusa.Location.Y, this);
+                Label label_készítette = MainForm.createlabel(Settings.LoginName, box_foglalás_neve.Location.X, készítette.Location.Y, this);
+                Label label_foglalás_ideje = MainForm.createlabel(DateTime.Now.ToString(), box_foglalás_neve.Location.X, foglalás_ideje.Location.Y, this);
+
+                Button rendben = new Button();
+                rendben.Text = "Rendben";
+                rendben.Size = new System.Drawing.Size(96, 32);
+                rendben.Location = new Point(ClientRectangle.Width - rendben.Size.Width - 16, ClientRectangle.Height - rendben.Size.Height - 16);
+
+                Button file_kiválasztás = new Button();
+                file_kiválasztás.Text = "...";
+                file_kiválasztás.Size = new System.Drawing.Size(32, 16);
+                file_kiválasztás.Location = new Point(box_foglalás_neve.Location.X,label_file.Location.Y);
+                file_kiválasztás.Click += file_kiválasztás_Click;
+
+                Controls.Add(rendben);
+                Controls.Add(file_kiválasztás);
+            }
+
+            void file_kiválasztás_Click(object sender, EventArgs e)
+            {
+                string data =null;
+                OpenFileDialog file = new OpenFileDialog();
+                if (!(System.IO.Directory.Exists(Path.GetFullPath("IMPORT"))))
+                {
+                    Directory.CreateDirectory("IMPORT");
+                }
+
+                file.InitialDirectory = Path.GetFullPath("IMPORT");
+                if (file.ShowDialog() == DialogResult.OK)
+                {
+                    System.IO.StreamReader sr = new
+                    System.IO.StreamReader(file.FileName);
+                    data = sr.ReadToEnd();
+                }
+                StreamWriter sw = File.CreateText(file.FileName.Substring(0, file.FileName.Length - 3) + "-hibalista.txt");
+
+                Import import = new Import(data.Substring(0, 3), data.Substring(8, 3), data.Substring(14, 1), data.Substring(15, 4));
+                string hiba = Program.database.Foglalás_Feltöltés_Ellenőrzés(import);
+
+            }
+           
+
+            private void InitializeData()
+            {
+
+            }
+
+            private void InitializeData(Foglalás _foglalás)
+            {
+               
+            }
+            #endregion
         }
     }
 }
