@@ -403,7 +403,7 @@ namespace Labor
 
             List<string> hibák = Program.database.Foglalás_Feltöltés_Ellenőrzés(import);
 
-            if (hibák != null)
+            if (hibák.Count != 0)
             {
                 StreamWriter sw;
                 if (file.FileName.Length == 0) { return; }
@@ -1406,6 +1406,9 @@ namespace Labor
         public sealed class Foglalás_Feltöltés:Form
         {
             TextBox box_foglalás_neve;
+            Label label_foglalás_típusa;
+                Label label_készítette ;
+                Label label_foglalás_ideje;
             #region Declaration
             
             #endregion
@@ -1437,16 +1440,29 @@ namespace Labor
                 Label foglalás_ideje = MainForm.createlabel("Foglalás ideje:", 8, 4 * 32, this);
 
                 box_foglalás_neve = MainForm.createtextbox(foglalás_neve.Location.X + 128, foglalás_neve.Location.Y, 30, 240, this);
-                Label label_foglalás_típusa = MainForm.createlabel("Feltöltés", box_foglalás_neve.Location.X, foglalás_típusa.Location.Y, this);
-                Label label_készítette = MainForm.createlabel(Settings.LoginName, box_foglalás_neve.Location.X, készítette.Location.Y, this);
-                Label label_foglalás_ideje = MainForm.createlabel(DateTime.Now.ToString(), box_foglalás_neve.Location.X, foglalás_ideje.Location.Y, this);
+                label_foglalás_típusa = MainForm.createlabel("Feltöltés", box_foglalás_neve.Location.X, foglalás_típusa.Location.Y, this);
+                label_készítette = MainForm.createlabel(Settings.LoginName, box_foglalás_neve.Location.X, készítette.Location.Y, this);
+                label_foglalás_ideje = MainForm.createlabel(DateTime.Now.ToString(), box_foglalás_neve.Location.X, foglalás_ideje.Location.Y, this);
 
                 Button rendben = new Button();
                 rendben.Text = "Rendben";
                 rendben.Size = new System.Drawing.Size(96, 32);
                 rendben.Location = new Point(ClientRectangle.Width - rendben.Size.Width - 16, ClientRectangle.Height - rendben.Size.Height - 16);
+                rendben.Click += rendben_Click;
 
                 Controls.Add(rendben);
+            }
+
+            private void rendben_Click(object sender, EventArgs e)
+            {
+
+                // SQL ellenőrzések
+                if (!Database.IsCorrectSQLText(box_foglalás_neve.Text)) { MessageBox.Show("Nem megfelelő karakter a névben!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+                if (!Program.database.Foglalás_Hozzáadás(new Foglalás(0, box_foglalás_neve.Text, 0, label_foglalás_típusa.Text, label_készítette.Text, label_foglalás_ideje.Text)))
+                { MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy létezik már ilyen foglalás?", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+
+                Close();
             }
 
 
