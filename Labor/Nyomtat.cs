@@ -64,16 +64,14 @@ namespace Labor
         {
             public struct Adat
             {
-                public int sorszám;
                 public string hordó;
                 public string sarzs;
                 public double nettó_súly;
                 public string hordó_típus;
                 public string gyártás_dátum;
 
-                public Adat(int _sorszám, string _hordó, string _sarzs, double _nettó_súly, string _hordó_típus, string _gyártás_dátum)
+                public Adat( string _hordó, string _sarzs, double _nettó_súly, string _hordó_típus, string _gyártás_dátum)
                 {
-                    sorszám = _sorszám;
                     hordó = _hordó;
                     sarzs = _sarzs;
                     nettó_súly = _nettó_súly;
@@ -237,8 +235,8 @@ namespace Labor
             konszignáció.gyümölcstípusok = new List<Node_Konszignáció.Gyümölcstípus>();
 
             int sorok_száma = 3;
-            int sorszám = 0;
             double összes_súly = 0;
+
             foreach (Foglalás foglalás_iterator in _foglalások)
             {
                 összes_súly = 0;
@@ -256,7 +254,25 @@ namespace Labor
                     if (!found) hordó_termékkódok.Add(hordók[i].termékkód);
                 }
 
-                foreach (string item in hordó_termékkódok) { konszignáció.gyümölcstípusok.Add(Program.database.Konszignáció_Gyümölcstípus(item)); }
+                //
+
+                //
+                foreach (string item in hordó_termékkódok)
+                {
+                    bool found = false;
+                    Node_Konszignáció.Gyümölcstípus temp = Program.database.Konszignáció_Gyümölcstípus(item);
+                    foreach (Node_Konszignáció.Gyümölcstípus gyitem in konszignáció.gyümölcstípusok)
+                    {
+                        if( temp.megnevezés == gyitem.megnevezés && temp.vtsz==gyitem.vtsz )
+                        {
+                            found = true;
+                        }
+                    }
+                    if (!found)
+                    {
+                        konszignáció.gyümölcstípusok.Add(Program.database.Konszignáció_Gyümölcstípus(item)); 
+                    }
+                }
 
                 for (int i = 0; i < konszignáció.gyümölcstípusok.Count; i++)
                 {
@@ -264,7 +280,7 @@ namespace Labor
                     {
                         if (konszignáció.gyümölcstípusok[i].megnevezés == Program.database.Name(inner.termékkód))
                         {
-                            Node_Konszignáció.Gyümölcstípus.Adat temp = new Node_Konszignáció.Gyümölcstípus.Adat(++sorszám,inner.gyártási_év[3] + inner.id, inner.sarzs, Convert.ToDouble(inner.mennyiség), "", inner.time.Substring(0,11));
+                            Node_Konszignáció.Gyümölcstípus.Adat temp = new Node_Konszignáció.Gyümölcstípus.Adat(inner.gyártási_év[3] + inner.id, inner.sarzs, Convert.ToDouble(inner.mennyiség), "", inner.time.Substring(0,11));
                             sorok_száma++;
                             List<Vizsgálat.Azonosító> vizsgálatok = Program.database.Vizsgálatok();
                             foreach (Vizsgálat.Azonosító item in vizsgálatok)
@@ -283,6 +299,10 @@ namespace Labor
                     sorok_száma += 2;
                 }
             }
+
+            Console.WriteLine(konszignáció);
+           // konszignáció = KonszignációRendezés(konszignáció);
+
 
             if (!Directory.Exists("Listák"))
             {
@@ -360,11 +380,13 @@ namespace Labor
 
 
             int c = 1;
+            int sorszám = 1;
             foreach (Node_Konszignáció.Gyümölcstípus outer in konszignáció.gyümölcstípusok)
             {
                 foreach (Node_Konszignáció.Gyümölcstípus.Adat inner in outer.adat)
                 {
-                    data_table.Rows[c].Cells[0].Paragraphs[0].Append(inner.sorszám.ToString() + '.');
+                    data_table.Rows[c].Cells[0].Paragraphs[0].Append(sorszám.ToString() + '.');
+                    sorszám++;
                     data_table.Rows[c].Cells[1].Paragraphs[0].Append(outer.megnevezés);
                     data_table.Rows[c].Cells[2].Paragraphs[0].Append(inner.hordó.ToString());
                     data_table.Rows[c].Cells[3].Paragraphs[0].Append(inner.sarzs);
@@ -609,6 +631,7 @@ namespace Labor
             else { value = minmax.max.ToString() ; }
             return value;
         }
+
         public static void MinBizDataTáblázatFormázása(Table _table)
         {
             _table.AutoFit = AutoFit.Contents;
@@ -656,7 +679,14 @@ namespace Labor
             }
         }
 
+        public static Node_Konszignáció KonszignációRendezés(Node_Konszignáció _eredeti)
+        {
+            Node_Konszignáció data = new Node_Konszignáció();
+            data.fejléc = _eredeti.fejléc;
 
+
+            return data;
+        }
         #endregion
     }
 }
