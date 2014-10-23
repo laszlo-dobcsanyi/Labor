@@ -1383,7 +1383,6 @@ namespace Labor
             }
         }
 
-
         public List<string> Foglalás_Feltöltés_Ellenőrzés(Import _import)
         {
             List<string> hibák = new List<string>();
@@ -1409,7 +1408,7 @@ namespace Labor
 
                     if (serial_nr == null)
                     {
-                        hibák.Add(item.termékkód + " " + item.hordószám + @" -nincs ilyen hordó");
+                        hibák.Add(item.termékkód + " " + item.hordószám + " -nincs ilyen hordó");
                     }
                     else
                     {
@@ -1439,7 +1438,7 @@ namespace Labor
 
                     if (vigyev == null)
                     {
-                        hibák.Add(item.termékkód + " " + item.hordószám + @" -nincs vizsgálati lap");
+                        hibák.Add(item.termékkód + " " + item.hordószám + " -nincs vizsgálati lap");
                     }
                     reader.Close();
                     laborconnection.Close();
@@ -1447,6 +1446,44 @@ namespace Labor
             }
             return hibák;
         }
+
+        public List<string> Foglalás_Sarzsok(Import _import)
+        {
+            List<string> sarzsok = new List<string>();
+
+            foreach (Import.Import_Hordó item in _import.import_hordók)
+            {
+                string iProdId = "12" + item.termékkód.Substring(0, 2) + "01" + item.gyártási_év + "_0" + item.gyártási_év + item.hordószám;
+                string serial_nr = null;
+
+                lock (MarillenLock)
+                {
+                    marillenconnection.Open();
+
+                    SqlCommand command = new SqlCommand("SELECT serial_nr, prod_id, qty FROM tetelek WHERE (type=300) AND (prod_id like '" + iProdId + "') AND (qty > 0) ORDER BY serial_nr");
+                    command.Connection = marillenconnection;
+                    SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        serial_nr = reader.GetString(0);
+                    }
+
+                        command = new SqlCommand("SELECT propstr FROM folyoprops WHERE (serial_nr= " + serial_nr + " ) AND (code=3)");
+                        command.Connection = marillenconnection;
+                        reader.Close();
+                        reader = command.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            sarzsok.Add( reader.GetString(0));
+                        }
+                    
+                    reader.Close();
+                    marillenconnection.Close();
+                }
+            }
+            return sarzsok;
+        }
+
 
         #endregion
 

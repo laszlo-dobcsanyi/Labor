@@ -390,7 +390,7 @@ namespace Labor
                 System.IO.StreamReader(file.FileName);
                 data = sr.ReadToEnd();
             }
-
+            
             Import import = new Import();
             import.import_hordók = new List<Import.Import_Hordó>();
             string[] splitted = data.Split('\r');
@@ -417,8 +417,9 @@ namespace Labor
             }
             else
             {
-                Foglalás_Feltöltés foglalás_feltöltés = new Foglalás_Feltöltés(file.FileName);
+                Foglalás_Feltöltés foglalás_feltöltés = new Foglalás_Feltöltés(file.FileName,import);
                 foglalás_feltöltés.ShowDialog();
+
             }
             Program.RefreshData();
         }
@@ -1405,17 +1406,19 @@ namespace Labor
 
         public sealed class Foglalás_Feltöltés:Form
         {
+            Import import;
             TextBox box_foglalás_neve;
             Label label_foglalás_típusa;
-                Label label_készítette ;
-                Label label_foglalás_ideje;
+            Label label_készítette ;
+            Label label_foglalás_ideje;
             #region Declaration
             
             #endregion
 
             #region Constructor
-            public Foglalás_Feltöltés(string _filename)
+            public Foglalás_Feltöltés(string _filename,Import _import)
             {
+                import = _import;
                 Text = "Foglalás Feltöltés";
                 InitializeForm();
                 InitializeContent(_filename);
@@ -1455,13 +1458,27 @@ namespace Labor
 
             private void rendben_Click(object sender, EventArgs e)
             {
-
                 // SQL ellenőrzések
                 if (!Database.IsCorrectSQLText(box_foglalás_neve.Text)) { MessageBox.Show("Nem megfelelő karakter a névben!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
 
                 if (!Program.database.Foglalás_Hozzáadás(new Foglalás(0, box_foglalás_neve.Text, 0, label_foglalás_típusa.Text, label_készítette.Text, label_foglalás_ideje.Text)))
                 { MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy létezik már ilyen foglalás?", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); }
 
+                List<Foglalás> foglalások = Program.database.Foglalások();
+                List<string> sarzsok = Program.database.Foglalás_Sarzsok(import);
+
+
+                foreach (Foglalás outer in foglalások)
+                {
+                    if( outer.név == box_foglalás_neve.Text)
+                    {
+                        for (int i = 0; i < import.import_hordók.Count; i++)
+                        {
+                            Program.database.Hordó_Foglalás(false, outer.id, import.import_hordók[i].termékkód, sarzsok[i], import.import_hordók[i].hordószám);
+                        }
+                    }
+                }
+                Program.RefreshData();
                 Close();
             }
 
