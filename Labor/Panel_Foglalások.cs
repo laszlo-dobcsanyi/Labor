@@ -265,18 +265,21 @@ namespace Labor
 
     public struct Import
     {
-        public string sorszám;
-        public string termékkód;
-        public string gyártási_év;
-        public string hordószám;
-
-        public Import(string _sorszám, string _termékkód, string _gyártási_év, string _hordószám)
+        public struct Import_Hordó
         {
-            sorszám = _sorszám;
-            termékkód = _termékkód;
-            gyártási_év = _gyártási_év;
-            hordószám = _hordószám;
+            public string sorszám;
+            public string termékkód;
+            public string gyártási_év;
+            public string hordószám;
+            public Import_Hordó(string _sorszám,string _termékkód, string _gyártási_év, string _hordószám )
+            {
+                termékkód = _termékkód;
+                gyártási_év = _gyártási_év;
+                hordószám = _hordószám;
+                sorszám = _sorszám;
+            }
         }
+        public List<Import_Hordó> import_hordók;
     }
     public sealed class Panel_Foglalások : Tokenized_Control<Foglalás>
     {
@@ -376,10 +379,47 @@ namespace Labor
 
         private void Foglalás_Feltöltése(object _sender, EventArgs _event)
         {
-            Foglalás_Feltöltés foglalás_feltöltés = new Foglalás_Feltöltés();
-            foglalás_feltöltés.ShowDialog();
+            string data = null;
+            OpenFileDialog file = new OpenFileDialog();
+            if (!(System.IO.Directory.Exists(Path.GetFullPath("IMPORT")))){ Directory.CreateDirectory("IMPORT");}
 
+            file.InitialDirectory = Path.GetFullPath("IMPORT");
+            if (file.ShowDialog() == DialogResult.OK)
+            {
+                System.IO.StreamReader sr = new
+                System.IO.StreamReader(file.FileName);
+                data = sr.ReadToEnd();
+            }
 
+            Import import = new Import();
+            import.import_hordók = new List<Import.Import_Hordó>();
+            string[] splitted = data.Split('\r');
+
+            for (int i = 0; i < splitted.Length - 1; i++)
+            {
+                Import.Import_Hordó hordó = new Import.Import_Hordó(splitted[i].Substring(0, 3), splitted[i].Substring(8, 3), splitted[i].Substring(14, 1), splitted[i].Substring(15, 4));
+                import.import_hordók.Add(hordó);
+            }
+
+            List<string> hibák = Program.database.Foglalás_Feltöltés_Ellenőrzés(import);
+
+            if (hibák != null)
+            {
+                StreamWriter sw;
+                if (file.FileName.Length == 0) { return; }
+                sw = File.CreateText(file.FileName.Substring(0, file.FileName.Length - 3) + "-hibalista.txt");
+                foreach (string item in hibák)
+                    sw.WriteLine(item);
+
+                sw.Close();
+                MessageBox.Show("Hibalista készült. A hibalista file neve: " + (file.FileName.Substring(0, file.FileName.Length - 3) + "-hibalista.txt"), "Hibalista", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            else
+            {
+                Foglalás_Feltöltés foglalás_feltöltés = new Foglalás_Feltöltés(file.FileName);
+                foglalás_feltöltés.ShowDialog();
+            }
             Program.RefreshData();
         }
 
@@ -1366,17 +1406,16 @@ namespace Labor
         public sealed class Foglalás_Feltöltés:Form
         {
             TextBox box_foglalás_neve;
-            
             #region Declaration
             
             #endregion
 
             #region Constructor
-            public Foglalás_Feltöltés()
+            public Foglalás_Feltöltés(string _filename)
             {
                 Text = "Foglalás Feltöltés";
                 InitializeForm();
-                InitializeContent();
+                InitializeContent(_filename);
                 InitializeData();
             }
 
@@ -1390,17 +1429,15 @@ namespace Labor
                 FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             }
 
-            private void InitializeContent()
+            private void InitializeContent(string _filename)
             {
                 Label foglalás_neve = MainForm.createlabel("Foglalás neve:", 8, 1 * 32, this);
                 Label foglalás_típusa = MainForm.createlabel("Foglalás típusa:", 8, 2 * 32, this);
-                Label label_file = MainForm.createlabel("File:", 8, 3 * 32, this);
-                Label készítette = MainForm.createlabel("Készítette:", 8, 4 * 32, this);
-                Label foglalás_ideje = MainForm.createlabel("Foglalás ideje:", 8, 5 * 32, this);
-
+                Label készítette = MainForm.createlabel("Készítette:", 8, 3 * 32, this);
+                Label foglalás_ideje = MainForm.createlabel("Foglalás ideje:", 8, 4 * 32, this);
 
                 box_foglalás_neve = MainForm.createtextbox(foglalás_neve.Location.X + 128, foglalás_neve.Location.Y, 30, 240, this);
-                Label label_foglalás_típusa = MainForm.createlabel("Keresés", box_foglalás_neve.Location.X, foglalás_típusa.Location.Y, this);
+                Label label_foglalás_típusa = MainForm.createlabel("Feltöltés", box_foglalás_neve.Location.X, foglalás_típusa.Location.Y, this);
                 Label label_készítette = MainForm.createlabel(Settings.LoginName, box_foglalás_neve.Location.X, készítette.Location.Y, this);
                 Label label_foglalás_ideje = MainForm.createlabel(DateTime.Now.ToString(), box_foglalás_neve.Location.X, foglalás_ideje.Location.Y, this);
 
@@ -1409,39 +1446,9 @@ namespace Labor
                 rendben.Size = new System.Drawing.Size(96, 32);
                 rendben.Location = new Point(ClientRectangle.Width - rendben.Size.Width - 16, ClientRectangle.Height - rendben.Size.Height - 16);
 
-                Button file_kiválasztás = new Button();
-                file_kiválasztás.Text = "...";
-                file_kiválasztás.Size = new System.Drawing.Size(32, 16);
-                file_kiválasztás.Location = new Point(box_foglalás_neve.Location.X,label_file.Location.Y);
-                file_kiválasztás.Click += file_kiválasztás_Click;
-
                 Controls.Add(rendben);
-                Controls.Add(file_kiválasztás);
             }
 
-            void file_kiválasztás_Click(object sender, EventArgs e)
-            {
-                string data =null;
-                OpenFileDialog file = new OpenFileDialog();
-                if (!(System.IO.Directory.Exists(Path.GetFullPath("IMPORT"))))
-                {
-                    Directory.CreateDirectory("IMPORT");
-                }
-
-                file.InitialDirectory = Path.GetFullPath("IMPORT");
-                if (file.ShowDialog() == DialogResult.OK)
-                {
-                    System.IO.StreamReader sr = new
-                    System.IO.StreamReader(file.FileName);
-                    data = sr.ReadToEnd();
-                }
-                StreamWriter sw = File.CreateText(file.FileName.Substring(0, file.FileName.Length - 3) + "-hibalista.txt");
-
-                Import import = new Import(data.Substring(0, 3), data.Substring(8, 3), data.Substring(14, 1), data.Substring(15, 4));
-                string hiba = Program.database.Foglalás_Feltöltés_Ellenőrzés(import);
-
-            }
-           
 
             private void InitializeData()
             {
