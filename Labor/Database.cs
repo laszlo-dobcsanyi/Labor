@@ -1562,21 +1562,22 @@ namespace Labor
             return value;
         }
 
-        public bool Konszignáció_ÚJSzállítólevél(Konszignáció_Szállítólevél _szállítólevél)
+        public int Konszignáció_ÚJSzállítólevél(Konszignáció_Szállítólevél _szállítólevél)
         {
             lock (LaborLock)
             {
+                int modified = 0;
                 SqlCommand command;
                 laborconnection.Open();
                 command = laborconnection.CreateCommand();
-                command.CommandText = "INSERT INTO L_SZLEV (SZSZSZ,SZFENE,SZDATE,SZNYEL,SZVEVO,SZGKR1,SZGKR2,FOFOHO,SZGYEV,SZSZIN,SZIZEK,SZILLA)" +  
+                command.CommandText = "INSERT INTO L_SZLEV (SZSZSZ,SZFENE,SZDATE,SZNYEL,SZVEVO,SZGKR1,SZGKR2,FOFOHO,SZGYEV,SZSZIN,SZIZEK,SZILLA) output INSERTED.SZSZAM" +  
                     " VALUES(" + "'" + _szállítólevél.szlevél +  "','" + _szállítólevél.fnév + "','" + _szállítólevél.elszállítás_ideje + "','"+ _szállítólevél.nyelv + "','" +_szállítólevél.vevő + "','"+ _szállítólevél.gépkocsi1 + "','" +_szállítólevél.gépkocsi2  + "'," + _szállítólevél.foglalt_hordó + ",'"+ _szállítólevél.gyártási_idő + "','"+ _szállítólevél.szín + "','"+ _szállítólevél.íz + "','"+ _szállítólevél.illat + "');";
-
-                try { command.ExecuteNonQuery(); }
-                catch{ return false; }
+               ;
+               try { modified = (int)command.ExecuteScalar(); }
+                catch{ return modified; }
                 finally { command.Dispose(); laborconnection.Close(); }
                 laborconnection.Close();
-                return true;
+                return modified;
             }
         }
 
