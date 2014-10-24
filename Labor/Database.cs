@@ -1748,7 +1748,49 @@ namespace Labor
             }
             return data;
         }
+        #endregion
 
+        #region Kiszállítások
+        
+        public List<Kiszállítás> Kiszállítások()
+        {
+            List<Kiszállítás> value = new List<Kiszállítás>();
+
+            lock (LaborLock)
+            {
+                laborconnection.Open();
+                SqlCommand command = laborconnection.CreateCommand();
+                command.CommandText = "SELECT szszam, szszsz,szfene,szdate, szvevo,fofoho FROM l_szlev ORDER BY szszam";
+
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    value.Add( new Kiszállítás(reader.GetInt32(0),reader.GetString(1),reader.GetString(2),reader.GetString(3),reader.GetString(4),reader.GetByte(5)));
+                }
+                command.Dispose();
+                laborconnection.Close();
+            }
+            return value;
+        }
+
+        public bool Kiszállítás_Törlés(int _szállítólevél_szám)
+        {
+            lock (LaborLock)
+            {
+                bool found = true;
+                laborconnection.Open();
+
+                SqlCommand command = laborconnection.CreateCommand();
+                command.CommandText = "UPDATE l_foglal SET szszam=NULL WHERE szszam= '" + _szállítólevél_szám + "'; DELETE FROM l_szlev WHERE szszam= '" + _szállítólevél_szám + "'";
+
+                if (command.ExecuteNonQuery() == 0) found = false;
+
+                command.Dispose();
+                laborconnection.Close();
+
+                return found;
+            }
+        }
 
         #endregion
 
@@ -1769,7 +1811,6 @@ namespace Labor
             return false;
         }
         #endregion
-
 
         #region Sufni
         private string HardcodedData()

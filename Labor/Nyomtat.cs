@@ -254,23 +254,20 @@ namespace Labor
                     if (!found) hordó_termékkódok.Add(hordók[i].termékkód);
                 }
 
-                //
-
-                //
                 foreach (string item in hordó_termékkódok)
                 {
                     bool found = false;
                     Node_Konszignáció.Gyümölcstípus temp = Program.database.Konszignáció_Gyümölcstípus(item);
                     foreach (Node_Konszignáció.Gyümölcstípus gyitem in konszignáció.gyümölcstípusok)
                     {
-                        if( temp.megnevezés == gyitem.megnevezés && temp.vtsz==gyitem.vtsz )
+                        if (temp.megnevezés == gyitem.megnevezés && temp.vtsz == gyitem.vtsz)
                         {
                             found = true;
                         }
                     }
                     if (!found)
                     {
-                        konszignáció.gyümölcstípusok.Add(Program.database.Konszignáció_Gyümölcstípus(item)); 
+                        konszignáció.gyümölcstípusok.Add(Program.database.Konszignáció_Gyümölcstípus(item));
                     }
                 }
 
@@ -280,7 +277,7 @@ namespace Labor
                     {
                         if (konszignáció.gyümölcstípusok[i].megnevezés == Program.database.Name(inner.termékkód))
                         {
-                            Node_Konszignáció.Gyümölcstípus.Adat temp = new Node_Konszignáció.Gyümölcstípus.Adat(inner.gyártási_év[3] + inner.id, inner.sarzs, Convert.ToDouble(inner.mennyiség), "", inner.time.Substring(0,11));
+                            Node_Konszignáció.Gyümölcstípus.Adat temp = new Node_Konszignáció.Gyümölcstípus.Adat(inner.gyártási_év[3] + inner.id, inner.sarzs, Convert.ToDouble(inner.mennyiség), "", inner.time.Substring(0, 11));
                             sorok_száma++;
                             List<Vizsgálat.Azonosító> vizsgálatok = Program.database.Vizsgálatok();
                             foreach (Vizsgálat.Azonosító item in vizsgálatok)
@@ -299,10 +296,6 @@ namespace Labor
                     sorok_száma += 2;
                 }
             }
-
-            Console.WriteLine(konszignáció);
-           // konszignáció = KonszignációRendezés(konszignáció);
-
 
             if (!Directory.Exists("Listák"))
             {
@@ -377,8 +370,6 @@ namespace Labor
             data_table.Rows[0].Cells[5].Paragraphs[0].Append("Hordó típus").Bold();
             data_table.Rows[0].Cells[6].Paragraphs[0].Append("Gyártás dátuma").Bold();
 
-
-
             int c = 1;
             int sorszám = 1;
             foreach (Node_Konszignáció.Gyümölcstípus outer in konszignáció.gyümölcstípusok)
@@ -405,17 +396,15 @@ namespace Labor
             data_table.Rows[c].Cells[1].Paragraphs[0].Append("Összes elszállítás:").Bold();
             data_table.Rows[c].Cells[4].Paragraphs[0].Append(összes_súly + " kg").Bold();
 
-
             KonszignációsDataTáblázatFormázás(data_table);
             document.InsertTable(data_table);
             #endregion
-
 
             try { document.Save(); }
             catch (System.Exception) { MessageBox.Show("A dokumentum meg van nyitva!"); }
         }
 
-        public static void Nyomtat_MinőségBizonylat( Konszignáció_Szállítólevél _szállítólevél, int foglalás_id )
+        public static void Nyomtat_MinőségBizonylatok( Konszignáció_Szállítólevél _szállítólevél, Foglalás _foglalás )
         {
             Node_MinőségBizonylat data = new Node_MinőségBizonylat();
 
@@ -424,7 +413,7 @@ namespace Labor
             data.szállítólevél = new Node_MinőségBizonylat.Szállítólevél(_szállítólevél);
             data.fixstring = new Node_MinőségBizonylat.FixString();
             data.felhasználó = new Node_MinőségBizonylat.Felhasználó("név", "beosztás");
-            data.vizsgálatilap = Program.database.MinőségBizonylat(foglalás_id);
+            data.vizsgálatilap = Program.database.MinőségBizonylat(_foglalás.id);
             data.tápérték = Program.database.MinBiz_Tápérték(data.vizsgálatilap.hoteko);
             #endregion
 
@@ -508,7 +497,7 @@ namespace Labor
 
             if (_szállítólevél.nyelv == "M")
             {
-                #region Sufni
+                #region Magyar Sufni
                 data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Szállítólevél szám:").Bold();
                 data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Vevő megnevezése:").Bold();
                 data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Megnevezés:").Bold();
@@ -544,7 +533,7 @@ namespace Labor
             }
             else if (_szállítólevél.nyelv == "A")
             {
-                #region Sufni
+                #region Angol Sufni
                 data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Customer name:").Bold();
                 data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Product name:").Bold();
                 data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Date of production:").Bold();
