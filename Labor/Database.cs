@@ -15,13 +15,12 @@ namespace Labor
         public Database()
         {
             string MarillenConnectionString = @"Data Source=" + Settings.server + ";Initial Catalog=" +  Settings.marillen_database + ";User ID=" +
-                Settings.LoginName + ";Password=" + Settings.Password + ";";
+                Settings.sql_username + ";Password=" + Settings.sql_password + ";";
             
             marillenconnection = new SqlConnection(MarillenConnectionString);
-            
 
             string LaborConnectionString = @"Data Source=" + Settings.server + ";Initial Catalog=" +
-                Settings.labor_database + ";User ID=" + Settings.LoginName + ";Password=" + Settings.Password + ";";
+                Settings.labor_database + ";User ID=" + Settings.sql_username + ";Password=" + Settings.sql_password + ";";
 
             laborconnection = new SqlConnection(LaborConnectionString);
 
@@ -145,6 +144,20 @@ namespace Labor
             return value.Substring(0, value.Length - 2);
         }
 
+        public static string V_Apostrophe(string[] _texts)
+        {
+            string value = null;
+            int length = 0;
+            for (int current = 0; current < _texts.Length; ++current)
+                if (_texts[current] != null)
+                {
+                    value += "'" + _texts[current] + "', ";
+                    length++;
+                }
+            if (length == 0) return null;
+            return value.Substring(0, value.Length - 2);
+        }
+
         public static string Update<T>(string _column_name, T _value)
         {
             Type type = typeof(T);
@@ -177,6 +190,16 @@ namespace Labor
         {
             if (!_reader.IsDBNull(_column)) return _reader.GetString(_column);
             return null;
+        }
+
+        public static bool VB(string _value)
+        {
+            return (_value == "I" ? true : false);
+        }
+
+        public static string BV(bool _value)
+        {
+            return (_value ? "I" : "H");
         }
 
         public static string Is(string _filter, string _value_field)
@@ -1799,17 +1822,134 @@ namespace Labor
         public List<Felhasználó> Felhasználók()
         {
             List<Felhasználó> values = new List<Felhasználó>();
+
+            lock(LaborLock)
+            {
+                laborconnection.Open();
+                SqlCommand command = laborconnection.CreateCommand();
+                command.CommandText = "SELECT FEFEN1, FEFEN2, FEBEO1, FEBEO2, FEBEKO, FEJELS FROM L_FELHASZ;";
+                try
+                {
+                    SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        values.Add(new Felhasználó(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5), null));
+                    }
+                }
+                catch (SqlException q) { MessageBox.Show("Összes Felhasználó lekérdezés hiba:\n" + q.Message); }
+
+                command.Dispose();
+                laborconnection.Close();
+            }
+
             return values;
         }
 
         public Felhasználó? Felhasználó(string _felhasználó_név)
         {
-            return null;
+            Felhasználó? felhasználó = null;
+
+            lock (LaborLock)
+            {
+                laborconnection.Open();
+                SqlCommand command = laborconnection.CreateCommand();
+                command.CommandText = "SELECT * FROM L_FELHASZ WHERE FEBEKO = '" + _felhasználó_név + "';";
+                try
+                {
+                    SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        Felhasználó.Jogosultságok.Műveletek törzsadatok = new Labor.Felhasználó.Jogosultságok.Műveletek(VB(reader.GetString(6)), VB(reader.GetString(7)), VB(reader.GetString(8)));
+                        Felhasználó.Jogosultságok.Műveletek vizsgálatok = new Labor.Felhasználó.Jogosultságok.Műveletek(VB(reader.GetString(9)), VB(reader.GetString(10)), VB(reader.GetString(11)));
+                        Felhasználó.Jogosultságok.Műveletek foglalások = new Labor.Felhasználó.Jogosultságok.Műveletek(VB(reader.GetString(12)), VB(reader.GetString(13)), VB(reader.GetString(14)));
+                        Felhasználó.Jogosultságok.Műveletek felhasználók = new Labor.Felhasználó.Jogosultságok.Műveletek(VB(reader.GetString(15)), VB(reader.GetString(16)), VB(reader.GetString(17)));
+
+                        Felhasználó.Jogosultságok jogosultságok = new Labor.Felhasználó.Jogosultságok(törzsadatok,vizsgálatok, foglalások, felhasználók, VB(reader.GetString(18)), VB(reader.GetString(19)));
+
+                        felhasználó = new Felhasználó(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), _felhasználó_név, reader.GetString(5), jogosultságok);
+                    }
+                    reader.Close();
+                }
+                catch (SqlException q) { MessageBox.Show("Felhasználó adatainak lekérdezésekor hiba:\n" + q.Message); }
+
+                command.Dispose();
+                laborconnection.Close();
+            }
+
+            return felhasználó;
+        }
+
+        public bool Felhasználó_Hozzáadás(Felhasználó _f)
+        {            
+            string data = V_Apostrophe(new string[] { _f.név1, _f.név2, _f.beosztás1, _f.beosztás2, _f.felhasználó_név, _f.jelszó,
+                BV(_f.jogosultságok.Value.törzsadatok.hozzáadás), BV(_f.jogosultságok.Value.törzsadatok.módosítás), BV(_f.jogosultságok.Value.törzsadatok.törlés),
+                BV(_f.jogosultságok.Value.vizsgálatok.hozzáadás), BV(_f.jogosultságok.Value.vizsgálatok.módosítás), BV(_f.jogosultságok.Value.vizsgálatok.törlés),
+                BV(_f.jogosultságok.Value.foglalások.hozzáadás), BV(_f.jogosultságok.Value.foglalások.módosítás), BV(_f.jogosultságok.Value.foglalások.törlés),
+                BV(_f.jogosultságok.Value.felhasználók.hozzáadás), BV(_f.jogosultságok.Value.felhasználók.módosítás), BV(_f.jogosultságok.Value.felhasználók.törlés),
+                BV(_f.jogosultságok.Value.konszignáció_nyomtatás), BV(_f.jogosultságok.Value.kiszállítás_törlés) });
+
+            lock (LaborLock)
+            {
+                laborconnection.Open();
+
+                SqlCommand command = laborconnection.CreateCommand();
+                command.CommandText = "INSERT INTO L_FELHASZ VALUES(" + data + ");";
+                try
+                {
+                    command.ExecuteNonQuery();
+                }
+                catch (SqlException q) { MessageBox.Show("Felhasználó hozzáadás hiba:\n" + q.Message); return false; }
+
+                command.Dispose();
+                laborconnection.Close();
+            }
+
+            return true;
+        }
+
+        public bool Felhasználó_Módosítás(string _felhasználó_név, Felhasználó _f)
+        {
+            string data = V(new string[] { Update<string>("FEFEN1", _f.név1),  Update<string>("FEFEN2", _f.név2), Update<string>("FEBEO1", _f.beosztás1), Update<string>("FEBEO2", _f.beosztás2),
+                Update<string>("FEJELS", _f.jelszó),
+                Update<string>("FETOHO", BV(_f.jogosultságok.Value.törzsadatok.hozzáadás)), Update<string>("FETORO", BV(_f.jogosultságok.Value.törzsadatok.módosítás)), Update<string>("FETOTO", BV(_f.jogosultságok.Value.törzsadatok.törlés)),
+                Update<string>("FEVIHO", BV(_f.jogosultságok.Value.vizsgálatok.hozzáadás)), Update<string>("FEVIRO", BV(_f.jogosultságok.Value.vizsgálatok.módosítás)), Update<string>("FEVITO", BV(_f.jogosultságok.Value.vizsgálatok.törlés)),
+                Update<string>("FEFOKE", BV(_f.jogosultságok.Value.foglalások.hozzáadás)), Update<string>("FEFOFE", BV(_f.jogosultságok.Value.foglalások.módosítás)), Update<string>("FEFOTO", BV(_f.jogosultságok.Value.foglalások.törlés)),
+                Update<string>("FEFEHO", BV(_f.jogosultságok.Value.felhasználók.hozzáadás)), Update<string>("FEFERO", BV(_f.jogosultságok.Value.felhasználók.módosítás)), Update<string>("FEFETO", BV(_f.jogosultságok.Value.felhasználók.törlés)),
+                Update<string>("FEKONY", BV(_f.jogosultságok.Value.konszignáció_nyomtatás)), Update<string>("FEKITO", BV(_f.jogosultságok.Value.kiszállítás_törlés)) });
+
+            lock (LaborLock)
+            {
+                laborconnection.Open();
+
+                SqlCommand command = laborconnection.CreateCommand();
+                command.CommandText = "UPDATE L_FELHASZ SET " + data + " WHERE FEBEKO = '" + _felhasználó_név + "';";
+                try
+                {
+                    command.ExecuteNonQuery();
+                }
+                catch (SqlException q) { MessageBox.Show("Felhasználó hozzáadás hiba:\n" + q.Message); }
+
+                command.Dispose();
+                laborconnection.Close();
+            }
+
+            return true;
         }
 
         public bool Felhasználó_Törlés(string _felhasználó_név)
         {
-            return false;
+            int value = 0;
+            lock (LaborLock)
+            {
+                laborconnection.Open();
+                SqlCommand command = laborconnection.CreateCommand();
+                command.CommandText = "DELETE FROM L_FELHASZ WHERE FEBEKO = '" + _felhasználó_név + "';";
+                value = command.ExecuteNonQuery();
+                command.Dispose();
+                laborconnection.Close();
+            }
+
+            return value == 1 ? true : false;
         }
         #endregion
 
@@ -1955,7 +2095,7 @@ namespace Labor
                     "('Laboros','Belinyák Nándor','Nándor Belinyák','Nándor Belinyák');" +
 
                 "INSERT INTO L_FELHASZ (FEFEN1, FEFEN2, FEBEO1, FEBEO2, FEBEKO, FEJELS, FETOHO, FETORO, FETOTO, FEVIHO, FEVIRO, FEVITO, FEFOKE , FEFOFE , FEFOTO , FEFEHO , FEFERO , FEFETO , FEKONY , FEKITO) " +
-                    "VALUES ('Marillen', 'Adminisztrátor', 'Admin', '', 'admin', 'admin', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y')";
+                    "VALUES ('Marillen', 'Adminisztrátor', 'Admin', '', 'admin', 'admin', 'I', 'I', 'I', 'I', 'I', 'I', 'I', 'I', 'I', 'I', 'I', 'I', 'I', 'I')";
         }
         #endregion
     }

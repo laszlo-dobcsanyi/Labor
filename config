@@ -1,16 +1,21 @@
-﻿#		Labor program konfigurációs adatai
-# SQL Szerver elérési címe
+﻿#			Labor program konfigurációs adatai
+#
+#	MSSQL Szerver elérési címe
 #server=FUSIONW7\SQLEXPRESS
-# Marillen adatbázis neve
-marillen_database=Marillen2013
-# Labor adatbázis neve
+#
+#	Marillen adatbázis neve
+#marillen_database=Marillen2013
+#	Labor adatbázis neve
 #labor_database=Labor
-# Labor program műveleteinek elmentése hibakövetés céljából // nincs implementálva :)
-#logging=
-# Az ablakok frissítési ideje
-#refresh=10
-# Belépéskor a 'Felhasználó név' kezdőértéke
-#login_name=labor
-# Felugró ablakok rendezése egymás mellé/mindig középre
-#password=labor
-manual_locations
+#
+#	SQL-felhasználó neve
+#sql_username=labor
+#	SQL-felhasználó jelszava
+#sql_password=labor
+#
+#	Az ablakok frissítési ideje
+#ui_refresh=10
+#	Belépéskor a 'Felhasználó név' kezdőértéke
+ui_login_name=admin
+#	Felugró ablakok rendezése egymás mellé/mindig középre
+ui_manual_locations

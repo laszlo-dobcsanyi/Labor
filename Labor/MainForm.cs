@@ -7,6 +7,7 @@ namespace Labor
 {
     public partial class MainForm : Form
     {
+        #region Declaration
         public Panel_Törzsadatok    törzsadatok_panel;
         public Panel_Vizsgálatok    vizsgálatok_panel;
         public Panel_Foglalások     foglalások_panel;
@@ -16,6 +17,7 @@ namespace Labor
 
         private TabControl          menu;
         private StatusStrip         status;
+        #endregion
 
         #region Constructor
         public MainForm()
@@ -44,7 +46,7 @@ namespace Labor
             ToolStripStatusLabel Verzió = new ToolStripStatusLabel("Verzió: 0.4.3-2014.10.18");
             Verzió.BorderSides = ToolStripStatusLabelBorderSides.Left;
 
-            ToolStripStatusLabel Bejelentkezve = new ToolStripStatusLabel("Bejelentkezve " + Settings.LoginName + " néven." );
+            ToolStripStatusLabel Bejelentkezve = new ToolStripStatusLabel("Bejelentkezve " + Program.felhasználó.Value.név1 + " " + Program.felhasználó.Value.név2 + " néven." );
             Bejelentkezve.BorderSides = ToolStripStatusLabelBorderSides.Left;
 
             status = new StatusStrip();
@@ -187,8 +189,6 @@ namespace Labor
             if (!DateTime.TryParseExact(box.Text, "MMdd HHmm", CultureInfo.InvariantCulture, DateTimeStyles.None, out dt)) { box.Focus(); return; }
         }
 
-
-
         public static string ConvertOrDieSQLString(string _text)
         {
             if (_text == "" || !Database.IsCorrectSQLText(_text)) return null;
@@ -198,31 +198,31 @@ namespace Labor
         public static Label createlabel(string _szöveg, int _x, int _y, Form _form)
         {
             Label label = new Label();
+            label.AutoSize = true;
             label.Text = _szöveg;
             label.Location = new Point(_x, _y);
-            label.AutoSize = true;
             _form.Controls.Add(label);
             return label;
         }
 
-        public static TextBox createtextbox(int _x, int _y, int _maxlength, int _width, Form _form)
+        public static TextBox createtextbox(int _x, int _y, int _maxlength, int _width, Form _form, CharacterCasing _casing = CharacterCasing.Upper)
         {
             TextBox box = new TextBox();
             box.Location = new Point(_x, _y - 3);
             box.MaxLength = _maxlength;
             box.Width = _width;
-            box.CharacterCasing = CharacterCasing.Upper;
+            box.CharacterCasing = _casing;
             _form.Controls.Add(box);
             return box;
         }
-        public static TextBox createtextbox(string _text, int _x, int _y, int _maxlength, int _width, Form _form)
+        public static TextBox createtextbox(string _text, int _x, int _y, int _maxlength, int _width, Form _form, CharacterCasing _casing = CharacterCasing.Upper)
         {
             TextBox box = new TextBox();
             box.Text = _text;
             box.Location = new Point(_x, _y - 3);
             box.MaxLength = _maxlength;
             box.Width = _width;
-            box.CharacterCasing = CharacterCasing.Upper;
+            box.CharacterCasing = _casing;
             _form.Controls.Add(box);
             return box;
         }
@@ -235,6 +235,16 @@ namespace Labor
             combo.DropDownStyle = ComboBoxStyle.DropDownList;
             _form.Controls.Add(combo);
             return combo;
+        }
+
+        public static CheckBox Create_CheckBox(int _x, int _y, Form _form, bool _checked = false)
+        {
+            CheckBox checkbox = new CheckBox();
+            checkbox.AutoSize = true;
+            checkbox.Location = new Point(_x, _y);
+            checkbox.CheckState = _checked ? CheckState.Checked : CheckState.Unchecked;
+            _form.Controls.Add(checkbox);
+            return checkbox;
         }
         #endregion
     }

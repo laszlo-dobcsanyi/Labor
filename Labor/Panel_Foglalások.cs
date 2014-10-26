@@ -524,7 +524,7 @@ namespace Labor
 
                 box_foglalás_neve = MainForm.createtextbox(foglalás_neve.Location.X + 128, foglalás_neve.Location.Y, 30, 240, this);
                 label_foglalás_típusa = MainForm.createlabel("Keresés", box_foglalás_neve.Location.X, foglalás_típusa.Location.Y, this);
-                label_készítette = MainForm.createlabel(Settings.LoginName, box_foglalás_neve.Location.X, készítette.Location.Y, this);
+                label_készítette = MainForm.createlabel(Program.felhasználó.Value.név1 + " " + Program.felhasználó.Value.név2, box_foglalás_neve.Location.X, készítette.Location.Y, this);
                 label_foglalás_ideje = MainForm.createlabel(DateTime.Now.ToString(), box_foglalás_neve.Location.X, foglalás_ideje.Location.Y, this);
 
                 Button rendben = new Button();
@@ -574,7 +574,7 @@ namespace Labor
                 ClientSize = new Size(430, 600);
                 MinimumSize = ClientSize;
                 Location = new Point(0 * (430 + 16), 0);
-                StartPosition = Settings.ManualLocations ? FormStartPosition.Manual : FormStartPosition.CenterParent;
+                StartPosition = Settings.ui_manual_locations ? FormStartPosition.Manual : FormStartPosition.CenterParent;
                 FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
 
                 Load += Foglalás_Szerkesztő_Load;
@@ -772,7 +772,7 @@ namespace Labor
                 ClientSize = new Size(430, 600);
                 MinimumSize = ClientSize;
                 Location = new Point(1 * (430 + 16), 0);
-                StartPosition = Settings.ManualLocations ? FormStartPosition.Manual : FormStartPosition.CenterParent;
+                StartPosition = Settings.ui_manual_locations ? FormStartPosition.Manual : FormStartPosition.CenterParent;
                 FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             }
 
@@ -1044,7 +1044,7 @@ namespace Labor
                     ClientSize = new Size(4 * 75 + 3, 600);
                     MinimumSize = ClientSize;
                     Location = new Point(2 * (430 + 16), 0);
-                    StartPosition = Settings.ManualLocations ? FormStartPosition.Manual : FormStartPosition.CenterParent;
+                    StartPosition = Settings.ui_manual_locations ? FormStartPosition.Manual : FormStartPosition.CenterParent;
                     FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
                 }
 
@@ -1181,7 +1181,7 @@ namespace Labor
                         ClientSize = new Size(4 * 75 + 3, 600);
                         MinimumSize = ClientSize;
                         Location = new Point(2 * (430 + 16), 0);
-                        StartPosition = Settings.ManualLocations ? FormStartPosition.Manual : FormStartPosition.CenterParent;
+                        StartPosition = Settings.ui_manual_locations ? FormStartPosition.Manual : FormStartPosition.CenterParent;
                         FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
                     }
 
@@ -1444,7 +1444,7 @@ namespace Labor
 
                 box_foglalás_neve = MainForm.createtextbox(foglalás_neve.Location.X + 128, foglalás_neve.Location.Y, 30, 240, this);
                 label_foglalás_típusa = MainForm.createlabel("Feltöltés", box_foglalás_neve.Location.X, foglalás_típusa.Location.Y, this);
-                label_készítette = MainForm.createlabel(Settings.LoginName, box_foglalás_neve.Location.X, készítette.Location.Y, this);
+                label_készítette = MainForm.createlabel(Program.felhasználó.Value.név1 + " " + Program.felhasználó.Value.név2, box_foglalás_neve.Location.X, készítette.Location.Y, this);
                 label_foglalás_ideje = MainForm.createlabel(DateTime.Now.ToString(), box_foglalás_neve.Location.X, foglalás_ideje.Location.Y, this);
 
                 Button rendben = new Button();

@@ -5,9 +5,10 @@ namespace Labor
 {
     public static class Program
     {
-        private static Timer    refresher;
-        public static Database  database;
-        public static MainForm  mainform;
+        public static Database database;
+        public static Felhasználó? felhasználó;
+
+        private static Timer refresher;
 
         [STAThread]
         public static void Main()
@@ -15,14 +16,27 @@ namespace Labor
             Settings.Configurate();
 
             database = new Database();
-            mainform = new MainForm();
-            
-            refresher = new Timer();
-            refresher.Interval = Settings.RefreshTime * 1000;
-            refresher.Tick += Refresher_Elapsed;
-            refresher.Start();
+            felhasználó = null;
 
-            Application.Run(mainform);
+            LoginForm loginform = new LoginForm();
+            Application.Run(loginform);
+
+            if (loginform.felhasználó != null)
+            {
+                felhasználó = loginform.felhasználó;
+                loginform.Dispose();
+
+                refresher = new Timer();
+                refresher.Interval = Settings.ui_refresh * 1000;
+                refresher.Tick += Refresher_Elapsed;
+                refresher.Start();
+
+                MainForm mainform = new MainForm();
+                Application.Run(mainform);
+
+                refresher.Dispose();
+                mainform.Dispose();
+            }
         }
 
         #region Refresh
