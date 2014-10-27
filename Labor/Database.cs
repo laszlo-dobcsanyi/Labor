@@ -82,8 +82,8 @@ namespace Labor
 
                             "CREATE TABLE L_FELHASZ (FEFEN1 varchar(15), FEFEN2 varchar(15), FEBEO1 varchar(15), FEBEO2 varchar(15), FEBEKO varchar(15) PRIMARY KEY, FEJELS varchar(15), " +
                                 "FETOHO varchar(1), FETORO varchar(1), FETOTO varchar(1),   FEVIHO varchar(1), FEVIRO varchar(1), FEVITO varchar(1), " +
-                                "FEFOKE varchar(1), FEFOFE varchar(1), FEFOTO varchar(1),   FEKONY varchar(1), " +
-                                "FEKIME varchar(1), FEKIRO varchar(1), FEKITO varchar(1),   FEFEHO varchar(1), FEFERO varchar(1), FEFETO varchar(1));" +
+                                "FEFOKE varchar(1), FEFOFE varchar(1), FEFOTO varchar(1),   FEKONY varchar(1),   FEKITO varchar(1), " +
+                                "FEFEHO varchar(1), FEFERO varchar(1), FEFETO varchar(1));" +
 
                             "CREATE TABLE L_SZLEV (SZSZAM int IDENTITY(1,1), SZSZSZ varchar(50), SZFENE varchar(50), SZDATE varchar(10), SZNYEL varchar(1), SZVEVO varchar(100), SZGKR1 varchar(7), SZGKR2 varchar(7)," +
                                 "FOFOHO tinyint, SZGYEV varchar(4), SZSZIN varchar(60), SZIZEK varchar(60), SZILLA varchar(60));" +
@@ -1864,10 +1864,9 @@ namespace Labor
                         Felhasználó.Jogosultságok.Műveletek törzsadatok = new Labor.Felhasználó.Jogosultságok.Műveletek(VB(reader.GetString(6)), VB(reader.GetString(7)), VB(reader.GetString(8)));
                         Felhasználó.Jogosultságok.Műveletek vizsgálatok = new Labor.Felhasználó.Jogosultságok.Műveletek(VB(reader.GetString(9)), VB(reader.GetString(10)), VB(reader.GetString(11)));
                         Felhasználó.Jogosultságok.Műveletek foglalások = new Labor.Felhasználó.Jogosultságok.Műveletek(VB(reader.GetString(12)), VB(reader.GetString(13)), VB(reader.GetString(14)));
-                        Felhasználó.Jogosultságok.Műveletek kiszállítás = new Labor.Felhasználó.Jogosultságok.Műveletek(VB(reader.GetString(16)), VB(reader.GetString(17)), VB(reader.GetString(18)));
-                        Felhasználó.Jogosultságok.Műveletek felhasználók = new Labor.Felhasználó.Jogosultságok.Műveletek(VB(reader.GetString(19)), VB(reader.GetString(20)), VB(reader.GetString(21)));
+                        Felhasználó.Jogosultságok.Műveletek felhasználók = new Labor.Felhasználó.Jogosultságok.Műveletek(VB(reader.GetString(17)), VB(reader.GetString(18)), VB(reader.GetString(19)));
 
-                        Felhasználó.Jogosultságok jogosultságok = new Labor.Felhasználó.Jogosultságok(törzsadatok, vizsgálatok, foglalások, VB(reader.GetString(15)), kiszállítás, felhasználók);
+                        Felhasználó.Jogosultságok jogosultságok = new Labor.Felhasználó.Jogosultságok(törzsadatok, vizsgálatok, foglalások, VB(reader.GetString(15)), VB(reader.GetString(16)), felhasználók);
 
                         felhasználó = new Felhasználó(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), _felhasználó_név, reader.GetString(5), jogosultságok);
                     }
@@ -1888,8 +1887,7 @@ namespace Labor
                 BV(_f.jogosultságok.Value.törzsadatok.hozzáadás), BV(_f.jogosultságok.Value.törzsadatok.módosítás), BV(_f.jogosultságok.Value.törzsadatok.törlés),
                 BV(_f.jogosultságok.Value.vizsgálatok.hozzáadás), BV(_f.jogosultságok.Value.vizsgálatok.módosítás), BV(_f.jogosultságok.Value.vizsgálatok.törlés),
                 BV(_f.jogosultságok.Value.foglalások.hozzáadás), BV(_f.jogosultságok.Value.foglalások.módosítás), BV(_f.jogosultságok.Value.foglalások.törlés),
-                BV(_f.jogosultságok.Value.konszignáció_nyomtatás),
-                BV(_f.jogosultságok.Value.kiszállítások.hozzáadás), BV(_f.jogosultságok.Value.kiszállítások.módosítás), BV(_f.jogosultságok.Value.kiszállítások.törlés),
+                BV(_f.jogosultságok.Value.konszignáció_nyomtatás), BV(_f.jogosultságok.Value.kiszállítások_törlés),
                 BV(_f.jogosultságok.Value.felhasználók.hozzáadás), BV(_f.jogosultságok.Value.felhasználók.módosítás), BV(_f.jogosultságok.Value.felhasználók.törlés) });
 
             lock (LaborLock)
@@ -1917,8 +1915,7 @@ namespace Labor
                 Update<string>("FETOHO", BV(_f.jogosultságok.Value.törzsadatok.hozzáadás)), Update<string>("FETORO", BV(_f.jogosultságok.Value.törzsadatok.módosítás)), Update<string>("FETOTO", BV(_f.jogosultságok.Value.törzsadatok.törlés)),
                 Update<string>("FEVIHO", BV(_f.jogosultságok.Value.vizsgálatok.hozzáadás)), Update<string>("FEVIRO", BV(_f.jogosultságok.Value.vizsgálatok.módosítás)), Update<string>("FEVITO", BV(_f.jogosultságok.Value.vizsgálatok.törlés)),
                 Update<string>("FEFOKE", BV(_f.jogosultságok.Value.foglalások.hozzáadás)), Update<string>("FEFOFE", BV(_f.jogosultságok.Value.foglalások.módosítás)), Update<string>("FEFOTO", BV(_f.jogosultságok.Value.foglalások.törlés)),
-                Update<string>("FEKONY", BV(_f.jogosultságok.Value.konszignáció_nyomtatás)),
-                Update<string>("FEKIME", BV(_f.jogosultságok.Value.kiszállítások.hozzáadás)), Update<string>("FEKIRO", BV(_f.jogosultságok.Value.kiszállítások.módosítás)), Update<string>("FEKITO", BV(_f.jogosultságok.Value.kiszállítások.törlés)),
+                Update<string>("FEKONY", BV(_f.jogosultságok.Value.konszignáció_nyomtatás)), Update<string>("FEKITO", BV(_f.jogosultságok.Value.kiszállítások_törlés)),
                 Update<string>("FEFEHO", BV(_f.jogosultságok.Value.felhasználók.hozzáadás)), Update<string>("FEFERO", BV(_f.jogosultságok.Value.felhasználók.módosítás)), Update<string>("FEFETO", BV(_f.jogosultságok.Value.felhasználók.törlés)) });
 
             lock (LaborLock)
@@ -2098,8 +2095,8 @@ namespace Labor
                     "('Laboros','Belinyák Máté','Máté Belinyák','Máté Belinyák')," +
                     "('Laboros','Belinyák Nándor','Nándor Belinyák','Nándor Belinyák');" +
 
-                "INSERT INTO L_FELHASZ (FEFEN1, FEFEN2, FEBEO1, FEBEO2, FEBEKO, FEJELS,   FETOHO, FETORO, FETOTO,   FEVIHO, FEVIRO, FEVITO,   FEFOKE, FEFOFE, FEFOTO,   FEKONY,   FEKIME,  FEKIRO, FEKITO,   FEFEHO, FEFERO, FEFETO) " +
-                    "VALUES ('Marillen', 'Adminisztrátor', 'Admin', '', 'admin', 'admin',   'I', 'I', 'I',   'I', 'I', 'I',   'I', 'I', 'I',   'I',   'I', 'I', 'I',   'I', 'I', 'I')";
+                "INSERT INTO L_FELHASZ (FEFEN1, FEFEN2, FEBEO1, FEBEO2, FEBEKO, FEJELS,   FETOHO, FETORO, FETOTO,   FEVIHO, FEVIRO, FEVITO,   FEFOKE, FEFOFE, FEFOTO,   FEKONY,   FEKITO,   FEFEHO, FEFERO, FEFETO) " +
+                    "VALUES ('Marillen', 'Adminisztrátor', 'Admin', '', 'admin', 'admin',   'I', 'I', 'I',   'I', 'I', 'I',   'I', 'I', 'I',   'I',   'I',   'I', 'I', 'I')";
         }
         #endregion
     }

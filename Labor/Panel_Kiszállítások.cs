@@ -61,17 +61,11 @@ namespace Labor
 
     public sealed class Panel_Kiszállítások : Tokenized_Control<Kiszállítás>
     {
-       // private DataTable data;
-       // private DataGridView table;
-
-
         #region Counstructor
-
         public Panel_Kiszállítások()
         {
             InitializeContent();
             InitializeTokens();
-
         }
 
         private void InitializeContent()
@@ -95,6 +89,7 @@ namespace Labor
             törlés.Text = "Törlés";
             törlés.Size = new System.Drawing.Size(96, 32);
             törlés.Location = new Point(ClientRectangle.Width - 224 - 16, ClientRectangle.Height - 32 - 16);
+            törlés.Enabled = Program.felhasználó.Value.jogosultságok.Value.kiszállítások_törlés ? true : false;
             törlés.Click += törlés_Click;
         
             Controls.Add(table);
@@ -123,8 +118,8 @@ namespace Labor
 
         protected override bool SameKeys(Kiszállítás _1, DataRow _row) { return Kiszállítás.SameKeys(_1, _row); }
 
-        #endregion
         protected override List<Kiszállítás> CurrentData() { return Program.database.Kiszállítások(); }
+        #endregion
 
         #region EventHandlers
         void törlés_Click(object sender, EventArgs e)

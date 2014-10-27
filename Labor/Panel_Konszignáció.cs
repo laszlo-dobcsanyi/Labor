@@ -87,6 +87,7 @@ namespace Labor
             nyomtatás.Text = "Nyomtatás";
             nyomtatás.Size = new System.Drawing.Size(96, 32);
             nyomtatás.Location = new Point(hordók.Location.X + hordók.Width + 16, hordók.Location.Y);
+            nyomtatás.Enabled = Program.felhasználó.Value.jogosultságok.Value.konszignáció_nyomtatás ? true : false;
             nyomtatás.Click += nyomtatás_Click;
 
             Controls.Add(table);

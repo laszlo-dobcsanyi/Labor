@@ -55,16 +55,16 @@ namespace Labor
             public Műveletek vizsgálatok;
             public Műveletek foglalások;
             public bool konszignáció_nyomtatás;
-            public Műveletek kiszállítások;
+            public bool kiszállítások_törlés;
             public Műveletek felhasználók;
 
-            public Jogosultságok(Műveletek _törzsadatok, Műveletek _vizsgálatok, Műveletek _foglalások, bool _konszignáció_nyomtatás, Műveletek _kiszállítások, Műveletek _felhasználók)
+            public Jogosultságok(Műveletek _törzsadatok, Műveletek _vizsgálatok, Műveletek _foglalások, bool _konszignáció_nyomtatás, bool _kiszállítások_törlés, Műveletek _felhasználók)
             {
                 törzsadatok = _törzsadatok;
                 vizsgálatok = _vizsgálatok;
                 foglalások = _foglalások;
                 konszignáció_nyomtatás = _konszignáció_nyomtatás;
-                kiszállítások = _kiszállítások;
+                kiszállítások_törlés = _kiszállítások_törlés;
                 felhasználók = _felhasználók;
             }
         }
@@ -121,6 +121,7 @@ namespace Labor
             törlés.Text = "Törlés";
             törlés.Size = new System.Drawing.Size(96, 32);
             törlés.Location = new Point(ClientRectangle.Width - 224 - 16, ClientRectangle.Height - 32 - 16);
+            törlés.Enabled = Program.felhasználó.Value.jogosultságok.Value.felhasználók.törlés ? true : false;
             törlés.Click += Felhasználó_Törlés;
 
             Button hozzáadás = new Button();
@@ -128,6 +129,7 @@ namespace Labor
             hozzáadás.Text = "Hozzáadás";
             hozzáadás.Size = new System.Drawing.Size(96, 32);
             hozzáadás.Location = new Point(törlés.Location.X + törlés.Width + 16, törlés.Location.Y);
+            hozzáadás.Enabled = Program.felhasználó.Value.jogosultságok.Value.felhasználók.hozzáadás ? true : false;
             hozzáadás.Click += Felhasználó_Hozzáadás;
 
             //
@@ -171,6 +173,7 @@ namespace Labor
         private void Felhasználó_Módosítás(object _sender, EventArgs _event)
         {
             if (table.SelectedRows.Count != 1) return;
+            if (!Program.felhasználó.Value.jogosultságok.Value.felhasználók.módosítás) return;
 
             Felhasználó? felhasználó = Program.database.Felhasználó((string)table.SelectedRows[0].Cells[Felhasználó.TableIndexes.felhasználó_név].Value);
             if (felhasználó == null) { MessageBox.Show("Hiba a felhasználó lekérdezésekor!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
@@ -184,6 +187,7 @@ namespace Labor
         private void Felhasználó_Törlés(object _sender, EventArgs _event)
         {
             if (table.SelectedRows.Count != 1) return;
+            if (!Program.felhasználó.Value.jogosultságok.Value.felhasználók.törlés) return;
 
             if (!Program.database.Felhasználó_Törlés((string)table.SelectedRows[0].Cells[Felhasználó.TableIndexes.felhasználó_név].Value))
                 { MessageBox.Show("Hiba a felhasználó törlésekor!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
@@ -235,9 +239,7 @@ namespace Labor
 
             private CheckBox check_konszignáció_nyomtat;
 
-            private CheckBox check_kiszállítás_megtekintés;
-            private CheckBox check_kiszállítás_rögzítés;
-            private CheckBox check_kiszállítás_törlés;
+            private CheckBox check_kiszállítások_törlés;
 
             private CheckBox check_felhasználók_új;
             private CheckBox check_felhasználók_módosít;
@@ -342,12 +344,8 @@ namespace Labor
                 check_konszignáció_nyomtat = MainForm.Create_CheckBox(columns[0], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
 
                 ++group;
-                MainForm.createlabel("Megtekintés:", 0 * 100 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                check_kiszállítás_megtekintés = MainForm.Create_CheckBox(columns[0], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                MainForm.createlabel("Rögzítés:", 1 * 100 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                check_kiszállítás_rögzítés = MainForm.Create_CheckBox(columns[1], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
                 MainForm.createlabel("Törlés:", 2 * 100 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                check_kiszállítás_törlés = MainForm.Create_CheckBox(columns[2], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
+                check_kiszállítások_törlés = MainForm.Create_CheckBox(columns[0], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
 
                 ++group;
                 MainForm.createlabel("Hozzáadás:", 0 * 100 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
@@ -396,9 +394,7 @@ namespace Labor
 
                     check_konszignáció_nyomtat.CheckState = felhasználó.Value.jogosultságok.Value.konszignáció_nyomtatás ? CheckState.Checked : CheckState.Unchecked;
 
-                    check_kiszállítás_megtekintés.CheckState = felhasználó.Value.jogosultságok.Value.kiszállítások.hozzáadás ? CheckState.Checked : CheckState.Unchecked;
-                    check_kiszállítás_rögzítés.CheckState = felhasználó.Value.jogosultságok.Value.kiszállítások.módosítás ? CheckState.Checked : CheckState.Unchecked;
-                    check_kiszállítás_törlés.CheckState = felhasználó.Value.jogosultságok.Value.kiszállítások.törlés ? CheckState.Checked : CheckState.Unchecked;
+                    check_kiszállítások_törlés.CheckState = felhasználó.Value.jogosultságok.Value.kiszállítások_törlés ? CheckState.Checked : CheckState.Unchecked;
 
                     check_felhasználók_új.CheckState = felhasználó.Value.jogosultságok.Value.felhasználók.hozzáadás ? CheckState.Checked : CheckState.Unchecked;
                     check_felhasználók_módosít.CheckState = felhasználó.Value.jogosultságok.Value.felhasználók.módosítás ? CheckState.Checked : CheckState.Unchecked;
@@ -425,9 +421,8 @@ namespace Labor
                 Felhasználó.Jogosultságok.Műveletek törzsadat = new Felhasználó.Jogosultságok.Műveletek(Checked(check_törzs_új), Checked(check_törzs_módosít), Checked(check_törzs_töröl));
                 Felhasználó.Jogosultságok.Műveletek vizsgálat = new Felhasználó.Jogosultságok.Műveletek(Checked(check_vizsgálat_új), Checked(check_vizsgálat_módosít), Checked(check_vizsgálat_töröl));
                 Felhasználó.Jogosultságok.Műveletek foglalás = new Felhasználó.Jogosultságok.Műveletek(Checked(check_foglalás_új), Checked(check_foglalás_módosít), Checked(check_foglalás_töröl));
-                Felhasználó.Jogosultságok.Műveletek kiszállítás = new Felhasználó.Jogosultságok.Műveletek(Checked(check_kiszállítás_megtekintés), Checked(check_kiszállítás_rögzítés), Checked(check_kiszállítás_törlés));
                 Felhasználó.Jogosultságok.Műveletek felhasználók = new Felhasználó.Jogosultságok.Műveletek(Checked(check_felhasználók_új), Checked(check_felhasználók_módosít), Checked(check_felhasználók_töröl));
-                Felhasználó.Jogosultságok jogosultságok = new Felhasználó.Jogosultságok(törzsadat, vizsgálat, foglalás,Checked(check_konszignáció_nyomtat), kiszállítás, felhasználók);
+                Felhasználó.Jogosultságok jogosultságok = new Felhasználó.Jogosultságok(törzsadat, vizsgálat, foglalás, Checked(check_konszignáció_nyomtat), Checked(check_kiszállítások_törlés), felhasználók);
                 Felhasználó felhasználó_adatok = new Felhasználó(box_név1.Text, box_név2.Text, box_beosztás1.Text, box_beosztás2.Text, box_felhasználó_név.Text, box_jelszó.Text, jogosultságok);
 
                 if (felhasználó == null)
