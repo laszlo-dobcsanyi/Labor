@@ -229,8 +229,8 @@ namespace Labor
             private CheckBox check_vizsgálat_módosít;
             private CheckBox check_vizsgálat_töröl;
 
-            private CheckBox check_foglalás_keresés;
-            private CheckBox check_foglalás_feltöltés;
+            private CheckBox check_foglalás_új;
+            private CheckBox check_foglalás_módosít;
             private CheckBox check_foglalás_töröl;
 
             private CheckBox check_konszignáció_nyomtat;
@@ -330,10 +330,10 @@ namespace Labor
                 check_vizsgálat_töröl = MainForm.Create_CheckBox(columns[2], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
 
                 ++group;
-                MainForm.createlabel("Keresés:", 0 * 100 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                check_foglalás_keresés = MainForm.Create_CheckBox(columns[0], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                MainForm.createlabel("Feltöltés:", 1 * 100 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                check_foglalás_feltöltés = MainForm.Create_CheckBox(columns[1], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
+                MainForm.createlabel("Hozzáadás:", 0 * 100 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
+                check_foglalás_új = MainForm.Create_CheckBox(columns[0], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
+                MainForm.createlabel("Módosítás:", 1 * 100 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
+                check_foglalás_módosít = MainForm.Create_CheckBox(columns[1], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
                 MainForm.createlabel("Törlés:", 2 * 100 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
                 check_foglalás_töröl = MainForm.Create_CheckBox(columns[2], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
 
@@ -390,8 +390,8 @@ namespace Labor
                     check_vizsgálat_módosít.CheckState = felhasználó.Value.jogosultságok.Value.vizsgálatok.módosítás ? CheckState.Checked : CheckState.Unchecked;
                     check_vizsgálat_töröl.CheckState = felhasználó.Value.jogosultságok.Value.vizsgálatok.törlés ? CheckState.Checked : CheckState.Unchecked;
 
-                    check_foglalás_keresés.CheckState = felhasználó.Value.jogosultságok.Value.foglalások.hozzáadás ? CheckState.Checked : CheckState.Unchecked;
-                    check_foglalás_feltöltés.CheckState = felhasználó.Value.jogosultságok.Value.foglalások.módosítás ? CheckState.Checked : CheckState.Unchecked;
+                    check_foglalás_új.CheckState = felhasználó.Value.jogosultságok.Value.foglalások.hozzáadás ? CheckState.Checked : CheckState.Unchecked;
+                    check_foglalás_módosít.CheckState = felhasználó.Value.jogosultságok.Value.foglalások.módosítás ? CheckState.Checked : CheckState.Unchecked;
                     check_foglalás_töröl.CheckState = felhasználó.Value.jogosultságok.Value.foglalások.törlés ? CheckState.Checked : CheckState.Unchecked;
 
                     check_konszignáció_nyomtat.CheckState = felhasználó.Value.jogosultságok.Value.konszignáció_nyomtatás ? CheckState.Checked : CheckState.Unchecked;
@@ -424,7 +424,7 @@ namespace Labor
 
                 Felhasználó.Jogosultságok.Műveletek törzsadat = new Felhasználó.Jogosultságok.Műveletek(Checked(check_törzs_új), Checked(check_törzs_módosít), Checked(check_törzs_töröl));
                 Felhasználó.Jogosultságok.Műveletek vizsgálat = new Felhasználó.Jogosultságok.Műveletek(Checked(check_vizsgálat_új), Checked(check_vizsgálat_módosít), Checked(check_vizsgálat_töröl));
-                Felhasználó.Jogosultságok.Műveletek foglalás = new Felhasználó.Jogosultságok.Műveletek(Checked(check_foglalás_keresés), Checked(check_foglalás_feltöltés), Checked(check_foglalás_töröl));
+                Felhasználó.Jogosultságok.Műveletek foglalás = new Felhasználó.Jogosultságok.Műveletek(Checked(check_foglalás_új), Checked(check_foglalás_módosít), Checked(check_foglalás_töröl));
                 Felhasználó.Jogosultságok.Műveletek kiszállítás = new Felhasználó.Jogosultságok.Műveletek(Checked(check_kiszállítás_megtekintés), Checked(check_kiszállítás_rögzítés), Checked(check_kiszállítás_törlés));
                 Felhasználó.Jogosultságok.Műveletek felhasználók = new Felhasználó.Jogosultságok.Műveletek(Checked(check_felhasználók_új), Checked(check_felhasználók_módosít), Checked(check_felhasználók_töröl));
                 Felhasználó.Jogosultságok jogosultságok = new Felhasználó.Jogosultságok(törzsadat, vizsgálat, foglalás,Checked(check_konszignáció_nyomtat), kiszállítás, felhasználók);

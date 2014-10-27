@@ -281,6 +281,7 @@ namespace Labor
         }
         public List<Import_Hordó> import_hordók;
     }
+
     public sealed class Panel_Foglalások : Tokenized_Control<Foglalás>
     {
         #region Constructor
@@ -313,6 +314,7 @@ namespace Labor
             törlés.Text = "Törlés";
             törlés.Size = new System.Drawing.Size(96, 32);
             törlés.Location = new Point(ClientRectangle.Width - 224 - 16, ClientRectangle.Height - 32 - 16);
+            törlés.Enabled = Program.felhasználó.Value.jogosultságok.Value.foglalások.törlés ? true : false;
             törlés.Click += Foglalás_Törlés;
 
             Button hozzáadás = new Button();
@@ -320,6 +322,7 @@ namespace Labor
             hozzáadás.Text = "Hozzáadás";
             hozzáadás.Size = new System.Drawing.Size(96, 32);
             hozzáadás.Location = new Point(törlés.Location.X + törlés.Width + 16, törlés.Location.Y);
+            hozzáadás.Enabled = Program.felhasználó.Value.jogosultságok.Value.foglalások.hozzáadás ? true : false;
             hozzáadás.Click += Foglalás_Hozzáadás;
 
             Button feltöltés = new Button();
@@ -327,6 +330,7 @@ namespace Labor
             feltöltés.Text = "Feltöltés";
             feltöltés.Size = new System.Drawing.Size(96, 32);
             feltöltés.Location = new Point(törlés.Location.X + törlés.Width + 16, törlés.Location.Y - törlés.Height - 16);
+            feltöltés.Enabled = Program.felhasználó.Value.jogosultságok.Value.foglalások.hozzáadás ? true : false;
             feltöltés.Click += Foglalás_Feltöltése;
 
             Button keresés = new Button();
@@ -390,6 +394,7 @@ namespace Labor
                 System.IO.StreamReader(file.FileName);
                 data = sr.ReadToEnd();
             }
+            else return;
             
             Import import = new Import();
             import.import_hordók = new List<Import.Import_Hordó>();
@@ -442,6 +447,7 @@ namespace Labor
         {
             if (table.SelectedRows.Count == 1) { if (MessageBox.Show("Biztosan törli a kiválasztott foglalást?", "Megerősítés", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return; }
             else if (table.SelectedRows.Count != 0) { if (MessageBox.Show("Biztosan törli a kiválasztott foglalást?", "Megerősítés", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return; }
+            if (!Program.felhasználó.Value.jogosultságok.Value.foglalások.törlés) return;
 
             foreach (DataGridViewRow selected in table.SelectedRows)
             {
@@ -604,6 +610,7 @@ namespace Labor
                 törlés.Text = "Törlés";
                 törlés.Size = new System.Drawing.Size(96, 32);
                 törlés.Location = new Point(ClientRectangle.Width - törlés.Size.Width - 16, ClientRectangle.Height - törlés.Size.Height - 2 * 16);
+                törlés.Enabled = Program.felhasználó.Value.jogosultságok.Value.foglalások.módosítás ? true : false;
                 törlés.Click += Hordó_Törlés;
 
                 Button keresés = new Button();
@@ -667,6 +674,8 @@ namespace Labor
 
             private void Foglalás_Szerkesztő_FormClosing(object _sender, FormClosingEventArgs _event)
             {
+                if (!Program.felhasználó.Value.jogosultságok.Value.foglalások.módosítás) return;
+
                 if (foglalás.név != box_foglalás_neve.Text )
                 {
                     // SQL ellenőrzések
@@ -679,6 +688,7 @@ namespace Labor
             private void Hordó_Törlés(object _sender, EventArgs _event)
             {
                 if (table.SelectedRows.Count != 1) return;
+                if (!Program.felhasználó.Value.jogosultságok.Value.foglalások.törlés) return;
 
                 if (!Program.database.Hordó_Foglalás(true, foglalás.id, (string)table.SelectedRows[0].Cells[Hordó.TableIndexes.termékkód].Value,
                     (string)table.SelectedRows[0].Cells[Hordó.TableIndexes.sarzs].Value, (string)table.SelectedRows[0].Cells[Hordó.TableIndexes.id].Value))
@@ -1221,6 +1231,7 @@ namespace Labor
                             kijelölés_váltás.Text = "Kijelölés váltás";
                             kijelölés_váltás.Size = new System.Drawing.Size(128, 32);
                             kijelölés_váltás.Location = new Point(ClientRectangle.Width - kijelölés_váltás.Size.Width - rendben.Width - 32, ClientRectangle.Height - kijelölés_váltás.Size.Height - 16);
+                            kijelölés_váltás.Enabled = Program.felhasználó.Value.jogosultságok.Value.foglalások.módosítás ? true : false;
                             kijelölés_váltás.Click += kijelölés_váltás_Click;
 
                             Label label_foglalt_hordó = new Label();
@@ -1253,7 +1264,7 @@ namespace Labor
                         if (foglalás != null)
                         {
                             DataColumn column = new DataColumn("Foglalva", System.Type.GetType("System.Boolean"));
-                            column.ReadOnly = false;
+                            column.ReadOnly = Program.felhasználó.Value.jogosultságok.Value.foglalások.módosítás ? false : true;
                             data.Columns.Add(column);
                         }
                         else
@@ -1323,7 +1334,7 @@ namespace Labor
                         table.Columns[1].Width = 100;
                         table.Columns[1].ReadOnly = true;
                         table.Columns[2].Width = 100;
-                        table.Columns[2].ReadOnly = (foglalás == null) ? true : false;
+                        //table.Columns[2].ReadOnly = (foglalás == null) ? true : false;
                     }
 
                     private void Hordók_Számolás()
@@ -1404,7 +1415,7 @@ namespace Labor
             }
         }
 
-        public sealed class Foglalás_Feltöltés:Form
+        public sealed class Foglalás_Feltöltés : Form
         {
             Import import;
             TextBox box_foglalás_neve;
