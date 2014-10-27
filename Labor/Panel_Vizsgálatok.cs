@@ -251,6 +251,7 @@ namespace Labor
             törlés.Text = "Törlés";
             törlés.Size = new System.Drawing.Size(96, 32);
             törlés.Location = new Point(ClientRectangle.Width - 224 - 16, ClientRectangle.Height - 32 - 16);
+            törlés.Enabled = Program.felhasználó.Value.jogosultságok.Value.vizsgálatok.törlés ? true : false;
             törlés.Click += Vizsgálat_Törlés;
 
             Button hozzáadás = new Button();
@@ -258,6 +259,7 @@ namespace Labor
             hozzáadás.Text = "Hozzáadás";
             hozzáadás.Size = new System.Drawing.Size(96, 32);
             hozzáadás.Location = new Point(törlés.Location.X + törlés.Width + 16, törlés.Location.Y);
+            hozzáadás.Enabled = Program.felhasználó.Value.jogosultságok.Value.vizsgálatok.hozzáadás ? true : false;
             hozzáadás.Click += Vizsgálat_Hozzáadás;
 
             //
@@ -336,6 +338,7 @@ namespace Labor
         private void Vizsgálat_Módosítás(object _sender, EventArgs _event)
         {
             if (table.SelectedRows.Count != 1) return;
+            if (!Program.felhasználó.Value.jogosultságok.Value.vizsgálatok.módosítás) return;
 
             Vizsgálat.Azonosító azonosító = new Vizsgálat.Azonosító((string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.termékkód].Value,
                     (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.sarzs].Value, (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.hordószám].Value,
@@ -356,6 +359,8 @@ namespace Labor
         {
             if (table.SelectedRows.Count == 1) { if (MessageBox.Show("Biztosan törli a kiválasztott vizsgálatot?", "Megerősítés", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return; }
             else if (table.SelectedRows.Count != 0) { if (MessageBox.Show("Biztosan törli a kiválasztott vizsgálatokat?", "Megerősítés", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return; }
+            if (!Program.felhasználó.Value.jogosultságok.Value.vizsgálatok.törlés) return;
+            
             foreach (DataGridViewRow selected in table.SelectedRows)
             {
 
