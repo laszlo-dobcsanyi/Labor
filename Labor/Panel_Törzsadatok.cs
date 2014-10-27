@@ -104,6 +104,7 @@ namespace Labor
             törlés.Text = "Törlés";
             törlés.Size = new System.Drawing.Size(96, 32);
             törlés.Location = new Point(ClientRectangle.Width - 224 - 16, ClientRectangle.Height - 32 - 16);
+            törlés.Enabled = Program.felhasználó.Value.jogosultságok.Value.törzsadatok.törlés ? true : false;
             törlés.Click += TörzsadatTörlés;
 
             Button hozzáadás = new Button();
@@ -111,6 +112,7 @@ namespace Labor
             hozzáadás.Text = "Hozzáadás";
             hozzáadás.Size = new System.Drawing.Size(96, 32);
             hozzáadás.Location = new Point(törlés.Location.X + törlés.Width + 16, törlés.Location.Y);
+            hozzáadás.Enabled = Program.felhasználó.Value.jogosultságok.Value.törzsadatok.hozzáadás ? true : false;
             hozzáadás.Click += hozzáadás_Click;
 
             Controls.Add(table);
@@ -146,6 +148,8 @@ namespace Labor
         {
             if (table.SelectedRows.Count != 1) return;
 
+            if (!Program.felhasználó.Value.jogosultságok.Value.törzsadatok.módosítás) return;
+
             Form_Törzsadatok form = new Form_Törzsadatok(new Törzsadat(combo_törzsadat.SelectedItem.ToString(),
                 (string)table.SelectedRows[0].Cells[0].Value, (string)table.SelectedRows[0].Cells[1].Value, (string)table.SelectedRows[0].Cells[2].Value));
             form.ShowDialog();
@@ -155,6 +159,8 @@ namespace Labor
 
         private void TörzsadatTörlés(object _sender, EventArgs _event)
         {
+            if (!Program.felhasználó.Value.jogosultságok.Value.törzsadatok.törlés) return;
+
             if (table.SelectedRows.Count == 1) { if (MessageBox.Show("Biztosan törli a kiválasztott törzsadatot?", "Megerősítés", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return; }
             else if (table.SelectedRows.Count != 0) { if (MessageBox.Show("Biztosan törli a kiválasztott törzsadatokat?", "Megerősítés", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return; }
             foreach (DataGridViewRow selected in table.SelectedRows)
