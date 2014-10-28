@@ -235,18 +235,34 @@ namespace Labor
                 Label label_szín;
                 Label label_íz;
                 Label label_illat;
+                Label vonal = new Label();
+                vonal.Height = 3;
+                vonal.Width = 1000;
+                vonal.BackColor = Color.Gray;
+
+                Label vonal2 = new Label();
+                vonal2.Height = 3;
+                vonal2.Width = 1000;
+                vonal2.BackColor = Color.Gray;
 
                 Button rendben;
 
                 label_nyelv = MainForm.createlabel("Nyelv:", 16, 16 + 0 * 32, this);
+                vonal.Location = new Point(label_nyelv.Location.X - label_nyelv.Width, label_nyelv.Location.Y + 32);
+                Controls.Add(vonal);
 
-                label_vevő = MainForm.createlabel("Vevő:", 16, 16 + 1 * 32, this);
-                label_gépkocsi = MainForm.createlabel("Gépkocsi:", 16, 16 + 2 * 32, this);
-                label_szállítólevél = MainForm.createlabel("Szállítólevél:", 16, 16 + 3 * 32, this);
-                label_gyártási_idő = MainForm.createlabel("Gyártási idő:", 16, 16 + 4 * 32, this);
-                label_szín = MainForm.createlabel("Szín:", 16, 16 + 5 * 32, this);
-                label_íz = MainForm.createlabel("Íz:", 16, 16 + 6 * 32, this);
-                label_illat = MainForm.createlabel("Illat:", 16, 16 + 7 * 32, this);
+                label_vevő = MainForm.createlabel("Vevő:", 16, 32 + 1 * 32, this);
+                label_gépkocsi = MainForm.createlabel("Gépkocsi:", 16, 32 + 2 * 32, this);
+                label_szállítólevél = MainForm.createlabel("Szállítólevél:", 16, 32 + 3 * 32, this);
+
+                vonal2.Location = new Point(label_szállítólevél.Location.X - label_szállítólevél.Width, label_szállítólevél.Location.Y + 32);
+                Controls.Add(vonal2);
+
+
+                label_gyártási_idő = MainForm.createlabel("Gyártási idő:", 16, 32 + 5 * 32, this);
+                label_szín = MainForm.createlabel("Szín:", 16, 32 + 6 * 32, this);
+                label_íz = MainForm.createlabel("Íz:", 16, 32 + 7 * 32, this);
+                label_illat = MainForm.createlabel("Illat:", 16, 32 + 8 * 32, this);
 
                 combo_nyelv = MainForm.createcombobox(label_nyelv.Location.X + 48 + label_nyelv.Width, label_nyelv.Location.Y, 200, this);
                 combo_megrendelők = MainForm.createcombobox(combo_nyelv.Location.X, label_vevő.Location.Y, 200, this);
@@ -291,7 +307,7 @@ namespace Labor
                 //TODO check jó-é, gyártási idő??
                 string date = DateTime.Now.Year.ToString() + '.'+ DateTime.Now.Month + '.' + DateTime.Now.Day;
 
-                Konszignáció_Szállítólevél szállítólevél = new Konszignáció_Szállítólevél(0, box_levél.Text, foglalások[0].készítő, date, combo_nyelv.Text[0].ToString(), combo_megrendelők.Text, box_rendszám1.Text, box_rendszám2.Text, (byte)foglalások[0].hordók_száma, "??", box_szín.Text, box_íz.Text, box_illat.Text);
+                Konszignáció_Szállítólevél szállítólevél = new Konszignáció_Szállítólevél(0, box_levél.Text, foglalások[0].készítő, date, combo_nyelv.Text[0].ToString(), combo_megrendelők.Text, box_rendszám1.Text, box_rendszám2.Text, (byte)foglalások[0].hordók_száma, box_gyártási_idő.Text, box_szín.Text, box_íz.Text, box_illat.Text);
                 Nyomtat.Nyomtat_Konszignáció(szállítólevél, foglalások);
                 //Program.database.Konszignáció_FoglalásokKiszállítása(szállítólevél.szlevél_szám, foglalások);
                  szállítólevél.szlevél_szám =  Convert.ToByte( Program.database.Konszignáció_ÚJSzállítólevél(szállítólevél));
