@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -355,13 +356,14 @@ namespace Labor
             table_fejléc.Rows[0].Cells[3].Paragraphs[0].AppendLine(konszignáció.fejléc.feladó.feladó_cím);
 
 
-           // KonszignációsFejlécTáblázatFormázása(table_fejléc);
+            KonszignációsFejlécTáblázatFormázása(table_fejléc);
             document.InsertTable(table_fejléc);
             #endregion
 
             #region Data_Table
             Paragraph paragraph_data_table = document.InsertParagraph();
 
+            
             Table data_table = document.AddTable(sorok_száma, 7);
             data_table.Rows[0].Cells[0].Paragraphs[0].Append("S.Sz.").Bold();
             data_table.Rows[0].Cells[1].Paragraphs[0].Append("Megnevezés").Bold();
@@ -370,16 +372,20 @@ namespace Labor
             data_table.Rows[0].Cells[4].Paragraphs[0].Append("Nettó súly").Bold();
             data_table.Rows[0].Cells[5].Paragraphs[0].Append("Hordó típus").Bold();
             data_table.Rows[0].Cells[6].Paragraphs[0].Append("Gyártás dátuma").Bold();
+            RegexOptions options = RegexOptions.None;
+            Regex regex = new Regex(@"[ ]{2,}", options);
 
             int c = 1;
             int sorszám = 1;
             foreach (Node_Konszignáció.Gyümölcstípus outer in konszignáció.gyümölcstípusok)
             {
+                    string temp = regex.Replace(outer.megnevezés, @" ");
                 foreach (Node_Konszignáció.Gyümölcstípus.Adat inner in outer.adat)
                 {
+
                     data_table.Rows[c].Cells[0].Paragraphs[0].Append(sorszám.ToString() + '.');
                     sorszám++;
-                    data_table.Rows[c].Cells[1].Paragraphs[0].Append(outer.megnevezés);
+                    data_table.Rows[c].Cells[1].Paragraphs[0].Append(temp);
                     data_table.Rows[c].Cells[2].Paragraphs[0].Append(inner.hordó.ToString());
                     data_table.Rows[c].Cells[3].Paragraphs[0].Append(inner.sarzs);
                     data_table.Rows[c].Cells[4].Paragraphs[0].Append(inner.nettó_súly + " kg");
@@ -387,7 +393,7 @@ namespace Labor
                     data_table.Rows[c].Cells[6].Paragraphs[0].Append(inner.gyártás_dátum);
                     c++;
                 }
-                data_table.Rows[c].Cells[1].Paragraphs[0].Append(outer.megnevezés + " összesen:").Bold();
+                data_table.Rows[c].Cells[1].Paragraphs[0].Append( temp + "összesen:").Bold();
                 data_table.Rows[c].Cells[4].Paragraphs[0].Append(outer.összsúly + " kg").Bold();
                 összes_súly += outer.összsúly;
                 data_table.Rows[c].Cells[5].Paragraphs[0].Append("VTSZ:").Bold();
@@ -664,6 +670,7 @@ namespace Labor
             _table.SetBorder(TableBorderType.Top, c);
             _table.SetBorder(TableBorderType.Left, c);
             _table.SetBorder(TableBorderType.Right, c);
+             
         }
 
         public static void KonszignációsDataTáblázatFormázás(Table _table)
