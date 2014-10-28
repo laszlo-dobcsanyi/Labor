@@ -235,18 +235,34 @@ namespace Labor
                 Label label_szín;
                 Label label_íz;
                 Label label_illat;
+                Label vonal = new Label();
+                vonal.Height = 3;
+                vonal.Width = 1000;
+                vonal.BackColor = Color.Gray;
+
+                Label vonal2 = new Label();
+                vonal2.Height = 3;
+                vonal2.Width = 1000;
+                vonal2.BackColor = Color.Gray;
 
                 Button rendben;
 
                 label_nyelv = MainForm.createlabel("Nyelv:", 16, 16 + 0 * 32, this);
+                vonal.Location = new Point(label_nyelv.Location.X - label_nyelv.Width, label_nyelv.Location.Y + 32);
+                Controls.Add(vonal);
 
-                label_vevő = MainForm.createlabel("Vevő:", 16, 16 + 1 * 32, this);
-                label_gépkocsi = MainForm.createlabel("Gépkocsi:", 16, 16 + 2 * 32, this);
-                label_szállítólevél = MainForm.createlabel("Szállítólevél:", 16, 16 + 3 * 32, this);
-                label_gyártási_idő = MainForm.createlabel("Gyártási idő:", 16, 16 + 4 * 32, this);
-                label_szín = MainForm.createlabel("Szín:", 16, 16 + 5 * 32, this);
-                label_íz = MainForm.createlabel("Íz:", 16, 16 + 6 * 32, this);
-                label_illat = MainForm.createlabel("Illat:", 16, 16 + 7 * 32, this);
+                label_vevő = MainForm.createlabel("Vevő:", 16, 32 + 1 * 32, this);
+                label_gépkocsi = MainForm.createlabel("Gépkocsi:", 16, 32 + 2 * 32, this);
+                label_szállítólevél = MainForm.createlabel("Szállítólevél:", 16, 32 + 3 * 32, this);
+
+                vonal2.Location = new Point(label_szállítólevél.Location.X - label_szállítólevél.Width, label_szállítólevél.Location.Y + 32);
+                Controls.Add(vonal2);
+
+
+                label_gyártási_idő = MainForm.createlabel("Gyártási idő:", 16, 32 + 5 * 32, this);
+                label_szín = MainForm.createlabel("Szín:", 16, 32 + 6 * 32, this);
+                label_íz = MainForm.createlabel("Íz:", 16, 32 + 7 * 32, this);
+                label_illat = MainForm.createlabel("Illat:", 16, 32 + 8 * 32, this);
 
                 combo_nyelv = MainForm.createcombobox(label_nyelv.Location.X + 48 + label_nyelv.Width, label_nyelv.Location.Y, 200, this);
                 combo_megrendelők = MainForm.createcombobox(combo_nyelv.Location.X, label_vevő.Location.Y, 200, this);
