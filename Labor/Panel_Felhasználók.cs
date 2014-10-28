@@ -344,7 +344,7 @@ namespace Labor
                 check_konszignáció_nyomtat = MainForm.Create_CheckBox(columns[0], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
 
                 ++group;
-                MainForm.createlabel("Törlés:", 2 * 100 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
+                MainForm.createlabel("Törlés:", 0 * 100 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
                 check_kiszállítások_törlés = MainForm.Create_CheckBox(columns[0], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
 
                 ++group;
