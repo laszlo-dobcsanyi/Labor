@@ -662,7 +662,7 @@ namespace Labor
         /// <summary>
         /// Ha a Vizsgálatok táblában (L_VIZSLAP) ennek a terméknek (VITEKO) erre a gyártási évre (VIGYEV) van már olyan sarzsszámmal (VISARZ) rekord mint amit most rögzít a felhasználó, és annak más a hordótípusa (VIHOTI) akkor egy ablakban küldjön egy figyelmeztetést, hogy nem egyezik meg a hordótipus.  Az ablakban jelenítse meg, hogy az előzőnek mi volt a hordótípusa.
         /// </summary>
-        public string Vizsgálat_Hordótípus_Ellenőrzés(string _termékkód, string _gyártási_év, string _sarzs)
+        public string Vizsgálat_Hordótípus_Ellenőrzés(string _termékkód, string _hordószám, string _gyártási_év, string _sarzs)
         {
             string hordó_típus = null;
 
@@ -672,7 +672,7 @@ namespace Labor
 
                 string where = A(new string[] { Update<string>("VITEKO", _termékkód), Update<string>("VIGYEV", _gyártási_év), Update<string>("VISARZ", _sarzs) });
 
-                SqlCommand command = new SqlCommand("SELECT VIHOTI FROM L_VIZSLAP WHERE " + where);
+                SqlCommand command = new SqlCommand("SELECT VIHOTI FROM L_VIZSLAP WHERE " + where + " AND VIHOSZ <> '" + _hordószám + "';");
                 command.Connection = laborconnection;
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
