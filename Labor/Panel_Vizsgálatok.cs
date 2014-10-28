@@ -363,26 +363,24 @@ namespace Labor
             
             foreach (DataGridViewRow selected in table.SelectedRows)
             {
-
                 Vizsgálat.Azonosító azonosító = new Vizsgálat.Azonosító((string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.termékkód].Value,
                     (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.sarzs].Value, (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.hordószám].Value,
                     (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.hordótípus].Value, (double)selected.Cells[Vizsgálat.Azonosító.TableIndexes.nettó_töltet].Value,
                     (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.szita_átmérő].Value, (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.megrendelő].Value,
                     (int)selected.Cells[Vizsgálat.Azonosító.TableIndexes.sorszám].Value);
 
-                if (!Program.database.Vizsgálat_Törlés(azonosító))
+                Vizsgálat? vizsgálat = Program.database.Vizsgálat(azonosító);
+                if (vizsgálat == null) { MessageBox.Show("A kiválasztott vizsgálati lap nem található!", "Adatbázis hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+                if (!Program.database.Vizsgálat_Törlés(vizsgálat.Value))
                 {
                     MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy nem létezik már a törlendő vizsgálat?\nTermékkód: " + azonosító.termékkód + "\nSarzs: " + azonosító.sarzs + "\nHordószám: " + azonosító.hordószám +
                       "\nSorszám: " + azonosító.sorszám, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-                else
-                {
-                    //TODO Hordók törlés
-                    Program.database.Hordók_Törlés(azonosító);
-                    Program.RefreshData();
-                }
             }
+        
+            Program.RefreshData();
         }
 
         //
@@ -490,7 +488,7 @@ namespace Labor
                 InitializeForm();
                 InitializeContent();
                 SetState(States.KÉSZ);
-                InitializeData(_eredeti);
+                InitializeData();
             }
 
             private void InitializeForm()
@@ -642,13 +640,14 @@ namespace Labor
                 box_feketepont.KeyPress += MainForm.OnlyNumber;
                 box_barnapont.KeyPress += MainForm.OnlyNumber;
 
-                box_t_cimzett.Leave += CímzettLeave;
+                // TODO Címzett Leavehez kellenek, lásd lejjebb.
+                /*box_t_cimzett.Leave += CímzettLeave;
                 box_k1_cimzett.Leave += CímzettLeave;
                 box_k2_cimzett.Leave += CímzettLeave;
                 box_k3_cimzett.Leave += CímzettLeave;
                 box_k4_cimzett.Leave += CímzettLeave;
                 box_k5_cimzett.Leave += CímzettLeave;
-                box_k6_cimzett.Leave += CímzettLeave;
+                box_k6_cimzett.Leave += CímzettLeave;*/
 
                 box_t_datum.Leave += MainForm.OnlyDate;
                 box_k1_datum.Leave += MainForm.OnlyDate;
@@ -706,69 +705,68 @@ namespace Labor
 
             private void InitializeData()
             {
-            }
-
-            private void InitializeData(Vizsgálat _vizsgálat)
-            {
-                box_termékkód.Text = _vizsgálat.azonosító.termékkód;
-                box_szita_átmérő.Text = _vizsgálat.azonosító.szita_átmérő.ToString();
-                box_hordószám.Text = _vizsgálat.azonosító.hordószám.ToString();
-                box_hőkezelés.Text = _vizsgálat.adatok1.hőkezelés.ToString();
-                box_brix.Text = _vizsgálat.adatok2.brix.ToString();
-                box_citromsav.Text = _vizsgálat.adatok2.citromsav.ToString();
-                box_borkősav.Text = _vizsgálat.adatok2.borkősav.ToString();
-                box_ph.Text = _vizsgálat.adatok2.ph.ToString();
-                box_bostwick.Text = _vizsgálat.adatok2.bostwick.ToString();
-                box_aszkorbinsav.Text = _vizsgálat.adatok2.aszkorbinsav.ToString();
-                box_citromsav_ad.Text = _vizsgálat.adatok2.citromsav_adagolás.ToString();
-                box_magtöret.Text = _vizsgálat.adatok2.magtöret.ToString();
-                box_feketepont.Text = _vizsgálat.adatok2.feketepont.ToString();
-                box_barnapont.Text = _vizsgálat.adatok2.barnapont.ToString();
-                box_szin.Text = _vizsgálat.adatok2.szín;
-                box_iz.Text = _vizsgálat.adatok2.íz;
-                box_illat.Text = _vizsgálat.adatok2.illat;
-                box_nettó_töltet.Text = _vizsgálat.azonosító.nettó_töltet.ToString();
-                box_sarzs.Text = _vizsgálat.azonosító.sarzs;
-                box_műszak_jele.Text = _vizsgálat.adatok1.műszak_jele;
-                box_terméknév.Text = _vizsgálat.adatok1.terméknév;
-                box_töltőgép_száma.Text = _vizsgálat.adatok1.töltőgép;
-                box_leoltas.Text = _vizsgálat.adatok3.leoltás;
-                box_ertekeles.Text = _vizsgálat.adatok3.értékelés;
-                box_megjegyzes.Text = _vizsgálat.adatok3.megjegyzés;
-                box_összcsíra_higit_1.Text = _vizsgálat.adatok3.összcsíra_1.ToString();
-                box_összcsíra_higit_2.Text = _vizsgálat.adatok3.összcsíra_2.ToString();
-                box_penész_higit_1.Text = _vizsgálat.adatok3.penész_1.ToString();
-                box_penész_higit_2.Text = _vizsgálat.adatok3.penész_2.ToString();
-                box_élesztő_higit_1.Text = _vizsgálat.adatok3.élesztő_1.ToString();
-                box_élesztő_higit_2.Text = _vizsgálat.adatok3.élesztő_2.ToString();
-                box_t_cimzett.Text = _vizsgálat.adatok4.címzett_t;
-                box_t_datum.Text = _vizsgálat.adatok4.dátum_t;
-                box_k1_cimzett.Text = _vizsgálat.adatok4.címzett_k1;
-                box_k1_datum.Text = _vizsgálat.adatok4.dátum_k1;
-                box_k2_cimzett.Text = _vizsgálat.adatok4.címzett_k2;
-                box_k2_datum.Text = _vizsgálat.adatok4.dátum_k2;
-                box_k3_cimzett.Text = _vizsgálat.adatok4.címzett_k3;
-                box_k3_datum.Text = _vizsgálat.adatok4.dátum_k3;
-                box_k4_cimzett.Text = _vizsgálat.adatok4.címzett_k4;
-                box_k4_datum.Text = _vizsgálat.adatok4.dátum_k4;
-                box_k5_cimzett.Text = _vizsgálat.adatok4.címzett_k5;
-                box_k5_datum.Text = _vizsgálat.adatok4.dátum_k5;
-                box_k6_cimzett.Text = _vizsgálat.adatok4.címzett_k6;
-                box_k6_datum.Text = _vizsgálat.adatok4.dátum_k6;
-                combo_laboros.SelectedItem = _vizsgálat.adatok4.laboros;
-                combo_származási_ország.SelectedItem = _vizsgálat.adatok1.szárm_ország;
-                combo_hordótípus.SelectedItem = _vizsgálat.azonosító.hordótípus;
-                combo_megrendelő.SelectedItem = _vizsgálat.azonosító.megrendelő;
-
-                List<string> gyümölcsfajták = Program.database.Gyümölcsfajták(_vizsgálat.azonosító.termékkód);
-                foreach (string item in gyümölcsfajták)
+                if (eredeti != null)
                 {
-                    combo_gyümölcsfajta.Items.Add(item);
-                }
-                combo_gyümölcsfajta.Text = _vizsgálat.adatok1.gyümölcsfajta;
+                    box_termékkód.Text = eredeti.Value.azonosító.termékkód;
+                    box_szita_átmérő.Text = eredeti.Value.azonosító.szita_átmérő.ToString();
+                    box_hordószám.Text = eredeti.Value.azonosító.hordószám.ToString();
+                    box_hőkezelés.Text = eredeti.Value.adatok1.hőkezelés.ToString();
+                    box_brix.Text = eredeti.Value.adatok2.brix.ToString();
+                    box_citromsav.Text = eredeti.Value.adatok2.citromsav.ToString();
+                    box_borkősav.Text = eredeti.Value.adatok2.borkősav.ToString();
+                    box_ph.Text = eredeti.Value.adatok2.ph.ToString();
+                    box_bostwick.Text = eredeti.Value.adatok2.bostwick.ToString();
+                    box_aszkorbinsav.Text = eredeti.Value.adatok2.aszkorbinsav.ToString();
+                    box_citromsav_ad.Text = eredeti.Value.adatok2.citromsav_adagolás.ToString();
+                    box_magtöret.Text = eredeti.Value.adatok2.magtöret.ToString();
+                    box_feketepont.Text = eredeti.Value.adatok2.feketepont.ToString();
+                    box_barnapont.Text = eredeti.Value.adatok2.barnapont.ToString();
+                    box_szin.Text = eredeti.Value.adatok2.szín;
+                    box_iz.Text = eredeti.Value.adatok2.íz;
+                    box_illat.Text = eredeti.Value.adatok2.illat;
+                    box_nettó_töltet.Text = eredeti.Value.azonosító.nettó_töltet.ToString();
+                    box_sarzs.Text = eredeti.Value.azonosító.sarzs;
+                    box_műszak_jele.Text = eredeti.Value.adatok1.műszak_jele;
+                    box_terméknév.Text = eredeti.Value.adatok1.terméknév;
+                    box_töltőgép_száma.Text = eredeti.Value.adatok1.töltőgép;
+                    box_leoltas.Text = eredeti.Value.adatok3.leoltás;
+                    box_ertekeles.Text = eredeti.Value.adatok3.értékelés;
+                    box_megjegyzes.Text = eredeti.Value.adatok3.megjegyzés;
+                    box_összcsíra_higit_1.Text = eredeti.Value.adatok3.összcsíra_1.ToString();
+                    box_összcsíra_higit_2.Text = eredeti.Value.adatok3.összcsíra_2.ToString();
+                    box_penész_higit_1.Text = eredeti.Value.adatok3.penész_1.ToString();
+                    box_penész_higit_2.Text = eredeti.Value.adatok3.penész_2.ToString();
+                    box_élesztő_higit_1.Text = eredeti.Value.adatok3.élesztő_1.ToString();
+                    box_élesztő_higit_2.Text = eredeti.Value.adatok3.élesztő_2.ToString();
+                    box_t_cimzett.Text = eredeti.Value.adatok4.címzett_t;
+                    box_t_datum.Text = eredeti.Value.adatok4.dátum_t;
+                    box_k1_cimzett.Text = eredeti.Value.adatok4.címzett_k1;
+                    box_k1_datum.Text = eredeti.Value.adatok4.dátum_k1;
+                    box_k2_cimzett.Text = eredeti.Value.adatok4.címzett_k2;
+                    box_k2_datum.Text = eredeti.Value.adatok4.dátum_k2;
+                    box_k3_cimzett.Text = eredeti.Value.adatok4.címzett_k3;
+                    box_k3_datum.Text = eredeti.Value.adatok4.dátum_k3;
+                    box_k4_cimzett.Text = eredeti.Value.adatok4.címzett_k4;
+                    box_k4_datum.Text = eredeti.Value.adatok4.dátum_k4;
+                    box_k5_cimzett.Text = eredeti.Value.adatok4.címzett_k5;
+                    box_k5_datum.Text = eredeti.Value.adatok4.dátum_k5;
+                    box_k6_cimzett.Text = eredeti.Value.adatok4.címzett_k6;
+                    box_k6_datum.Text = eredeti.Value.adatok4.dátum_k6;
+                    combo_laboros.SelectedItem = eredeti.Value.adatok4.laboros;
+                    combo_származási_ország.SelectedItem = eredeti.Value.adatok1.szárm_ország;
+                    combo_hordótípus.SelectedItem = eredeti.Value.azonosító.hordótípus;
+                    combo_megrendelő.SelectedItem = eredeti.Value.azonosító.megrendelő;
 
-                box_termékkód.Enabled = false;
-                box_hordószám.Enabled = false;
+                    List<string> gyümölcsfajták = Program.database.Gyümölcsfajták(eredeti.Value.azonosító.termékkód);
+                    foreach (string item in gyümölcsfajták)
+                    {
+                        combo_gyümölcsfajta.Items.Add(item);
+                    }
+                    combo_gyümölcsfajta.Text = eredeti.Value.adatok1.gyümölcsfajta;
+
+                    box_termékkód.Enabled = false;
+                    box_hordószám.Enabled = false;
+                }
             }
             #endregion
 
@@ -832,7 +830,8 @@ namespace Labor
             #endregion
 
             #region EventHandlers
-            void CímzettLeave(object _sender, EventArgs _event)
+            // TODO ezt én sem értem
+            /*private void CímzettLeave(object _sender, EventArgs _event)
             {
                 string DateTimeNow = DateTime.Now.ToString("yy.MM.dd");
 
@@ -842,7 +841,7 @@ namespace Labor
                 if (_sender as TextBox == box_k4_cimzett) { if (box_k3_datum.Text == "") { box_k3_datum.Text = DateTimeNow; } }
                 if (_sender as TextBox == box_k5_cimzett) { if (box_k4_datum.Text == "") { box_k4_datum.Text = DateTimeNow; } }
                 if (_sender as TextBox == box_k6_cimzett) { if (box_k5_datum.Text == "") { box_k5_datum.Text = DateTimeNow; } }
-            }
+            }*/
 
             private void box_termékkód_TextChanged(object _sender, EventArgs _event)
             {

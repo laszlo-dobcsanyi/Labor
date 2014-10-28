@@ -382,7 +382,7 @@ namespace Labor
 
             protected override bool SameKeys(Hordó _1, DataRow _row) { return Hordó.SameKeys(_1, _row); }
 
-            protected override List<Hordó> CurrentData() { return Program.database.Foglalás_Hordók(foglalás); }
+            protected override List<Hordó> CurrentData() { return Program.database.Hordók(foglalás); }
             #endregion
 
             #region EventHandlers
