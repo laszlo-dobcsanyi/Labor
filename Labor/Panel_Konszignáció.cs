@@ -312,7 +312,7 @@ namespace Labor
                 //Program.database.Konszignáció_FoglalásokKiszállítása(szállítólevél.szlevél_szám, foglalások);
                  szállítólevél.szlevél_szám =  Convert.ToByte( Program.database.Konszignáció_ÚJSzállítólevél(szállítólevél));
 
-                 Nyomtat.Nyomtat_MinőségBizonylatok(szállítólevél, foglalások);
+                 //Nyomtat.Nyomtat_MinőségBizonylatok(szállítólevél, foglalások);
                  
                 Close();
             }

@@ -333,28 +333,29 @@ namespace Labor
             titleFormat.Position = 12;
 
             #region Fejléc
-            Table table_fejléc = document.AddTable(3, 4);
+            Table table_fejléc = document.AddTable(2, 4);
             table_fejléc.Alignment = Alignment.left;
             table_fejléc.Rows[0].Cells[0].Paragraphs[0].Append("Vevő:").Bold();
             table_fejléc.Rows[1].Cells[0].Paragraphs[0].Append("Gépkocsi:").Bold();
             table_fejléc.Rows[0].Cells[2].Paragraphs[0].Append("Feladó:").Bold();
             table_fejléc.Rows[1].Cells[2].Paragraphs[0].Append("Dátum:").Bold();
-            table_fejléc.Rows[2].Cells[2].Paragraphs[0].Append("Szállítólevél:").Bold();
+            table_fejléc.Rows[1].Cells[2].Paragraphs[0].Append(" " + konszignáció.fejléc.szállítólevél.dátum);
+
+            table_fejléc.Rows[1].Cells[3].Paragraphs[0].Append("Szállítólevél:").Bold();
+            table_fejléc.Rows[1].Cells[3].Paragraphs[0].Append(" " + konszignáció.fejléc.szállítólevél.szállítólevél);
 
             table_fejléc.Rows[0].Cells[1].Paragraphs[0].Append(konszignáció.fejléc.vevő.vevő_név);
             table_fejléc.Rows[0].Cells[1].Paragraphs[0].AppendLine(konszignáció.fejléc.vevő.vevő_név);
             table_fejléc.Rows[0].Cells[1].Paragraphs[0].AppendLine(konszignáció.fejléc.vevő.vevő_cím);
 
             table_fejléc.Rows[1].Cells[1].Paragraphs[0].Append(konszignáció.fejléc.szállítólevél.rendszámok[0]);
-            table_fejléc.Rows[1].Cells[1].Paragraphs[0].AppendLine(konszignáció.fejléc.szállítólevél.rendszámok[1]);
+            table_fejléc.Rows[1].Cells[1].Paragraphs[0].Append( " " + konszignáció.fejléc.szállítólevél.rendszámok[1]);
 
             table_fejléc.Rows[0].Cells[3].Paragraphs[0].Append(konszignáció.fejléc.feladó.feladó_név);
             table_fejléc.Rows[0].Cells[3].Paragraphs[0].AppendLine(konszignáció.fejléc.feladó.feladó_cím);
 
-            table_fejléc.Rows[1].Cells[3].Paragraphs[0].Append(konszignáció.fejléc.szállítólevél.dátum);
-            table_fejléc.Rows[2].Cells[3].Paragraphs[0].Append(konszignáció.fejléc.szállítólevél.szállítólevél);
 
-            KonszignációsFejlécTáblázatFormázása(table_fejléc);
+           // KonszignációsFejlécTáblázatFormázása(table_fejléc);
             document.InsertTable(table_fejléc);
             #endregion
 
