@@ -1007,7 +1007,7 @@ namespace Labor
                 marillenconnection.Open();
                 SqlCommand command = new SqlCommand("SELECT tetelek.prod_id, tetelek.qty, tetelek.time_ FROM tetelek" +
                                       " INNER JOIN folyoprops ON tetelek.serial_nr=folyoprops.serial_nr" +
-                                      " WHERE left(tetelek.prod_id,7) = '" + iPROD_ID + "' AND folyoprops.code= '3' AND folyoprops.propstr = '1' ORDER BY tetelek.prod_id;");
+                                      " WHERE left(tetelek.prod_id,7) = '" + iPROD_ID + "' AND folyoprops.code= '3' AND folyoprops.propstr = '" + _vizsgálat.azonosító.sarzs +"'  ORDER BY tetelek.prod_id;");
                 command.Connection = marillenconnection;
                 SqlDataReader reader = command.ExecuteReader();
 
