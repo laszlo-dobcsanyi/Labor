@@ -88,8 +88,6 @@ namespace Labor
                             "CREATE TABLE L_SZLEV (SZSZAM int IDENTITY(1,1), SZSZSZ varchar(50), SZFENE varchar(50), SZDATE varchar(10), SZNYEL varchar(1), SZVEVO varchar(100), SZGKR1 varchar(7), SZGKR2 varchar(7)," +
                                 "FOFOHO tinyint, SZGYEV varchar(4), SZSZIN varchar(60), SZIZEK varchar(60), SZILLA varchar(60));" +
 
-                            //"CREATE TABLE L_EREDMENY(RTEKO varchar(3), RSARZ varchar(3), RSZHO tinyint, FOFOHO tinyint);" +
-
                             "CREATE TABLE L_GYFAJTA(GFTEKO varchar(2), GFAZON varchar(30), GFSZO2 varchar(30), GFSZO3 varchar(30));" +
 
                             "CREATE TABLE L_TAPERTEK(TATEKO varchar(2), TAKIO smallint, TAKCAL smallint, TAFEHE DECIMAL(2, 1), TASZHI DECIMAL(3, 1), TAZSIR DECIMAL(2, 1), TAELRO DECIMAL(2, 1));" +
@@ -1950,6 +1948,33 @@ namespace Labor
         #endregion
 
         #region Sufni
+        private class AdminForm : Form
+        {
+            #region Constructor
+            public AdminForm()
+            {
+                InitializeForm();
+                InitializeContent();
+            }
+
+            private void InitializeForm()
+            {
+                ClientSize = new System.Drawing.Size(1024, 768);
+                MaximumSize = ClientSize;
+                Text = "Labor";
+                StartPosition = FormStartPosition.CenterScreen;
+                FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            }
+
+            private void InitializeContent()
+            {
+
+            }
+            #endregion
+
+            #region EventHandlers
+            #endregion
+        }
         private string HardcodedData()
         {
             return
