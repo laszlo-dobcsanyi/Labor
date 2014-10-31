@@ -219,7 +219,9 @@ namespace Labor
             private void InitializeForm()
             {
                 Text = "Nyomtatás";
-                ClientSize = new Size(320, 368);
+                FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+                MaximizeBox = false;
+                ClientSize = new Size(320, 465);
                 StartPosition = FormStartPosition.CenterParent;
                 MinimumSize = ClientSize;
                 FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -260,9 +262,10 @@ namespace Labor
 
 
                 label_gyártási_idő = MainForm.createlabel("Gyártási idő:", 16, 32 + 5 * 32, this);
+
                 label_szín = MainForm.createlabel("Szín:", 16, 32 + 6 * 32, this);
-                label_íz = MainForm.createlabel("Íz:", 16, 32 + 7 * 32, this);
-                label_illat = MainForm.createlabel("Illat:", 16, 32 + 8 * 32, this);
+                label_íz = MainForm.createlabel("Íz:", 16, 32 + 8 * 32, this);
+                label_illat = MainForm.createlabel("Illat:", 16, 32 + 10 * 32, this);
 
                 combo_nyelv = MainForm.createcombobox(label_nyelv.Location.X + 48 + label_nyelv.Width, label_nyelv.Location.Y, 200, this);
                 combo_megrendelők = MainForm.createcombobox(combo_nyelv.Location.X, label_vevő.Location.Y, 200, this);
@@ -271,15 +274,24 @@ namespace Labor
                 box_rendszám2 = MainForm.createtextbox(box_rendszám1.Location.X + box_rendszám1.Width + 8, label_gépkocsi.Location.Y, 20, 70, this);
                 box_levél = MainForm.createtextbox(combo_nyelv.Location.X, label_szállítólevél.Location.Y, 20, 70, this);
                 box_gyártási_idő = MainForm.createtextbox(combo_nyelv.Location.X, label_gyártási_idő.Location.Y, 20, 70, this);
-                box_szín = MainForm.createtextbox(combo_nyelv.Location.X, label_szín.Location.Y, 20, 70, this);
-                box_íz = MainForm.createtextbox(combo_nyelv.Location.X, label_íz.Location.Y, 20, 70, this);
-                box_illat = MainForm.createtextbox(combo_nyelv.Location.X, label_illat.Location.Y, 20, 70, this);
+
+                box_szín = MainForm.createtextbox(combo_nyelv.Location.X, label_szín.Location.Y, 60, 200, this);
+                box_szín.Multiline = true;
+                box_szín.Height = 50;
+
+                box_íz = MainForm.createtextbox(combo_nyelv.Location.X, label_íz.Location.Y, 60,200, this);
+                box_íz.Multiline = true;
+                box_íz.Height = 50; 
+
+                box_illat = MainForm.createtextbox(combo_nyelv.Location.X, label_illat.Location.Y, 60, 200, this);
+                box_illat.Multiline = true;
+                box_illat.Height = 50;
 
                 rendben = new Button();
                 rendben.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
                 rendben.Text = "Rendben";
                 rendben.Size = new System.Drawing.Size(96, 32);
-                rendben.Location = new Point(150, 300);
+                rendben.Location = new Point(ClientRectangle.Width - rendben.Size.Width - 16, ClientRectangle.Height - rendben.Size.Height - 16);
 
                 combo_nyelv.Items.Add("Magyar"); combo_nyelv.Items.Add("Angol"); combo_nyelv.Items.Add("3. label_nyelv"); combo_nyelv.SelectedIndex = 0;
 

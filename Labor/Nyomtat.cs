@@ -377,6 +377,7 @@ namespace Labor
 
             int c = 1;
             int sorszám = 1;
+            KonszignációRendezés(konszignáció);
             foreach (Node_Konszignáció.Gyümölcstípus outer in konszignáció.gyümölcstípusok)
             {
                     string temp = regex.Replace(outer.megnevezés, @" ");
@@ -694,13 +695,28 @@ namespace Labor
             }
         }
 
-        public static Node_Konszignáció KonszignációRendezés(Node_Konszignáció _eredeti)
+        /// <summary>
+        /// lista sorrend
+        /// </summary>
+        public static void KonszignációRendezés(Node_Konszignáció _eredeti)
         {
-            Node_Konszignáció data = new Node_Konszignáció();
-            data.fejléc = _eredeti.fejléc;
+            foreach (Node_Konszignáció.Gyümölcstípus outer in _eredeti.gyümölcstípusok)
+            {
+                for (int i = 0; i < outer.adat.Count; i++)
+                {
+                    for (int j = 0; j < outer.adat.Count; j++)
+                    {
+                        if (Convert.ToInt32(outer.adat[i].hordó) < Convert.ToInt32(outer.adat[j].hordó))
+                        {
+                            Node_Konszignáció.Gyümölcstípus.Adat temp = new Node_Konszignáció.Gyümölcstípus.Adat();
+                            temp = outer.adat[i];
+                            outer.adat[i] = outer.adat[j];
+                            outer.adat[j] = temp;
+                        }
+                    }
+                }
 
-
-            return data;
+            }
         }
         #endregion
     }
