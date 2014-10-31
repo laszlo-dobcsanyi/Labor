@@ -1228,7 +1228,7 @@ namespace Labor
                         if (foglalás != null)
                         {
                             Button kijelölés_váltás = new Button();
-                            kijelölés_váltás.Text = "Kijelölés váltás";
+                            kijelölés_váltás.Text = "Összes Be/Ki";
                             kijelölés_váltás.Size = new System.Drawing.Size(128, 32);
                             kijelölés_váltás.Location = new Point(ClientRectangle.Width - kijelölés_váltás.Size.Width - rendben.Width - 32, ClientRectangle.Height - kijelölés_váltás.Size.Height - 16);
                             kijelölés_váltás.Enabled = Program.felhasználó.Value.jogosultságok.Value.foglalások.módosítás ? true : false;
