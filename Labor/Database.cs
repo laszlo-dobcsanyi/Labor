@@ -1336,7 +1336,7 @@ namespace Labor
                     Is(_szűrő.adatok1.műszak_jele, "VIMUJE"),
                     Is(_szűrő.adatok1.töltőgép_száma, "VITOGE"),
                     Is(_szűrő.adatok1.termékkód, "VITEKO"),
-                    BetweenString(_szűrő.adatok2.sarzs, "VISARZ"),
+                    BetweenString(_szűrő.adatok2.sarzs, "CAST( VISARZ AS tinyint)"),
                     BetweenString(_szűrő.adatok2.hordó_id, "VIHOSZ"),
 
                     Between<double>(_szűrő.adatok2.brix, "VIBRIX") ,
