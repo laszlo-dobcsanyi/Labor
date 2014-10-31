@@ -640,14 +640,14 @@ namespace Labor
                 box_feketepont.KeyPress += MainForm.OnlyNumber;
                 box_barnapont.KeyPress += MainForm.OnlyNumber;
 
-                // TODO Címzett Leavehez kellenek, lásd lejjebb.
-                /*box_t_cimzett.Leave += CímzettLeave;
+               // TODO Címzett Leavehez kellenek, lásd lejjebb.
+                box_t_cimzett.Leave += CímzettLeave;
                 box_k1_cimzett.Leave += CímzettLeave;
                 box_k2_cimzett.Leave += CímzettLeave;
                 box_k3_cimzett.Leave += CímzettLeave;
                 box_k4_cimzett.Leave += CímzettLeave;
                 box_k5_cimzett.Leave += CímzettLeave;
-                box_k6_cimzett.Leave += CímzettLeave;*/
+                box_k6_cimzett.Leave += CímzettLeave;
 
                 box_t_datum.Leave += MainForm.OnlyDate;
                 box_k1_datum.Leave += MainForm.OnlyDate;
@@ -831,17 +831,18 @@ namespace Labor
 
             #region EventHandlers
             // TODO ezt én sem értem
-            /*private void CímzettLeave(object _sender, EventArgs _event)
+            private void CímzettLeave(object _sender, EventArgs _event)
             {
                 string DateTimeNow = DateTime.Now.ToString("yy.MM.dd");
 
-                if (_sender as TextBox == box_t_cimzett) { if (box_t_datum.Text == "") { box_t_datum.Text = DateTimeNow; } }
-                if (_sender as TextBox == box_k1_cimzett) { if (box_k1_datum.Text == "") { box_k1_datum.Text = DateTimeNow; } }
-                if (_sender as TextBox == box_k2_cimzett) { if (box_k2_datum.Text == "") { box_k2_datum.Text = DateTimeNow; } }
-                if (_sender as TextBox == box_k4_cimzett) { if (box_k3_datum.Text == "") { box_k3_datum.Text = DateTimeNow; } }
-                if (_sender as TextBox == box_k5_cimzett) { if (box_k4_datum.Text == "") { box_k4_datum.Text = DateTimeNow; } }
-                if (_sender as TextBox == box_k6_cimzett) { if (box_k5_datum.Text == "") { box_k5_datum.Text = DateTimeNow; } }
-            }*/
+                if (_sender as TextBox == box_t_cimzett && box_t_cimzett.Text != "") { if (box_t_datum.Text == "") { box_t_datum.Text = DateTimeNow; } }
+                if (_sender as TextBox == box_k1_cimzett && box_k1_cimzett.Text != "") { if (box_k1_datum.Text == "") { box_k1_datum.Text = DateTimeNow; } }
+                if (_sender as TextBox == box_k2_cimzett && box_k2_cimzett.Text != "") { if (box_k2_datum.Text == "") { box_k2_datum.Text = DateTimeNow; } }
+                if (_sender as TextBox == box_k3_cimzett && box_k3_cimzett.Text != "") { if (box_k2_datum.Text == "") { box_k2_datum.Text = DateTimeNow; } }
+                if (_sender as TextBox == box_k4_cimzett && box_k4_cimzett.Text != "") { if (box_k3_datum.Text == "") { box_k3_datum.Text = DateTimeNow; } }
+                if (_sender as TextBox == box_k5_cimzett && box_k4_cimzett.Text != "") { if (box_k4_datum.Text == "") { box_k4_datum.Text = DateTimeNow; } }
+                if (_sender as TextBox == box_k6_cimzett && box_k6_cimzett.Text != "") { if (box_k5_datum.Text == "") { box_k5_datum.Text = DateTimeNow; } }
+            }
 
             private void box_termékkód_TextChanged(object _sender, EventArgs _event)
             {
