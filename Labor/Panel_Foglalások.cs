@@ -387,38 +387,63 @@ namespace Labor
         {
             string data = null;
             OpenFileDialog file = new OpenFileDialog();
-            if (!(System.IO.Directory.Exists(Path.GetFullPath("IMPORT")))){ Directory.CreateDirectory("IMPORT");}
 
-            file.InitialDirectory = Path.GetFullPath("IMPORT");
-            if (file.ShowDialog() == DialogResult.OK)
+            try
             {
-                System.IO.StreamReader sr = new
-                System.IO.StreamReader(file.FileName);
-                data = sr.ReadToEnd();
+                if (!(System.IO.Directory.Exists(Path.GetFullPath("IMPORT")))) { Directory.CreateDirectory("IMPORT"); }
+
+                file.InitialDirectory = Path.GetFullPath("IMPORT");
+                if (file.ShowDialog() == DialogResult.OK)
+                {
+                    System.IO.StreamReader sr = new System.IO.StreamReader(file.FileName);
+                    data = sr.ReadToEnd();
+                }
+                else return;
             }
-            else return;
+            catch (Exception _e)
+            {
+                MessageBox.Show("Hiba a foglalás adatok beolvasása során, kérem ellenőrizze a file tartalmát!\n" + _e.Message, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             
             Import import = new Import();
             import.import_hordók = new List<Import.Import_Hordó>();
             string[] splitted = data.Split('\r');
 
-            for (int i = 0; i < splitted.Length - 1; i++)
+            try
             {
-                Import.Import_Hordó hordó = new Import.Import_Hordó(splitted[i].Substring(0, 3), splitted[i].Substring(8, 3), splitted[i].Substring(14, 1), splitted[i].Substring(15, 4));
-                import.import_hordók.Add(hordó);
+                for (int i = 0; i < splitted.Length - 1; i++)
+                {
+                    Import.Import_Hordó hordó = new Import.Import_Hordó(splitted[i].Substring(0, 3), splitted[i].Substring(8, 3), splitted[i].Substring(14, 1), splitted[i].Substring(15, 4));
+                    import.import_hordók.Add(hordó);
+                }
+            }
+            catch (Exception _e)
+            {
+                MessageBox.Show("Hiba a foglalás adatok szeparálása során, kérem ellenőrizze a file tartalmát!\n" + _e.Message, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
 
             List<string> hibák = Program.database.Foglalás_Feltöltés_Ellenőrzés(import);
 
             if (hibák.Count != 0)
             {
-                StreamWriter sw;
-                if (file.FileName.Length == 0) { return; }
-                sw = File.CreateText(file.FileName.Substring(0, file.FileName.Length - 3) + "-hibalista.txt");
-                foreach (string item in hibák)
-                    sw.WriteLine(item);
+                if (file.FileName.Length == 0) return;
 
-                sw.Close();
+                try
+                {
+                    StreamWriter sw = File.CreateText(file.FileName.Substring(0, file.FileName.Length - 3) + "-hibalista.txt");
+                    foreach (string item in hibák)
+                        sw.WriteLine(item);
+
+                    sw.Close();
+                }
+                catch (Exception _e)
+                {
+                    MessageBox.Show("Hiba a hibalista kiírása során!\n" + _e.Message, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
                 MessageBox.Show("Hibalista készült. A hibalista file neve: " + (file.FileName.Substring(0, file.FileName.Length - 3) + "-hibalista.txt"), "Hibalista", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
@@ -427,8 +452,8 @@ namespace Labor
                 Foglalás_Feltöltés foglalás_feltöltés = new Foglalás_Feltöltés(file.FileName,import);
                 foglalás_feltöltés.ShowDialog();
 
+                Program.RefreshData();
             }
-            Program.RefreshData();
         }
 
         private void Foglalás_Módosítás(object _sender, EventArgs _event)
@@ -1419,28 +1444,26 @@ namespace Labor
 
         public sealed class Foglalás_Feltöltés : Form
         {
-            Import import;
-            TextBox box_foglalás_neve;
-            Label label_foglalás_típusa;
-            Label label_készítette ;
-            Label label_foglalás_ideje;
             #region Declaration
-            
+            private Import import;
+            private TextBox box_foglalás_neve;
+            private Label label_foglalás_típusa;
+            private Label label_készítette;
+            private Label label_foglalás_ideje;
             #endregion
 
             #region Constructor
-            public Foglalás_Feltöltés(string _filename,Import _import)
+            public Foglalás_Feltöltés(string _filename, Import _import)
             {
                 import = _import;
-                Text = "Foglalás Feltöltés";
+
                 InitializeForm();
                 InitializeContent(_filename);
-                InitializeData();
             }
-
 
             private void InitializeForm()
             {
+                Text = "Foglalás Feltöltés";
                 ClientSize = new Size(400, 250 - 64);
                 MinimumSize = ClientSize;
                 Location = new Point(1 * (430 + 16), 0);
@@ -1469,7 +1492,7 @@ namespace Labor
                 Controls.Add(rendben);
             }
 
-            private void rendben_Click(object sender, EventArgs e)
+            private void rendben_Click(object _sender, EventArgs _event)
             {
                 // SQL ellenőrzések
                 if (!Database.IsCorrectSQLText(box_foglalás_neve.Text)) { MessageBox.Show("Nem megfelelő karakter a névben!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
@@ -1479,7 +1502,6 @@ namespace Labor
 
                 List<Foglalás> foglalások = Program.database.Foglalások();
                 List<string> sarzsok = Program.database.Foglalás_Sarzsok(import);
-
 
                 foreach (Foglalás outer in foglalások)
                 {
@@ -1493,17 +1515,6 @@ namespace Labor
                 }
                 Program.RefreshData();
                 Close();
-            }
-
-
-            private void InitializeData()
-            {
-
-            }
-
-            private void InitializeData(Foglalás _foglalás)
-            {
-               
             }
             #endregion
         }

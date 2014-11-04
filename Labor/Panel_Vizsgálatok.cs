@@ -830,7 +830,6 @@ namespace Labor
             #endregion
 
             #region EventHandlers
-            // TODO ezt én sem értem
             private void CímzettLeave(object _sender, EventArgs _event)
             {
                 string DateTimeNow = DateTime.Now.ToString("yy.MM.dd");
