@@ -268,7 +268,7 @@ namespace Labor
                 ClientSize = new Size(400, 600 + 64);
                 MaximumSize = ClientSize;
                 FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-                Text = felhasználó == null ? "Új felhasználó" : felhasználó.Value.név1 + " " + felhasználó.Value.név2;
+                Text = felhasználó == null ? "Új felhasználó" : felhasználó.Value.név1;
                 StartPosition = FormStartPosition.CenterScreen;
             }
 

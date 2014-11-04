@@ -46,7 +46,7 @@ namespace Labor
             ToolStripStatusLabel Verzió = new ToolStripStatusLabel("Verzió: 0.4.3-2014.10.18");
             Verzió.BorderSides = ToolStripStatusLabelBorderSides.Left;
 
-            ToolStripStatusLabel Bejelentkezve = new ToolStripStatusLabel("Bejelentkezve " + Program.felhasználó.Value.név1 + " " + Program.felhasználó.Value.név2 + " néven." );
+            ToolStripStatusLabel Bejelentkezve = new ToolStripStatusLabel("Bejelentkezve " + Program.felhasználó.Value.név1 + " néven." );
             Bejelentkezve.BorderSides = ToolStripStatusLabelBorderSides.Left;
 
             status = new StatusStrip();
