@@ -111,7 +111,6 @@ namespace Labor
                     return;
                 }*/
             }
-
         }
 
         #region Segédfüggvények
