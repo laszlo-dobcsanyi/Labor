@@ -15,7 +15,7 @@ namespace Labor
 
         public Database()
         {
-            string MarillenConnectionString = @"Data Source=" + Settings.server + ";Initial Catalog=" +  Settings.marillen_database + ";User ID=" +
+            string MarillenConnectionString = @"Data Source=" + Settings.server + ";Initial Catalog=" + Settings.marillen_database + ";User ID=" +
                 Settings.sql_username + ";Password=" + Settings.sql_password + ";";
             
             marillenconnection = new SqlConnection(MarillenConnectionString);
@@ -45,12 +45,16 @@ namespace Labor
                 }
                 catch
                 {
-                    return;
+                    MessageBox.Show("Hiba a csatlakozás során! Ellenőrizze az adatbázis elérést, felhasználó jogosultságát!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Environment.Exit(1);
                 }
 
                 //try
                 {
                     laborconnection = new SqlConnection("Server=" + Settings.server + ";Database=" + Settings.labor_database + ";Integrated Security=true");
+                    AdminForm adminform = new AdminForm();
+                    adminform.ShowDialog();
+
                     laborconnection.Open();
                     SqlCommand command = new SqlCommand(
                             "CREATE TABLE L_TORZSA (TOTIPU varchar(20) NOT NULL,TOAZON varchar(25) PRIMARY KEY,TOSZO2 varchar(25),TOSZO3 varchar(25));" +
@@ -95,7 +99,7 @@ namespace Labor
 
                             "CREATE TABLE L_MINBIZ(MISZ1M varchar(600), MISZ1A varchar(600), MISZ2M varchar(600), MISZ2A varchar(600));" +
                             
-                            HardcodedData() , laborconnection);
+                            HardcodedData(adminform.Data) , laborconnection);
 
 
                     command.ExecuteNonQuery();
@@ -163,19 +167,19 @@ namespace Labor
         {
             Type type = typeof(T);
             if (type == typeof(char)) { return _column_name + " = '" + _value + "'"; }
-            if (type == typeof(string)) { if (_value != null) return _column_name + " = '" + _value + "'"; else return null; }
+            if (type == typeof(string)) { if (_value != null) return _column_name + " = '" + _value + "'"; else return _column_name + " = NULL"; }
 
             if (type == typeof(byte)) { return _column_name + " = " + _value; }
-            if (type == typeof(byte?)) { if (_value != null) return _column_name + " = " + _value; else return null; }
+            if (type == typeof(byte?)) { if (_value != null) return _column_name + " = " + _value; else return _column_name + " = NULL"; }
 
             if (type == typeof(short)) { return _column_name + " = " + _value; }
-            if (type == typeof(short?)) { if (_value != null) return _column_name + " = " + _value; else return null; }
+            if (type == typeof(short?)) { if (_value != null) return _column_name + " = " + _value; else return _column_name + " = NULL"; }
 
             if (type == typeof(int)) { return _column_name + " = " + _value; }
-            if (type == typeof(int?)) { if (_value != null) return _column_name + " = " + _value; else return null; }
+            if (type == typeof(int?)) { if (_value != null) return _column_name + " = " + _value; else return _column_name + " = NULL"; }
 
             if (type == typeof(double)) { return _column_name + " = " + _value.ToString().Replace(',', '.'); }
-            if (type == typeof(double?)) { if (_value != null) return _column_name + " = " + _value.ToString().Replace(',', '.'); else return null; }
+            if (type == typeof(double?)) { if (_value != null) return _column_name + " = " + _value.ToString().Replace(',', '.'); else return _column_name + " = NULL"; }
 
             throw new IndexOutOfRangeException();
         }
@@ -1048,7 +1052,7 @@ namespace Labor
             return true;
         }
         
-        public bool Hordó_Foglalás(bool _törlés, int _foglalás_id, string _termékkód, string _sarzs, string _hordó_szám)
+        public bool Hordók_Foglalás(bool _törlés, int _foglalás_id, string _termékkód, string _sarzs, string _hordó_szám)
         {
             lock (LaborLock)
             {
@@ -1070,6 +1074,48 @@ namespace Labor
                 if (modified != 2) return false;
                 return true;
             }
+        }
+
+        /// <summary>
+        /// Egy hordó lista összes elemét az adott foglaláshoz rendeli.
+        /// </summary>
+        /// <param name="_foglalás_id"></param>
+        /// <param name="_adatok">Törlés? - Termékkód - Sarzs - Hordó_szám sorrendben kell a Tuple-ben lennie.</param>
+        /// <returns>Lefoglalt hordók száma.</returns>
+        public int Hordók_ListaFoglalás(int _foglalás_id, List< Tuple< bool, string, string, string > > _adatok)
+        {
+            int offset = 0;
+            int modified = 0;
+
+            lock (LaborLock)
+            {
+                SqlCommand command;
+
+                laborconnection.Open();
+
+                foreach (Tuple<bool, string, string, string> current in _adatok)
+                {
+                    command = laborconnection.CreateCommand();
+                    command.CommandText = "UPDATE L_HORDO " + (current.Item1 ? "SET FOSZAM = NULL" : "SET FOSZAM = " + _foglalás_id) +
+                        " WHERE " + (current.Item1 ? "FOSZAM = " + _foglalás_id : "FOSZAM IS NULL") + " AND HOTEKO = '" + current.Item2 + "' AND HOSARZ = '" + current.Item3 + "' AND HOSZAM = '" + current.Item4 + "';";
+
+                    if (command.ExecuteNonQuery() == 1) modified++;
+                    offset += current.Item1 ? -1 : +1;
+                    command.Dispose();
+                }
+
+                if (offset != 0)
+                { 
+                    command = laborconnection.CreateCommand();
+                    command.CommandText = "UPDATE L_FOGLAL SET FOFOHO = FOFOHO " + (0 < offset ? "+" + offset : offset.ToString()) + " WHERE FOSZAM = " + _foglalás_id + ";";
+                    command.ExecuteNonQuery();
+                    command.Dispose();
+                }
+
+                laborconnection.Close();
+            }
+
+            return modified;
         }
 
         public bool Hordók_Törlés(Vizsgálat _vizsgálat)
@@ -1409,62 +1455,69 @@ namespace Labor
         {
             List<string> hibák = new List<string>();
 
-            foreach (Import.Import_Hordó item in _import.import_hordók)
+            lock (MarillenLock)
             {
-                string iProdId = "12" + item.termékkód.Substring(0, 2) + "01" + item.gyártási_év + "_0" + item.gyártási_év + item.hordószám;
-                string serial_nr = null;
-                string isarz = null;
-                string vigyev = null;
-
-                lock (MarillenLock)
-                {
-                    marillenconnection.Open();
-
-                    SqlCommand command = new SqlCommand("SELECT serial_nr, prod_id, qty FROM tetelek WHERE (type=300) AND (prod_id like '" + iProdId + "') AND (qty > 0) ORDER BY serial_nr");
-                    command.Connection = marillenconnection;
-                    SqlDataReader reader = command.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        serial_nr = reader.GetString(0);
-                    }
-
-                    if (serial_nr == null)
-                    {
-                        hibák.Add(item.termékkód + " " + item.hordószám + " -nincs ilyen hordó");
-                    }
-                    else
-                    {
-                        command = new SqlCommand("SELECT propstr FROM folyoprops WHERE (serial_nr= " + serial_nr + " ) AND (code=3)");
-                        command.Connection = marillenconnection;
-                        reader.Close();
-                        reader = command.ExecuteReader();
-                        while (reader.Read())
-                        {
-                            isarz = reader.GetString(0);
-                        }
-                    }
-                    reader.Close();
-                    marillenconnection.Close();
-                }
+                marillenconnection.Open();
 
                 lock (laborconnection)
                 {
                     laborconnection.Open();
-                    SqlCommand command = new SqlCommand("SELECT vigyev FROM l_vizslap WHERE (viteko=" + item.termékkód + ") AND (visarz= " + isarz + ");");
-                    command.Connection = laborconnection;
-                    SqlDataReader reader = command.ExecuteReader();
-                    while (reader.Read())
+
+                    foreach (Import.Import_Hordó item in _import.import_hordók)
                     {
-                        vigyev = reader.GetString(0);
+                        string iProdId = "12" + item.termékkód.Substring(0, 2) + "01" + item.gyártási_év + "_0" + item.gyártási_év + item.hordószám;
+                        string serial_nr = null;
+                        string visarz = null;
+                        string vigyev = null;
+
+                        SqlCommand command = new SqlCommand("SELECT serial_nr, prod_id, qty FROM tetelek WHERE (type=300) AND (prod_id like '" + iProdId + "') AND (qty > 0) ORDER BY serial_nr");
+                        command.Connection = marillenconnection;
+                        SqlDataReader reader = command.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            serial_nr = reader.GetString(0);
+                        }
+                        reader.Close();
+
+                        if (serial_nr == null)
+                        {
+                            hibák.Add(item.termékkód + " " + item.hordószám + " -nincs ilyen hordó");
+                            continue;
+                        }
+                        else
+                        {
+                            command = new SqlCommand("SELECT propstr FROM folyoprops WHERE (serial_nr= " + serial_nr + " ) AND (code=3)");
+                            command.Connection = marillenconnection;
+                            reader = command.ExecuteReader();
+                            while (reader.Read())
+                            {
+                                visarz = reader.GetString(0);
+                            }
+                            reader.Close();
+                        }
+
+                        if (visarz != null)
+                        {
+                            command = new SqlCommand("SELECT vigyev FROM l_vizslap WHERE (viteko=" + item.termékkód + ") AND (visarz= " + visarz + ");");
+                            command.Connection = laborconnection;
+                            reader = command.ExecuteReader();
+                            while (reader.Read())
+                            {
+                                vigyev = reader.GetString(0);
+                            }
+                            reader.Close();
+
+                            if (vigyev == null)
+                            {
+                                hibák.Add(item.termékkód + " " + item.hordószám + " -nincs vizsgálati lap");
+                            }
+                        }
                     }
 
-                    if (vigyev == null)
-                    {
-                        hibák.Add(item.termékkód + " " + item.hordószám + " -nincs vizsgálati lap");
-                    }
-                    reader.Close();
                     laborconnection.Close();
                 }
+
+                marillenconnection.Close();
             }
             return hibák;
         }
@@ -1490,14 +1543,14 @@ namespace Labor
                         serial_nr = reader.GetString(0);
                     }
 
-                        command = new SqlCommand("SELECT propstr FROM folyoprops WHERE (serial_nr= " + serial_nr + " ) AND (code=3)");
-                        command.Connection = marillenconnection;
-                        reader.Close();
-                        reader = command.ExecuteReader();
-                        while (reader.Read())
-                        {
-                            sarzsok.Add( reader.GetString(0));
-                        }
+                    command = new SqlCommand("SELECT propstr FROM folyoprops WHERE (serial_nr= " + serial_nr + " ) AND (code=3)");
+                    command.Connection = marillenconnection;
+                    reader.Close();
+                    reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        sarzsok.Add( reader.GetString(0));
+                    }
                     
                     reader.Close();
                     marillenconnection.Close();
@@ -1984,32 +2037,114 @@ namespace Labor
         #region Sufni
         private class AdminForm : Form
         {
+            public string Data = null;
+
+            #region Declaration
+            private TextBox box_név1;
+            private TextBox box_név2;
+            private TextBox box_beosztás1;
+            private TextBox box_beosztás2;
+            private TextBox box_felhasználó_név;
+            private TextBox box_jelszó;
+            private TextBox box_jelszó_mégegyszer;
+            #endregion
+
             #region Constructor
             public AdminForm()
             {
                 InitializeForm();
                 InitializeContent();
+                InitializeData();
             }
 
             private void InitializeForm()
             {
-                ClientSize = new System.Drawing.Size(1024, 768);
+                ClientSize = new System.Drawing.Size(400, 200 + 64);
                 MaximumSize = ClientSize;
-                Text = "Labor";
+                Text = "Admin adatai";
                 StartPosition = FormStartPosition.CenterScreen;
                 FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             }
 
             private void InitializeContent()
             {
+                const int offset = 16;
+                const int spacer = 24;
+                const int group_spacer = 8;
+                Tuple<string, int, int>[] labels = new Tuple<string, int, int>[]{
+                    new Tuple<string, int, int>("Név", 2, 1),
+                    new Tuple<string, int, int>("Beosztás", 2, 1),
+                    new Tuple<string, int, int>("Belépési kód", 1, 0),
+                    new Tuple<string, int, int>("Jelszó", 2, 1) };
 
+                int count = 0;
+                int group = 0;
+                for (int current = 0; current < labels.Length; ++current)
+                {
+                    Label label = MainForm.createlabel(labels[current].Item1 + ":", offset, count * spacer + group * group_spacer + offset, this);
+                    count += labels[current].Item2;
+                    group += labels[current].Item3;
+                }
+
+                //
+
+                const int column = 100;
+                box_név1 = MainForm.createtextbox(column, 0 * spacer + 0 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
+                box_név2 = MainForm.createtextbox(column, 1 * spacer + 0 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
+
+                box_beosztás1 = MainForm.createtextbox(column, 2 * spacer + 1 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
+                box_beosztás2 = MainForm.createtextbox(column, 3 * spacer + 1 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
+
+                box_felhasználó_név = MainForm.createtextbox(column, 4 * spacer + 2 * group_spacer + offset, 15, 15 * 8, this, CharacterCasing.Normal);
+                box_jelszó = MainForm.createtextbox(column, 5 * spacer + 2 * group_spacer + offset, 15, 15 * 8, this, CharacterCasing.Normal);
+                box_jelszó.PasswordChar = '*';
+                box_jelszó_mégegyszer = MainForm.createtextbox(column, 6 * spacer + 2 * group_spacer + offset, 15, 15 * 8, this, CharacterCasing.Normal);
+                box_jelszó_mégegyszer.PasswordChar = '*';
+
+                //
+
+                Button rendben = new Button();
+                rendben.Size = new System.Drawing.Size(96, 32);
+                rendben.Location = new System.Drawing.Point(ClientSize.Width - rendben.Width - spacer, ClientSize.Height - rendben.Height - spacer);
+                rendben.Click += rendben_Click;
+                rendben.Text = "Rendben";
+
+                Controls.Add(rendben);
+            }
+
+            private void InitializeData()
+            {
+                box_név1.Text = "Marillen";
+
+                box_beosztás1.Text = "Adminisztrátor";
+                box_beosztás2.Text = "System Administrator";
+
+                box_felhasználó_név.Text = "admin";
+                box_jelszó.Text = "admin";
+                box_jelszó_mégegyszer.Text = "admin";
             }
             #endregion
 
             #region EventHandlers
+            private void rendben_Click(object _sender, EventArgs _event)
+            {
+                if (box_jelszó.Text != box_jelszó_mégegyszer.Text) { MessageBox.Show("Nem egyezik a két jelszó!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+                if (!Database.IsCorrectSQLText(box_név1.Text)) { MessageBox.Show("Nem megengedett karakter a név1 mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                if (!Database.IsCorrectSQLText(box_név2.Text)) { MessageBox.Show("Nem megengedett karakter a név2 mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                if (!Database.IsCorrectSQLText(box_beosztás1.Text)) { MessageBox.Show("Nem megengedett karakter a beosztás1 mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                if (!Database.IsCorrectSQLText(box_beosztás2.Text)) { MessageBox.Show("Nem megengedett karakter a beosztás2 mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                if (!Database.IsCorrectSQLText(box_felhasználó_név.Text)) { MessageBox.Show("Nem megengedett karakter a felhasználó név mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                if (!Database.IsCorrectSQLText(box_jelszó.Text)) { MessageBox.Show("Nem megengedett karakter a jelszó mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+                Data = V_Apostrophe(new string[] { box_név1.Text, box_név2.Text, box_beosztás1.Text, box_beosztás2.Text, box_felhasználó_név.Text, box_jelszó.Text }) + 
+                    ", 'I', 'I', 'I',   'I', 'I', 'I',   'I', 'I', 'I',   'I',   'I',   'I', 'I', 'I'";
+
+                Close();
+            }
             #endregion
         }
-        private string HardcodedData()
+        private string HardcodedData(string _admin_data)
         {
             return
                 "INSERT INTO L_GYFAJTA (GFTEKO, GFAZON, GFSZO2,GFSZO3) VALUES    ('21','Érdi jubileum','','')," +
@@ -2149,15 +2284,14 @@ namespace Labor
                     "('Laboros','Belinyák Máté','Máté Belinyák','Máté Belinyák')," +
                     "('Laboros','Belinyák Nándor','Nándor Belinyák','Nándor Belinyák');" +
 
-                "INSERT INTO L_FELHASZ (FEFEN1, FEFEN2, FEBEO1, FEBEO2, FEBEKO, FEJELS,   FETOHO, FETORO, FETOTO,   FEVIHO, FEVIRO, FEVITO,   FEFOKE, FEFOFE, FEFOTO,   FEKONY,   FEKITO,   FEFEHO, FEFERO, FEFETO) " +
-                    "VALUES ('Marillen', 'Adminisztrátor', 'Admin', '', 'admin', 'admin',   'I', 'I', 'I',   'I', 'I', 'I',   'I', 'I', 'I',   'I',   'I',   'I', 'I', 'I')" +
-
                 "INSERT INTO L_MINBIZ (MISZ1M , MISZ1A , MISZ2M , MISZ2A) "  +
                     "VALUES ('Alulírott Marillen Kft. kijelenti, hogy a fenti termék mindenben megfelel az érvényes magyar előírásoknak.'," +
                     " 'Marillen Kft. certifies that the above mentioned product is in accordance with current Hungarian legislation.',"+
                     " 'Alulírott Marillen Kft. nevében kijelentem, hogy az általunk gyártott aszeptikus velő nem génmanipulált termék. Génmanipulált alap- és segédanyagokat, ill. allergén anyagokat nem tartalmaz.',"+
-                    " 'Aseptic purees produced by Marillen Ltd. are not genetically modified and don’t contain any genetically modified raw materials and additives.')";
-                    ;
+                    " 'Aseptic purees produced by Marillen Ltd. are not genetically modified and don’t contain any genetically modified raw materials and additives.');" +
+
+                "INSERT INTO L_FELHASZ (FEFEN1, FEFEN2, FEBEO1, FEBEO2, FEBEKO, FEJELS,   FETOHO, FETORO, FETOTO,   FEVIHO, FEVIRO, FEVITO,   FEFOKE, FEFOFE, FEFOTO,   FEKONY,   FEKITO,   FEFEHO, FEFERO, FEFETO) " +
+                    "VALUES ('Marillen', 'Adminisztrátor', 'Admin', '', 'admin', 'admin',   'I', 'I', 'I',   'I', 'I', 'I',   'I', 'I', 'I',   'I',   'I',   'I', 'I', 'I');";
         }
         #endregion
     }
