@@ -51,6 +51,9 @@ namespace Labor
                 //try
                 {
                     laborconnection = new SqlConnection("Server=" + Settings.server + ";Database=" + Settings.labor_database + ";Integrated Security=true");
+                    AdminForm adminform = new AdminForm();
+                    adminform.ShowDialog();
+
                     laborconnection.Open();
                     SqlCommand command = new SqlCommand(
                             "CREATE TABLE L_TORZSA (TOTIPU varchar(20) NOT NULL,TOAZON varchar(25) PRIMARY KEY,TOSZO2 varchar(25),TOSZO3 varchar(25));" +
@@ -95,7 +98,7 @@ namespace Labor
 
                             "CREATE TABLE L_MINBIZ(MISZ1M varchar(600), MISZ1A varchar(600), MISZ2M varchar(600), MISZ2A varchar(600));" +
                             
-                            HardcodedData() , laborconnection);
+                            HardcodedData(adminform.Data) , laborconnection);
 
 
                     command.ExecuteNonQuery();
@@ -2007,32 +2010,114 @@ namespace Labor
         #region Sufni
         private class AdminForm : Form
         {
+            public string Data = null;
+
+            #region Declaration
+            private TextBox box_név1;
+            private TextBox box_név2;
+            private TextBox box_beosztás1;
+            private TextBox box_beosztás2;
+            private TextBox box_felhasználó_név;
+            private TextBox box_jelszó;
+            private TextBox box_jelszó_mégegyszer;
+            #endregion
+
             #region Constructor
             public AdminForm()
             {
                 InitializeForm();
                 InitializeContent();
+                InitializeData();
             }
 
             private void InitializeForm()
             {
-                ClientSize = new System.Drawing.Size(1024, 768);
+                ClientSize = new System.Drawing.Size(400, 200 + 64);
                 MaximumSize = ClientSize;
-                Text = "Labor";
+                Text = "Admin adatai";
                 StartPosition = FormStartPosition.CenterScreen;
                 FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             }
 
             private void InitializeContent()
             {
+                const int offset = 16;
+                const int spacer = 24;
+                const int group_spacer = 8;
+                Tuple<string, int, int>[] labels = new Tuple<string, int, int>[]{
+                    new Tuple<string, int, int>("Név", 2, 1),
+                    new Tuple<string, int, int>("Beosztás", 2, 1),
+                    new Tuple<string, int, int>("Belépési kód", 1, 0),
+                    new Tuple<string, int, int>("Jelszó", 2, 1) };
 
+                int count = 0;
+                int group = 0;
+                for (int current = 0; current < labels.Length; ++current)
+                {
+                    Label label = MainForm.createlabel(labels[current].Item1 + ":", offset, count * spacer + group * group_spacer + offset, this);
+                    count += labels[current].Item2;
+                    group += labels[current].Item3;
+                }
+
+                //
+
+                const int column = 100;
+                box_név1 = MainForm.createtextbox(column, 0 * spacer + 0 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
+                box_név2 = MainForm.createtextbox(column, 1 * spacer + 0 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
+
+                box_beosztás1 = MainForm.createtextbox(column, 2 * spacer + 1 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
+                box_beosztás2 = MainForm.createtextbox(column, 3 * spacer + 1 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
+
+                box_felhasználó_név = MainForm.createtextbox(column, 4 * spacer + 2 * group_spacer + offset, 15, 15 * 8, this, CharacterCasing.Normal);
+                box_jelszó = MainForm.createtextbox(column, 5 * spacer + 2 * group_spacer + offset, 15, 15 * 8, this, CharacterCasing.Normal);
+                box_jelszó.PasswordChar = '*';
+                box_jelszó_mégegyszer = MainForm.createtextbox(column, 6 * spacer + 2 * group_spacer + offset, 15, 15 * 8, this, CharacterCasing.Normal);
+                box_jelszó_mégegyszer.PasswordChar = '*';
+
+                //
+
+                Button rendben = new Button();
+                rendben.Size = new System.Drawing.Size(96, 32);
+                rendben.Location = new System.Drawing.Point(ClientSize.Width - rendben.Width - spacer, ClientSize.Height - rendben.Height - spacer);
+                rendben.Click += rendben_Click;
+                rendben.Text = "Rendben";
+
+                Controls.Add(rendben);
+            }
+
+            private void InitializeData()
+            {
+                box_név1.Text = "Marillen";
+
+                box_beosztás1.Text = "Adminisztrátor";
+                box_beosztás2.Text = "System Administrator";
+
+                box_felhasználó_név.Text = "admin";
+                box_jelszó.Text = "admin";
+                box_jelszó_mégegyszer.Text = "admin";
             }
             #endregion
 
             #region EventHandlers
+            private void rendben_Click(object _sender, EventArgs _event)
+            {
+                if (box_jelszó.Text != box_jelszó_mégegyszer.Text) { MessageBox.Show("Nem egyezik a két jelszó!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+                if (!Database.IsCorrectSQLText(box_név1.Text)) { MessageBox.Show("Nem megengedett karakter a név1 mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                if (!Database.IsCorrectSQLText(box_név2.Text)) { MessageBox.Show("Nem megengedett karakter a név2 mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                if (!Database.IsCorrectSQLText(box_beosztás1.Text)) { MessageBox.Show("Nem megengedett karakter a beosztás1 mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                if (!Database.IsCorrectSQLText(box_beosztás2.Text)) { MessageBox.Show("Nem megengedett karakter a beosztás2 mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                if (!Database.IsCorrectSQLText(box_felhasználó_név.Text)) { MessageBox.Show("Nem megengedett karakter a felhasználó név mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                if (!Database.IsCorrectSQLText(box_jelszó.Text)) { MessageBox.Show("Nem megengedett karakter a jelszó mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+
+                Data = V_Apostrophe(new string[] { box_név1.Text, box_név2.Text, box_beosztás1.Text, box_beosztás2.Text, box_felhasználó_név.Text, box_jelszó.Text }) + 
+                    ", 'I', 'I', 'I',   'I', 'I', 'I',   'I', 'I', 'I',   'I',   'I',   'I', 'I', 'I'";
+
+                Close();
+            }
             #endregion
         }
-        private string HardcodedData()
+        private string HardcodedData(string _admin_data)
         {
             return
                 "INSERT INTO L_GYFAJTA (GFTEKO, GFAZON, GFSZO2,GFSZO3) VALUES    ('21','Érdi jubileum','','')," +
@@ -2173,7 +2258,7 @@ namespace Labor
                     "('Laboros','Belinyák Nándor','Nándor Belinyák','Nándor Belinyák');" +
 
                 "INSERT INTO L_FELHASZ (FEFEN1, FEFEN2, FEBEO1, FEBEO2, FEBEKO, FEJELS,   FETOHO, FETORO, FETOTO,   FEVIHO, FEVIRO, FEVITO,   FEFOKE, FEFOFE, FEFOTO,   FEKONY,   FEKITO,   FEFEHO, FEFERO, FEFETO) " +
-                    "VALUES ('Marillen', 'Adminisztrátor', 'Admin', '', 'admin', 'admin',   'I', 'I', 'I',   'I', 'I', 'I',   'I', 'I', 'I',   'I',   'I',   'I', 'I', 'I')";
+                    "VALUES (" + (_admin_data == null ? "'Marillen', 'Adminisztrátor', 'Admin', '', 'admin', 'admin',   'I', 'I', 'I',   'I', 'I', 'I',   'I', 'I', 'I',   'I',   'I',   'I', 'I', 'I'" : _admin_data) +");";
         }
         #endregion
     }
