@@ -4,7 +4,7 @@
 #server=FUSIONW7\SQLEXPRESS
 #
 #	Marillen adatbázis neve
-#marillen_database=Marillen2014
+#marillen_database=Marillen2013
 #	Labor adatbázis neve
 #labor_database=Labor
 #
@@ -16,6 +16,6 @@
 #	Az ablakok frissítési ideje
 #ui_refresh=10
 #	Belépéskor a 'Felhasználó név' kezdőértéke
-ui_login_name=admin
+#ui_login_name=admin
 #	Felugró ablakok rendezése egymás mellé/mindig középre
 ui_manual_locations
