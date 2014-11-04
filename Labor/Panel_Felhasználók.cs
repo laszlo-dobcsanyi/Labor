@@ -106,7 +106,7 @@ namespace Labor
             table.AllowUserToResizeRows = false;
             table.AllowUserToResizeColumns = false;
             table.AllowUserToAddRows = false;
-            table.Width = 450 + 3;
+            table.Width = 75 * 8 + 3;
             table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             table.ReadOnly = true;
             table.DataBindingComplete += table_DataBindingComplete;
@@ -143,8 +143,8 @@ namespace Labor
         {
             data = new DataTable();
 
-            data.Columns.Add(new DataColumn("Név1", System.Type.GetType("System.String")));
-            data.Columns.Add(new DataColumn("Beosztás1", System.Type.GetType("System.String")));
+            data.Columns.Add(new DataColumn("Név", System.Type.GetType("System.String")));
+            data.Columns.Add(new DataColumn("Beosztás", System.Type.GetType("System.String")));
             data.Columns.Add(new DataColumn("Felhasználónév", System.Type.GetType("System.String")));
 
             return data;
@@ -199,9 +199,9 @@ namespace Labor
         private void table_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
             table.DataBindingComplete -= table_DataBindingComplete;
-            table.Columns[Felhasználó.TableIndexes.név1].Width = 150;
-            table.Columns[Felhasználó.TableIndexes.beosztás1].Width = 150;
-            table.Columns[Felhasználó.TableIndexes.felhasználó_név].Width = 150;
+            table.Columns[Felhasználó.TableIndexes.név1].Width = 30 * 8;
+            table.Columns[Felhasználó.TableIndexes.beosztás1].Width = 30 * 8;
+            table.Columns[Felhasználó.TableIndexes.felhasználó_név].Width = 15 * 8;
         }
 
         private void table_UserDeletingRow(object _sender, DataGridViewRowCancelEventArgs _event)
@@ -307,8 +307,8 @@ namespace Labor
                 box_beosztás1 = MainForm.createtextbox(column, 2 * spacer + 1 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
                 box_beosztás2 = MainForm.createtextbox(column, 3 * spacer + 1 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
 
-                box_felhasználó_név = MainForm.createtextbox(column, 4 * spacer + 2 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
-                box_jelszó = MainForm.createtextbox(column, 5 * spacer + 2 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
+                box_felhasználó_név = MainForm.createtextbox(column, 4 * spacer + 2 * group_spacer + offset, 15, 15 * 8, this, CharacterCasing.Normal);
+                box_jelszó = MainForm.createtextbox(column, 5 * spacer + 2 * group_spacer + offset, 15, 15 * 8, this, CharacterCasing.Normal);
                 box_jelszó.PasswordChar = '*';
 
                 //
