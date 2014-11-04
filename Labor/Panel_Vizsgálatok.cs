@@ -856,6 +856,7 @@ namespace Labor
                     termékkódválasztó.Location = new Point(box_termékkód.Location.X, box_termékkód.Location.Y);
                     termékkódválasztó.Width = 300;
                     termékkódválasztó.KeyDown += termékkódválasztó_KeyDown;
+                    termékkódválasztó.Leave += termékkódválasztó_Leave;
 
                     foreach (string item in temp)
                     {
@@ -893,6 +894,12 @@ namespace Labor
                     if(combo_gyümölcsfajta.Items.Count!=0)
                     combo_gyümölcsfajta.SelectedIndex = 0;
                 }
+            }
+
+            private void termékkódválasztó_Leave(object _sender, EventArgs _event)
+            {
+                ListBox termékkódválasztó = (ListBox)_sender;
+                termékkódválasztó.Focus();
             }
 
             private void box_hordószám_TextChanged(object _sender, EventArgs _event)

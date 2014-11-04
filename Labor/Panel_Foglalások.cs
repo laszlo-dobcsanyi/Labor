@@ -1513,6 +1513,7 @@ namespace Labor
                         }
                     }
                 }
+
                 Program.RefreshData();
                 Close();
             }
