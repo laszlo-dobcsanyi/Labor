@@ -380,7 +380,7 @@ namespace Labor
             KonszignációRendezés(konszignáció);
             foreach (Node_Konszignáció.Gyümölcstípus outer in konszignáció.gyümölcstípusok)
             {
-                    string temp = regex.Replace(outer.megnevezés, @" ");
+                string temp = regex.Replace(outer.megnevezés, @" ");
                 foreach (Node_Konszignáció.Gyümölcstípus.Adat inner in outer.adat)
                 {
 
@@ -678,9 +678,6 @@ namespace Labor
         public static void KonszignációsDataTáblázatFormázás(Table _table)
         {
             _table.AutoFit = AutoFit.Contents;
-            for (int i = 0; i < _table.Rows.Count; i++)
-                _table.Rows[i].Cells[6].Width = 160;
-
             Border c = new Border(Novacode.BorderStyle.Tcbs_none, BorderSize.two, 0, Color.Black);
             _table.SetBorder(TableBorderType.InsideH, c);
             _table.SetBorder(TableBorderType.InsideV, c);
