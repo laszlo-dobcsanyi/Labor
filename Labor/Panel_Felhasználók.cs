@@ -265,7 +265,7 @@ namespace Labor
 
             public void InitializeForm()
             {
-                ClientSize = new Size(400, 600 + 64);
+                ClientSize = new Size(450, 600 + 64);
                 MaximumSize = ClientSize;
                 FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
                 Text = felhasználó == null ? "Új felhasználó" : felhasználó.Value.név1;
@@ -301,58 +301,58 @@ namespace Labor
                 //
 
                 const int column = 100;
-                box_név1 = MainForm.createtextbox(column, 0 * spacer + 0 * group_spacer + offset, 15, 15 * 8, this, CharacterCasing.Normal);
-                box_név2 = MainForm.createtextbox(column, 1 * spacer + 0 * group_spacer + offset, 15, 15 * 8, this, CharacterCasing.Normal);
+                box_név1 = MainForm.createtextbox(column, 0 * spacer + 0 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
+                box_név2 = MainForm.createtextbox(column, 1 * spacer + 0 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
 
-                box_beosztás1 = MainForm.createtextbox(column, 2 * spacer + 1 * group_spacer + offset, 15, 15 * 8, this, CharacterCasing.Normal);
-                box_beosztás2 = MainForm.createtextbox(column, 3 * spacer + 1 * group_spacer + offset, 15, 15 * 8, this, CharacterCasing.Normal);
+                box_beosztás1 = MainForm.createtextbox(column, 2 * spacer + 1 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
+                box_beosztás2 = MainForm.createtextbox(column, 3 * spacer + 1 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
 
-                box_felhasználó_név = MainForm.createtextbox(column, 4 * spacer + 2 * group_spacer + offset, 15, 15 * 8, this, CharacterCasing.Normal);
-                box_jelszó = MainForm.createtextbox(column, 5 * spacer + 2 * group_spacer + offset, 15, 15 * 8, this, CharacterCasing.Normal);
+                box_felhasználó_név = MainForm.createtextbox(column, 4 * spacer + 2 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
+                box_jelszó = MainForm.createtextbox(column, 5 * spacer + 2 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
                 box_jelszó.PasswordChar = '*';
 
                 //
 
-                int[] columns = new int[] { 100, 195, 275 };
+                int[] columns = new int[] { 100, 245, 375 };
 
                 group = 0;
-                MainForm.createlabel("Hozzáadás:",   0 * 100 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
+                MainForm.createlabel("Hozzáadás:",   0 * 150 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
                 check_törzs_új = MainForm.Create_CheckBox(columns[0], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                MainForm.createlabel("Módosítás:",   1 * 100 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
+                MainForm.createlabel("Módosítás:",   1 * 150 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
                 check_törzs_módosít = MainForm.Create_CheckBox(columns[1], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                MainForm.createlabel("Törlés:", 2 * 100 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
+                MainForm.createlabel("Törlés:", 2 * 150 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
                 check_törzs_töröl = MainForm.Create_CheckBox(columns[2], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
 
                 ++group;
-                MainForm.createlabel("Hozzáadás:", 0 * 100 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
+                MainForm.createlabel("Hozzáadás:", 0 * 150 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
                 check_vizsgálat_új = MainForm.Create_CheckBox(columns[0], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                MainForm.createlabel("Módosítás:", 1 * 100 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
+                MainForm.createlabel("Módosítás:", 1 * 150 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
                 check_vizsgálat_módosít = MainForm.Create_CheckBox(columns[1], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                MainForm.createlabel("Törlés:", 2 * 100 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
+                MainForm.createlabel("Törlés:", 2 * 150 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
                 check_vizsgálat_töröl = MainForm.Create_CheckBox(columns[2], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
 
                 ++group;
-                MainForm.createlabel("Hozzáadás:", 0 * 100 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
+                MainForm.createlabel("Hozzáadás:", 0 * 150 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
                 check_foglalás_új = MainForm.Create_CheckBox(columns[0], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                MainForm.createlabel("Módosítás:", 1 * 100 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
+                MainForm.createlabel("Módosítás:", 1 * 150 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
                 check_foglalás_módosít = MainForm.Create_CheckBox(columns[1], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                MainForm.createlabel("Törlés:", 2 * 100 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
+                MainForm.createlabel("Törlés:", 2 * 150 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
                 check_foglalás_töröl = MainForm.Create_CheckBox(columns[2], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
 
                 ++group;
-                MainForm.createlabel("Nyomtatás:", 0 * 100 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
+                MainForm.createlabel("Nyomtatás:", 0 * 150 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
                 check_konszignáció_nyomtat = MainForm.Create_CheckBox(columns[0], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
 
                 ++group;
-                MainForm.createlabel("Törlés:", 0 * 100 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
+                MainForm.createlabel("Törlés:", 0 * 150 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
                 check_kiszállítások_törlés = MainForm.Create_CheckBox(columns[0], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
 
                 ++group;
-                MainForm.createlabel("Hozzáadás:", 0 * 100 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
+                MainForm.createlabel("Hozzáadás:", 0 * 150 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
                 check_felhasználók_új = MainForm.Create_CheckBox(columns[0], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                MainForm.createlabel("Módosítás:", 1 * 100 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
+                MainForm.createlabel("Módosítás:", 1 * 150 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
                 check_felhasználók_módosít = MainForm.Create_CheckBox(columns[1], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                MainForm.createlabel("Törlés:", 2 * 100 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
+                MainForm.createlabel("Törlés:", 2 * 150 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
                 check_felhasználók_töröl = MainForm.Create_CheckBox(columns[2], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
 
                 //

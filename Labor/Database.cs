@@ -80,7 +80,7 @@ namespace Labor
                                 "FOFAJT varchar(15), FOHOTI varchar(15), FOMEGR varchar(15), FOSZOR varchar(15), FOMUJE varchar(1), FOTOGE varchar(1), FOFOHO tinyint, FOSZSZ tinyint ," +
                                 "FOSZATI varchar(6) , FOSZATT varchar(6), FOBOSAI smallint, FOBOSAT smallint, SZSZAM tinyint);" +
 
-                            "CREATE TABLE L_FELHASZ (FEFEN1 varchar(15), FEFEN2 varchar(15), FEBEO1 varchar(15), FEBEO2 varchar(15), FEBEKO varchar(15) PRIMARY KEY, FEJELS varchar(15), " +
+                            "CREATE TABLE L_FELHASZ (FEFEN1 varchar(30), FEFEN2 varchar(30), FEBEO1 varchar(30), FEBEO2 varchar(30), FEBEKO varchar(30) PRIMARY KEY, FEJELS varchar(30), " +
                                 "FETOHO varchar(1), FETORO varchar(1), FETOTO varchar(1),   FEVIHO varchar(1), FEVIRO varchar(1), FEVITO varchar(1), " +
                                 "FEFOKE varchar(1), FEFOFE varchar(1), FEFOTO varchar(1),   FEKONY varchar(1),   FEKITO varchar(1), " +
                                 "FEFEHO varchar(1), FEFERO varchar(1), FEFETO varchar(1));" +

@@ -26,7 +26,7 @@ namespace Labor
 
         private void InitializeForm()
         {
-            ClientSize = new Size(400, 300 + 16);
+            ClientSize = new Size(450, 300 + 16);
             MaximumSize = ClientSize;
             Text = "Labor Belépés";
             StartPosition = FormStartPosition.CenterScreen;
@@ -41,8 +41,8 @@ namespace Labor
             string[] labels = new string[] { "Felhasználónév", "Jelszó", "Szerver elérése", "Marillen adatbázis", "Labor adatbázis" };
             for(int current = 0; current < labels.Length; ++current)
             { Label label = MainForm.createlabel(labels[current] + ":", offset, (current < 2 ? current : current + 1) * spacer + offset, this); }
-            box_felhasználónév      = MainForm.createtextbox(128 + 32, 0 * spacer + offset, 15, 15 * 8, this, CharacterCasing.Normal);
-            box_jelszó              = MainForm.createtextbox(128 + 32, 1 * spacer + offset, 15, 15 * 8, this, CharacterCasing.Normal);
+            box_felhasználónév      = MainForm.createtextbox(128 + 32, 0 * spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
+            box_jelszó              = MainForm.createtextbox(128 + 32, 1 * spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
             box_jelszó.PasswordChar = '*';
             box_szerver             = MainForm.createtextbox(128 + 32, 3 * spacer + offset, 20, 20 * 8, this, CharacterCasing.Normal);
             box_marillen            = MainForm.createtextbox(128 + 32, 4 * spacer + offset, 20, 20 * 8, this, CharacterCasing.Normal);
