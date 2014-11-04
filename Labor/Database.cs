@@ -15,7 +15,7 @@ namespace Labor
 
         public Database()
         {
-            string MarillenConnectionString = @"Data Source=" + Settings.server + ";Initial Catalog=" +  Settings.marillen_database + ";User ID=" +
+            string MarillenConnectionString = @"Data Source=" + Settings.server + ";Initial Catalog=" + Settings.marillen_database + ";User ID=" +
                 Settings.sql_username + ";Password=" + Settings.sql_password + ";";
             
             marillenconnection = new SqlConnection(MarillenConnectionString);
@@ -45,7 +45,8 @@ namespace Labor
                 }
                 catch
                 {
-                    return;
+                    MessageBox.Show("Hiba a csatlakozás során! Ellenőrizze az adatbázis elérést, felhasználó jogosultságát!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Environment.Exit(1);
                 }
 
                 //try
