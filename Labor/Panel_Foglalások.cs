@@ -301,7 +301,7 @@ namespace Labor
             table.AllowUserToResizeRows = false;
             table.AllowUserToResizeColumns = false;
             table.AllowUserToAddRows = false;
-            table.Width = 700;
+            table.Width = (6 + 30 + 6 + 10 + 30 + 15) * 8 + 3;
             table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             table.ReadOnly = true;
             table.DataBindingComplete += table_DataBindingComplete;
@@ -309,34 +309,36 @@ namespace Labor
             table.UserDeletingRow += table_UserDeletingRow;
             table.DataSource = CreateSource();
 
-            Button törlés = new Button();
-            törlés.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
-            törlés.Text = "Törlés";
-            törlés.Size = new System.Drawing.Size(96, 32);
-            törlés.Location = new Point(ClientRectangle.Width - 224 - 16, ClientRectangle.Height - 32 - 16);
-            törlés.Enabled = Program.felhasználó.Value.jogosultságok.Value.foglalások.törlés ? true : false;
-            törlés.Click += Foglalás_Törlés;
+            const int spacer = 16;
 
             Button hozzáadás = new Button();
             hozzáadás.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
             hozzáadás.Text = "Hozzáadás";
-            hozzáadás.Size = new System.Drawing.Size(96, 32);
-            hozzáadás.Location = new Point(törlés.Location.X + törlés.Width + 16, törlés.Location.Y);
+            hozzáadás.Size = new System.Drawing.Size(85, 32);
+            hozzáadás.Location = new Point(ClientRectangle.Width - hozzáadás.Size.Width - spacer, ClientRectangle.Height - hozzáadás.Size.Height - spacer);
             hozzáadás.Enabled = Program.felhasználó.Value.jogosultságok.Value.foglalások.hozzáadás ? true : false;
             hozzáadás.Click += Foglalás_Hozzáadás;
 
             Button feltöltés = new Button();
             feltöltés.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
             feltöltés.Text = "Feltöltés";
-            feltöltés.Size = new System.Drawing.Size(96, 32);
-            feltöltés.Location = new Point(törlés.Location.X + törlés.Width + 16, törlés.Location.Y - törlés.Height - 16);
+            feltöltés.Size = new System.Drawing.Size(85, 32);
+            feltöltés.Location = new Point(ClientRectangle.Width - hozzáadás.Size.Width - spacer, hozzáadás.Location.Y - feltöltés.Size.Height - spacer);
             feltöltés.Enabled = Program.felhasználó.Value.jogosultságok.Value.foglalások.hozzáadás ? true : false;
             feltöltés.Click += Foglalás_Feltöltése;
+
+            Button törlés = new Button();
+            törlés.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
+            törlés.Text = "Törlés";
+            törlés.Size = new System.Drawing.Size(85, 32);
+            törlés.Location = new Point(hozzáadás.Location.X - törlés.Size.Width - spacer, hozzáadás.Location.Y);
+            törlés.Enabled = Program.felhasználó.Value.jogosultságok.Value.foglalások.törlés ? true : false;
+            törlés.Click += Foglalás_Törlés;
 
             Button keresés = new Button();
             keresés.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
             keresés.Text = "Keresés";
-            keresés.Size = new System.Drawing.Size(96, 32);
+            keresés.Size = new System.Drawing.Size(85, 32);
             keresés.Location = new Point(törlés.Location.X, feltöltés.Location.Y);
             keresés.Click += Vizsgálat_Keresése;
 
@@ -351,10 +353,10 @@ namespace Labor
         {
             data = new DataTable();
 
-            data.Columns.Add(new DataColumn("Foglalás száma", System.Type.GetType("System.Int32")));
+            data.Columns.Add(new DataColumn("Száma", System.Type.GetType("System.Int32")));
             data.Columns.Add(new DataColumn("Foglalás neve", System.Type.GetType("System.String")));
-            data.Columns.Add(new DataColumn("Foglalt hordók száma", System.Type.GetType("System.Int32")));
-            data.Columns.Add(new DataColumn("Foglalás típusa", System.Type.GetType("System.String")));
+            data.Columns.Add(new DataColumn("Hordók", System.Type.GetType("System.Int32")));
+            data.Columns.Add(new DataColumn("Típusa", System.Type.GetType("System.String")));
             data.Columns.Add(new DataColumn("Készítette", System.Type.GetType("System.String")));
             data.Columns.Add(new DataColumn("Foglalás ideje", System.Type.GetType("System.String")));
 
@@ -476,12 +478,12 @@ namespace Labor
         private void table_DataBindingComplete(object _sender, DataGridViewBindingCompleteEventArgs _event)
         {
             table.DataBindingComplete -= table_DataBindingComplete;
-            table.Columns[Foglalás.TableIndexes.id].Width = 100 - 3;
-            table.Columns[Foglalás.TableIndexes.név].Width = 120;
-            table.Columns[Foglalás.TableIndexes.hordók_száma].Width = 120;
-            table.Columns[Foglalás.TableIndexes.típus].Width = 120;
-            table.Columns[Foglalás.TableIndexes.készítő].Width = 120;
-            table.Columns[Foglalás.TableIndexes.idő].Width = 120;
+            table.Columns[Foglalás.TableIndexes.id].Width = 6 * 8;
+            table.Columns[Foglalás.TableIndexes.név].Width = 30 * 8;
+            table.Columns[Foglalás.TableIndexes.hordók_száma].Width = 6 * 8;
+            table.Columns[Foglalás.TableIndexes.típus].Width = 10 * 8;
+            table.Columns[Foglalás.TableIndexes.készítő].Width = 30 * 8;
+            table.Columns[Foglalás.TableIndexes.idő].Width = 15 * 8;
         }
 
         private void Panel_Foglalások_KeyDown(object _sender, KeyEventArgs _event)
@@ -622,7 +624,7 @@ namespace Labor
 
                 Label foglalás_neve = MainForm.createlabel("Foglalás neve:", 10, 30, this);
 
-                box_foglalás_neve = MainForm.createtextbox(foglalás_neve.Location.X + foglalás_neve.Width + 16, foglalás_neve.Location.Y, 30, 200, this);
+                box_foglalás_neve = MainForm.createtextbox(foglalás_neve.Location.X + foglalás_neve.Width + 16, foglalás_neve.Location.Y, 30, 30 * 8, this);
 
                 //
 

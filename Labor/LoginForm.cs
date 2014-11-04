@@ -43,11 +43,8 @@ namespace Labor
             { Label label = MainForm.createlabel(labels[current] + ":", offset, (current < 2 ? current : current + 1) * spacer + offset, this); }
             box_felhasználónév      = MainForm.createtextbox(128 + 32, 0 * spacer + offset, 15, 15 * 8, this, CharacterCasing.Normal);
             box_jelszó              = MainForm.createtextbox(128 + 32, 1 * spacer + offset, 15, 15 * 8, this, CharacterCasing.Normal);
-            box_jelszó.PasswordChar = '*';
-            box_szerver             = MainForm.createtextbox(128 + 32, 3 * spacer + offset, 20, 20 * 8, this, CharacterCasing.Normal);
-            box_marillen            = MainForm.createtextbox(128 + 32, 4 * spacer + offset, 20, 20 * 8, this, CharacterCasing.Normal);
-            box_labor               = MainForm.createtextbox(128 + 32, 5 * spacer + offset, 20, 20 * 8, this, CharacterCasing.Normal);
 
+            box_jelszó.PasswordChar = '*';
             Button rendben = new Button();
             rendben.Size = new Size(96, 32);
             rendben.Location = new Point(ClientSize.Width - rendben.Width - offset, ClientSize.Height - rendben.Height - offset);
@@ -55,6 +52,11 @@ namespace Labor
             rendben.Text = "Rendben";
 
             Controls.Add(rendben);
+
+            box_szerver             = MainForm.createtextbox(128 + 32, 3 * spacer + offset, 20, 20 * 8, this, CharacterCasing.Normal);
+            box_marillen            = MainForm.createtextbox(128 + 32, 4 * spacer + offset, 20, 20 * 8, this, CharacterCasing.Normal);
+            box_labor               = MainForm.createtextbox(128 + 32, 5 * spacer + offset, 20, 20 * 8, this, CharacterCasing.Normal);
+
 
         }
 

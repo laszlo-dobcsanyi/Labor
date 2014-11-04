@@ -68,30 +68,22 @@ namespace Labor
             table.AllowUserToResizeRows = false;
             table.AllowUserToResizeColumns = false;
             table.AllowUserToAddRows = false;
-            table.Width = 750;
+            table.Width = (6 + 30 + 6 + 10 + 30 + 15 + 6) * 8 + 3;
             table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             table.DataSource = CreateSource();
             table.DataBindingComplete += table_DataBindingComplete;
             table.UserDeletingRow += table_UserDeletingRow;
             table.CellMouseUp += table_CellMouseUp;
 
-            Button hordók = new Button();
-            hordók.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
-            hordók.Text = "Hordók";
-            hordók.Size = new System.Drawing.Size(96, 32);
-            hordók.Location = new Point(ClientRectangle.Width - 224 - 16, ClientRectangle.Height - 32 - 16);
-            hordók.Click += hordók_Click;
-
             Button nyomtatás = new Button();
             nyomtatás.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
             nyomtatás.Text = "Nyomtatás";
-            nyomtatás.Size = new System.Drawing.Size(96, 32);
-            nyomtatás.Location = new Point(hordók.Location.X + hordók.Width + 16, hordók.Location.Y);
+            nyomtatás.Size = new System.Drawing.Size(128, 32);
+            nyomtatás.Location = new Point(ClientRectangle.Width - nyomtatás.Size.Width - 16, ClientRectangle.Height - nyomtatás.Height - 16);
             nyomtatás.Enabled = Program.felhasználó.Value.jogosultságok.Value.konszignáció_nyomtatás ? true : false;
             nyomtatás.Click += nyomtatás_Click;
 
             Controls.Add(table);
-            Controls.Add(hordók);
             Controls.Add(nyomtatás);
         }
 
@@ -99,10 +91,10 @@ namespace Labor
         {
             data = new DataTable();
 
-            data.Columns.Add(new DataColumn("Foglalás száma", System.Type.GetType("System.Int32")));
+            data.Columns.Add(new DataColumn("Száma", System.Type.GetType("System.Int32")));
             data.Columns.Add(new DataColumn("Foglalás neve", System.Type.GetType("System.String")));
-            data.Columns.Add(new DataColumn("Foglalt hordók száma", System.Type.GetType("System.Int32")));
-            data.Columns.Add(new DataColumn("Foglalás típusa", System.Type.GetType("System.String")));
+            data.Columns.Add(new DataColumn("Hordók", System.Type.GetType("System.Int32")));
+            data.Columns.Add(new DataColumn("Típusa", System.Type.GetType("System.String")));
             data.Columns.Add(new DataColumn("Készítette", System.Type.GetType("System.String")));
             data.Columns.Add(new DataColumn("Foglalás ideje", System.Type.GetType("System.String")));
             data.Columns.Add(new DataColumn("Kijelölés", System.Type.GetType("System.Boolean")));
@@ -148,42 +140,46 @@ namespace Labor
         private void table_CellMouseUp(object _sender, DataGridViewCellMouseEventArgs _event)
         {
             // End of edition on each click on column of checkbox
-            if (_event.ColumnIndex == 6 && _event.RowIndex != -1)
+            if (_event.RowIndex == -1) return;
+
+            if (_event.ColumnIndex == 6)
             {
                 table.EndEdit();
             }
-        }
-     
-        private void hordók_Click(object _sender, EventArgs _event)
-        {
-            if (table.SelectedRows.Count != 1) return;
+            else
+            {
+                if (_event.Clicks == 2)
+                {
+                    if (table.SelectedRows.Count != 1) return;
 
-            Foglalás foglalás = new Foglalás((int)table.SelectedRows[0].Cells[Foglalás.TableIndexes.id].Value, (string)table.SelectedRows[0].Cells[Foglalás.TableIndexes.név].Value,
-                (int)table.SelectedRows[0].Cells[Foglalás.TableIndexes.hordók_száma].Value, (string)table.SelectedRows[0].Cells[Foglalás.TableIndexes.típus].Value,
-                (string)table.SelectedRows[0].Cells[Foglalás.TableIndexes.készítő].Value, (string)table.SelectedRows[0].Cells[Foglalás.TableIndexes.idő].Value);
+                    Foglalás foglalás = new Foglalás((int)table.SelectedRows[0].Cells[Foglalás.TableIndexes.id].Value, (string)table.SelectedRows[0].Cells[Foglalás.TableIndexes.név].Value,
+                        (int)table.SelectedRows[0].Cells[Foglalás.TableIndexes.hordók_száma].Value, (string)table.SelectedRows[0].Cells[Foglalás.TableIndexes.típus].Value,
+                        (string)table.SelectedRows[0].Cells[Foglalás.TableIndexes.készítő].Value, (string)table.SelectedRows[0].Cells[Foglalás.TableIndexes.idő].Value);
 
-            Konszignáció_Hordók hordó_megjelenítő = new Konszignáció_Hordók(foglalás);
-            hordó_megjelenítő.ShowDialog(this);
+                    Konszignáció_Hordók hordó_megjelenítő = new Konszignáció_Hordók(foglalás);
+                    hordó_megjelenítő.ShowDialog(this);
 
-            Program.RefreshData();
+                    Program.RefreshData();
+                }
+            }
         }
 
         private void table_DataBindingComplete(object _sender, DataGridViewBindingCompleteEventArgs _event)
         {
             table.DataBindingComplete -= table_DataBindingComplete;
-            table.Columns[0].Width = 100 - 3;
+            table.Columns[0].Width = 6 * 8;
             table.Columns[0].ReadOnly = true;
-            table.Columns[1].Width = 120;
+            table.Columns[1].Width = 30 * 8;
             table.Columns[1].ReadOnly = true;
-            table.Columns[2].Width = 120;
+            table.Columns[2].Width = 6 * 8;
             table.Columns[2].ReadOnly = true;
-            table.Columns[3].Width = 120;
+            table.Columns[3].Width = 10 * 8;
             table.Columns[3].ReadOnly = true;
-            table.Columns[4].Width = 120;
+            table.Columns[4].Width = 30 * 8;
             table.Columns[4].ReadOnly = true;
-            table.Columns[5].Width = 120;
+            table.Columns[5].Width = 15 * 8;
             table.Columns[5].ReadOnly = true;
-            table.Columns[6].Width = 50;
+            table.Columns[6].Width = 6 * 8;
             table.Columns[6].ReadOnly = false;
         }
 

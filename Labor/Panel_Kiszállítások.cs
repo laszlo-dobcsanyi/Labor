@@ -76,7 +76,7 @@ namespace Labor
             table.AllowUserToResizeRows = false;
             table.AllowUserToResizeColumns = false;
             table.AllowUserToAddRows = false;
-            table.Width = 720;
+            table.Width = 720 + 3;
             table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             table.MultiSelect = false;
             table.ReadOnly = true;
