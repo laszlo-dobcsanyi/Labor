@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 
 namespace Labor
@@ -13,29 +14,56 @@ namespace Labor
         [STAThread]
         public static void Main()
         {
-            Settings.Configurate();
-
-            database = new Database();
-            felhasználó = null;
-
-            LoginForm loginform = new LoginForm();
-            Application.Run(loginform);
-
-            if (loginform.felhasználó != null)
+            try
             {
-                felhasználó = loginform.felhasználó;
-                loginform.Dispose();
+                Settings.Configurate();
 
-                refresher = new Timer();
-                refresher.Interval = Settings.ui_refresh * 1000;
-                refresher.Tick += Refresher_Elapsed;
-                refresher.Start();
+                database = new Database();
+                felhasználó = null;
 
-                MainForm mainform = new MainForm();
-                Application.Run(mainform);
+                LoginForm loginform = new LoginForm();
+                Application.Run(loginform);
 
-                refresher.Dispose();
-                mainform.Dispose();
+                if (loginform.felhasználó != null)
+                {
+                    felhasználó = loginform.felhasználó;
+                    loginform.Dispose();
+
+                    refresher = new Timer();
+                    refresher.Interval = Settings.ui_refresh * 1000;
+                    refresher.Tick += Refresher_Elapsed;
+                    refresher.Start();
+
+                    MainForm mainform = new MainForm();
+                    Application.Run(mainform);
+
+                    refresher.Dispose();
+                    mainform.Dispose();
+                }
+            }
+            catch (Exception _e)
+            {
+                MessageBox.Show("Kezeletlen globális hiba a program futása során!\nKérem jelezze a hibát a rendszergazdának!\nHiba adatai:\n" + _e.Message, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                string file_name = string.Format("crash-{0:yyyy-MM-dd_hh-mm-ss}.data", DateTime.Now);
+
+                try
+                {
+                    StreamWriter file = new StreamWriter(file_name);
+                    file.WriteLine("Message:\t" + _e.Message);
+                    file.WriteLine("Source:\t" + _e.Source);
+                    file.WriteLine("Data:\t" + _e.Data);
+                    file.WriteLine("Stack:\t" + _e.StackTrace);
+                    file.Close();
+                }
+                catch (Exception _ex)
+                {
+                    MessageBox.Show("További hiba a kivétel mentésekor!\n" + _ex.Message, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Environment.Exit(1);
+                }
+
+                MessageBox.Show("A hiba adatait a " + file_name + " nevű file tartalmazza!", "Hiba adatainak elérése", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Environment.Exit(0);
             }
         }
 
