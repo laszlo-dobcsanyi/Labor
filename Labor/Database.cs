@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
 namespace Labor
 {
@@ -1622,8 +1623,15 @@ namespace Labor
                 }
                 command.Dispose();
                 marillenconnection.Close();
-                return data;
             }
+
+            RegexOptions options = RegexOptions.None;
+            Regex regex = new Regex(@"[ ]{2,}", options);
+            data.vevő_cím = regex.Replace(data.vevő_cím, @" ");
+            data.vevő_név = regex.Replace(data.vevő_név, @" ");
+            data.vevő_város = regex.Replace(data.vevő_város, @" ");
+
+            return data;
         }
 
         /// <summary>

@@ -340,13 +340,13 @@ namespace Labor
             table_fejléc.Rows[1].Cells[0].Paragraphs[0].Append("Gépkocsi:").Bold();
             table_fejléc.Rows[0].Cells[2].Paragraphs[0].Append("Feladó:").Bold();
             table_fejléc.Rows[1].Cells[2].Paragraphs[0].Append("Dátum:").Bold();
-            table_fejléc.Rows[1].Cells[2].Paragraphs[0].Append(" " + konszignáció.fejléc.szállítólevél.dátum);
 
+            table_fejléc.Rows[1].Cells[3].Paragraphs[0].Append(konszignáció.fejléc.szállítólevél.dátum + "    ");
             table_fejléc.Rows[1].Cells[3].Paragraphs[0].Append("Szállítólevél:").Bold();
             table_fejléc.Rows[1].Cells[3].Paragraphs[0].Append(" " + konszignáció.fejléc.szállítólevél.szállítólevél);
 
             table_fejléc.Rows[0].Cells[1].Paragraphs[0].Append(konszignáció.fejléc.vevő.vevő_név);
-            table_fejléc.Rows[0].Cells[1].Paragraphs[0].AppendLine(konszignáció.fejléc.vevő.vevő_név);
+            table_fejléc.Rows[0].Cells[1].Paragraphs[0].AppendLine(konszignáció.fejléc.vevő.vevő_város);
             table_fejléc.Rows[0].Cells[1].Paragraphs[0].AppendLine(konszignáció.fejléc.vevő.vevő_cím);
 
             table_fejléc.Rows[1].Cells[1].Paragraphs[0].Append(konszignáció.fejléc.szállítólevél.rendszámok[0]);
@@ -380,7 +380,7 @@ namespace Labor
             KonszignációRendezés(konszignáció);
             foreach (Node_Konszignáció.Gyümölcstípus outer in konszignáció.gyümölcstípusok)
             {
-                    string temp = regex.Replace(outer.megnevezés, @" ");
+                string temp = regex.Replace(outer.megnevezés, @" ");
                 foreach (Node_Konszignáció.Gyümölcstípus.Adat inner in outer.adat)
                 {
 
@@ -436,6 +436,7 @@ namespace Labor
             */
             
              #endregion
+
             if (!Directory.Exists("Listák"))
             {
                 Directory.CreateDirectory("Listák");
@@ -677,9 +678,6 @@ namespace Labor
         public static void KonszignációsDataTáblázatFormázás(Table _table)
         {
             _table.AutoFit = AutoFit.Contents;
-            for (int i = 0; i < _table.Rows.Count; i++)
-                _table.Rows[i].Cells[6].Width = 160;
-
             Border c = new Border(Novacode.BorderStyle.Tcbs_none, BorderSize.two, 0, Color.Black);
             _table.SetBorder(TableBorderType.InsideH, c);
             _table.SetBorder(TableBorderType.InsideV, c);
