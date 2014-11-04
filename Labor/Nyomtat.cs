@@ -340,13 +340,13 @@ namespace Labor
             table_fejléc.Rows[1].Cells[0].Paragraphs[0].Append("Gépkocsi:").Bold();
             table_fejléc.Rows[0].Cells[2].Paragraphs[0].Append("Feladó:").Bold();
             table_fejléc.Rows[1].Cells[2].Paragraphs[0].Append("Dátum:").Bold();
-            table_fejléc.Rows[1].Cells[2].Paragraphs[0].Append(" " + konszignáció.fejléc.szállítólevél.dátum);
 
+            table_fejléc.Rows[1].Cells[3].Paragraphs[0].Append(konszignáció.fejléc.szállítólevél.dátum + "    ");
             table_fejléc.Rows[1].Cells[3].Paragraphs[0].Append("Szállítólevél:").Bold();
             table_fejléc.Rows[1].Cells[3].Paragraphs[0].Append(" " + konszignáció.fejléc.szállítólevél.szállítólevél);
 
             table_fejléc.Rows[0].Cells[1].Paragraphs[0].Append(konszignáció.fejléc.vevő.vevő_név);
-            table_fejléc.Rows[0].Cells[1].Paragraphs[0].AppendLine(konszignáció.fejléc.vevő.vevő_név);
+            table_fejléc.Rows[0].Cells[1].Paragraphs[0].AppendLine(konszignáció.fejléc.vevő.vevő_város);
             table_fejléc.Rows[0].Cells[1].Paragraphs[0].AppendLine(konszignáció.fejléc.vevő.vevő_cím);
 
             table_fejléc.Rows[1].Cells[1].Paragraphs[0].Append(konszignáció.fejléc.szállítólevél.rendszámok[0]);
@@ -436,6 +436,7 @@ namespace Labor
             */
             
              #endregion
+
             if (!Directory.Exists("Listák"))
             {
                 Directory.CreateDirectory("Listák");
