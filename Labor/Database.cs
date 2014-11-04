@@ -1112,6 +1112,45 @@ namespace Labor
                 }
 
                 laborconnection.Close();
+        }
+
+        /// <summary>
+        /// Egy hordó lista összes elemét az adott foglaláshoz rendeli.
+        /// </summary>
+        /// <param name="_foglalás_id"></param>
+        /// <param name="_adatok">Törlés? - Termékkód - Sarzs - Hordó_szám sorrendben kell a Tuple-ben lennie.</param>
+        /// <returns>Lefoglalt hordók száma.</returns>
+        public int Hordók_ListaFoglalás(int _foglalás_id, List< Tuple< bool, string, string, string > > _adatok)
+        {
+            int offset = 0;
+            int modified = 0;
+
+            lock (LaborLock)
+            {
+                SqlCommand command;
+
+                laborconnection.Open();
+
+                foreach (Tuple<bool, string, string, string> current in _adatok)
+                {
+                    command = laborconnection.CreateCommand();
+                    command.CommandText = "UPDATE L_HORDO " + (current.Item1 ? "SET FOSZAM = NULL" : "SET FOSZAM = " + _foglalás_id) +
+                        " WHERE " + (current.Item1 ? "FOSZAM = " + _foglalás_id : "FOSZAM IS NULL") + " AND HOTEKO = '" + current.Item2 + "' AND HOSARZ = '" + current.Item3 + "' AND HOSZAM = '" + current.Item4 + "';";
+
+                    if (command.ExecuteNonQuery() == 1) modified++;
+                    offset += current.Item1 ? -1 : +1;
+                    command.Dispose();
+                }
+
+                if (offset != 0)
+                { 
+                    command = laborconnection.CreateCommand();
+                    command.CommandText = "UPDATE L_FOGLAL SET FOFOHO = FOFOHO " + (0 < offset ? "+" + offset : offset.ToString()) + " WHERE FOSZAM = " + _foglalás_id + ";";
+                    command.ExecuteNonQuery();
+                    command.Dispose();
+                }
+
+                laborconnection.Close();
             }
 
             return modified;
@@ -1462,54 +1501,54 @@ namespace Labor
                 {
                     laborconnection.Open();
 
-                    foreach (Import.Import_Hordó item in _import.import_hordók)
-                    {
-                        string iProdId = "12" + item.termékkód.Substring(0, 2) + "01" + item.gyártási_év + "_0" + item.gyártási_év + item.hordószám;
-                        string serial_nr = null;
+            foreach (Import.Import_Hordó item in _import.import_hordók)
+            {
+                string iProdId = "12" + item.termékkód.Substring(0, 2) + "01" + item.gyártási_év + "_0" + item.gyártási_év + item.hordószám;
+                string serial_nr = null;
                         string visarz = null;
-                        string vigyev = null;
+                string vigyev = null;
 
-                        SqlCommand command = new SqlCommand("SELECT serial_nr, prod_id, qty FROM tetelek WHERE (type=300) AND (prod_id like '" + iProdId + "') AND (qty > 0) ORDER BY serial_nr");
-                        command.Connection = marillenconnection;
-                        SqlDataReader reader = command.ExecuteReader();
-                        while (reader.Read())
-                        {
-                            serial_nr = reader.GetString(0);
-                        }
+                    SqlCommand command = new SqlCommand("SELECT serial_nr, prod_id, qty FROM tetelek WHERE (type=300) AND (prod_id like '" + iProdId + "') AND (qty > 0) ORDER BY serial_nr");
+                    command.Connection = marillenconnection;
+                    SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        serial_nr = reader.GetString(0);
+                    }
                         reader.Close();
 
-                        if (serial_nr == null)
-                        {
-                            hibák.Add(item.termékkód + " " + item.hordószám + " -nincs ilyen hordó");
+                    if (serial_nr == null)
+                    {
+                        hibák.Add(item.termékkód + " " + item.hordószám + " -nincs ilyen hordó");
                             continue;
-                        }
-                        else
+                    }
+                    else
+                    {
+                        command = new SqlCommand("SELECT propstr FROM folyoprops WHERE (serial_nr= " + serial_nr + " ) AND (code=3)");
+                        command.Connection = marillenconnection;
+                        reader = command.ExecuteReader();
+                        while (reader.Read())
                         {
-                            command = new SqlCommand("SELECT propstr FROM folyoprops WHERE (serial_nr= " + serial_nr + " ) AND (code=3)");
-                            command.Connection = marillenconnection;
-                            reader = command.ExecuteReader();
-                            while (reader.Read())
-                            {
                                 visarz = reader.GetString(0);
                             }
-                            reader.Close();
-                        }
+                    reader.Close();
+                }
 
                         if (visarz != null)
-                        {
+                {
                             command = new SqlCommand("SELECT vigyev FROM l_vizslap WHERE (viteko=" + item.termékkód + ") AND (visarz= " + visarz + ");");
-                            command.Connection = laborconnection;
+                    command.Connection = laborconnection;
                             reader = command.ExecuteReader();
-                            while (reader.Read())
-                            {
-                                vigyev = reader.GetString(0);
-                            }
+                    while (reader.Read())
+                    {
+                        vigyev = reader.GetString(0);
+                    }
                             reader.Close();
 
-                            if (vigyev == null)
-                            {
-                                hibák.Add(item.termékkód + " " + item.hordószám + " -nincs vizsgálati lap");
-                            }
+                    if (vigyev == null)
+                    {
+                        hibák.Add(item.termékkód + " " + item.hordószám + " -nincs vizsgálati lap");
+                    }
                         }
                     }
 
@@ -1542,14 +1581,14 @@ namespace Labor
                         serial_nr = reader.GetString(0);
                     }
 
-                    command = new SqlCommand("SELECT propstr FROM folyoprops WHERE (serial_nr= " + serial_nr + " ) AND (code=3)");
-                    command.Connection = marillenconnection;
-                    reader.Close();
-                    reader = command.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        sarzsok.Add( reader.GetString(0));
-                    }
+                        command = new SqlCommand("SELECT propstr FROM folyoprops WHERE (serial_nr= " + serial_nr + " ) AND (code=3)");
+                        command.Connection = marillenconnection;
+                        reader.Close();
+                        reader = command.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            sarzsok.Add( reader.GetString(0));
+                        }
                     
                     reader.Close();
                     marillenconnection.Close();
@@ -1645,7 +1684,7 @@ namespace Labor
                 laborconnection.Open();
                 command = laborconnection.CreateCommand();
                 command.CommandText = "INSERT INTO L_SZLEV (SZSZSZ,SZFENE,SZDATE,SZNYEL,SZVEVO,SZGKR1,SZGKR2,FOFOHO,SZGYEV,SZSZIN,SZIZEK,SZILLA) output INSERTED.SZSZAM" +  
-                    " VALUES(" + "'" + _szállítólevél.szlevél +  "','" + _szállítólevél.fnév + "','" + _szállítólevél.elszállítás_ideje + "','"+ _szállítólevél.nyelv + "','" +_szállítólevél.vevő + "','"+ _szállítólevél.gépkocsi1 + "','" +_szállítólevél.gépkocsi2  + "'," + _szállítólevél.foglalt_hordó + ",'"+ _szállítólevél.gyártási_idő + "','"+ _szállítólevél.szín + "','"+ _szállítólevél.íz + "','"+ _szállítólevél.illat + "');";
+                    " VALUES(" + "'" + _szállítólevél.szlevél +  "','" + _szállítólevél.fnév + "','" + _szállítólevél.elszállítás_ideje + "','"+ _szállítólevél.nyelv + "','" +_szállítólevél.vevő + "','"+ _szállítólevél.gépkocsi1 + "','" +_szállítólevél.gépkocsi2  + "'," + _szállítólevél.foglalt_hordó + ",'"+ _szállítólevél.gyártási_idő.Substring(0,4) + "','"+ _szállítólevél.szín + "','"+ _szállítólevél.íz + "','"+ _szállítólevél.illat + "');";
                ;
                try { modified = (int)command.ExecuteScalar(); }
                 catch{ return modified; }
@@ -1829,6 +1868,32 @@ namespace Labor
             }
             return data;
         }
+
+        public Node_MinBiz_Szöveg MinőségBizonylat_Szöveg()
+        {
+            Node_MinBiz_Szöveg data = new Node_MinBiz_Szöveg();
+
+            lock (LaborLock)
+            {
+                laborconnection.Open();
+
+                SqlCommand command = laborconnection.CreateCommand();
+                command.CommandText = "SELECT MISZ1M,MISZ1A, MISZ2M,MISZ2A FROM L_MINBIZ";
+
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    data.sz1_m = reader.GetString(0);
+                    data.sz1_a = reader.GetString(1);
+                    data.sz2_m = reader.GetString(2);
+                    data.sz2_a = reader.GetString(3);
+                }
+                command.Dispose();
+                laborconnection.Close();
+            }
+            return data;
+        }
+
         #endregion
 
         #region Kiszállítások
@@ -2096,6 +2161,44 @@ namespace Labor
                 box_jelszó.Text = "admin";
                 box_jelszó_mégegyszer.Text = "admin";
             }
+
+                //
+
+                const int column = 100;
+                box_név1 = MainForm.createtextbox(column, 0 * spacer + 0 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
+                box_név2 = MainForm.createtextbox(column, 1 * spacer + 0 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
+
+                box_beosztás1 = MainForm.createtextbox(column, 2 * spacer + 1 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
+                box_beosztás2 = MainForm.createtextbox(column, 3 * spacer + 1 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
+
+                box_felhasználó_név = MainForm.createtextbox(column, 4 * spacer + 2 * group_spacer + offset, 15, 15 * 8, this, CharacterCasing.Normal);
+                box_jelszó = MainForm.createtextbox(column, 5 * spacer + 2 * group_spacer + offset, 15, 15 * 8, this, CharacterCasing.Normal);
+                box_jelszó.PasswordChar = '*';
+                box_jelszó_mégegyszer = MainForm.createtextbox(column, 6 * spacer + 2 * group_spacer + offset, 15, 15 * 8, this, CharacterCasing.Normal);
+                box_jelszó_mégegyszer.PasswordChar = '*';
+
+                //
+
+                Button rendben = new Button();
+                rendben.Size = new System.Drawing.Size(96, 32);
+                rendben.Location = new System.Drawing.Point(ClientSize.Width - rendben.Width - spacer, ClientSize.Height - rendben.Height - spacer);
+                rendben.Click += rendben_Click;
+                rendben.Text = "Rendben";
+
+                Controls.Add(rendben);
+            }
+
+            private void InitializeData()
+            {
+                box_név1.Text = "Marillen";
+
+                box_beosztás1.Text = "Adminisztrátor";
+                box_beosztás2.Text = "System Administrator";
+
+                box_felhasználó_név.Text = "admin";
+                box_jelszó.Text = "admin";
+                box_jelszó_mégegyszer.Text = "admin";
+            }
             #endregion
 
             #region EventHandlers
@@ -2256,6 +2359,12 @@ namespace Labor
                     "('Hordótípus','Nagy','Big','Groß')," +
                     "('Laboros','Belinyák Máté','Máté Belinyák','Máté Belinyák')," +
                     "('Laboros','Belinyák Nándor','Nándor Belinyák','Nándor Belinyák');" +
+
+                "INSERT INTO L_MINBIZ (MISZ1M , MISZ1A , MISZ2M , MISZ2A) "  +
+                    "VALUES ('Alulírott Marillen Kft. kijelenti, hogy a fenti termék mindenben megfelel az érvényes magyar előírásoknak.'," +
+                    " 'Marillen Kft. certifies that the above mentioned product is in accordance with current Hungarian legislation.',"+
+                    " 'Alulírott Marillen Kft. nevében kijelentem, hogy az általunk gyártott aszeptikus velő nem génmanipulált termék. Génmanipulált alap- és segédanyagokat, ill. allergén anyagokat nem tartalmaz.',"+
+                    " 'Aseptic purees produced by Marillen Ltd. are not genetically modified and don’t contain any genetically modified raw materials and additives.');" +
 
                 "INSERT INTO L_FELHASZ (FEFEN1, FEFEN2, FEBEO1, FEBEO2, FEBEKO, FEJELS,   FETOHO, FETORO, FETOTO,   FEVIHO, FEVIRO, FEVITO,   FEFOKE, FEFOFE, FEFOTO,   FEKONY,   FEKITO,   FEFEHO, FEFERO, FEFETO) " +
                     "VALUES (" + (_admin_data == null ? "'Marillen', 'Adminisztrátor', 'Admin', '', 'admin', 'admin',   'I', 'I', 'I',   'I', 'I', 'I',   'I', 'I', 'I',   'I',   'I',   'I', 'I', 'I'" : _admin_data) +");";

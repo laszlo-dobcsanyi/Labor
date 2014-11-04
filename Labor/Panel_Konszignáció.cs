@@ -317,8 +317,8 @@ namespace Labor
 
                 Konszignáció_Szállítólevél szállítólevél = new Konszignáció_Szállítólevél(0, box_levél.Text, foglalások[0].készítő, date, combo_nyelv.Text[0].ToString(), combo_megrendelők.Text, box_rendszám1.Text, box_rendszám2.Text, (byte)foglalások[0].hordók_száma, box_gyártási_idő.Text, box_szín.Text, box_íz.Text, box_illat.Text);
                 Nyomtat.Nyomtat_Konszignáció(szállítólevél, foglalások);
-                //Program.database.Konszignáció_FoglalásokKiszállítása(szállítólevél.szlevél_szám, foglalások);
-                 szállítólevél.szlevél_szám =  Convert.ToByte( Program.database.Konszignáció_ÚJSzállítólevél(szállítólevél));
+                szállítólevél.szlevél_szám =  Convert.ToByte( Program.database.Konszignáció_ÚJSzállítólevél(szállítólevél));
+                Program.database.Konszignáció_FoglalásokKiszállítása(szállítólevél.szlevél_szám, foglalások);
 
                  Nyomtat.Nyomtat_MinőségBizonylatok(szállítólevél, foglalások);
                  
