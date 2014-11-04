@@ -1112,45 +1112,6 @@ namespace Labor
                 }
 
                 laborconnection.Close();
-        }
-
-        /// <summary>
-        /// Egy hordó lista összes elemét az adott foglaláshoz rendeli.
-        /// </summary>
-        /// <param name="_foglalás_id"></param>
-        /// <param name="_adatok">Törlés? - Termékkód - Sarzs - Hordó_szám sorrendben kell a Tuple-ben lennie.</param>
-        /// <returns>Lefoglalt hordók száma.</returns>
-        public int Hordók_ListaFoglalás(int _foglalás_id, List< Tuple< bool, string, string, string > > _adatok)
-        {
-            int offset = 0;
-            int modified = 0;
-
-            lock (LaborLock)
-            {
-                SqlCommand command;
-
-                laborconnection.Open();
-
-                foreach (Tuple<bool, string, string, string> current in _adatok)
-                {
-                    command = laborconnection.CreateCommand();
-                    command.CommandText = "UPDATE L_HORDO " + (current.Item1 ? "SET FOSZAM = NULL" : "SET FOSZAM = " + _foglalás_id) +
-                        " WHERE " + (current.Item1 ? "FOSZAM = " + _foglalás_id : "FOSZAM IS NULL") + " AND HOTEKO = '" + current.Item2 + "' AND HOSARZ = '" + current.Item3 + "' AND HOSZAM = '" + current.Item4 + "';";
-
-                    if (command.ExecuteNonQuery() == 1) modified++;
-                    offset += current.Item1 ? -1 : +1;
-                    command.Dispose();
-                }
-
-                if (offset != 0)
-                { 
-                    command = laborconnection.CreateCommand();
-                    command.CommandText = "UPDATE L_FOGLAL SET FOFOHO = FOFOHO " + (0 < offset ? "+" + offset : offset.ToString()) + " WHERE FOSZAM = " + _foglalás_id + ";";
-                    command.ExecuteNonQuery();
-                    command.Dispose();
-                }
-
-                laborconnection.Close();
             }
 
             return modified;
@@ -2123,44 +2084,6 @@ namespace Labor
                     count += labels[current].Item2;
                     group += labels[current].Item3;
                 }
-
-                //
-
-                const int column = 100;
-                box_név1 = MainForm.createtextbox(column, 0 * spacer + 0 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
-                box_név2 = MainForm.createtextbox(column, 1 * spacer + 0 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
-
-                box_beosztás1 = MainForm.createtextbox(column, 2 * spacer + 1 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
-                box_beosztás2 = MainForm.createtextbox(column, 3 * spacer + 1 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
-
-                box_felhasználó_név = MainForm.createtextbox(column, 4 * spacer + 2 * group_spacer + offset, 15, 15 * 8, this, CharacterCasing.Normal);
-                box_jelszó = MainForm.createtextbox(column, 5 * spacer + 2 * group_spacer + offset, 15, 15 * 8, this, CharacterCasing.Normal);
-                box_jelszó.PasswordChar = '*';
-                box_jelszó_mégegyszer = MainForm.createtextbox(column, 6 * spacer + 2 * group_spacer + offset, 15, 15 * 8, this, CharacterCasing.Normal);
-                box_jelszó_mégegyszer.PasswordChar = '*';
-
-                //
-
-                Button rendben = new Button();
-                rendben.Size = new System.Drawing.Size(96, 32);
-                rendben.Location = new System.Drawing.Point(ClientSize.Width - rendben.Width - spacer, ClientSize.Height - rendben.Height - spacer);
-                rendben.Click += rendben_Click;
-                rendben.Text = "Rendben";
-
-                Controls.Add(rendben);
-            }
-
-            private void InitializeData()
-            {
-                box_név1.Text = "Marillen";
-
-                box_beosztás1.Text = "Adminisztrátor";
-                box_beosztás2.Text = "System Administrator";
-
-                box_felhasználó_név.Text = "admin";
-                box_jelszó.Text = "admin";
-                box_jelszó_mégegyszer.Text = "admin";
-            }
 
                 //
 
