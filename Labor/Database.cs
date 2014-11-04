@@ -162,19 +162,19 @@ namespace Labor
         {
             Type type = typeof(T);
             if (type == typeof(char)) { return _column_name + " = '" + _value + "'"; }
-            if (type == typeof(string)) { if (_value != null) return _column_name + " = '" + _value + "'"; else return null; }
+            if (type == typeof(string)) { if (_value != null) return _column_name + " = '" + _value + "'"; else return _column_name + " = NULL"; }
 
             if (type == typeof(byte)) { return _column_name + " = " + _value; }
-            if (type == typeof(byte?)) { if (_value != null) return _column_name + " = " + _value; else return null; }
+            if (type == typeof(byte?)) { if (_value != null) return _column_name + " = " + _value; else return _column_name + " = NULL"; }
 
             if (type == typeof(short)) { return _column_name + " = " + _value; }
-            if (type == typeof(short?)) { if (_value != null) return _column_name + " = " + _value; else return null; }
+            if (type == typeof(short?)) { if (_value != null) return _column_name + " = " + _value; else return _column_name + " = NULL"; }
 
             if (type == typeof(int)) { return _column_name + " = " + _value; }
-            if (type == typeof(int?)) { if (_value != null) return _column_name + " = " + _value; else return null; }
+            if (type == typeof(int?)) { if (_value != null) return _column_name + " = " + _value; else return _column_name + " = NULL"; }
 
             if (type == typeof(double)) { return _column_name + " = " + _value.ToString().Replace(',', '.'); }
-            if (type == typeof(double?)) { if (_value != null) return _column_name + " = " + _value.ToString().Replace(',', '.'); else return null; }
+            if (type == typeof(double?)) { if (_value != null) return _column_name + " = " + _value.ToString().Replace(',', '.'); else return _column_name + " = NULL"; }
 
             throw new IndexOutOfRangeException();
         }

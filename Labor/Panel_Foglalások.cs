@@ -799,7 +799,7 @@ namespace Labor
                 Text = "Vizsgálat keresés " + _eredeti.név + " foglalás számára";
                 InitializeForm();
                 InitializeContent();
-                InitializeData(_eredeti);
+                InitializeData();
 
                 KeyDown += Vizsgálat_Kereső_KeyDown;
             }
@@ -925,41 +925,40 @@ namespace Labor
            
             private void InitializeData()
             {
+                if (eredeti != null)
+                {
+                    box_termékkód.Text = eredeti.Value.szűrő.Value.adatok1.termékkód;
+                    box_sarzs_min.Text = eredeti.Value.szűrő.Value.adatok2.sarzs.min;
+                    box_sarzs_max.Text = eredeti.Value.szűrő.Value.adatok2.sarzs.max;
+                    box_hordó_id_min.Text = eredeti.Value.szűrő.Value.adatok2.hordó_id.min;
+                    box_hordó_id_max.Text = eredeti.Value.szűrő.Value.adatok2.hordó_id.max;
+                    box_brix_min.Text = eredeti.Value.szűrő.Value.adatok2.brix.min.ToString();
+                    box_brix_max.Text = eredeti.Value.szűrő.Value.adatok2.brix.max.ToString();
+                    box_citromsav_min.Text = eredeti.Value.szűrő.Value.adatok2.citromsav.min.ToString();
+                    box_citromsav_max.Text = eredeti.Value.szűrő.Value.adatok2.citromsav.max.ToString();
+                    box_borkősav_min.Text = eredeti.Value.szűrő.Value.adatok2.borkősav.min.ToString();
+                    box_borkősav_max.Text = eredeti.Value.szűrő.Value.adatok2.borkősav.max.ToString();
+                    box_ph_min.Text = eredeti.Value.szűrő.Value.adatok2.ph.min.ToString();
+                    box_ph_max.Text = eredeti.Value.szűrő.Value.adatok2.ph.max.ToString();
+                    box_bostwick_min.Text = eredeti.Value.szűrő.Value.adatok2.bostwick.min.ToString();
+                    box_bostwick_max.Text = eredeti.Value.szűrő.Value.adatok2.bostwick.max.ToString();
+                    box_aszkorbinsav_min.Text = eredeti.Value.szűrő.Value.adatok2.aszkorbinsav.min.ToString();
+                    box_aszkorbinsav_max.Text = eredeti.Value.szűrő.Value.adatok2.aszkorbinsav.max.ToString();
+                    box_nettó_töltet_min.Text = eredeti.Value.szűrő.Value.adatok2.nettó_töltet.min.ToString();
+                    box_nettó_töltet_max.Text = eredeti.Value.szűrő.Value.adatok2.nettó_töltet.max.ToString();
+                    box_hőkezelés_min.Text = eredeti.Value.szűrő.Value.adatok2.hőkezelés.min.ToString();
+                    box_hőkezelés_max.Text = eredeti.Value.szűrő.Value.adatok2.hőkezelés.max.ToString();
+                    box_szita_átmérő_min.Text = eredeti.Value.szűrő.Value.adatok2.szita_átmérő.min.ToString();
+                    box_szita_átmérő_max.Text = eredeti.Value.szűrő.Value.adatok2.szita_átmérő.max.ToString();
+                    box_citromsav_ad_min.Text = eredeti.Value.szűrő.Value.adatok2.citromsav_ad.min.ToString();
+                    box_citromsav_ad_max.Text = eredeti.Value.szűrő.Value.adatok2.citromsav_ad.max.ToString();
 
-            }
+                    combo_gyümölcsfajta.Text = eredeti.Value.szűrő.Value.adatok1.gyümölcsfajta;
+                    combo_hordótípus.Text = eredeti.Value.szűrő.Value.adatok1.hordótípus;
+                    combo_származási_ország.Text = eredeti.Value.szűrő.Value.adatok1.származási_ország;
+                    box_töltőgép_száma.Text = eredeti.Value.szűrő.Value.adatok1.töltőgép_száma;
+                }
 
-            private void InitializeData(Foglalás _foglalás)
-            {
-                box_termékkód.Text = _foglalás.szűrő.Value.adatok1.termékkód;
-                box_sarzs_min.Text = _foglalás.szűrő.Value.adatok2.sarzs.min;
-                box_sarzs_max.Text = _foglalás.szűrő.Value.adatok2.sarzs.max;
-                box_hordó_id_min.Text = _foglalás.szűrő.Value.adatok2.hordó_id.min;
-                box_hordó_id_max.Text = _foglalás.szűrő.Value.adatok2.hordó_id.max;
-                box_brix_min.Text = _foglalás.szűrő.Value.adatok2.brix.min.ToString();
-                box_brix_max.Text = _foglalás.szűrő.Value.adatok2.brix.max.ToString();
-                box_citromsav_min.Text = _foglalás.szűrő.Value.adatok2.citromsav.min.ToString();
-                box_citromsav_max.Text = _foglalás.szűrő.Value.adatok2.citromsav.max.ToString();
-                box_borkősav_min.Text = _foglalás.szűrő.Value.adatok2.borkősav.min.ToString();
-                box_borkősav_max.Text = _foglalás.szűrő.Value.adatok2.borkősav.max.ToString();
-                box_ph_min.Text = _foglalás.szűrő.Value.adatok2.ph.min.ToString();
-                box_ph_max.Text = _foglalás.szűrő.Value.adatok2.ph.max.ToString();
-                box_bostwick_min.Text = _foglalás.szűrő.Value.adatok2.bostwick.min.ToString();
-                box_bostwick_max.Text = _foglalás.szűrő.Value.adatok2.bostwick.max.ToString();
-                box_aszkorbinsav_min.Text = _foglalás.szűrő.Value.adatok2.aszkorbinsav.min.ToString();
-                box_aszkorbinsav_max.Text = _foglalás.szűrő.Value.adatok2.aszkorbinsav.max.ToString();
-                box_nettó_töltet_min.Text = _foglalás.szűrő.Value.adatok2.nettó_töltet.min.ToString();
-                box_nettó_töltet_max.Text = _foglalás.szűrő.Value.adatok2.nettó_töltet.max.ToString();
-                box_hőkezelés_min.Text = _foglalás.szűrő.Value.adatok2.hőkezelés.min.ToString();
-                box_hőkezelés_max.Text = _foglalás.szűrő.Value.adatok2.hőkezelés.max.ToString();
-                box_szita_átmérő_min.Text = _foglalás.szűrő.Value.adatok2.szita_átmérő.min.ToString();
-                box_szita_átmérő_max.Text = _foglalás.szűrő.Value.adatok2.szita_átmérő.max.ToString();
-                box_citromsav_ad_min.Text = _foglalás.szűrő.Value.adatok2.citromsav_ad.min.ToString();
-                box_citromsav_ad_max.Text = _foglalás.szűrő.Value.adatok2.citromsav_ad.max.ToString();
-
-                combo_gyümölcsfajta.Text = _foglalás.szűrő.Value.adatok1.gyümölcsfajta;
-                combo_hordótípus.Text = _foglalás.szűrő.Value.adatok1.hordótípus;
-                combo_származási_ország.Text = _foglalás.szűrő.Value.adatok1.származási_ország;
-                box_töltőgép_száma.Text = _foglalás.szűrő.Value.adatok1.töltőgép_száma;
             }
             #endregion
 
