@@ -1048,7 +1048,7 @@ namespace Labor
             return true;
         }
         
-        public bool Hordó_Foglalás(bool _törlés, int _foglalás_id, string _termékkód, string _sarzs, string _hordó_szám)
+        public bool Hordók_Foglalás(bool _törlés, int _foglalás_id, string _termékkód, string _sarzs, string _hordó_szám)
         {
             lock (LaborLock)
             {
@@ -1070,6 +1070,48 @@ namespace Labor
                 if (modified != 2) return false;
                 return true;
             }
+        }
+
+        /// <summary>
+        /// Egy hordó lista összes elemét az adott foglaláshoz rendeli.
+        /// </summary>
+        /// <param name="_foglalás_id"></param>
+        /// <param name="_adatok">Törlés? - Termékkód - Sarzs - Hordó_szám sorrendben kell a Tuple-ben lennie.</param>
+        /// <returns>Lefoglalt hordók száma.</returns>
+        public int Hordók_ListaFoglalás(int _foglalás_id, List< Tuple< bool, string, string, string > > _adatok)
+        {
+            int offset = 0;
+            int modified = 0;
+
+            lock (LaborLock)
+            {
+                SqlCommand command;
+
+                laborconnection.Open();
+
+                foreach (Tuple<bool, string, string, string> current in _adatok)
+                {
+                    command = laborconnection.CreateCommand();
+                    command.CommandText = "UPDATE L_HORDO " + (current.Item1 ? "SET FOSZAM = NULL" : "SET FOSZAM = " + _foglalás_id) +
+                        " WHERE " + (current.Item1 ? "FOSZAM = " + _foglalás_id : "FOSZAM IS NULL") + " AND HOTEKO = '" + current.Item2 + "' AND HOSARZ = '" + current.Item3 + "' AND HOSZAM = '" + current.Item4 + "';";
+
+                    if (command.ExecuteNonQuery() == 1) modified++;
+                    offset += current.Item1 ? -1 : +1;
+                    command.Dispose();
+                }
+
+                if (offset != 0)
+                { 
+                    command = laborconnection.CreateCommand();
+                    command.CommandText = "UPDATE L_FOGLAL SET FOFOHO = FOFOHO " + (0 < offset ? "+" + offset : offset.ToString()) + " WHERE FOSZAM = " + _foglalás_id + ";";
+                    command.ExecuteNonQuery();
+                    command.Dispose();
+                }
+
+                laborconnection.Close();
+            }
+
+            return modified;
         }
 
         public bool Hordók_Törlés(Vizsgálat _vizsgálat)
@@ -1409,62 +1451,69 @@ namespace Labor
         {
             List<string> hibák = new List<string>();
 
-            foreach (Import.Import_Hordó item in _import.import_hordók)
+            lock (MarillenLock)
             {
-                string iProdId = "12" + item.termékkód.Substring(0, 2) + "01" + item.gyártási_év + "_0" + item.gyártási_év + item.hordószám;
-                string serial_nr = null;
-                string isarz = null;
-                string vigyev = null;
-
-                lock (MarillenLock)
-                {
-                    marillenconnection.Open();
-
-                    SqlCommand command = new SqlCommand("SELECT serial_nr, prod_id, qty FROM tetelek WHERE (type=300) AND (prod_id like '" + iProdId + "') AND (qty > 0) ORDER BY serial_nr");
-                    command.Connection = marillenconnection;
-                    SqlDataReader reader = command.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        serial_nr = reader.GetString(0);
-                    }
-
-                    if (serial_nr == null)
-                    {
-                        hibák.Add(item.termékkód + " " + item.hordószám + " -nincs ilyen hordó");
-                    }
-                    else
-                    {
-                        command = new SqlCommand("SELECT propstr FROM folyoprops WHERE (serial_nr= " + serial_nr + " ) AND (code=3)");
-                        command.Connection = marillenconnection;
-                        reader.Close();
-                        reader = command.ExecuteReader();
-                        while (reader.Read())
-                        {
-                            isarz = reader.GetString(0);
-                        }
-                    }
-                    reader.Close();
-                    marillenconnection.Close();
-                }
+                marillenconnection.Open();
 
                 lock (laborconnection)
                 {
                     laborconnection.Open();
-                    SqlCommand command = new SqlCommand("SELECT vigyev FROM l_vizslap WHERE (viteko=" + item.termékkód + ") AND (visarz= " + isarz + ");");
-                    command.Connection = laborconnection;
-                    SqlDataReader reader = command.ExecuteReader();
-                    while (reader.Read())
+
+                    foreach (Import.Import_Hordó item in _import.import_hordók)
                     {
-                        vigyev = reader.GetString(0);
+                        string iProdId = "12" + item.termékkód.Substring(0, 2) + "01" + item.gyártási_év + "_0" + item.gyártási_év + item.hordószám;
+                        string serial_nr = null;
+                        string visarz = null;
+                        string vigyev = null;
+
+                        SqlCommand command = new SqlCommand("SELECT serial_nr, prod_id, qty FROM tetelek WHERE (type=300) AND (prod_id like '" + iProdId + "') AND (qty > 0) ORDER BY serial_nr");
+                        command.Connection = marillenconnection;
+                        SqlDataReader reader = command.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            serial_nr = reader.GetString(0);
+                        }
+                        reader.Close();
+
+                        if (serial_nr == null)
+                        {
+                            hibák.Add(item.termékkód + " " + item.hordószám + " -nincs ilyen hordó");
+                            continue;
+                        }
+                        else
+                        {
+                            command = new SqlCommand("SELECT propstr FROM folyoprops WHERE (serial_nr= " + serial_nr + " ) AND (code=3)");
+                            command.Connection = marillenconnection;
+                            reader = command.ExecuteReader();
+                            while (reader.Read())
+                            {
+                                visarz = reader.GetString(0);
+                            }
+                            reader.Close();
+                        }
+
+                        if (visarz != null)
+                        {
+                            command = new SqlCommand("SELECT vigyev FROM l_vizslap WHERE (viteko=" + item.termékkód + ") AND (visarz= " + visarz + ");");
+                            command.Connection = laborconnection;
+                            reader = command.ExecuteReader();
+                            while (reader.Read())
+                            {
+                                vigyev = reader.GetString(0);
+                            }
+                            reader.Close();
+
+                            if (vigyev == null)
+                            {
+                                hibák.Add(item.termékkód + " " + item.hordószám + " -nincs vizsgálati lap");
+                            }
+                        }
                     }
 
-                    if (vigyev == null)
-                    {
-                        hibák.Add(item.termékkód + " " + item.hordószám + " -nincs vizsgálati lap");
-                    }
-                    reader.Close();
                     laborconnection.Close();
                 }
+
+                marillenconnection.Close();
             }
             return hibák;
         }
@@ -1490,14 +1539,14 @@ namespace Labor
                         serial_nr = reader.GetString(0);
                     }
 
-                        command = new SqlCommand("SELECT propstr FROM folyoprops WHERE (serial_nr= " + serial_nr + " ) AND (code=3)");
-                        command.Connection = marillenconnection;
-                        reader.Close();
-                        reader = command.ExecuteReader();
-                        while (reader.Read())
-                        {
-                            sarzsok.Add( reader.GetString(0));
-                        }
+                    command = new SqlCommand("SELECT propstr FROM folyoprops WHERE (serial_nr= " + serial_nr + " ) AND (code=3)");
+                    command.Connection = marillenconnection;
+                    reader.Close();
+                    reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        sarzsok.Add( reader.GetString(0));
+                    }
                     
                     reader.Close();
                     marillenconnection.Close();

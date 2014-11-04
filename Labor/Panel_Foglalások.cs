@@ -717,7 +717,7 @@ namespace Labor
                 if (table.SelectedRows.Count != 1) return;
                 if (!Program.felhasználó.Value.jogosultságok.Value.foglalások.törlés) return;
 
-                if (!Program.database.Hordó_Foglalás(true, foglalás.id, (string)table.SelectedRows[0].Cells[Hordó.TableIndexes.termékkód].Value,
+                if (!Program.database.Hordók_Foglalás(true, foglalás.id, (string)table.SelectedRows[0].Cells[Hordó.TableIndexes.termékkód].Value,
                     (string)table.SelectedRows[0].Cells[Hordó.TableIndexes.sarzs].Value, (string)table.SelectedRows[0].Cells[Hordó.TableIndexes.id].Value))
                 { MessageBox.Show("Hiba a hordó lefoglalásakor!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
 
@@ -1393,7 +1393,7 @@ namespace Labor
                         {
                             if (_event.ColumnIndex == 2 && _event.RowIndex != -1)
                             {
-                                if (!Program.database.Hordó_Foglalás(!(bool)table.Rows[_event.RowIndex].Cells[_event.ColumnIndex].Value,
+                                if (!Program.database.Hordók_Foglalás(!(bool)table.Rows[_event.RowIndex].Cells[_event.ColumnIndex].Value,
                                     foglalás.Value.id, sarzs.termékkód, sarzs.sarzs, (string)table.Rows[_event.RowIndex].Cells[1].Value))
                                 { MessageBox.Show("Hiba a hordó lefoglalásakor!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
 
@@ -1413,21 +1413,22 @@ namespace Labor
 
                     private void kijelölés_váltás_Click(object _sender, EventArgs _event)
                     {
+                        List< Tuple <bool, string, string, string > > data = new List< Tuple< bool, string, string, string > >();
+
                         foreach(DataGridViewRow row in table.Rows)
                         {
                             if ((bool)row.Cells[2].Value == true)
                             {
-                                if (!kijelölés_összes)
-                                    if (!Program.database.Hordó_Foglalás(true, foglalás.Value.id, sarzs.termékkód, sarzs.sarzs, (string)row.Cells[1].Value))
-                                    { MessageBox.Show("Hiba a hordó lefoglalásakor!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                                if (!kijelölés_összes) data.Add(new Tuple< bool, string, string, string>(true, sarzs.termékkód, sarzs.sarzs, (string)row.Cells[1].Value));
                             }
                             else
                             {
-                                if (kijelölés_összes)
-                                    if (!Program.database.Hordó_Foglalás(false, foglalás.Value.id, sarzs.termékkód, sarzs.sarzs, (string)row.Cells[1].Value))
-                                    { MessageBox.Show("Hiba a hordó lefoglalásakor!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                                if (kijelölés_összes) data.Add(new Tuple<bool, string, string, string>(false, sarzs.termékkód, sarzs.sarzs, (string)row.Cells[1].Value));
                             }
                         }
+
+                        int modified = Program.database.Hordók_ListaFoglalás(foglalás.Value.id, data);
+                        if (modified != data.Count) MessageBox.Show("Hiba a kijelölés váltása során (Összes: " + data.Count + ", Módosított: " + modified, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                         Program.RefreshData();
                     }
@@ -1502,16 +1503,26 @@ namespace Labor
                 List<Foglalás> foglalások = Program.database.Foglalások();
                 List<string> sarzsok = Program.database.Foglalás_Sarzsok(import);
 
+                bool found = false;
                 foreach (Foglalás outer in foglalások)
                 {
-                    if( outer.név == box_foglalás_neve.Text)
+                    if(outer.név == box_foglalás_neve.Text)
                     {
+                        List< Tuple< bool, string, string, string > > data = new List< Tuple< bool,string,string,string > >();
                         for (int i = 0; i < import.import_hordók.Count; i++)
                         {
-                            Program.database.Hordó_Foglalás(false, outer.id, import.import_hordók[i].termékkód, sarzsok[i], import.import_hordók[i].hordószám);
+                            data.Add(new Tuple< bool, string, string, string >(false, import.import_hordók[i].termékkód, sarzsok[i], import.import_hordók[i].hordószám));
                         }
+
+                        int modified = Program.database.Hordók_ListaFoglalás(outer.id, data);
+                        if (modified != data.Count) MessageBox.Show("Hiba a hordók lefoglalása során (Összes: " + data.Count + ", Módosított: " + modified, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                        found = true;
+                        break;
                     }
                 }
+
+                if (!found) MessageBox.Show("Nem található az adatbázisban ilyen foglalás!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 Program.RefreshData();
                 Close();
