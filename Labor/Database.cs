@@ -1593,7 +1593,7 @@ namespace Labor
                 laborconnection.Open();
                 command = laborconnection.CreateCommand();
                 command.CommandText = "INSERT INTO L_SZLEV (SZSZSZ,SZFENE,SZDATE,SZNYEL,SZVEVO,SZGKR1,SZGKR2,FOFOHO,SZGYEV,SZSZIN,SZIZEK,SZILLA) output INSERTED.SZSZAM" +  
-                    " VALUES(" + "'" + _szállítólevél.szlevél +  "','" + _szállítólevél.fnév + "','" + _szállítólevél.elszállítás_ideje + "','"+ _szállítólevél.nyelv + "','" +_szállítólevél.vevő + "','"+ _szállítólevél.gépkocsi1 + "','" +_szállítólevél.gépkocsi2  + "'," + _szállítólevél.foglalt_hordó + ",'"+ _szállítólevél.gyártási_idő + "','"+ _szállítólevél.szín + "','"+ _szállítólevél.íz + "','"+ _szállítólevél.illat + "');";
+                    " VALUES(" + "'" + _szállítólevél.szlevél +  "','" + _szállítólevél.fnév + "','" + _szállítólevél.elszállítás_ideje + "','"+ _szállítólevél.nyelv + "','" +_szállítólevél.vevő + "','"+ _szállítólevél.gépkocsi1 + "','" +_szállítólevél.gépkocsi2  + "'," + _szállítólevél.foglalt_hordó + ",'"+ _szállítólevél.gyártási_idő.Substring(0,4) + "','"+ _szállítólevél.szín + "','"+ _szállítólevél.íz + "','"+ _szállítólevél.illat + "');";
                ;
                try { modified = (int)command.ExecuteScalar(); }
                 catch{ return modified; }
@@ -1777,6 +1777,32 @@ namespace Labor
             }
             return data;
         }
+
+        public Node_MinBiz_Szöveg MinőségBizonylat_Szöveg()
+        {
+            Node_MinBiz_Szöveg data = new Node_MinBiz_Szöveg();
+
+            lock (LaborLock)
+            {
+                laborconnection.Open();
+
+                SqlCommand command = laborconnection.CreateCommand();
+                command.CommandText = "SELECT MISZ1M,MISZ1A, MISZ2M,MISZ2A FROM L_MINBIZ";
+
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    data.sz1_m = reader.GetString(0);
+                    data.sz1_a = reader.GetString(1);
+                    data.sz2_m = reader.GetString(2);
+                    data.sz2_a = reader.GetString(3);
+                }
+                command.Dispose();
+                laborconnection.Close();
+            }
+            return data;
+        }
+
         #endregion
 
         #region Kiszállítások
@@ -2124,7 +2150,14 @@ namespace Labor
                     "('Laboros','Belinyák Nándor','Nándor Belinyák','Nándor Belinyák');" +
 
                 "INSERT INTO L_FELHASZ (FEFEN1, FEFEN2, FEBEO1, FEBEO2, FEBEKO, FEJELS,   FETOHO, FETORO, FETOTO,   FEVIHO, FEVIRO, FEVITO,   FEFOKE, FEFOFE, FEFOTO,   FEKONY,   FEKITO,   FEFEHO, FEFERO, FEFETO) " +
-                    "VALUES ('Marillen', 'Adminisztrátor', 'Admin', '', 'admin', 'admin',   'I', 'I', 'I',   'I', 'I', 'I',   'I', 'I', 'I',   'I',   'I',   'I', 'I', 'I')";
+                    "VALUES ('Marillen', 'Adminisztrátor', 'Admin', '', 'admin', 'admin',   'I', 'I', 'I',   'I', 'I', 'I',   'I', 'I', 'I',   'I',   'I',   'I', 'I', 'I')" +
+
+                "INSERT INTO L_MINBIZ (MISZ1M , MISZ1A , MISZ2M , MISZ2A) "  +
+                    "VALUES ('Alulírott Marillen Kft. kijelenti, hogy a fenti termék mindenben megfelel az érvényes magyar előírásoknak.'," +
+                    " 'Marillen Kft. certifies that the above mentioned product is in accordance with current Hungarian legislation.',"+
+                    " 'Alulírott Marillen Kft. nevében kijelentem, hogy az általunk gyártott aszeptikus velő nem génmanipulált termék. Génmanipulált alap- és segédanyagokat, ill. allergén anyagokat nem tartalmaz.',"+
+                    " 'Aseptic purees produced by Marillen Ltd. are not genetically modified and don’t contain any genetically modified raw materials and additives.')";
+                    ;
         }
         #endregion
     }
