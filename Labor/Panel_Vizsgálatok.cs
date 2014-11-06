@@ -73,14 +73,14 @@ namespace Labor
         public struct Adatok1
         {
             public string terméknév;
-            public byte hőkezelés;
+            public int hőkezelés;
             public string gyártási_év;
             public string műszak_jele;
             public string töltőgép;
             public string szárm_ország;
             public string gyümölcsfajta;
 
-            public Adatok1(string _terméknév, byte _hőkezelés, string _gyártási_év, string _műszak_jele, string _töltőgép, string _szárm_ország, string _gyümölcsfajta)
+            public Adatok1(string _terméknév, int _hőkezelés, string _gyártási_év, string _műszak_jele, string _töltőgép, string _szárm_ország, string _gyümölcsfajta)
             {
                 terméknév = _terméknév;
                 hőkezelés = _hőkezelés;
@@ -99,15 +99,15 @@ namespace Labor
             public double? borkősav;
             public double? ph;
             public double? bostwick;
-            public byte? aszkorbinsav;
-            public byte? citromsav_adagolás;
-            public byte? magtöret;
-            public byte? feketepont;
-            public byte? barnapont;
+            public int? aszkorbinsav;
+            public int? citromsav_adagolás;
+            public int? magtöret;
+            public int? feketepont;
+            public int? barnapont;
             public string szín;
             public string íz;
             public string illat;
-            public Adatok2(double? _brix, double? _citromsav, double? _borkősav, double? _ph, double? _bostwick, byte? _aszkorbinsav, byte? _citromsav_adagolás, byte? _magtöret, byte? _feketepont, byte? _barnapont, string _szín, string _íz, string _illat)
+            public Adatok2(double? _brix, double? _citromsav, double? _borkősav, double? _ph, double? _bostwick, int? _aszkorbinsav, int? _citromsav_adagolás, int? _magtöret, int? _feketepont, int? _barnapont, string _szín, string _íz, string _illat)
             {
                 brix = _brix;
                 citromsav = _citromsav;
@@ -129,14 +129,14 @@ namespace Labor
         {
             public string leoltás;
             public string értékelés;
-            public byte? összcsíra_1;
-            public byte? összcsíra_2;
-            public byte? penész_1;
-            public byte? penész_2;
-            public byte? élesztő_1;
-            public byte? élesztő_2;
+            public int? összcsíra_1;
+            public int? összcsíra_2;
+            public int? penész_1;
+            public int? penész_2;
+            public int? élesztő_1;
+            public int? élesztő_2;
             public string megjegyzés;
-            public Adatok3(string _leoltás, string _értékelés, byte? _összcsíra_1, byte? _összcsíra_2, byte? _penész_1, byte? _penész_2, byte? _élesztő_1, byte? _élesztő_2, string _megjegyzés)
+            public Adatok3(string _leoltás, string _értékelés, int? _összcsíra_1, int? _összcsíra_2, int? _penész_1, int? _penész_2, int? _élesztő_1, int? _élesztő_2, string _megjegyzés)
             {
                 leoltás = _leoltás;
                 értékelés = _értékelés;
@@ -979,7 +979,7 @@ namespace Labor
 
                 Vizsgálat.Adatok1 adatok1 = new Vizsgálat.Adatok1(
                        box_terméknév.Text,
-                       Convert.ToByte(box_hőkezelés.Text),
+                       Convert.ToInt32(box_hőkezelés.Text),
                        gyártási_év,
                        box_műszak_jele.Text,
                        box_töltőgép_száma.Text,
@@ -992,11 +992,11 @@ namespace Labor
                     MainForm.ConvertOrDie<double>(box_borkősav.Text),
                     MainForm.ConvertOrDie<double>(box_ph.Text),
                     MainForm.ConvertOrDie<double>(box_bostwick.Text),
-                    MainForm.ConvertOrDie<byte>(box_aszkorbinsav.Text),
-                    MainForm.ConvertOrDie<byte>(box_citromsav_ad.Text),
-                    MainForm.ConvertOrDie<byte>(box_magtöret.Text),
-                    MainForm.ConvertOrDie<byte>(box_feketepont.Text),
-                    MainForm.ConvertOrDie<byte>(box_barnapont.Text),
+                    MainForm.ConvertOrDie<int>(box_aszkorbinsav.Text),
+                    MainForm.ConvertOrDie<int>(box_citromsav_ad.Text),
+                    MainForm.ConvertOrDie<int>(box_magtöret.Text),
+                    MainForm.ConvertOrDie<int>(box_feketepont.Text),
+                    MainForm.ConvertOrDie<int>(box_barnapont.Text),
                     MainForm.ConvertOrDieSQLString(box_szin.Text),
                     MainForm.ConvertOrDieSQLString(box_iz.Text),
                     MainForm.ConvertOrDieSQLString(box_illat.Text));
@@ -1004,12 +1004,12 @@ namespace Labor
                 Vizsgálat.Adatok3 adatok3 = new Vizsgálat.Adatok3(
                     MainForm.ConvertOrDieSQLString(box_leoltas.Text),
                     MainForm.ConvertOrDieSQLString(box_ertekeles.Text),
-                    MainForm.ConvertOrDie<byte>(box_összcsíra_higit_1.Text),
-                    MainForm.ConvertOrDie<byte>(box_összcsíra_higit_2.Text),
-                    MainForm.ConvertOrDie<byte>(box_penész_higit_1.Text),
-                    MainForm.ConvertOrDie<byte>(box_penész_higit_2.Text),
-                    MainForm.ConvertOrDie<byte>(box_élesztő_higit_1.Text),
-                    MainForm.ConvertOrDie<byte>(box_élesztő_higit_2.Text),
+                    MainForm.ConvertOrDie<int>(box_összcsíra_higit_1.Text),
+                    MainForm.ConvertOrDie<int>(box_összcsíra_higit_2.Text),
+                    MainForm.ConvertOrDie<int>(box_penész_higit_1.Text),
+                    MainForm.ConvertOrDie<int>(box_penész_higit_2.Text),
+                    MainForm.ConvertOrDie<int>(box_élesztő_higit_1.Text),
+                    MainForm.ConvertOrDie<int>(box_élesztő_higit_2.Text),
                     MainForm.ConvertOrDieSQLString(box_megjegyzes.Text));
 
                 Vizsgálat.Adatok4 adatok4 = new Vizsgálat.Adatok4(

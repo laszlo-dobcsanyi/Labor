@@ -104,7 +104,7 @@ namespace Labor
     {
         public struct Szállítólevél
         {
-            public byte szlevél_szám;
+            public Int16 szlevél_szám;
             public string vevő;
             public string gyártási_idő;
             public string szín;

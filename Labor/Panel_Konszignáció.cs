@@ -8,7 +8,7 @@ namespace Labor
 {
     public struct Konszignáció_Szállítólevél
     {
-        public byte szlevél_szám;
+        public Int16 szlevél_szám;
         public string szlevél;
         public string fnév;
         public string elszállítás_ideje;
@@ -16,13 +16,13 @@ namespace Labor
         public string vevő;
         public string gépkocsi1;
         public string gépkocsi2;
-        public byte foglalt_hordó;
+        public Int16 foglalt_hordó;
         public string gyártási_idő;
         public string szín;
         public string íz;
         public string illat;
 
-        public Konszignáció_Szállítólevél(byte _szlevél_szám, string _szlevél, string _fnév, string _elszállítás_ideje, string _nyelv, string _vevő, string _gépkocsi1, string _gépkocsi2, byte _foglalt_hordó, string _gyártási_idő, string _szín, string _íz, string _illat)
+        public Konszignáció_Szállítólevél(Int16 _szlevél_szám, string _szlevél, string _fnév, string _elszállítás_ideje, string _nyelv, string _vevő, string _gépkocsi1, string _gépkocsi2, Int16 _foglalt_hordó, string _gyártási_idő, string _szín, string _íz, string _illat)
         {
             szlevél_szám = _szlevél_szám;
             szlevél = _szlevél;
@@ -315,9 +315,9 @@ namespace Labor
                 //TODO check jó-é, gyártási idő??
                 string date = DateTime.Now.Year.ToString() + '.'+ DateTime.Now.Month + '.' + DateTime.Now.Day;
 
-                Konszignáció_Szállítólevél szállítólevél = new Konszignáció_Szállítólevél(0, box_levél.Text, foglalások[0].készítő, date, combo_nyelv.Text[0].ToString(), combo_megrendelők.Text, box_rendszám1.Text, box_rendszám2.Text, (byte)foglalások[0].hordók_száma, box_gyártási_idő.Text, box_szín.Text, box_íz.Text, box_illat.Text);
+                Konszignáció_Szállítólevél szállítólevél = new Konszignáció_Szállítólevél(0, box_levél.Text, foglalások[0].készítő, date, combo_nyelv.Text[0].ToString(), combo_megrendelők.Text, box_rendszám1.Text, box_rendszám2.Text, (Int16)foglalások[0].hordók_száma, box_gyártási_idő.Text, box_szín.Text, box_íz.Text, box_illat.Text);
                 Nyomtat.Nyomtat_Konszignáció(szállítólevél, foglalások);
-                szállítólevél.szlevél_szám =  Convert.ToByte( Program.database.Konszignáció_ÚJSzállítólevél(szállítólevél));
+                szállítólevél.szlevél_szám =  Convert.ToInt16( Program.database.Konszignáció_ÚJSzállítólevél(szállítólevél));
                 Program.database.Konszignáció_FoglalásokKiszállítása(szállítólevél.szlevél_szám, foglalások);
 
                  Nyomtat.Nyomtat_MinőségBizonylatok(szállítólevél, foglalások);

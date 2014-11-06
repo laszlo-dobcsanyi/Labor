@@ -64,14 +64,14 @@ namespace Labor
                                 "VIMSSZ int, " +
 
                                 // Adatok1
-                                "VITENE varchar(50), VIHOKE tinyint, VIGYEV varchar(1), VIMUJE varchar(1), VITOGE varchar(1),  VISZOR varchar(15), VIFAJT varchar(50), " +
+                                "VITENE varchar(50), VIHOKE smallint, VIGYEV varchar(1), VIMUJE varchar(1), VITOGE varchar(1),  VISZOR varchar(15), VIFAJT varchar(50), " +
 
                                 // Adatok2
-                                "VIBRIX DECIMAL(3,1), VICSAV DECIMAL(4,2), VIBOSA DECIMAL(4,2), VIPEHA DECIMAL(4,2), VIBOST DECIMAL(3,1) ,VIASAV tinyint, VICIAD tinyint, VIMATO tinyint, VIFEFE tinyint, VIFEBA tinyint, " +
+                                "VIBRIX DECIMAL(3,1), VICSAV DECIMAL(4,2), VIBOSA DECIMAL(4,2), VIPEHA DECIMAL(4,2), VIBOST DECIMAL(3,1) ,VIASAV smallint, VICIAD smallint, VIMATO smallint, VIFEFE smallint, VIFEBA smallint, " +
                                 "VISZIN varchar(60), VIIZEK varchar(60), VIILLA varchar(60), " +
 
                                 // Adatok3
-                                "VILEOL varchar(11), VIERDA varchar(11), VIOCS1 tinyint, VIOCS2 tinyint, VIELE1 tinyint, VIELE2 tinyint, VIPEN1 tinyint, VIPEN2 tinyint, VIEMEJE varchar(300), " +
+                                "VILEOL varchar(11), VIERDA varchar(11), VIOCS1 smallint, VIOCS2 smallint, VIELE1 smallint, VIELE2 smallint, VIPEN1 smallint, VIPEN2 smallint, VIEMEJE varchar(300), " +
 
                                 // Adatok4
                                 "VIMTS1 varchar(15),VIMTD1 varchar(8),VIMKS1 varchar(15),VIMKD1 varchar(8), VIMKS2 varchar(15), VIMKD2 varchar(8), VIMKS3 varchar(15), VIMKD3 varchar(8), VIMKS4 varchar(15), VIMKD4 varchar(8), " +
@@ -81,9 +81,9 @@ namespace Labor
 
                             "CREATE TABLE L_FOGLAL (FONEVE varchar(30), FOSZAM int IDENTITY(1,1), FODATE varchar(20), FOTIPU varchar(10), FOFENE varchar(30), FOTEKO varchar(3), FOSARZT varchar(3), FOSARZI varchar(3), FOHOSZT varchar(4)," +
                                 "FOHOSZI varchar(4), FOBRIXT DECIMAL(4,2), FOBRIXI DECIMAL(4,2), FOCSAVT DECIMAL(4,2), FOCSAVI DECIMAL(4,2), FOPEHAT DECIMAL(4,2), FOPEHAI DECIMAL(4,2), FOBOSTT DECIMAL(4,2)," +
-                                "FOBOSTI DECIMAL(4,2), FOASAVT smallint, FOASAVI smallint, FONETOT smallint, FONETOI smallint, FOHOFOT tinyint, FOHOFOI tinyint, FOCIADT smallint, FOCIADI smallint," +
-                                "FOFAJT varchar(15), FOHOTI varchar(15), FOMEGR varchar(15), FOSZOR varchar(15), FOMUJE varchar(1), FOTOGE varchar(1), FOFOHO tinyint, FOSZSZ tinyint ," +
-                                "FOSZATI varchar(6) , FOSZATT varchar(6), FOBOSAI smallint, FOBOSAT smallint, SZSZAM tinyint);" +
+                                "FOBOSTI DECIMAL(4,2), FOASAVT smallint, FOASAVI smallint, FONETOT smallint, FONETOI smallint, FOHOFOT smallint, FOHOFOI smallint, FOCIADT smallint, FOCIADI smallint," +
+                                "FOFAJT varchar(15), FOHOTI varchar(15), FOMEGR varchar(15), FOSZOR varchar(15), FOMUJE varchar(1), FOTOGE varchar(1), FOFOHO smallint, FOSZSZ smallint ," +
+                                "FOSZATI varchar(6) , FOSZATT varchar(6), FOBOSAI smallint, FOBOSAT smallint, SZSZAM smallint);" +
 
                             "CREATE TABLE L_FELHASZ (FEFEN1 varchar(30), FEFEN2 varchar(30), FEBEO1 varchar(30), FEBEO2 varchar(30), FEBEKO varchar(15) PRIMARY KEY, FEJELS varchar(15), " +
                                 "FETOHO varchar(1), FETORO varchar(1), FETOTO varchar(1),   FEVIHO varchar(1), FEVIRO varchar(1), FEVITO varchar(1), " +
@@ -91,7 +91,7 @@ namespace Labor
                                 "FEFEHO varchar(1), FEFERO varchar(1), FEFETO varchar(1));" +
 
                             "CREATE TABLE L_SZLEV (SZSZAM int IDENTITY(1,1), SZSZSZ varchar(50), SZFENE varchar(50), SZDATE varchar(10), SZNYEL varchar(1), SZVEVO varchar(100), SZGKR1 varchar(7), SZGKR2 varchar(7)," +
-                                "FOFOHO tinyint, SZGYEV varchar(4), SZSZIN varchar(60), SZIZEK varchar(60), SZILLA varchar(60));" +
+                                "FOFOHO smallint, SZGYEV varchar(4), SZSZIN varchar(60), SZIZEK varchar(60), SZILLA varchar(60));" +
 
                             "CREATE TABLE L_GYFAJTA(GFTEKO varchar(2), GFAZON varchar(30), GFSZO2 varchar(30), GFSZO3 varchar(30));" +
 
@@ -168,8 +168,8 @@ namespace Labor
             if (type == typeof(char)) { return _column_name + " = '" + _value + "'"; }
             if (type == typeof(string)) { if (_value != null) return _column_name + " = '" + _value + "'"; else return _column_name + " = NULL"; }
 
-            if (type == typeof(byte)) { return _column_name + " = " + _value; }
-            if (type == typeof(byte?)) { if (_value != null) return _column_name + " = " + _value; else return _column_name + " = NULL"; }
+            if (type == typeof(Int16)) { return _column_name + " = " + _value; }
+            if (type == typeof(Int16?)) { if (_value != null) return _column_name + " = " + _value; else return _column_name + " = NULL"; }
 
             if (type == typeof(short)) { return _column_name + " = " + _value; }
             if (type == typeof(short?)) { if (_value != null) return _column_name + " = " + _value; else return _column_name + " = NULL"; }
@@ -571,7 +571,7 @@ namespace Labor
                     reader = command.ExecuteReader();
                     while (reader.Read())
                     {
-                        adatok1 = new Vizsgálat.Adatok1(reader.GetString(0), reader.GetByte(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5), reader.GetString(6));
+                        adatok1 = new Vizsgálat.Adatok1(reader.GetString(0), reader.GetInt16(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5), reader.GetString(6));
                     }
                     reader.Close();
                 }
@@ -588,8 +588,8 @@ namespace Labor
                     while (reader.Read())
                     {
                         adatok2 = new Vizsgálat.Adatok2((double?)GetNullable<decimal>(reader, 0), (double?)GetNullable<decimal>(reader, 1), (double?)GetNullable<decimal>(reader, 2),
-                            (double?)GetNullable<decimal>(reader, 3), (double?)GetNullable<decimal>(reader, 4), GetNullable<byte>(reader, 5), GetNullable<byte>(reader, 6), GetNullable<byte>(reader, 7),
-                            GetNullable<byte>(reader, 8), GetNullable<byte>(reader, 9), GetNullableString(reader, 10), GetNullableString(reader, 11), GetNullableString(reader, 12));
+                            (double?)GetNullable<decimal>(reader, 3), (double?)GetNullable<decimal>(reader, 4), GetNullable<Int16>(reader, 5), GetNullable<Int16>(reader, 6), GetNullable<Int16>(reader, 7),
+                            GetNullable<Int16>(reader, 8), GetNullable<Int16>(reader, 9), GetNullableString(reader, 10), GetNullableString(reader, 11), GetNullableString(reader, 12));
                     }
                     reader.Close();
                 }
@@ -605,8 +605,8 @@ namespace Labor
                     reader = command.ExecuteReader();
                     while (reader.Read())
                     {
-                        adatok3 = new Vizsgálat.Adatok3(GetNullableString(reader, 0), GetNullableString(reader, 1), GetNullable<byte>(reader, 2), GetNullable<byte>(reader, 3), GetNullable<byte>(reader, 4),
-                                    GetNullable<byte>(reader, 5), GetNullable<byte>(reader, 6), GetNullable<byte>(reader, 7), GetNullableString(reader, 8));
+                        adatok3 = new Vizsgálat.Adatok3(GetNullableString(reader, 0), GetNullableString(reader, 1), GetNullable<Int16>(reader, 2), GetNullable<Int16>(reader, 3), GetNullable<Int16>(reader, 4),
+                                    GetNullable<Int16>(reader, 5), GetNullable<Int16>(reader, 6), GetNullable<Int16>(reader, 7), GetNullableString(reader, 8));
                     }
                     reader.Close();
                 }
@@ -712,7 +712,7 @@ namespace Labor
                 if (laborconnection.State != System.Data.ConnectionState.Open) return false;
 
                 // Adatok1
-                data = V(new string[] {Update<string>("VITENE", _vizsgálat.adatok1.terméknév), Update<byte>("VIHOKE", _vizsgálat.adatok1.hőkezelés), Update<char>("VIGYEV", _vizsgálat.adatok1.gyártási_év[_vizsgálat.adatok1.gyártási_év.Length - 1]),
+                data = V(new string[] {Update<string>("VITENE", _vizsgálat.adatok1.terméknév), Update<int>("VIHOKE", _vizsgálat.adatok1.hőkezelés), Update<char>("VIGYEV", _vizsgálat.adatok1.gyártási_év[_vizsgálat.adatok1.gyártási_év.Length - 1]),
                 Update<string>("VIMUJE", _vizsgálat.adatok1.műszak_jele), Update<string>("VITOGE", _vizsgálat.adatok1.töltőgép), Update<string>("VISZOR", _vizsgálat.adatok1.szárm_ország),
                 Update<string>("VIFAJT", _vizsgálat.adatok1.gyümölcsfajta)});
 
@@ -803,7 +803,7 @@ namespace Labor
                 
                 // Adatok1
 
-                data = V(new string[] {Update<string>("VITENE", _új.adatok1.terméknév), Update<byte>("VIHOKE", _új.adatok1.hőkezelés),
+                data = V(new string[] {Update<string>("VITENE", _új.adatok1.terméknév), Update<int>("VIHOKE", _új.adatok1.hőkezelés),
                 Update<string>("VIGYEV", _új.adatok1.gyártási_év[_új.adatok1.gyártási_év.Length - 1].ToString()), Update<string>("VIMUJE", _új.adatok1.műszak_jele),
                 Update<string>("VITOGE", _új.adatok1.töltőgép), Update<string>("VISZOR", _új.adatok1.szárm_ország), Update<string>("VIFAJT", _új.adatok1.gyümölcsfajta)});
 
@@ -1169,7 +1169,7 @@ namespace Labor
                 while (reader.Read())
                 {
                     int c = -1;
-                    Foglalás temp_foglalás = new Foglalás(reader.GetInt32(++c), reader.GetString(++c), reader.GetByte(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c));
+                    Foglalás temp_foglalás = new Foglalás(reader.GetInt32(++c), reader.GetString(++c), reader.GetInt16(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c));
                     data.Add(temp_foglalás);
                 }
                 command.Dispose();
@@ -1228,12 +1228,12 @@ namespace Labor
                             GetNullable<Int16>(reader, ++c),
                             GetNullable<Int16>(reader, ++c),
 
-                            GetNullable<byte>(reader, ++c),
-                            GetNullable<byte>(reader, ++c),
-                            GetNullable<byte>(reader, ++c),
-                            GetNullable<byte>(reader, ++c),
-                            GetNullable<byte>(reader, ++c),
-                            GetNullable<byte>(reader, ++c));
+                            GetNullable<Int16>(reader, ++c),
+                            GetNullable<Int16>(reader, ++c),
+                            GetNullable<Int16>(reader, ++c),
+                            GetNullable<Int16>(reader, ++c),
+                            GetNullable<Int16>(reader, ++c),
+                            GetNullable<Int16>(reader, ++c));
                     };
                 }
                 catch (SqlException q)
@@ -1285,9 +1285,9 @@ namespace Labor
                 Update<double?>("FOBOSTT", _szűrő.adatok2.bostwick.min), Update<double?>("FOBOSTI", _szűrő.adatok2.bostwick.max),
                 Update<short?>("FOASAVT", _szűrő.adatok2.aszkorbinsav.min), Update<short?>("FOASAVI", _szűrő.adatok2.aszkorbinsav.max),
                 Update<short?>("FONETOT", _szűrő.adatok2.nettó_töltet.min), Update<short?>("FONETOI", _szűrő.adatok2.nettó_töltet.max),
-                Update<byte?>("FOHOFOT", _szűrő.adatok2.hőkezelés.min), Update<byte?>("FOHOFOI", _szűrő.adatok2.hőkezelés.max),
-                Update<byte?>("FOCIADT", _szűrő.adatok2.citromsav_ad.min), Update<byte?>("FOCIADI", _szűrő.adatok2.citromsav_ad.max),
-                Update<byte?>("FOSZATT", _szűrő.adatok2.szita_átmérő.min), Update<byte?>("FOSZATI", _szűrő.adatok2.szita_átmérő.max)});
+                Update<Int16?>("FOHOFOT", _szűrő.adatok2.hőkezelés.min), Update<Int16?>("FOHOFOI", _szűrő.adatok2.hőkezelés.max),
+                Update<Int16?>("FOCIADT", _szűrő.adatok2.citromsav_ad.min), Update<Int16?>("FOCIADI", _szűrő.adatok2.citromsav_ad.max),
+                Update<Int16?>("FOSZATT", _szűrő.adatok2.szita_átmérő.min), Update<Int16?>("FOSZATI", _szűrő.adatok2.szita_átmérő.max)});
 
                 if (data != null)
                 {
@@ -1380,7 +1380,7 @@ namespace Labor
                     Is(_szűrő.adatok1.műszak_jele, "VIMUJE"),
                     Is(_szűrő.adatok1.töltőgép_száma, "VITOGE"),
                     Is(_szűrő.adatok1.termékkód, "VITEKO"),
-                    BetweenString(_szűrő.adatok2.sarzs, "CAST( VISARZ AS tinyint)"),
+                    BetweenString(_szűrő.adatok2.sarzs, "CAST( VISARZ AS smallint)"),
                     BetweenString(_szűrő.adatok2.hordó_id, "VIHOSZ"),
 
                     Between<double>(_szűrő.adatok2.brix, "VIBRIX") ,
@@ -1391,9 +1391,9 @@ namespace Labor
 
                     Between<Int16>(_szűrő.adatok2.aszkorbinsav, "VIASAV") ,
                     Between<Int16>(_szűrő.adatok2.nettó_töltet, "VINETO") ,
-                    Between<byte>(_szűrő.adatok2.hőkezelés, "VIHOKE") ,
-                    Between<byte>(_szűrő.adatok2.citromsav_ad, "VICIAD") ,
-                    Between<byte>(_szűrő.adatok2.szita_átmérő, "VISZAT") ,
+                    Between<Int16>(_szűrő.adatok2.hőkezelés, "VIHOKE") ,
+                    Between<Int16>(_szűrő.adatok2.citromsav_ad, "VICIAD") ,
+                    Between<Int16>(_szűrő.adatok2.szita_átmérő, "VISZAT") ,
 
                 });
 
@@ -1602,7 +1602,7 @@ namespace Labor
                 while (reader.Read())
                 {
                     int c = -1;
-                    Foglalás temp_foglalás = new Foglalás(reader.GetInt32(++c), reader.GetString(++c), reader.GetByte(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c));
+                    Foglalás temp_foglalás = new Foglalás(reader.GetInt32(++c), reader.GetString(++c), reader.GetInt16(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c));
                     data.Add(temp_foglalás);
                 }
                 command.Dispose();
@@ -1794,8 +1794,8 @@ namespace Labor
                     (double?)GetNullable<decimal>(reader, 2), (double?)GetNullable<decimal>(reader, 3),
                     (double?)GetNullable<decimal>(reader, 4), (double?)GetNullable<decimal>(reader, 5),
                     (double?)GetNullable<decimal>(reader, 6), (double?)GetNullable<decimal>(reader, 7),
-                    (double?)GetNullable<byte>(reader, 8), (double?)GetNullable<byte>(reader, 9),
-                    (double?)GetNullable<byte>(reader, 10),
+                    (double?)GetNullable<Int16>(reader, 8), (double?)GetNullable<Int16>(reader, 9),
+                    (double?)GetNullable<Int16>(reader, 10),
                     reader.GetString(11),
                     reader.GetString(12),reader.GetString(13),reader.GetString(14),reader.GetString(15),reader.GetString(16));
                 }
@@ -1871,7 +1871,7 @@ namespace Labor
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    value.Add( new Kiszállítás(reader.GetInt32(0),reader.GetString(1),reader.GetString(2),reader.GetString(3),reader.GetString(4),reader.GetByte(5)));
+                    value.Add( new Kiszállítás(reader.GetInt32(0),reader.GetString(1),reader.GetString(2),reader.GetString(3),reader.GetString(4),reader.GetInt16(5)));
                 }
                 command.Dispose();
                 laborconnection.Close();
