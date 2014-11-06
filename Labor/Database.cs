@@ -21,7 +21,7 @@ namespace Labor
             marillenconnection = new SqlConnection(MarillenConnectionString);
 
             string LaborConnectionString = @"Data Source=" + Settings.server + ";Initial Catalog=" +
-                Settings.labor_database + ";User ID=" + Settings.sql_username + ";Password=" + Settings.sql_password + ";";
+                Settings.labor_database + ";User ID=" + Settings.sql_username + ";Password=" + Settings.sql_password + ";Integrated Security=true;";
 
             laborconnection = new SqlConnection(LaborConnectionString);
 
@@ -30,7 +30,7 @@ namespace Labor
                 laborconnection.Open();
                 laborconnection.Close();
             }
-            catch
+            catch(Exception  e)
             {
                 SqlConnection create_connection = new SqlConnection("Server=" + Settings.server + ";Integrated Security=true");
 

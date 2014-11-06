@@ -6,12 +6,12 @@ namespace Labor
 {
     public static class Settings
     {
-        public static string server = ".\\SQLEXPRESS";
+        public static string server = @".\SQLEXPRESS";
 
         public static string marillen_database = "marillen2013";
         public static string labor_database = "Labor";
 
-        public static string sql_username = "labor";
+        public static string sql_username = "l_labor";
         public static string sql_password = "labor";
 
         public static int    ui_refresh = 5;
