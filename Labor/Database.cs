@@ -16,12 +16,12 @@ namespace Labor
         public Database()
         {
             string MarillenConnectionString = @"Data Source=" + Settings.server + ";Initial Catalog=" + Settings.marillen_database + ";User ID=" +
-                Settings.sql_username + ";Password=" + Settings.sql_password + ";";
+                Settings.sql_username + ";Password=" + Settings.sql_password + ";Integrated Security=true;";
             
             marillenconnection = new SqlConnection(MarillenConnectionString);
 
             string LaborConnectionString = @"Data Source=" + Settings.server + ";Initial Catalog=" +
-                Settings.labor_database + ";User ID=" + Settings.sql_username + ";Password=" + Settings.sql_password + ";";
+                Settings.labor_database + ";User ID=" + Settings.sql_username + ";Password=" + Settings.sql_password + ";Integrated Security=true;";
 
             laborconnection = new SqlConnection(LaborConnectionString);
 
@@ -32,7 +32,7 @@ namespace Labor
             }
             catch
             {
-                SqlConnection create_connection = new SqlConnection("Server=" + Settings.server + ";Integrated Security=true");
+                SqlConnection create_connection = new SqlConnection("Server=" + Settings.server + ";Integrated Security=true;");
 
                 try
                 {

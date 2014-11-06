@@ -586,8 +586,8 @@ namespace Labor
                 box_aszkorbinsav = MainForm.createtextbox(box_brix.Location.X, aszkorbinsav.Location.Y, 4, méret[2], this);
                 box_citromsav_ad = MainForm.createtextbox("0", box_brix.Location.X, citromsav_ad.Location.Y, 3, méret[2], this);
                 box_magtöret = MainForm.createtextbox(box_brix.Location.X, magtöret.Location.Y, 2, méret[1], this);
-                box_feketepont = MainForm.createtextbox(box_brix.Location.X, feketepont.Location.Y, 2, méret[1], this);
-                box_barnapont = MainForm.createtextbox(box_brix.Location.X, barnapont.Location.Y, 2, méret[1], this);
+                box_feketepont = MainForm.createtextbox(box_brix.Location.X, feketepont.Location.Y, 3, méret[2], this);
+                box_barnapont = MainForm.createtextbox(box_brix.Location.X, barnapont.Location.Y, 3, méret[2], this);
                 box_szin = MainForm.createtextbox(box_magtöret.Location.X, szin.Location.Y, 60, méret[8], this);
                 box_iz = MainForm.createtextbox(box_magtöret.Location.X, iz.Location.Y, 60, méret[8], this);
                 box_illat = MainForm.createtextbox(box_magtöret.Location.X, illat.Location.Y, 60, méret[8], this);
