@@ -295,7 +295,6 @@ namespace Labor
                 foreach (string item in megrendelok) { combo_megrendelők.Items.Add(item); } combo_megrendelők.SelectedIndex = 0;
 
                 /*csak tesztelés miatt!
-                */
                 box_rendszám1.Text = "KTM791";
                 box_rendszám2.Text = "HCS850";
                 box_levél.Text = "levél";
@@ -303,6 +302,7 @@ namespace Labor
                 box_szín.Text = "Szín";
                 box_íz.Text = "Íz";
                 box_illat.Text = "Illat";
+                */
 
                 rendben.Click += rendben_Click;
                 Controls.Add(rendben);
