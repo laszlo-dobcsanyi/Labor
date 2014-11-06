@@ -210,12 +210,12 @@ namespace Labor
 
             public MinMaxPair<Int16?> aszkorbinsav;
             public MinMaxPair<Int16?> nettó_töltet;
-            public MinMaxPair<byte?> hőkezelés;
-            public MinMaxPair<byte?> citromsav_ad;
-            public MinMaxPair<byte?> szita_átmérő;
+            public MinMaxPair<Int16?> hőkezelés;
+            public MinMaxPair<Int16?> citromsav_ad;
+            public MinMaxPair<Int16?> szita_átmérő;
 
             public Adatok2(string _min_sarzs, string _max_sarzs, string _min_hordó_id, string _max_hordó_id, double? _min_brix, double? _max_brix, double? _min_citromsav, double? _max_citromsav, double? _min_borkősav, double? _max_borkősav, double? _min_ph, double? _max_ph, double? _min_bostwick,
-                double? _max_bostwick, Int16? _min_aszkorbinsav, Int16? _max_aszkorbinsav, Int16? _min_nettó_töltet, Int16? _max_nettó_töltet, byte? _min_hőkezelés, byte? _max_hőkezelés, byte? _min_szita_átmérő, byte? _max_szita_átmérő, byte? _min_citromsav_ad, byte? _max_citromsav_ad)
+                double? _max_bostwick, Int16? _min_aszkorbinsav, Int16? _max_aszkorbinsav, Int16? _min_nettó_töltet, Int16? _max_nettó_töltet, Int16? _min_hőkezelés, Int16? _max_hőkezelés, Int16? _min_szita_átmérő, Int16? _max_szita_átmérő, Int16? _min_citromsav_ad, Int16? _max_citromsav_ad)
             {
                 sarzs = new MinMaxPair<string>(_min_sarzs, _max_sarzs);
                 hordó_id = new MinMaxPair<string>(_min_hordó_id, _max_hordó_id);
@@ -228,13 +228,13 @@ namespace Labor
 
                 aszkorbinsav = new MinMaxPair<short?>(_min_aszkorbinsav, _max_aszkorbinsav);
                 nettó_töltet = new MinMaxPair<short?>(_min_nettó_töltet, _max_nettó_töltet);
-                hőkezelés = new MinMaxPair<byte?>(_min_hőkezelés, _max_hőkezelés);
-                szita_átmérő = new MinMaxPair<byte?>(_min_szita_átmérő, _max_szita_átmérő);
-                citromsav_ad = new MinMaxPair<byte?>(_min_citromsav_ad, _max_citromsav_ad);
+                hőkezelés = new MinMaxPair<Int16?>(_min_hőkezelés, _max_hőkezelés);
+                szita_átmérő = new MinMaxPair<Int16?>(_min_szita_átmérő, _max_szita_átmérő);
+                citromsav_ad = new MinMaxPair<Int16?>(_min_citromsav_ad, _max_citromsav_ad);
             }
 
             public Adatok2(MinMaxPair<string> _sarzs, MinMaxPair<string> _hordó_id, MinMaxPair<double?> _brix, MinMaxPair<double?> _citromsav, MinMaxPair<double?> _borkősav, MinMaxPair<double?> _ph,
-                MinMaxPair<double?> _bostwick, MinMaxPair<Int16?> _aszkorbinsav, MinMaxPair<Int16?> _nettó_töltet, MinMaxPair<byte?> _hőkezelés, MinMaxPair<byte?> _citromsav_ad, MinMaxPair<byte?> _szita_átmérő)
+                MinMaxPair<double?> _bostwick, MinMaxPair<Int16?> _aszkorbinsav, MinMaxPair<Int16?> _nettó_töltet, MinMaxPair<Int16?> _hőkezelés, MinMaxPair<Int16?> _citromsav_ad, MinMaxPair<Int16?> _szita_átmérő)
             {
                 sarzs = _sarzs;
                 hordó_id = _hordó_id;
@@ -1026,12 +1026,12 @@ namespace Labor
                     MainForm.ConvertOrDie<Int16>(box_aszkorbinsav_max.Text),
                     MainForm.ConvertOrDie<Int16>(box_nettó_töltet_min.Text),
                     MainForm.ConvertOrDie<Int16>(box_nettó_töltet_max.Text),
-                    MainForm.ConvertOrDie<byte>(box_hőkezelés_min.Text),
-                    MainForm.ConvertOrDie<byte>(box_hőkezelés_max.Text),
-                    MainForm.ConvertOrDie<byte>(box_citromsav_ad_min.Text),
-                    MainForm.ConvertOrDie<byte>(box_citromsav_ad_max.Text),
-                    MainForm.ConvertOrDie<byte>(box_szita_átmérő_min.Text),
-                    MainForm.ConvertOrDie<byte>(box_szita_átmérő_max.Text));
+                    MainForm.ConvertOrDie<Int16>(box_hőkezelés_min.Text),
+                    MainForm.ConvertOrDie<Int16>(box_hőkezelés_max.Text),
+                    MainForm.ConvertOrDie<Int16>(box_citromsav_ad_min.Text),
+                    MainForm.ConvertOrDie<Int16>(box_citromsav_ad_max.Text),
+                    MainForm.ConvertOrDie<Int16>(box_szita_átmérő_min.Text),
+                    MainForm.ConvertOrDie<Int16>(box_szita_átmérő_max.Text));
 
                 if (eredeti == null)
                 {

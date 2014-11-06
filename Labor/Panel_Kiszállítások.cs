@@ -13,9 +13,9 @@ namespace Labor
         public string felhasználó;
         public string dátum;
         public string vevő;
-        public byte fogalthordó;
+        public Int16 fogalthordó;
 
-        public Kiszállítás(int _szállítólevélszám, string _szállítólevél, string _felhasználó, string _dátum, string _vevő, byte _fogalthordó)
+        public Kiszállítás(int _szállítólevélszám, string _szállítólevél, string _felhasználó, string _dátum, string _vevő, Int16 _fogalthordó)
         {
             szállítólevélszám = _szállítólevélszám;
             szállítólevél = _szállítólevél;
@@ -103,7 +103,7 @@ namespace Labor
             data.Columns.Add(new DataColumn("Szállítólevél száma", System.Type.GetType("System.Int32")));
             data.Columns.Add(new DataColumn("Szállítólevél", System.Type.GetType("System.String")));
             data.Columns.Add(new DataColumn("Vevő", System.Type.GetType("System.String")));
-            data.Columns.Add(new DataColumn("Összes hordó", System.Type.GetType("System.Byte")));
+            data.Columns.Add(new DataColumn("Összes hordó", System.Type.GetType("System.Int16")));
             data.Columns.Add(new DataColumn("Készítette", System.Type.GetType("System.String")));
             data.Columns.Add(new DataColumn("Készítetés ideje", System.Type.GetType("System.String")));
 
