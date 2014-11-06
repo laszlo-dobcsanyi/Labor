@@ -586,8 +586,8 @@ namespace Labor
                 box_aszkorbinsav = MainForm.createtextbox(box_brix.Location.X, aszkorbinsav.Location.Y, 4, méret[2], this);
                 box_citromsav_ad = MainForm.createtextbox("0", box_brix.Location.X, citromsav_ad.Location.Y, 3, méret[2], this);
                 box_magtöret = MainForm.createtextbox(box_brix.Location.X, magtöret.Location.Y, 2, méret[1], this);
-                box_feketepont = MainForm.createtextbox(box_brix.Location.X, feketepont.Location.Y, 3, méret[2], this);
-                box_barnapont = MainForm.createtextbox(box_brix.Location.X, barnapont.Location.Y, 3, méret[2], this);
+                box_feketepont = MainForm.createtextbox(box_brix.Location.X, feketepont.Location.Y, 4, méret[2], this);
+                box_barnapont = MainForm.createtextbox(box_brix.Location.X, barnapont.Location.Y, 4, méret[2], this);
                 box_szin = MainForm.createtextbox(box_magtöret.Location.X, szin.Location.Y, 60, méret[8], this);
                 box_iz = MainForm.createtextbox(box_magtöret.Location.X, iz.Location.Y, 60, méret[8], this);
                 box_illat = MainForm.createtextbox(box_magtöret.Location.X, illat.Location.Y, 60, méret[8], this);
@@ -616,7 +616,7 @@ namespace Labor
                 box_k5_datum = MainForm.createtextbox(box_t_datum.Location.X, k5.Location.Y, 8, méret[5], this);
                 box_k6_cimzett = MainForm.createtextbox(box_k1_cimzett.Location.X, k6.Location.Y, 15, méret[4], this);
                 box_k6_datum = MainForm.createtextbox(box_t_datum.Location.X, k6.Location.Y, 8, méret[5], this);
-                combo_laboros = MainForm.createcombobox(box_t_cimzett.Location.X, laboros.Location.Y, méret[4], this);
+                combo_laboros = MainForm.createcombobox(box_t_cimzett.Location.X, laboros.Location.Y, méret[10], this);
                 box_sarzs.Enabled = false;
                 box_terméknév.Enabled = false;
                 box_szita_átmérő.Enabled = false;
