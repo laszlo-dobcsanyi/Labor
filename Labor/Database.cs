@@ -30,9 +30,9 @@ namespace Labor
                 laborconnection.Open();
                 laborconnection.Close();
             }
-            catch(Exception  _e)
+            catch
             {
-                SqlConnection create_connection = new SqlConnection("Server=" + Settings.server + ";Integrated Security=true;");
+                SqlConnection create_connection = new SqlConnection("Server=" + Settings.server + (Settings.integrated_security ? "Integrated Security=true;" : ""));
 
                 try
                 {
@@ -43,13 +43,13 @@ namespace Labor
 
                     create_connection.Close();
                 }
-                catch
+                catch (Exception _inner)
                 {
-                    MessageBox.Show("Hiba a csatlakozás során! Ellenőrizze az adatbázis elérést, felhasználó jogosultságát!\n" + _e.Message, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Hiba a csatlakozás során! Ellenőrizze az adatbázis elérést, felhasználó jogosultságát!\n" + _inner.Message, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     Environment.Exit(1);
                 }
 
-                //try
+                try
                 {
                     laborconnection = new SqlConnection("Server=" + Settings.server + ";Database=" + Settings.labor_database + ";Integrated Security=true");
                     AdminForm adminform = new AdminForm();
@@ -106,10 +106,22 @@ namespace Labor
                     command.Dispose();
                     laborconnection.Close();
                 }
-                /*catch (Exception _e)
+                catch (Exception _inner)
                 {
-                    return;
-                }*/
+                    MessageBox.Show("Hiba az adatbázis létrehozása során!\n" + _inner.Message, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Environment.Exit(1);
+                }
+
+                try
+                {
+                    laborconnection.Open();
+                    laborconnection.Close();
+                }
+                catch (Exception _inner)
+                {
+                    MessageBox.Show("Adatbázis hiba a kapcsolat létrehozása közben!\n" + _inner.Message, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Environment.Exit(1);
+                }
             }
         }
 
