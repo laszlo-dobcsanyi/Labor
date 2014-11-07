@@ -2,6 +2,8 @@
 #
 #	MSSQL Szerver elérési címe
 #server=FUSIONW7\SQLEXPRESS
+#	Szerver biztonsági beállítása
+#integrated_security
 #
 #	Marillen adatbázis neve
 #marillen_database=Marillen2013

@@ -16,12 +16,12 @@ namespace Labor
         public Database()
         {
             string MarillenConnectionString = @"Data Source=" + Settings.server + ";Initial Catalog=" + Settings.marillen_database + ";User ID=" +
-                Settings.sql_username + ";Password=" + Settings.sql_password + ";Integrated Security=true;";
+                Settings.sql_username + ";Password=" + Settings.sql_password + ";" + (Settings.integrated_security ? "Integrated Security=true;" : "");
             
             marillenconnection = new SqlConnection(MarillenConnectionString);
 
             string LaborConnectionString = @"Data Source=" + Settings.server + ";Initial Catalog=" +
-                Settings.labor_database + ";User ID=" + Settings.sql_username + ";Password=" + Settings.sql_password + ";Integrated Security=true;";
+                Settings.labor_database + ";User ID=" + Settings.sql_username + ";Password=" + Settings.sql_password + ";" + (Settings.integrated_security ? "Integrated Security=true;" : "");
 
             laborconnection = new SqlConnection(LaborConnectionString);
 
@@ -30,7 +30,7 @@ namespace Labor
                 laborconnection.Open();
                 laborconnection.Close();
             }
-            catch(Exception  e)
+            catch(Exception  _e)
             {
                 SqlConnection create_connection = new SqlConnection("Server=" + Settings.server + ";Integrated Security=true;");
 
@@ -45,7 +45,7 @@ namespace Labor
                 }
                 catch
                 {
-                    MessageBox.Show("Hiba a csatlakozás során! Ellenőrizze az adatbázis elérést, felhasználó jogosultságát!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Hiba a csatlakozás során! Ellenőrizze az adatbázis elérést, felhasználó jogosultságát!\n" + _e.Message, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     Environment.Exit(1);
                 }
 
