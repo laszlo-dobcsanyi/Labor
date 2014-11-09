@@ -52,10 +52,10 @@ namespace Labor
 
                 try
                 {
-                    laborconnection = new SqlConnection("Server=" + Settings.server + ";Database=" + Settings.labor_database + ";Integrated Security=true");
                     AdminForm adminform = new AdminForm();
                     adminform.ShowDialog();
 
+                    laborconnection = new SqlConnection(LaborConnectionString);
                     laborconnection.Open();
                     SqlCommand command = new SqlCommand(
                             "CREATE TABLE L_TORZSA (TOTIPU varchar(20) NOT NULL,TOAZON varchar(25) PRIMARY KEY,TOSZO2 varchar(25),TOSZO3 varchar(25));" +
