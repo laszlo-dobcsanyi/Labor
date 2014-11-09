@@ -32,6 +32,14 @@ namespace Labor
             MinimumSize = ClientSize;
             Text = "Labor";
             StartPosition = FormStartPosition.CenterScreen;
+            try
+            {
+                Icon = new Icon("Labor.ico");
+            }
+            catch
+            {
+
+            }
 
             KeyPreview = true;
             KeyDown += MainForm_KeyDown;
@@ -247,5 +255,19 @@ namespace Labor
             return checkbox;
         }
         #endregion
+
+        private void InitializeComponent()
+        {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+            this.SuspendLayout();
+            // 
+            // MainForm
+            // 
+            this.ClientSize = new System.Drawing.Size(284, 261);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Name = "MainForm";
+            this.ResumeLayout(false);
+
+        }
     }
 }
