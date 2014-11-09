@@ -32,7 +32,7 @@ namespace Labor
             }
             catch
             {
-                SqlConnection create_connection = new SqlConnection("Server=" + Settings.server + (Settings.integrated_security ? "Integrated Security=true;" : ""));
+                SqlConnection create_connection = new SqlConnection("Data Source=" + Settings.server + ";" + (Settings.integrated_security ? "Integrated Security=true;" : "User ID=" + Settings.sql_username + ";Password=" + Settings.sql_password + ";"));
 
                 try
                 {
@@ -1608,7 +1608,7 @@ namespace Labor
                 laborconnection.Open();
 
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT FOSZAM, FONEVE, FOFOHO, FOTIPU, FOFENE, FODATE FROM L_FOGLAL WHERE SZSZAM IS NULL";
+                command.CommandText = "SELECT FOSZAM, FONEVE, FOFOHO, FOTIPU, FOFENE, FODATE FROM L_FOGLAL;";// WHERE; SZSZAM IS NULL";
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
