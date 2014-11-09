@@ -15,13 +15,13 @@ namespace Labor
 
         public Database()
         {
-            string MarillenConnectionString = @"Data Source=" + Settings.server + ";Initial Catalog=" + Settings.marillen_database + ";User ID=" +
-                Settings.sql_username + ";Password=" + Settings.sql_password + ";" + (Settings.integrated_security ? "Integrated Security=true;" : "");
+            string MarillenConnectionString = @"Data Source=" + Settings.server + ";Initial Catalog=" + Settings.marillen_database + ";" +
+                (Settings.integrated_security ? "Integrated Security=true;" : "User ID=" + Settings.sql_username + ";Password=" + Settings.sql_password + ";");
             
             marillenconnection = new SqlConnection(MarillenConnectionString);
 
-            string LaborConnectionString = @"Data Source=" + Settings.server + ";Initial Catalog=" +
-                Settings.labor_database + ";User ID=" + Settings.sql_username + ";Password=" + Settings.sql_password + ";" + (Settings.integrated_security ? "Integrated Security=true;" : "");
+            string LaborConnectionString = @"Data Source=" + Settings.server + ";Initial Catalog=" + Settings.labor_database + ";" +
+                (Settings.integrated_security ? "Integrated Security=true;" : "User ID=" + Settings.sql_username + ";Password=" + Settings.sql_password + ";");
 
             laborconnection = new SqlConnection(LaborConnectionString);
 
@@ -32,7 +32,8 @@ namespace Labor
             }
             catch
             {
-                SqlConnection create_connection = new SqlConnection("Data Source=" + Settings.server + ";" + (Settings.integrated_security ? "Integrated Security=true;" : "User ID=" + Settings.sql_username + ";Password=" + Settings.sql_password + ";"));
+                SqlConnection create_connection = new SqlConnection("Data Source=" + Settings.server + ";" +
+                    (Settings.integrated_security ? "Integrated Security=true;" : "User ID=" + Settings.sql_username + ";Password=" + Settings.sql_password + ";"));
 
                 try
                 {
