@@ -908,7 +908,10 @@ namespace Labor
                 {
                     string prodid = "12" + box_termékkód.Text.Substring(0, 2) + "01" + box_termékkód.Text.Substring(2, 1) + "_0" + box_termékkód.Text.Substring(2, 1) + box_hordószám.Text;
 
-                    if (!Database.IsCorrectSQLText(prodid)) { MessageBox.Show("Nem megfelelő karakter a lekérdezésben!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                    if (!Database.IsCorrectSQLText(prodid))
+                        { MessageBox.Show("Nem megfelelő karakter a lekérdezésben!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                    if (eredeti == null && !Program.database.Vizsgálat_Hordószám_Ellenőrzés(box_termékkód.Text, box_hordószám.Text, gyártási_év[gyártási_év.Length - 1].ToString()))
+                        { MessageBox.Show("Már létezik ehhez a termékkódhoz ilyen hordószám erre az évre!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
 
                     List<string> fejléc_adatok = Program.database.Vizsgálat_Fejlécadatok(prodid);
                     if (fejléc_adatok.Count != 0)

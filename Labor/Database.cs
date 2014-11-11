@@ -703,6 +703,35 @@ namespace Labor
             return hordó_típus;
         }
 
+        /// <summary>
+        /// Egy Termékkód-Hordószám-Gyártási év hármasht csak egyszer lehet felvenni az adatbázisba.
+        /// Ez a függvény ellenőrzi, hogy ez a hármas létezik-e
+        /// </summary>
+        public bool Vizsgálat_Hordószám_Ellenőrzés(string _termékkód, string _hordószám, string _gyártási_év)
+        {
+            bool unique = true;
+
+            lock (LaborLock)
+            {
+                laborconnection.Open();
+
+                string where = A(new string[] { Update<string>("VITEKO", _termékkód), Update<string>("VIGYEV", _gyártási_év), Update<string>("VIHOSZ", _hordószám) });
+
+                SqlCommand command = new SqlCommand("SELECT VIHOSZ FROM L_VIZSLAP WHERE " + where + ";");
+                command.Connection = laborconnection;
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    unique = false;
+                }
+
+                command.Dispose();
+                laborconnection.Close();
+            }
+
+            return unique;
+        }
+
         public bool Vizsgálat_Hozzáadás(Vizsgálat _vizsgálat)
         {
             lock (LaborLock)
