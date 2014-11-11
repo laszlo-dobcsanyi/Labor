@@ -545,6 +545,27 @@ namespace Labor
                 return found;
             }
         }
+
+        public string Törzsadat_Angol(string _azonosító)
+        {
+            lock (LaborLock)
+            {
+                string value = null;
+
+                laborconnection.Open();
+                SqlCommand command = laborconnection.CreateCommand();
+                command.CommandText = "SELECT TOSZO2 FROM L_TORZSA WHERE TOAZON= '" + _azonosító + "';";
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    value = reader.GetString(0);
+                }
+                command.Dispose();
+                laborconnection.Close();
+                return value;
+            }
+        }
+
         #endregion
 
         #region Vizsgálatok
@@ -1881,8 +1902,8 @@ namespace Labor
                         data.hoteko = reader.GetString(11);
                         data.sarzs += data.sarzs == null ? reader.GetString(12) : ", " + reader.GetString(12);
                         data.megnevezés = reader.GetString(13);
-                        data.passzírozottság += data.passzírozottság == null ? reader.GetString(14) : ", " + reader.GetString(14);
-                        data.csomagolás += data.csomagolás == null ? reader.GetString(15) : ", " + reader.GetString(15);
+                        data.passzírozottság += data.passzírozottság == null  ? reader.GetString(14) : ( data.passzírozottság==reader.GetString(14) ? "" : ", " + reader.GetString(14));
+                        data.csomagolás += data.csomagolás == null ? reader.GetString(15) : ( data.csomagolás == reader.GetString(15) ? "" :  ", " + reader.GetString(15));
                         data.származási_hely = reader.GetString(16);
                     }
 

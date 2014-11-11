@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -227,12 +228,12 @@ namespace Labor
             {
                 if(_nyelv == "M")
                 {
-                    felhasználó_neve =  Program.felhasználó.Value.felhasználó_név;
+                    felhasználó_neve =  Program.felhasználó.Value.név1;
                     felhasználó_beosztása= Program.felhasználó.Value.beosztás1;
                 }
                 else
                 {
-                   felhasználó_neve= Program.felhasználó.Value.felhasználó_név;
+                   felhasználó_neve= Program.felhasználó.Value.név2;
                    felhasználó_beosztása = Program.felhasználó.Value.beosztás2;
                 }
             }
@@ -635,7 +636,8 @@ namespace Labor
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(MinMax(_data.vizsgálatilap.citromsav) + " %");
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(MinMax(_data.vizsgálatilap.ph));
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(MinMax(_data.vizsgálatilap.bostwick) + " cm/30 sec");
-                if (MinMax(_data.vizsgálatilap.citromsavad) == null) { table.Rows[++c].Cells[1].Paragraphs[0].Append("nincs"); } else { table.Rows[++c].Cells[1].Paragraphs[0].Append(MinMax(_data.vizsgálatilap.citromsavad)); }
+                if (_data.vizsgálatilap.citromsavad.min == 0 && _data.vizsgálatilap.citromsavad.max == 0){ table.Rows[++c].Cells[1].Paragraphs[0].Append("nincs"); } 
+                else { table.Rows[++c].Cells[1].Paragraphs[0].Append(MinMax(_data.vizsgálatilap.citromsavad)); }
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.hozzáadott_cukor);
                 table.Rows[++c].Cells[1].Paragraphs[0].Append("maximum " + _data.vizsgálatilap.aszkorbinsav + " mg/kg");
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.hozzáadott_színezék);
@@ -649,7 +651,7 @@ namespace Labor
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.tápérték.élelmi_rost.ToString() + " g");
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.mikrobiológia);
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.minőségét_megőrzi);
-                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.vizsgálatilap.passzírozottság + " mm-es szitán");
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.vizsgálatilap.passzírozottság + " -es szitán");
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.nettó_tömeg);
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.tárolás);
                 table.Rows[++c].Cells[1].Paragraphs[0].Append("aszeptikus zsákban és " + _data.vizsgálatilap.csomagolás);
@@ -722,8 +724,8 @@ namespace Labor
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.vizsgálatilap.passzírozottság + " mm");
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.nettó_tömeg);
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.tárolás);
-                table.Rows[++c].Cells[1].Paragraphs[0].Append("aseptic bags and " + _data.vizsgálatilap.csomagolás);
-                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.vizsgálatilap.származási_hely);
+                table.Rows[++c].Cells[1].Paragraphs[0].Append("aseptic bags and " + Program.database.Törzsadat_Angol( _data.vizsgálatilap.csomagolás));
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(Program.database.Törzsadat_Angol(_data.vizsgálatilap.származási_hely));
                 #endregion
             }
         }
@@ -738,18 +740,21 @@ namespace Labor
                 p.AppendLine();
                 p.AppendLine(minbizszöveg.sz2_m);
                 p.AppendLine();
-                p.AppendLine("Kiskunfélegyháza " + DateTime.Now.Day + ". " + DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year);
+                p.AppendLine("Kiskunfélegyháza, " + DateTime.Now.Year + ". " +  DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Day + "."  );
                 Paragraph q = document.InsertParagraph();
                 q.Alignment = Alignment.right;
                 q.Append(_data.felhasználó.felhasználó_neve + "\n" + _data.felhasználó.felhasználó_beosztása);
             }
             else
             {
+                CultureInfo ci = new CultureInfo("en-US");
+                var month = DateTime.Now.ToString("MMMM", ci);
+
                 p.AppendLine(minbizszöveg.sz1_a);
                 p.AppendLine();
                 p.AppendLine(minbizszöveg.sz2_a);
                 p.AppendLine();
-                p.AppendLine("Kiskunfélegyháza " + DateTime.Now.Day + "nd " + DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year);
+                p.AppendLine("Kiskunfélegyháza, " + DateTime.Now.Day + "nd " + month + " " + DateTime.Now.Year);
                 Paragraph q = document.InsertParagraph();
                 q.Alignment = Alignment.right;
                 q.Append(_data.felhasználó.felhasználó_neve + "\n" + _data.felhasználó.felhasználó_beosztása);
