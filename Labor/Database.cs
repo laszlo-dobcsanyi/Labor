@@ -1786,33 +1786,78 @@ namespace Labor
         #endregion
 
         #region MinőségBizonylat
-        public Node_MinőségBizonylat.VizsgálatiLap MinőségBizonylat(int _id)
+        public List<string> MinőségBizonylatHotekok(List<Foglalás> _foglalások)
         {
-            Node_MinőségBizonylat.VizsgálatiLap data = new Node_MinőségBizonylat.VizsgálatiLap();
+            List<string> hotekok = new List<string>();
             lock (LaborLock)
             {
+                string where = null;
                 laborconnection.Open();
-
+                foreach (Foglalás item in _foglalások)
+                {
+                    where += " l_hordo.foszam = '" + item.id + "' or";
+                }
+                where = where.Substring(0, where.Length - 2);
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT  MIN(vibrix), MAX(vibrix), MIN(vicsav), MAX(vicsav), MIN(vipeha), MAX(vipeha), MIN(vibost), MAX(vibost),  MIN(viciad), MAX(viciad), MAX(viasav), hoteko, hosarz , vitene, viszat, vihoti, viszor " +
-                    "FROM l_hordo " +
-                    "INNER JOIN l_vizslap ON l_hordo.hoteko= l_vizslap.viteko AND l_hordo.hosarz= l_vizslap.visarz " +
-                    "WHERE l_hordo.foszam= " + _id + " group by l_hordo.hosarz, l_hordo.hoteko, vitene, viszat, vihoti, viszor ";
-
+                command.CommandText = "select distinct hoteko from l_hordo where " + where;
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    data = new Node_MinőségBizonylat.VizsgálatiLap(
-                    (double?)GetNullable<decimal>(reader, 0), (double?)GetNullable<decimal>(reader, 1),
-                    (double?)GetNullable<decimal>(reader, 2), (double?)GetNullable<decimal>(reader, 3),
-                    (double?)GetNullable<decimal>(reader, 4), (double?)GetNullable<decimal>(reader, 5),
-                    (double?)GetNullable<decimal>(reader, 6), (double?)GetNullable<decimal>(reader, 7),
-                    (double?)GetNullable<Int16>(reader, 8), (double?)GetNullable<Int16>(reader, 9),
-                    (double?)GetNullable<Int16>(reader, 10),
-                    reader.GetString(11),
-                    reader.GetString(12),reader.GetString(13),reader.GetString(14),reader.GetString(15),reader.GetString(16));
+                    hotekok.Add(reader.GetString(0));
                 }
+                command.Dispose();
+                laborconnection.Close();
+            }
+                return hotekok;
+        }
 
+
+        public Node_MinőségBizonylat.VizsgálatiLap MinőségBizonylat(List<Foglalás> _foglalások, string _hoteko)
+        {
+            Node_MinőségBizonylat.VizsgálatiLap data = new Node_MinőségBizonylat.VizsgálatiLap();
+
+            lock (LaborLock)
+            {
+                laborconnection.Open();
+                SqlCommand command = laborconnection.CreateCommand();
+
+                string where = null;
+                foreach (Foglalás item in _foglalások)
+                {
+                    where += " l_hordo.foszam = '" + item.id + "' or";
+                }
+                where = where.Substring(0, where.Length - 2);
+
+                    command.CommandText = "SELECT  MIN(vibrix), MAX(vibrix), MIN(vicsav), MAX(vicsav), MIN(vipeha), MAX(vipeha), MIN(vibost), MAX(vibost),  MIN(viciad), MAX(viciad), MAX(viasav), hoteko, hosarz , vitene, viszat, vihoti, viszor " +
+                        "FROM l_hordo " +
+                        "INNER JOIN l_vizslap ON l_hordo.hoteko= l_vizslap.viteko AND l_hordo.hosarz= l_vizslap.visarz " +
+                        "WHERE l_vizslap.viteko = (Select distinct hoteko from l_hordo where l_hordo.hoteko=" + _hoteko + ") and (" + where + ") group by l_hordo.hosarz, l_hordo.hoteko, vitene, viszat, vihoti, viszor ";
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    // Node_MinőségBizonylat.VizsgálatiLap temp = new Node_MinőségBizonylat.VizsgálatiLap();
+
+                    while (reader.Read())
+                    {
+                        data.brix.min = (((double?)GetNullable<decimal>(reader, 0) < data.brix.min || data.brix.min == null) ? (double?)GetNullable<decimal>(reader, 0) : data.brix.min);
+                        data.brix.max = (((double?)GetNullable<decimal>(reader, 1) > data.brix.max || data.brix.max == null) ? (double?)GetNullable<decimal>(reader, 1) : data.brix.max);
+                        data.citromsav.min = (((double?)GetNullable<decimal>(reader, 2) < data.citromsav.min || data.citromsav.min == null) ? (double?)GetNullable<decimal>(reader, 2) : data.citromsav.min);
+                        data.citromsav.max = (((double?)GetNullable<decimal>(reader, 3) > data.citromsav.max || data.citromsav.max == null) ? (double?)GetNullable<decimal>(reader, 3) : data.citromsav.max);
+                        data.ph.min = (((double?)GetNullable<decimal>(reader, 4) < data.ph.min || data.ph.min == null) ? (double?)GetNullable<decimal>(reader, 4) : data.ph.min);
+                        data.ph.max = (((double?)GetNullable<decimal>(reader, 5) > data.ph.max || data.ph.max == null) ? (double?)GetNullable<decimal>(reader, 5) : data.ph.max);
+                        data.bostwick.min = (((double?)GetNullable<decimal>(reader, 6) < data.bostwick.min || data.bostwick.min == null) ? (double?)GetNullable<decimal>(reader, 6) : data.bostwick.min);
+                        data.bostwick.max = (((double?)GetNullable<decimal>(reader, 7) > data.bostwick.max || data.bostwick.max == null) ? (double?)GetNullable<decimal>(reader, 7) : data.bostwick.max);
+                        data.citromsavad.min = (((double?)GetNullable<Int16>(reader, 8) < data.citromsavad.min || data.citromsavad.min == null) ? (double?)GetNullable<Int16>(reader, 8) : data.citromsavad.min);
+                        data.citromsavad.max = (((double?)GetNullable<Int16>(reader, 9) > data.citromsavad.max || data.citromsavad.max == null) ? (double?)GetNullable<Int16>(reader, 9) : data.citromsavad.max);
+                        data.aszkorbinsav = (((double?)GetNullable<Int16>(reader, 10) > data.aszkorbinsav || data.aszkorbinsav == null) ? (double?)GetNullable<Int16>(reader, 10) : data.aszkorbinsav);
+                        data.hoteko = reader.GetString(11);
+                        data.sarzs += data.sarzs == null ? reader.GetString(12) : ", " + reader.GetString(12);
+                        data.megnevezés = reader.GetString(13);
+                        data.passzírozottság += data.passzírozottság == null ? reader.GetString(14) : ", " + reader.GetString(14);
+                        data.csomagolás += data.csomagolás == null ? reader.GetString(15) : ", " + reader.GetString(15);
+                        data.származási_hely = reader.GetString(16);
+                    }
+
+                
                 command.Dispose();
                 laborconnection.Close();
             }

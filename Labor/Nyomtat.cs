@@ -120,7 +120,6 @@ namespace Labor
                 íz = _szállítólevél.íz;
                 illat = _szállítólevél.illat;
             }
-
         }
 
         public struct VizsgálatiLap
@@ -175,35 +174,7 @@ namespace Labor
             }
         }//kész
 
-        public class FixStringMagyar
-            {
-                public string hozzáadott_cukor;
-                public string hozzáadott_színezék;
-                public string hozzáadott_aroma;
-                public string hozzáadott_tartósítószer;
-                public string mikrobiológia;
-                public string minőségét_megőrzi;
-                public string nettó_tömeg;
-                public string tárolás;
-                public string Ethanol;
-                public string HMF;
-
-                public FixStringMagyar()
-                {
-                    hozzáadott_cukor = "nincs";
-                    hozzáadott_színezék = "nincs";
-                    hozzáadott_aroma = "nincs";
-                    hozzáadott_tartósítószer = "nincs";
-                    mikrobiológia = "technológiailag steril";
-                    minőségét_megőrzi = "a hordó címkéjén feltüntetett időpontig";
-                    nettó_tömeg = "a hordó címkéjén szereplő töltőtömeg";
-                    tárolás = "0 - 20°C közötti hőmérsékleten, felbontás nélkül";
-                    Ethanol = "0 - 20°C közötti hőmérsékleten, felbontás nélkül";
-                    HMF = "max. 5 mg/l";
-                }
-            } 
-
-        public class FixStringAngol
+        public class FixString
         {
             public string hozzáadott_cukor;
             public string hozzáadott_színezék;
@@ -216,38 +187,61 @@ namespace Labor
             public string Ethanol;
             public string HMF;
 
-            public FixStringAngol()
+            public FixString(string _nyelv)
             {
-                hozzáadott_cukor = "no";
-                hozzáadott_színezék = "no";
-                hozzáadott_aroma = "no";
-                hozzáadott_tartósítószer = "no";
-                mikrobiológia = "aseptic technology";
-                minőségét_megőrzi = "see on label of drum";
-                nettó_tömeg = "as labelled";
-                tárolás = "between 0 and 20°C, without opening";
-                Ethanol = "between 0 and 20°C, without opening";
-                HMF = "max. 5 mg/l";
+
+                if (_nyelv == "M")
+                {
+                    hozzáadott_cukor = "nincs";
+                    hozzáadott_színezék = "nincs";
+                    hozzáadott_aroma = "nincs";
+                    hozzáadott_tartósítószer = "nincs";
+                    mikrobiológia = "technológiailag steril";
+                    minőségét_megőrzi = "a hordó címkéjén feltüntetett időpontig";
+                    nettó_tömeg = "a hordó címkéjén szereplő töltőtömeg";
+                    tárolás = "0 - 20°C közötti hőmérsékleten, felbontás nélkül";
+                    Ethanol = "0 - 20°C közötti hőmérsékleten, felbontás nélkül";
+                    HMF = "max. 5 mg/l";
+                }
+                else if (_nyelv == "A")
+                {
+                    hozzáadott_cukor = "no";
+                    hozzáadott_színezék = "no";
+                    hozzáadott_aroma = "no";
+                    hozzáadott_tartósítószer = "no";
+                    mikrobiológia = "aseptic technology";
+                    minőségét_megőrzi = "see on label of drum";
+                    nettó_tömeg = "as labelled";
+                    tárolás = "between 0 and 20°C, without opening";
+                    Ethanol = "between 0 and 20°C, without opening";
+                    HMF = "max. 5 mg/l";
+                }
             }
-        } // kész
+        } 
 
         public struct Felhasználó
         {
             public string felhasználó_neve;
             public string felhasználó_beosztása;
-
-            public Felhasználó(string _felhasználó_neve, string _felhasználó_beosztása)
+            public Felhasználó(string _nyelv)
             {
-                felhasználó_neve = _felhasználó_neve;
-                felhasználó_beosztása = _felhasználó_beosztása;
+                if(_nyelv == "M")
+                {
+                    felhasználó_neve =  Program.felhasználó.Value.felhasználó_név;
+                    felhasználó_beosztása= Program.felhasználó.Value.beosztás1;
+                }
+                else
+                {
+                   felhasználó_neve= Program.felhasználó.Value.felhasználó_név;
+                   felhasználó_beosztása = Program.felhasználó.Value.beosztás2;
+                }
             }
         }
 
         public Szállítólevél szállítólevél;
         public VizsgálatiLap vizsgálatilap;
         public Tápérték tápérték;
-        public FixStringMagyar fixstringmagyar;
-        public FixStringAngol fixstringangol;
+        public FixString fixstring;
         public Felhasználó felhasználó;
     }
 
@@ -269,8 +263,12 @@ namespace Labor
 
     public sealed class Nyomtat
     {
+        static Regex regex;
+
         public static void Nyomtat_Konszignáció(Konszignáció_Szállítólevél _szállítólevél, List<Foglalás> _foglalások)
         {
+            regex = new Regex(@"[ ]{2,}", RegexOptions.None);
+
             Node_Konszignáció konszignáció = new Node_Konszignáció();
 
             konszignáció.fejléc = new Node_Konszignáció.Fejléc();
@@ -415,8 +413,7 @@ namespace Labor
             data_table.Rows[0].Cells[4].Paragraphs[0].Append("Nettó súly").Bold();
             data_table.Rows[0].Cells[5].Paragraphs[0].Append("Hordó típus").Bold();
             data_table.Rows[0].Cells[6].Paragraphs[0].Append("Gyártás dátuma").Bold();
-            RegexOptions options = RegexOptions.None;
-            Regex regex = new Regex(@"[ ]{2,}", options);
+
 
             int c = 1;
             int sorszám = 1;
@@ -455,37 +452,26 @@ namespace Labor
             catch (System.Exception) { MessageBox.Show("A dokumentum meg van nyitva!"); }
         }
 
-        public static void Nyomtat_MinőségBizonylatok( Konszignáció_Szállítólevél _szállítólevél, List<Foglalás> _foglalások )
+        public static void Nyomtat_MinőségBizonylatok(Konszignáció_Szállítólevél _szállítólevél, List<Foglalás> _foglalások)
         {
+            regex = new Regex(@"[ ]{2,}", RegexOptions.None);
+
             List<Node_MinőségBizonylat> data = new List<Node_MinőségBizonylat>();
 
             #region Data
-            foreach (Foglalás item in _foglalások)
+            Node_MinőségBizonylat temp = new Node_MinőségBizonylat();
+            temp.fixstring = new Node_MinőségBizonylat.FixString(_szállítólevél.nyelv);
+            temp.felhasználó = new Node_MinőségBizonylat.Felhasználó(_szállítólevél.nyelv);
+            temp.szállítólevél = new Node_MinőségBizonylat.Szállítólevél(_szállítólevél);
+
+            List<string> hotekok = Program.database.MinőségBizonylatHotekok(_foglalások);
+            foreach (string item in hotekok)
             {
-                Node_MinőségBizonylat temp = new Node_MinőségBizonylat();
-                temp.szállítólevél =  new Node_MinőségBizonylat.Szállítólevél(_szállítólevél);
-                if(_szállítólevél.nyelv == "M")
-                {
-                    temp.fixstringmagyar = new Node_MinőségBizonylat.FixStringMagyar(); 
-                }
-                else
-                {
-                    temp.fixstringangol = new Node_MinőségBizonylat.FixStringAngol(); 
-
-                }
-                if(_szállítólevél.nyelv == "M")
-                {
-                    temp.felhasználó = new Node_MinőségBizonylat.Felhasználó(Program.felhasználó.Value.felhasználó_név,Program.felhasználó.Value.beosztás1);
-                }
-                else
-                {
-                    temp.felhasználó = new Node_MinőségBizonylat.Felhasználó(Program.felhasználó.Value.felhasználó_név, Program.felhasználó.Value.beosztás2);
-
-                }
-                temp.vizsgálatilap = Program.database.MinőségBizonylat(item.id);
+                temp.vizsgálatilap = Program.database.MinőségBizonylat(_foglalások, item);
                 temp.tápérték = Program.database.MinBiz_Tápérték(temp.vizsgálatilap.hoteko);
                 data.Add(temp);
             }
+
             #endregion
 
             if (!Directory.Exists("Listák"))
@@ -493,13 +479,10 @@ namespace Labor
                 Directory.CreateDirectory("Listák");
             }
 
-
-            string filename = "Listák//" + "MinBiz.docx";
+            string filename = "Listák//" + _szállítólevél.szlevél + "-MinBiz.docx";
             var document = DocX.Create(filename);
             document.AddHeaders();
             document.AddFooters();
-
-            
 
             #region Header
 
@@ -526,13 +509,13 @@ namespace Labor
                 titleFormat.Spacing = 5;
                 titleFormat.Bold = true;
                 Paragraph title = null;
-                if(_szállítólevél.nyelv == "M")
+                if (_szállítólevél.nyelv == "M")
                 {
-                    title = header.InsertParagraph("\nMINŐSÉGI BIZONYÍTVÁNY\n", false, titleFormat);
+                    title = header.InsertParagraph("MINŐSÉGI BIZONYÍTVÁNY\n", false, titleFormat);
                 }
                 else
                 {
-                    title = header.InsertParagraph("\nQUALITY CERTIFICATE\n", false, titleFormat);
+                    title = header.InsertParagraph("QUALITY CERTIFICATE\n", false, titleFormat);
 
                 }
                 title.Alignment = Alignment.center;
@@ -560,199 +543,34 @@ namespace Labor
             }
             #endregion
 
-                for (int i = 0; i < data.Count;i++ )
+            for (int i = 0; i < data.Count; i++)
+            {
+                #region DataTable
+                Table data_table;
+
+                if (data[i].szállítólevél.vevő == "GABONAL  Kft.                                     ")
                 {
-                    #region DataTable
-                    Table data_table;
+                    data_table = document.AddTable(34, 2);
+                    data_table.Rows[32].Cells[0].Paragraphs[0].Append("Ethanol:").Bold();
+                    data_table.Rows[33].Cells[0].Paragraphs[0].Append("Hydroxymethylfurfural:").Bold();
+                    data_table.Rows[32].Cells[1].Paragraphs[0].Append("max. 0,2 %");
+                    data_table.Rows[33].Cells[1].Paragraphs[0].Append("max. 5 mg/l");
 
-                    if (data[i].szállítólevél.vevő == "GABONAL  Kft.                                     ")
-                    {
-                        data_table = document.AddTable(34, 2);
-                        data_table.Rows[32].Cells[0].Paragraphs[0].Append("Ethanol:").Bold();
-                        data_table.Rows[33].Cells[0].Paragraphs[0].Append("Hydroxymethylfurfural:").Bold();
-                        data_table.Rows[32].Cells[1].Paragraphs[0].Append("max. 0,2 %");
-                        data_table.Rows[33].Cells[1].Paragraphs[0].Append("max. 5 mg/l");
-
-                    }
-                    else { data_table = document.AddTable(31, 2); }
-
-                    int c = -1;
-
-                    if (_szállítólevél.nyelv == "M")
-                    {
-                        #region Magyar Sufni
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Szállítólevél szám:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Vevő megnevezése:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Megnevezés:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Gyártási idő:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Sarzs:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Szín:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Íz:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Illat:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Brix:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Savtartalom (citromsavban):").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("pH:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Konzisztencia (Bostwick fok):").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Hozzáadott citromsav:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Hozzáadott cukor:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Aszkorbinsav:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Hozzáadott színezék:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Hozzáadott aroma:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Hozzáadott tartósítószer:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Átlagos tápérték tartalom 100 g termékben").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("     Energia tartalom:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("     Fehérje:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("     Szénhidrát:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("     Zsír:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("     Élelmi rost:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Mikrobiológia:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Minőségét megőrzi:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Passzírozottság:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Nettó tömeg:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Tárolás:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Csomagolás:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Származási hely:").Bold();
-                        #endregion
-
-                        #region Magyar Adat
-                        c = -1;
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].szállítólevél.szlevél_szám.ToString()).Bold();
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].szállítólevél.vevő).Bold();
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].vizsgálatilap.megnevezés).Bold();
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].szállítólevél.gyártási_idő).Bold();
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].vizsgálatilap.sarzs).Bold();
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].szállítólevél.szín);
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].szállítólevél.íz);
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].szállítólevél.illat);
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(MinMax(data[i].vizsgálatilap.brix) + " %");
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(MinMax(data[i].vizsgálatilap.citromsav) + " %");
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(MinMax(data[i].vizsgálatilap.ph));
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(MinMax(data[i].vizsgálatilap.bostwick) + " cm/30 sec");
-                        if (MinMax(data[i].vizsgálatilap.citromsavad) == null) { data_table.Rows[++c].Cells[1].Paragraphs[0].Append("nincs"); } else { data_table.Rows[++c].Cells[1].Paragraphs[0].Append(MinMax(data[i].vizsgálatilap.citromsavad)); }
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].fixstringmagyar.hozzáadott_cukor);
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append("maximum " + data[i].vizsgálatilap.aszkorbinsav + " mg/kg");
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].fixstringmagyar.hozzáadott_színezék);
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].fixstringmagyar.hozzáadott_aroma);
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].fixstringmagyar.hozzáadott_aroma);
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append("");
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].tápérték.energia_tartalom1.ToString() + " kj / " + data[i].tápérték.energia_tartalom2.ToString() + " kcal");
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].tápérték.fehérje.ToString());
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].tápérték.szénhidrát.ToString());
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].tápérték.zsír.ToString());
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].tápérték.élelmi_rost.ToString());
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].fixstringmagyar.mikrobiológia);
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].fixstringmagyar.minőségét_megőrzi);
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].vizsgálatilap.passzírozottság + " mm-es szitán");
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].fixstringmagyar.nettó_tömeg);
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].fixstringmagyar.tárolás);
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append("aszeptikus zsákban és " + data[i].vizsgálatilap.csomagolás);
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].vizsgálatilap.származási_hely);
-                        #endregion
-                    }
-                    else if (_szállítólevél.nyelv == "A")
-                    {
-                        #region Angol Sufni
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Customer name:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Product name:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Date of production:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Batch number:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Colour:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Taste:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Odour:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Brix:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Acid content (in citric acid):").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("pH:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Consistence (Bostwick, 20°C):").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Added citric acid:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Added sugar:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Ascorbic acid:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Added colours:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Added flavours:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Added preservatives:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Average nutritional values in 100 g product").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("     Energy:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("     Protein:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("     Carbohydrate:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("     Fat:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("     Dietary fiber:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Microbiological status:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Best before:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Sieve size:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Net weight:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Storage:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Packaging:").Bold();
-                        data_table.Rows[++c].Cells[0].Paragraphs[0].Append("Country of origin:").Bold();
-                        #endregion
-
-                        #region Angol Adat
-                        c = -1;
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].szállítólevél.vevő).Bold();
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].vizsgálatilap.megnevezés).Bold();
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].szállítólevél.gyártási_idő).Bold();
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].vizsgálatilap.sarzs).Bold();
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].szállítólevél.szín);
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].szállítólevél.íz);
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].szállítólevél.illat);
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(MinMax(data[i].vizsgálatilap.brix) + " %");
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(MinMax(data[i].vizsgálatilap.citromsav) + " %");
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(MinMax(data[i].vizsgálatilap.ph));
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(MinMax(data[i].vizsgálatilap.bostwick) + " cm/30 sec");
-                        if (MinMax(data[i].vizsgálatilap.citromsavad) == null) { data_table.Rows[++c].Cells[1].Paragraphs[0].Append("no"); } else { data_table.Rows[++c].Cells[1].Paragraphs[0].Append(MinMax(data[i].vizsgálatilap.citromsavad)); }
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].fixstringangol.hozzáadott_cukor);
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append("maximum " + data[i].vizsgálatilap.aszkorbinsav + " mg/kg");
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].fixstringangol.hozzáadott_színezék);
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].fixstringangol.hozzáadott_aroma);
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].fixstringangol.hozzáadott_aroma);
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append("");
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].tápérték.energia_tartalom1.ToString() + " kj / " + data[i].tápérték.energia_tartalom2.ToString() + " kcal");
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].tápérték.fehérje.ToString());
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].tápérték.szénhidrát.ToString());
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].tápérték.zsír.ToString());
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].tápérték.élelmi_rost.ToString());
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].fixstringangol.mikrobiológia);
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].fixstringangol.minőségét_megőrzi);
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].vizsgálatilap.passzírozottság + " mm");
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].fixstringangol.nettó_tömeg);
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].fixstringangol.tárolás);
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append("aseptic bags and " + data[i].vizsgálatilap.csomagolás);
-                        data_table.Rows[++c].Cells[1].Paragraphs[0].Append(data[i].vizsgálatilap.származási_hely);
-                        #endregion
-                    }
-
-                    MinBizDataTáblázatFormázása(data_table);
-                    document.InsertTable(data_table);
-
-                    Paragraph p = document.InsertParagraph();
-                    Node_MinBiz_Szöveg minbizszöveg = Program.database.MinőségBizonylat_Szöveg();
-
-                    if (_szállítólevél.nyelv == "M")
-                    {
-                        p.AppendLine(minbizszöveg.sz1_m);
-                        p.AppendLine();
-                        p.AppendLine(minbizszöveg.sz2_m);
-                        p.AppendLine();
-                        p.AppendLine("Kiskunfélegyháza " + DateTime.Now.Day + ". " + DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year);
-                        Paragraph q = document.InsertParagraph();
-                        q.Alignment = Alignment.right;
-                        q.AppendLine( data[0].felhasználó.felhasználó_neve + "\n" + data[0].felhasználó.felhasználó_beosztása);
-                    }
-                    else
-                    {
-                        p.AppendLine(minbizszöveg.sz1_a);
-                        p.AppendLine();
-                        p.AppendLine(minbizszöveg.sz2_a);
-                        p.AppendLine();
-                        p.AppendLine("Kiskunfélegyháza " + DateTime.Now.Day + "nd " + DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year);
-                        Paragraph q = document.InsertParagraph();
-                        q.Alignment = Alignment.right;
-                        q.AppendLine( data[0].felhasználó.felhasználó_neve + "\n" + data[0].felhasználó.felhasználó_beosztása);
-
-                    }
-
-                    if(i!=data.Count-1)
-                    document.InsertSectionPageBreak(false);
-                    #endregion
                 }
+                else { data_table = document.AddTable(31, 2); }
+                MinBizDataTable(data[i], _szállítólevél.nyelv, i, data_table);
+
+                MinBizDataTáblázatFormázása(data_table);
+                document.InsertTable(data_table);
+
+                Paragraph p = document.InsertParagraph();
+
+                MinBizSzöveg(_szállítólevél.nyelv, p, data[i], document);
+
+                if (i != data.Count - 1)
+                    document.InsertSectionPageBreak(false);
+                #endregion
+            }
 
             try { document.Save(); }
             catch (System.Exception) { MessageBox.Show("A dokumentum meg van nyitva!"); }
@@ -760,6 +578,181 @@ namespace Labor
         }
 
         #region SegédFüggvények
+        public static void MinBizDataTable( Node_MinőségBizonylat _data, string _nyelv , int i, Table table)
+        {
+            int c;
+            if (_nyelv == "M")
+            {
+                #region fixstring
+                c=-1;
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Szállítólevél szám:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Vevő megnevezése:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Megnevezés:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Gyártási idő:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Sarzs:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Szín:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Íz:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Illat:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Brix:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Savtartalom (citromsavban):").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("pH:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Konzisztencia (Bostwick fok):").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Hozzáadott citromsav:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Hozzáadott cukor:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Aszkorbinsav:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Hozzáadott színezék:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Hozzáadott aroma:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Hozzáadott tartósítószer:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Átlagos tápérték tartalom 100 g termékben").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("     Energia tartalom:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("     Fehérje:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("     Szénhidrát:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("     Zsír:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("     Élelmi rost:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Mikrobiológia:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Minőségét megőrzi:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Passzírozottság:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Nettó tömeg:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Tárolás:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Csomagolás:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Származási hely:").Bold();
+                #endregion
+
+                #region data
+                c=-1;
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.szállítólevél.szlevél_szám.ToString()).Bold();
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.szállítólevél.vevő).Bold();
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.vizsgálatilap.megnevezés).Bold();
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.szállítólevél.gyártási_idő).Bold();
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.vizsgálatilap.sarzs).Bold();
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.szállítólevél.szín);
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.szállítólevél.íz);
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.szállítólevél.illat);
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(MinMax(_data.vizsgálatilap.brix) + " %");
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(MinMax(_data.vizsgálatilap.citromsav) + " %");
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(MinMax(_data.vizsgálatilap.ph));
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(MinMax(_data.vizsgálatilap.bostwick) + " cm/30 sec");
+                if (MinMax(_data.vizsgálatilap.citromsavad) == null) { table.Rows[++c].Cells[1].Paragraphs[0].Append("nincs"); } else { table.Rows[++c].Cells[1].Paragraphs[0].Append(MinMax(_data.vizsgálatilap.citromsavad)); }
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.hozzáadott_cukor);
+                table.Rows[++c].Cells[1].Paragraphs[0].Append("maximum " + _data.vizsgálatilap.aszkorbinsav + " mg/kg");
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.hozzáadott_színezék);
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.hozzáadott_aroma);
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.hozzáadott_aroma);
+                table.Rows[++c].Cells[1].Paragraphs[0].Append("");
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.tápérték.energia_tartalom1.ToString() + " kj / " + _data.tápérték.energia_tartalom2.ToString() + " kcal");
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.tápérték.fehérje.ToString() + " g");
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.tápérték.szénhidrát.ToString() + " g");
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.tápérték.zsír.ToString() + " g");
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.tápérték.élelmi_rost.ToString() + " g");
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.mikrobiológia);
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.minőségét_megőrzi);
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.vizsgálatilap.passzírozottság + " mm-es szitán");
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.nettó_tömeg);
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.tárolás);
+                table.Rows[++c].Cells[1].Paragraphs[0].Append("aszeptikus zsákban és " + _data.vizsgálatilap.csomagolás);
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.vizsgálatilap.származási_hely);
+                #endregion
+            }
+            else
+            {
+                #region fixstring
+                c=-1;
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Customer name:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Product name:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Date of production:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Batch number:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Colour:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Taste:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Odour:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Brix:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Acid content (in citric acid):").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("pH:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Consistence (Bostwick, 20°C):").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Added citric acid:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Added sugar:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Ascorbic acid:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Added colours:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Added flavours:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Added preservatives:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Average nutritional values in 100 g product").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("     Energy:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("     Protein:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("     Carbohydrate:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("     Fat:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("     Dietary fiber:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Microbiological status:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Best before:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Sieve size:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Net weight:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Storage:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Packaging:").Bold();
+                table.Rows[++c].Cells[0].Paragraphs[0].Append("Country of origin:").Bold();
+                #endregion
+
+                #region data
+                c=-1;
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.szállítólevél.vevő).Bold();
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.vizsgálatilap.megnevezés).Bold();
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.szállítólevél.gyártási_idő).Bold();
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.vizsgálatilap.sarzs).Bold();
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.szállítólevél.szín);
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.szállítólevél.íz);
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.szállítólevél.illat);
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(MinMax(_data.vizsgálatilap.brix) + " %");
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(MinMax(_data.vizsgálatilap.citromsav) + " %");
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(MinMax(_data.vizsgálatilap.ph));
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(MinMax(_data.vizsgálatilap.bostwick) + " cm/30 sec");
+                if (MinMax(_data.vizsgálatilap.citromsavad) == null) { table.Rows[++c].Cells[1].Paragraphs[0].Append("no"); } else { table.Rows[++c].Cells[1].Paragraphs[0].Append(MinMax(_data.vizsgálatilap.citromsavad)); }
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.hozzáadott_cukor);
+                table.Rows[++c].Cells[1].Paragraphs[0].Append("maximum " + _data.vizsgálatilap.aszkorbinsav + " mg/kg");
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.hozzáadott_színezék);
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.hozzáadott_aroma);
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.hozzáadott_aroma);
+                table.Rows[++c].Cells[1].Paragraphs[0].Append("");
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.tápérték.energia_tartalom1.ToString() + " kj / " + _data.tápérték.energia_tartalom2.ToString() + " kcal");
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.tápérték.fehérje.ToString() + " g");
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.tápérték.szénhidrát.ToString() + " g");
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.tápérték.zsír.ToString() + " g");
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.tápérték.élelmi_rost.ToString() + " g");
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.mikrobiológia);
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.minőségét_megőrzi);
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.vizsgálatilap.passzírozottság + " mm");
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.nettó_tömeg);
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.tárolás);
+                table.Rows[++c].Cells[1].Paragraphs[0].Append("aseptic bags and " + _data.vizsgálatilap.csomagolás);
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.vizsgálatilap.származási_hely);
+                #endregion
+            }
+        }
+
+        public static void MinBizSzöveg(string _nyelv, Paragraph p, Node_MinőségBizonylat _data, DocX document )
+        {
+            Node_MinBiz_Szöveg minbizszöveg = Program.database.MinőségBizonylat_Szöveg();
+
+            if (_nyelv == "M")
+            {
+                p.AppendLine(minbizszöveg.sz1_m);
+                p.AppendLine();
+                p.AppendLine(minbizszöveg.sz2_m);
+                p.AppendLine();
+                p.AppendLine("Kiskunfélegyháza " + DateTime.Now.Day + ". " + DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year);
+                Paragraph q = document.InsertParagraph();
+                q.Alignment = Alignment.right;
+                q.Append(_data.felhasználó.felhasználó_neve + "\n" + _data.felhasználó.felhasználó_beosztása);
+            }
+            else
+            {
+                p.AppendLine(minbizszöveg.sz1_a);
+                p.AppendLine();
+                p.AppendLine(minbizszöveg.sz2_a);
+                p.AppendLine();
+                p.AppendLine("Kiskunfélegyháza " + DateTime.Now.Day + "nd " + DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year);
+                Paragraph q = document.InsertParagraph();
+                q.Alignment = Alignment.right;
+                q.Append(_data.felhasználó.felhasználó_neve + "\n" + _data.felhasználó.felhasználó_beosztása);
+
+            }
+        }
 
         public static string MinMax(MinMaxPair<double?> minmax)
         {

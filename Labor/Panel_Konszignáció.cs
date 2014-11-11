@@ -294,7 +294,6 @@ namespace Labor
                 List<string> megrendelok = Program.database.Megrendelők();
                 foreach (string item in megrendelok) { combo_megrendelők.Items.Add(item); } combo_megrendelők.SelectedIndex = 0;
 
-                /*csak tesztelés miatt!
                 box_rendszám1.Text = "KTM791";
                 box_rendszám2.Text = "HCS850";
                 box_levél.Text = "levél";
@@ -302,6 +301,7 @@ namespace Labor
                 box_szín.Text = "Szín";
                 box_íz.Text = "Íz";
                 box_illat.Text = "Illat";
+                /*csak tesztelés miatt!
                 */
 
                 rendben.Click += rendben_Click;
@@ -314,6 +314,22 @@ namespace Labor
             {
                 //TODO check jó-é, gyártási idő??
                 string date = DateTime.Now.Year.ToString() + '.'+ DateTime.Now.Month + '.' + DateTime.Now.Day;
+
+                if (combo_nyelv.Text == "3. label_nyelv")
+                { MessageBox.Show("Nyelv mező nem lehet" + '"'+ "3. label_nyelv" + '"' , "Egyenlőre!", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+                if (box_rendszám1.Text == "" || box_rendszám2.Text == "")
+                { MessageBox.Show("Rendszám mező nem lehet üres!", "Egyenlőre!", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+                if (box_levél.Text == "")
+                { MessageBox.Show("Szállítólevél mező nem lehet üres!", "Egyenlőre!", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; } 
+                
+                if (box_gyártási_idő.Text == "" || box_gyártási_idő.Text.Length < 4)
+                { MessageBox.Show("Gyártási idő mező nem lehet üres és minimum 4 karakter!", "Egyenlőre!", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+                if (box_szín.Text == "")
+                { MessageBox.Show("Szín mező nem lehet üres!", "Egyenlőre!", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+                if (box_íz.Text == "")
+                { MessageBox.Show("Íz mező nem lehet üres!", "Egyenlőre!", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+                if (box_illat.Text == "")
+                { MessageBox.Show("Illat mező nem lehet üres!", "Egyenlőre!", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
 
                 Konszignáció_Szállítólevél szállítólevél = new Konszignáció_Szállítólevél(0, box_levél.Text, foglalások[0].készítő, date, combo_nyelv.Text[0].ToString(), combo_megrendelők.Text, box_rendszám1.Text, box_rendszám2.Text, (Int16)foglalások[0].hordók_száma, box_gyártási_idő.Text, box_szín.Text, box_íz.Text, box_illat.Text);
                 Nyomtat.Nyomtat_Konszignáció(szállítólevél, foglalások);
