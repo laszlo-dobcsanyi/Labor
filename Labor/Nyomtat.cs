@@ -277,7 +277,6 @@ namespace Labor
             konszignáció.fejléc.szállítólevél = new Node_Konszignáció.Fejléc.Szállítólevél(_szállítólevél);
             konszignáció.gyümölcstípusok = new List<Node_Konszignáció.Gyümölcstípus>();
 
-            int sorok_száma = 3;
             double összes_súly = 0;
 
             foreach (Foglalás foglalás_iterator in _foglalások)
@@ -321,7 +320,6 @@ namespace Labor
                         if (konszignáció.gyümölcstípusok[i].megnevezés == Program.database.Name(inner.termékkód))
                         {
                             Node_Konszignáció.Gyümölcstípus.Adat temp = new Node_Konszignáció.Gyümölcstípus.Adat(inner.gyártási_év[3] + inner.id, inner.sarzs, Convert.ToDouble(inner.mennyiség), "", inner.time.Substring(0, 11));
-                            sorok_száma++;
                             List<Vizsgálat.Azonosító> vizsgálatok = Program.database.Vizsgálatok();
                             foreach (Vizsgálat.Azonosító item in vizsgálatok)
                             {
@@ -336,7 +334,6 @@ namespace Labor
                             konszignáció.gyümölcstípusok[i] = tempgy;
                         }
                     }
-                    sorok_száma += 2;
                 }
             }
 
@@ -405,7 +402,7 @@ namespace Labor
             Paragraph paragraph_data_table = document.InsertParagraph();
 
             
-            Table data_table = document.AddTable(sorok_száma, 7);
+            Table data_table = document.AddTable(1, 7);
             data_table.Rows[0].Cells[0].Paragraphs[0].Append("S.Sz.").Bold();
             data_table.Rows[0].Cells[1].Paragraphs[0].Append("Megnevezés").Bold();
             data_table.Rows[0].Cells[2].Paragraphs[0].Append("Hordó").Bold();
@@ -423,6 +420,7 @@ namespace Labor
                 string temp = regex.Replace(outer.megnevezés, @" ");
                 foreach (Node_Konszignáció.Gyümölcstípus.Adat inner in outer.adat)
                 {
+                    data_table.InsertRow();
 
                     data_table.Rows[c].Cells[0].Paragraphs[0].Append(sorszám.ToString() + '.');
                     sorszám++;
@@ -432,8 +430,12 @@ namespace Labor
                     data_table.Rows[c].Cells[4].Paragraphs[0].Append(inner.nettó_súly + " kg");
                     data_table.Rows[c].Cells[5].Paragraphs[0].Append(inner.hordó_típus);
                     data_table.Rows[c].Cells[6].Paragraphs[0].Append(inner.gyártás_dátum);
+
                     c++;
                 }
+
+                data_table.InsertRow();
+                data_table.InsertRow();
                 data_table.Rows[c].Cells[1].Paragraphs[0].Append( temp + "összesen:").Bold();
                 data_table.Rows[c].Cells[4].Paragraphs[0].Append(outer.összsúly + " kg").Bold();
                 összes_súly += outer.összsúly;
@@ -441,6 +443,7 @@ namespace Labor
                 data_table.Rows[c].Cells[6].Paragraphs[0].Append(outer.vtsz).Bold();
                 c += 2;
             }
+            data_table.InsertRow();
             data_table.Rows[c].Cells[1].Paragraphs[0].Append("Összes elszállítás:").Bold();
             data_table.Rows[c].Cells[4].Paragraphs[0].Append(összes_súly + " kg").Bold();
 
