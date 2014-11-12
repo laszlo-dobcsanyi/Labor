@@ -51,7 +51,7 @@ namespace Labor
             ToolStripStatusLabel Készítők = new ToolStripStatusLabel("Belinyák Nándor és Társai. \u00A9 2014");
             Készítők.BorderSides = ToolStripStatusLabelBorderSides.Left;
 
-            ToolStripStatusLabel Verzió = new ToolStripStatusLabel("Verzió: 0.4.7-2014.11.07");
+            ToolStripStatusLabel Verzió = new ToolStripStatusLabel("Verzió: 0.4.8-2014.11.12");
             Verzió.BorderSides = ToolStripStatusLabelBorderSides.Left;
 
             ToolStripStatusLabel Bejelentkezve = new ToolStripStatusLabel("Bejelentkezve " + Program.felhasználó.Value.név1 + " néven." );
@@ -255,19 +255,5 @@ namespace Labor
             return checkbox;
         }
         #endregion
-
-        private void InitializeComponent()
-        {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.SuspendLayout();
-            // 
-            // MainForm
-            // 
-            this.ClientSize = new System.Drawing.Size(284, 261);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "MainForm";
-            this.ResumeLayout(false);
-
-        }
     }
 }
