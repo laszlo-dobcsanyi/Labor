@@ -707,7 +707,7 @@ namespace Labor
             {
                 laborconnection.Open();
 
-                string where = A(new string[] { Update<string>("VITEKO", _termékkód), Update<string>("VIGYEV", _gyártási_év), Update<string>("VISARZ", _sarzs) });
+                string where = A(new string[] { Update<string>("VITEKO", _termékkód), Update<string>("VIGYEV", _gyártási_év[_gyártási_év.Length - 1].ToString()), Update<string>("VISARZ", _sarzs) });
 
                 SqlCommand command = new SqlCommand("SELECT VIHOTI FROM L_VIZSLAP WHERE " + where + " AND VIHOSZ <> '" + _hordószám + "';");
                 command.Connection = laborconnection;
@@ -736,7 +736,7 @@ namespace Labor
             {
                 laborconnection.Open();
 
-                string where = A(new string[] { Update<string>("VITEKO", _termékkód), Update<string>("VIGYEV", _gyártási_év), Update<string>("VIHOSZ", _hordószám) });
+                string where = A(new string[] { Update<string>("VITEKO", _termékkód), Update<string>("VIGYEV", _gyártási_év[_gyártási_év.Length - 1].ToString()), Update<string>("VIHOSZ", _hordószám) });
 
                 SqlCommand command = new SqlCommand("SELECT VIHOSZ FROM L_VIZSLAP WHERE " + where + ";");
                 command.Connection = laborconnection;
@@ -937,6 +937,26 @@ namespace Labor
 
                 return true;
             }
+        }
+
+        public bool Vizsgálat_Módosítás_Hordótípus(string _termékkód,  string _sarzs, string _gyártási_év, string _hordó_típus)
+        {
+            lock (LaborLock)
+            {
+                laborconnection.Open();
+
+                string where = A(new string[] { Update<string>("VITEKO", _termékkód), Update<string>("VISARZ", _sarzs), Update<string>("VIGYEV", _gyártási_év[_gyártási_év.Length - 1].ToString()) });
+
+                SqlCommand command = new SqlCommand("UPDATE L_VIZSLAP SET VIHOTI = '" + _hordó_típus + "' WHERE " + where);
+                command.Connection = laborconnection;
+                try { command.ExecuteNonQuery(); command.Dispose(); }
+                catch (SqlException q) { MessageBox.Show("Vizsgálat_Módosítás_Hordótípus -> UPDATE hiba:\n" + q.Message); }
+                if (laborconnection.State != System.Data.ConnectionState.Open) return false;
+
+                laborconnection.Close();
+            }
+
+            return true;
         }
 
         public bool Vizsgálat_Törlés(Vizsgálat _vizsgálat)

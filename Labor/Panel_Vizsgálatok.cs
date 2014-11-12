@@ -810,13 +810,11 @@ namespace Labor
                         break;
 
                     case States.KÉSZ:
-                        bool hordótípus_enabled = combo_hordótípus.Enabled;
                         foreach (Control control in Controls)
                         {
                             control.Enabled = true;
                         }
 
-                        combo_hordótípus.Enabled = hordótípus_enabled;
                         box_sarzs.Enabled = false;
                         box_terméknév.Enabled = false;
                         box_szita_átmérő.Enabled = false;
@@ -910,7 +908,7 @@ namespace Labor
 
                     if (!Database.IsCorrectSQLText(prodid))
                         { MessageBox.Show("Nem megfelelő karakter a lekérdezésben!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-                    if (eredeti == null && !Program.database.Vizsgálat_Hordószám_Ellenőrzés(box_termékkód.Text, box_hordószám.Text, gyártási_év[gyártási_év.Length - 1].ToString()))
+                    if (eredeti == null && !Program.database.Vizsgálat_Hordószám_Ellenőrzés(box_termékkód.Text, box_hordószám.Text, gyártási_év))
                         { MessageBox.Show("Már létezik ehhez a termékkódhoz ilyen hordószám erre az évre!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
 
                     List<string> fejléc_adatok = Program.database.Vizsgálat_Fejlécadatok(prodid);
@@ -922,15 +920,10 @@ namespace Labor
                         box_sarzs.Text = fejléc_adatok[3];
                         box_szita_átmérő.Text = fejléc_adatok[4];
 
-                        string hordótípus = Program.database.Vizsgálat_Hordótípus_Ellenőrzés(box_termékkód.Text, box_hordószám.Text, gyártási_év[gyártási_év.Length - 1].ToString(), box_sarzs.Text);
+                        string hordótípus = Program.database.Vizsgálat_Hordótípus_Ellenőrzés(box_termékkód.Text, box_hordószám.Text, gyártási_év, box_sarzs.Text);
                         if (hordótípus != null)
                         {
                             combo_hordótípus.Text = hordótípus;
-                            combo_hordótípus.Enabled = false;
-                        }
-                        else
-                        {
-                            combo_hordótípus.Enabled = true;
                         }
 
                         SetState(States.KÉSZ);
@@ -1034,23 +1027,29 @@ namespace Labor
 
                 Vizsgálat _vizsgálat = new Vizsgálat(azonosító, adatok1, adatok2, adatok3, adatok4);
 
-
+                bool success = false;
                 if (eredeti != null)
                 {
-                    if (!Program.database.Vizsgálat_Módosítás(eredeti.Value, _vizsgálat))
-                    {
-                        MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy nem létezik már a módosítandó vizsgálat?\nTermékkód: " + azonosító.termékkód + "\nSarzs: " + azonosító.sarzs + "\nHordószám: " + azonosító.hordószám +
-                          "\nSorszám: " + azonosító.sorszám, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                    success = Program.database.Vizsgálat_Módosítás(eredeti.Value, _vizsgálat);
                 }
                 else
                 {
-                    if (!Program.database.Vizsgálat_Hozzáadás(_vizsgálat))
+                    success = Program.database.Vizsgálat_Hozzáadás(_vizsgálat);
+                }
+
+                if (!success)
+                {
+                    MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy nem létezik már a módosítandó vizsgálat?\nTermékkód: " + azonosító.termékkód + "\nSarzs: " + azonosító.sarzs + "\nHordószám: " + azonosító.hordószám +
+                        "\nSorszám: " + azonosító.sorszám, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    if (!Program.database.Vizsgálat_Módosítás_Hordótípus(box_termékkód.Text, box_sarzs.Text, gyártási_év, combo_hordótípus.Text))
                     {
-                        MessageBox.Show("Adatbázis hiba!\nLehetséges, hogy már létezik ilyen vizsgálat?\nTermékkód: " + azonosító.termékkód + "\nSarzs: " + azonosító.sarzs + "\nHordószám: " + azonosító.hordószám +
-                          "\nSorszám: " + azonosító.sorszám, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Adatbázis hiba a hordótípusok módosításakor!\nTermékkód: " + azonosító.termékkód + "\nSarzs: " + azonosító.sarzs + "\nGyártási év: " + gyártási_év, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
+
 
                 Close();
             }
