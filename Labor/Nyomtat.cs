@@ -627,7 +627,7 @@ namespace Labor
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.szállítólevél.szlevél_szám.ToString()).Bold();
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.szállítólevél.vevő).Bold();
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.vizsgálatilap.megnevezés).Bold();
-                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.szállítólevél.gyártási_idő).Bold();
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.szállítólevél.gyártási_idő.Substring(0,4) + ". évben").Bold() ;
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.vizsgálatilap.sarzs).Bold();
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.szállítólevél.szín);
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.szállítólevél.íz);
@@ -651,7 +651,7 @@ namespace Labor
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.tápérték.élelmi_rost.ToString() + " g");
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.mikrobiológia);
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.minőségét_megőrzi);
-                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.vizsgálatilap.passzírozottság + " -es szitán");
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.vizsgálatilap.passzírozottság + "-es szitán");
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.nettó_tömeg);
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.tárolás);
                 table.Rows[++c].Cells[1].Paragraphs[0].Append("aszeptikus zsákban és " + _data.vizsgálatilap.csomagolás);
@@ -698,7 +698,7 @@ namespace Labor
                 c=-1;
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.szállítólevél.vevő).Bold();
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.vizsgálatilap.megnevezés).Bold();
-                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.szállítólevél.gyártási_idő).Bold();
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.szállítólevél.gyártási_idő.Substring(0,4)).Bold();
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.vizsgálatilap.sarzs).Bold();
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.szállítólevél.szín);
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.szállítólevél.íz);
@@ -721,7 +721,7 @@ namespace Labor
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.tápérték.élelmi_rost.ToString() + " g");
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.mikrobiológia);
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.minőségét_megőrzi);
-                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.vizsgálatilap.passzírozottság + " mm");
+                table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.vizsgálatilap.passzírozottság);
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.nettó_tömeg);
                 table.Rows[++c].Cells[1].Paragraphs[0].Append(_data.fixstring.tárolás);
                 table.Rows[++c].Cells[1].Paragraphs[0].Append("aseptic bags and " + Program.database.Törzsadat_Angol( _data.vizsgálatilap.csomagolás));
