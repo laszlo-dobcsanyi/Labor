@@ -51,7 +51,7 @@ namespace Labor
             ToolStripStatusLabel Készítők = new ToolStripStatusLabel("Belinyák Nándor és Társai. \u00A9 2014");
             Készítők.BorderSides = ToolStripStatusLabelBorderSides.Left;
 
-            ToolStripStatusLabel Verzió = new ToolStripStatusLabel("Verzió: 0.4.8-2014.11.12");
+            ToolStripStatusLabel Verzió = new ToolStripStatusLabel("Verzió: 0.4.9-2014.11.19");
             Verzió.BorderSides = ToolStripStatusLabelBorderSides.Left;
 
             ToolStripStatusLabel Bejelentkezve = new ToolStripStatusLabel("Bejelentkezve " + Program.felhasználó.Value.név1 + " néven." );
