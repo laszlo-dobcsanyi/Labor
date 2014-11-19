@@ -49,7 +49,7 @@ namespace Labor
                     MessageBox.Show("Hiba a csatlakozás során! Ellenőrizze az adatbázis elérést, felhasználó jogosultságát!\n" + _inner.Message, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     Environment.Exit(1);
                 }
-
+                
                 try
                 {
                     AdminForm adminform = new AdminForm();

@@ -961,8 +961,10 @@ namespace Labor
                 else box_borkősav.Text = "";
             }
 
+
             private void rendben_Click(object _sender, System.EventArgs _event)
             {
+                gyártási_év = "201" +  box_termékkód.Text.Substring(box_termékkód.Text.Length - 1, 1);
                 Vizsgálat.Azonosító azonosító = new Vizsgálat.Azonosító(
                         box_termékkód.Text,
                         box_sarzs.Text,
