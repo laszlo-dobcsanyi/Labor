@@ -1679,11 +1679,11 @@ namespace Labor
                 laborconnection.Open();
 
                 SqlCommand command = laborconnection.CreateCommand();
-                //command.CommandText = "SELECT FOSZAM, FONEVE, FOFOHO, FOTIPU, FOFENE, FODATE FROM L_FOGLAL WHERE SZSZAM IS NULL";
+                command.CommandText = "SELECT FOSZAM, FONEVE, FOFOHO, FOTIPU, FOFENE, FODATE FROM L_FOGLAL WHERE SZSZAM IS NULL";
 
-                //teszteléshez
+/*                //teszteléshez
                 command.CommandText = "SELECT FOSZAM, FONEVE, FOFOHO, FOTIPU, FOFENE, FODATE FROM L_FOGLAL;";// WHERE; SZSZAM IS NULL";
-
+*/
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
