@@ -1722,7 +1722,7 @@ namespace Labor
             return value;
         }
 
-        public int Konszignáció_ÚJSzállítólevél(Konszignáció_Szállítólevél _szállítólevél)
+        public int Konszignáció_ÚJSzállítólevél(KonszignacioSzallitolevel _szállítólevél)
         {
             lock (LaborLock)
             {
@@ -1731,7 +1731,7 @@ namespace Labor
                 laborconnection.Open();
                 command = laborconnection.CreateCommand();
                 command.CommandText = "INSERT INTO L_SZLEV (SZSZSZ,SZFENE,SZDATE,SZNYEL,SZVEVO,SZGKR1,SZGKR2,FOFOHO,SZGYEV,SZSZIN,SZIZEK,SZILLA) output INSERTED.SZSZAM" +  
-                    " VALUES(" + "'" + _szállítólevél.szlevél +  "','" + _szállítólevél.fnév + "','" + _szállítólevél.elszállítás_ideje + "','"+ _szállítólevél.nyelv + "','" +_szállítólevél.vevő + "','"+ _szállítólevél.gépkocsi1 + "','" +_szállítólevél.gépkocsi2  + "'," + _szállítólevél.foglalt_hordó + ",'"+ _szállítólevél.gyártási_idő.Substring(0,4) + "','"+ _szállítólevél.szín + "','"+ _szállítólevél.íz + "','"+ _szállítólevél.illat + "');";
+                    " VALUES(" + "'" + _szállítólevél.Szallitolevel +  "','" + _szállítólevél.FelhasznaloNev + "','" + _szállítólevél.ElszallitasIdeje + "','"+ _szállítólevél.Nyelv + "','" +_szállítólevél.Vevo + "','"+ _szállítólevél.Rendszam1 + "','" +_szállítólevél.Rendszam2  + "'," + _szállítólevél.FoglaltHordo + ",'"+ _szállítólevél.GyartasiIdo.Substring(0,4) + "','"+ _szállítólevél.Szin + "','"+ _szállítólevél.Iz + "','"+ _szállítólevél.Illat + "');";
                ;
                try { modified = (int)command.ExecuteScalar(); }
                 catch{ return modified; }
@@ -1744,20 +1744,20 @@ namespace Labor
         /// <summary>
         /// Marillenből, vevő adatai
         /// </summary>
-        public Node_Konszignáció.Fejléc.Vevő Konszignáció_Vevő(string _partner)
+        public Node_Konszignacio.Fejlec.Vevo Konszignáció_Vevő(string _partner)
         {
-            Node_Konszignáció.Fejléc.Vevő data = new Node_Konszignáció.Fejléc.Vevő();
+            Node_Konszignacio.Fejlec.Vevo data = new Node_Konszignacio.Fejlec.Vevo();
 
             lock (MarillenLock)
             {
                 marillenconnection.Open();
                 SqlCommand command = marillenconnection.CreateCommand();
-                command.CommandText = "SELECT name, city, addr FROM partner WHERE partner.name=" + "'" + _partner + "'";
+                command.CommandText = "SELECT name,city,addr,house_nr FROM partner WHERE partner.name=" + "'" + _partner + "'";
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
                     int c = -1;
-                    data = new Node_Konszignáció.Fejléc.Vevő(reader.GetString(++c), reader.GetString(++c), reader.GetString(++c));
+                    data = new Node_Konszignacio.Fejlec.Vevo(reader.GetString(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c));
                 }
                 command.Dispose();
                 marillenconnection.Close();
@@ -1765,9 +1765,10 @@ namespace Labor
 
             RegexOptions options = RegexOptions.None;
             Regex regex = new Regex(@"[ ]{2,}", options);
-            data.vevő_cím = regex.Replace(data.vevő_cím, @" ");
-            data.vevő_név = regex.Replace(data.vevő_név, @" ");
-            data.vevő_város = regex.Replace(data.vevő_város, @" ");
+            data.Cim = regex.Replace(data.Cim, @" ");
+            data.Nev = regex.Replace(data.Nev, @" ");
+            data.Varos = regex.Replace(data.Varos, @" ");
+            data.HazSzam = regex.Replace(data.HazSzam, @" ");
 
             return data;
         }
@@ -1775,9 +1776,9 @@ namespace Labor
         /// <summary>
         /// Marillenből, gyümölcsnév, vtsz
         /// </summary>
-        public Node_Konszignáció.Gyümölcstípus Konszignáció_Gyümölcstípus(string _termékkód)
+        public Node_Konszignacio.GyumolcsTipus Konszignáció_Gyümölcstípus(string _termékkód)
         {
-            Node_Konszignáció.Gyümölcstípus data = new Node_Konszignáció.Gyümölcstípus();
+            Node_Konszignacio.GyumolcsTipus data = new Node_Konszignacio.GyumolcsTipus();
             lock (MarillenLock)
             {
                 marillenconnection.Open();
@@ -1787,7 +1788,7 @@ namespace Labor
                 while (reader.Read())
                 {
                     int c = -1;
-                    data = new Node_Konszignáció.Gyümölcstípus(reader.GetString(++c), reader.GetString(++c));
+                    data = new Node_Konszignacio.GyumolcsTipus(reader.GetString(++c), reader.GetString(++c));
                 }
                 command.Dispose();
                 marillenconnection.Close();
@@ -1885,9 +1886,9 @@ namespace Labor
         }
 
 
-        public Node_MinőségBizonylat.VizsgálatiLap MinőségBizonylat(List<Foglalás> _foglalások, string _hoteko)
+        public Node_MinosegBizonylat.VizsgalatiLap MinőségBizonylat(List<Foglalás> _foglalások, string _hoteko)
         {
-            Node_MinőségBizonylat.VizsgálatiLap data = new Node_MinőségBizonylat.VizsgálatiLap();
+            Node_MinosegBizonylat.VizsgalatiLap data = new Node_MinosegBizonylat.VizsgalatiLap();
 
             lock (LaborLock)
             {
@@ -1911,23 +1912,23 @@ namespace Labor
 
                     while (reader.Read())
                     {
-                        data.brix.min = (((double?)GetNullable<decimal>(reader, 0) < data.brix.min || data.brix.min == null) ? (double?)GetNullable<decimal>(reader, 0) : data.brix.min);
-                        data.brix.max = (((double?)GetNullable<decimal>(reader, 1) > data.brix.max || data.brix.max == null) ? (double?)GetNullable<decimal>(reader, 1) : data.brix.max);
-                        data.citromsav.min = (((double?)GetNullable<decimal>(reader, 2) < data.citromsav.min || data.citromsav.min == null) ? (double?)GetNullable<decimal>(reader, 2) : data.citromsav.min);
-                        data.citromsav.max = (((double?)GetNullable<decimal>(reader, 3) > data.citromsav.max || data.citromsav.max == null) ? (double?)GetNullable<decimal>(reader, 3) : data.citromsav.max);
-                        data.ph.min = (((double?)GetNullable<decimal>(reader, 4) < data.ph.min || data.ph.min == null) ? (double?)GetNullable<decimal>(reader, 4) : data.ph.min);
-                        data.ph.max = (((double?)GetNullable<decimal>(reader, 5) > data.ph.max || data.ph.max == null) ? (double?)GetNullable<decimal>(reader, 5) : data.ph.max);
-                        data.bostwick.min = (((double?)GetNullable<decimal>(reader, 6) < data.bostwick.min || data.bostwick.min == null) ? (double?)GetNullable<decimal>(reader, 6) : data.bostwick.min);
-                        data.bostwick.max = (((double?)GetNullable<decimal>(reader, 7) > data.bostwick.max || data.bostwick.max == null) ? (double?)GetNullable<decimal>(reader, 7) : data.bostwick.max);
-                        data.citromsavad.min = (((double?)GetNullable<Int16>(reader, 8) < data.citromsavad.min || data.citromsavad.min == null) ? (double?)GetNullable<Int16>(reader, 8) : data.citromsavad.min);
-                        data.citromsavad.max = (((double?)GetNullable<Int16>(reader, 9) > data.citromsavad.max || data.citromsavad.max == null) ? (double?)GetNullable<Int16>(reader, 9) : data.citromsavad.max);
-                        data.aszkorbinsav = (((double?)GetNullable<Int16>(reader, 10) > data.aszkorbinsav || data.aszkorbinsav == null) ? (double?)GetNullable<Int16>(reader, 10) : data.aszkorbinsav);
-                        data.hoteko = reader.GetString(11);
-                        data.sarzs += data.sarzs == null ? reader.GetString(12) : ", " + reader.GetString(12);
-                        data.megnevezés = reader.GetString(13);
-                        data.passzírozottság += data.passzírozottság == null  ? reader.GetString(14) : ( data.passzírozottság==reader.GetString(14) ? "" : ", " + reader.GetString(14));
-                        data.csomagolás += data.csomagolás == null ? reader.GetString(15) : ( data.csomagolás == reader.GetString(15) ? "" :  ", " + reader.GetString(15));
-                        data.származási_hely = reader.GetString(16);
+                        data.Brix.min = (((double?)GetNullable<decimal>(reader, 0) < data.Brix.min || data.Brix.min == null) ? (double?)GetNullable<decimal>(reader, 0) : data.Brix.min);
+                        data.Brix.max = (((double?)GetNullable<decimal>(reader, 1) > data.Brix.max || data.Brix.max == null) ? (double?)GetNullable<decimal>(reader, 1) : data.Brix.max);
+                        data.Citromsav.min = (((double?)GetNullable<decimal>(reader, 2) < data.Citromsav.min || data.Citromsav.min == null) ? (double?)GetNullable<decimal>(reader, 2) : data.Citromsav.min);
+                        data.Citromsav.max = (((double?)GetNullable<decimal>(reader, 3) > data.Citromsav.max || data.Citromsav.max == null) ? (double?)GetNullable<decimal>(reader, 3) : data.Citromsav.max);
+                        data.Ph.min = (((double?)GetNullable<decimal>(reader, 4) < data.Ph.min || data.Ph.min == null) ? (double?)GetNullable<decimal>(reader, 4) : data.Ph.min);
+                        data.Ph.max = (((double?)GetNullable<decimal>(reader, 5) > data.Ph.max || data.Ph.max == null) ? (double?)GetNullable<decimal>(reader, 5) : data.Ph.max);
+                        data.Bostwick.min = (((double?)GetNullable<decimal>(reader, 6) < data.Bostwick.min || data.Bostwick.min == null) ? (double?)GetNullable<decimal>(reader, 6) : data.Bostwick.min);
+                        data.Bostwick.max = (((double?)GetNullable<decimal>(reader, 7) > data.Bostwick.max || data.Bostwick.max == null) ? (double?)GetNullable<decimal>(reader, 7) : data.Bostwick.max);
+                        data.CitromsavAdagolas.min = (((double?)GetNullable<Int16>(reader, 8) < data.CitromsavAdagolas.min || data.CitromsavAdagolas.min == null) ? (double?)GetNullable<Int16>(reader, 8) : data.CitromsavAdagolas.min);
+                        data.CitromsavAdagolas.max = (((double?)GetNullable<Int16>(reader, 9) > data.CitromsavAdagolas.max || data.CitromsavAdagolas.max == null) ? (double?)GetNullable<Int16>(reader, 9) : data.CitromsavAdagolas.max);
+                        data.Aszkorbinsav = (((double?)GetNullable<Int16>(reader, 10) > data.Aszkorbinsav || data.Aszkorbinsav == null) ? (double?)GetNullable<Int16>(reader, 10) : data.Aszkorbinsav);
+                        data.Hoteko = reader.GetString(11);
+                        data.Sarzs += data.Sarzs == null ? reader.GetString(12) : ", " + reader.GetString(12);
+                        data.Megnevezes = reader.GetString(13);
+                        data.Paszirozottsag += data.Paszirozottsag == null  ? reader.GetString(14) : ( data.Paszirozottsag==reader.GetString(14) ? "" : ", " + reader.GetString(14));
+                        data.Csomagolas += data.Csomagolas == null ? reader.GetString(15) : ( data.Csomagolas == reader.GetString(15) ? "" :  ", " + reader.GetString(15));
+                        data.SzarmazasiHely = reader.GetString(16);
                     }
 
                 
@@ -1937,9 +1938,9 @@ namespace Labor
             return data;
         }
 
-        public Node_MinőségBizonylat.Tápérték MinBiz_Tápérték( string _hoteko)
+        public Node_MinosegBizonylat.Tapertek MinBiz_Tápérték(string _hoteko)
         {
-            Node_MinőségBizonylat.Tápérték data = new Node_MinőségBizonylat.Tápérték();
+            Node_MinosegBizonylat.Tapertek data = new Node_MinosegBizonylat.Tapertek();
             lock (LaborLock)
             {
                 laborconnection.Open();
@@ -1950,7 +1951,7 @@ namespace Labor
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    data = new Node_MinőségBizonylat.Tápérték(
+                    data = new Node_MinosegBizonylat.Tapertek(
                     GetNullable<short>(reader, 0), GetNullable<short>(reader, 1),
                     (double)GetNullable<decimal>(reader, 2), (double)GetNullable<decimal>(reader, 3),
                     (double)GetNullable<decimal>(reader, 4), (double)GetNullable<decimal>(reader, 5));
@@ -1975,10 +1976,10 @@ namespace Labor
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    data.sz1_m = reader.GetString(0);
-                    data.sz1_a = reader.GetString(1);
-                    data.sz2_m = reader.GetString(2);
-                    data.sz2_a = reader.GetString(3);
+                    data.MagyarSzoveg1= reader.GetString(0);
+                    data.AngolSzoveg1 = reader.GetString(1);
+                    data.MagyarSzoveg2 = reader.GetString(2);
+                    data.AngolSzoveg2 = reader.GetString(3);
                 }
                 command.Dispose();
                 laborconnection.Close();
