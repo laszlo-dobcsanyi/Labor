@@ -8,6 +8,7 @@ namespace Labor
 {
     public sealed class Database
     {
+        //(feltétel ? igaz : hamis);
         private SqlConnection marillenconnection;
         private SqlConnection laborconnection;
         private Object MarillenLock = new Object();

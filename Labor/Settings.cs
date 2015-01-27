@@ -19,8 +19,10 @@ namespace Labor
         public static string ui_login_name = "";
         public static bool   ui_manual_locations = false;
 
+        public static string import_mappa = null;
+
         public static void Configurate()
-        {
+        {  
             try
             {
                 StreamReader config = new StreamReader("config");
@@ -49,6 +51,7 @@ namespace Labor
                                     case "ui_refresh": ui_refresh = Convert.ToInt32(arguments[1]); break;
                                     case "ui_login_name": ui_login_name = arguments[1]; break;
                                     case "ui_manual_locations": ui_manual_locations = true; break;
+                                    case "import": import_mappa = arguments[1]; break;
                                 }
                             }
                     }

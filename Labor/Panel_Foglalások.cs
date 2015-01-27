@@ -319,13 +319,13 @@ namespace Labor
             hozzáadás.Enabled = Program.felhasználó.Value.jogosultságok.Value.foglalások.hozzáadás ? true : false;
             hozzáadás.Click += Foglalás_Hozzáadás;
 
-            Button feltöltés = new Button();
-            feltöltés.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
-            feltöltés.Text = "Feltöltés";
-            feltöltés.Size = new System.Drawing.Size(85, 32);
-            feltöltés.Location = new Point(ClientRectangle.Width - hozzáadás.Size.Width - spacer, hozzáadás.Location.Y - feltöltés.Size.Height - spacer);
-            feltöltés.Enabled = Program.felhasználó.Value.jogosultságok.Value.foglalások.hozzáadás ? true : false;
-            feltöltés.Click += Foglalás_Feltöltése;
+            Button btnFeltoltes = new Button();
+            btnFeltoltes.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
+            btnFeltoltes.Text = "Feltöltés";
+            btnFeltoltes.Size = new System.Drawing.Size(85, 32);
+            btnFeltoltes.Location = new Point(ClientRectangle.Width - hozzáadás.Size.Width - spacer, hozzáadás.Location.Y - btnFeltoltes.Size.Height - spacer);
+            btnFeltoltes.Enabled = Program.felhasználó.Value.jogosultságok.Value.foglalások.hozzáadás ? true : false;
+            btnFeltoltes.Click += btnFeltoltes_Click;
 
             Button törlés = new Button();
             törlés.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
@@ -339,13 +339,13 @@ namespace Labor
             keresés.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
             keresés.Text = "Keresés";
             keresés.Size = new System.Drawing.Size(85, 32);
-            keresés.Location = new Point(törlés.Location.X, feltöltés.Location.Y);
+            keresés.Location = new Point(törlés.Location.X, btnFeltoltes.Location.Y);
             keresés.Click += Vizsgálat_Keresése;
 
             Controls.Add(table);
             Controls.Add(törlés);
             Controls.Add(hozzáadás);
-            Controls.Add(feltöltés);
+            Controls.Add(btnFeltoltes);
             Controls.Add(keresés);
         }
 
@@ -383,16 +383,21 @@ namespace Labor
             Program.RefreshData();
         }
 
-        private void Foglalás_Feltöltése(object _sender, EventArgs _event)
+        private void 
+        btnFeltoltes_Click(object _sender, EventArgs _event)
         {
             string data = null;
             OpenFileDialog file = new OpenFileDialog();
 
             try
             {
-                if (!(System.IO.Directory.Exists(Path.GetFullPath("IMPORT")))) { Directory.CreateDirectory("IMPORT"); }
+                if (!(System.IO.Directory.Exists(Path.GetFullPath("IMPORT"))))
+                {
+                    Directory.CreateDirectory("IMPORT");
+                }
 
-                file.InitialDirectory = Path.GetFullPath("IMPORT");
+                //file.InitialDirectory = Path.GetFullPath("IMPORT");
+                file.InitialDirectory = Settings.import_mappa;
                 if (file.ShowDialog() == DialogResult.OK)
                 {
                     System.IO.StreamReader sr = new System.IO.StreamReader(file.FileName);
@@ -402,7 +407,10 @@ namespace Labor
             }
             catch (Exception _e)
             {
-                MessageBox.Show("Hiba a foglalás adatok beolvasása során, kérem ellenőrizze a file tartalmát!\n" + _e.Message, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Hiba a foglalás adatok beolvasása során, kérem ellenőrizze a file tartalmát!\n" + _e.Message,
+                                "Hiba", 
+                                MessageBoxButtons.OK, 
+                                MessageBoxIcon.Error);
                 return;
             }
             
@@ -414,13 +422,19 @@ namespace Labor
             {
                 for (int i = 0; i < splitted.Length - 1; i++)
                 {
-                    Import.Import_Hordó hordó = new Import.Import_Hordó(splitted[i].Substring(0, 3), splitted[i].Substring(8, 3), splitted[i].Substring(14, 1), splitted[i].Substring(15, 4));
+                    Import.Import_Hordó hordó = new Import.Import_Hordó(splitted[i].Substring(0, 3),
+                                                                        splitted[i].Substring(8, 3), 
+                                                                        splitted[i].Substring(14, 1), 
+                                                                        splitted[i].Substring(15, 4));
                     import.import_hordók.Add(hordó);
                 }
             }
             catch (Exception _e)
             {
-                MessageBox.Show("Hiba a foglalás adatok szeparálása során, kérem ellenőrizze a file tartalmát!\n" + _e.Message, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Hiba a foglalás adatok szeparálása során, kérem ellenőrizze a file tartalmát!\n" + _e.Message, 
+                                "Hiba", 
+                                MessageBoxButtons.OK, 
+                                MessageBoxIcon.Error);
                 return;
             }
 
@@ -432,7 +446,8 @@ namespace Labor
 
                 try
                 {
-                    StreamWriter sw = File.CreateText(file.FileName.Substring(0, file.FileName.Length - 3) + "-hibalista.txt");
+                    StreamWriter sw = File.CreateText(file.FileName.Substring(0, file.FileName.Length - 3) +
+                                                                              "-hibalista.txt");
                     foreach (string item in hibák)
                         sw.WriteLine(item);
 
@@ -440,11 +455,18 @@ namespace Labor
                 }
                 catch (Exception _e)
                 {
-                    MessageBox.Show("Hiba a hibalista kiírása során!\n" + _e.Message, "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Hiba a hibalista kiírása során!\n" + _e.Message, 
+                                    "Hiba", 
+                                    MessageBoxButtons.OK, 
+                                    MessageBoxIcon.Error);
                     return;
                 }
 
-                MessageBox.Show("Hibalista készült. A hibalista file neve: " + (file.FileName.Substring(0, file.FileName.Length - 3) + "-hibalista.txt"), "Hibalista", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Hibalista készült. A hibalista file neve: " +
+                                (file.FileName.Substring(0, file.FileName.Length - 3) + 
+                                "-hibalista.txt"), "Hibalista", 
+                                MessageBoxButtons.OK, 
+                                MessageBoxIcon.Information);
                 return;
             }
             else
