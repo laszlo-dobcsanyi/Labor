@@ -1546,9 +1546,9 @@ namespace Labor
                 {
                     laborconnection.Open();
 
-            foreach (Import.Import_Hordó item in _import.import_hordók)
+            foreach (Import.Import_Hordo item in _import.ImportHordok)
             {
-                string iProdId = "12" + item.termékkód.Substring(0, 2) + "01" + item.gyártási_év + "_0" + item.gyártási_év + item.hordószám;
+                string iProdId = "12" + item.Termekkod.Substring(0, 2) + "01" + item.GyartasiEv + "_0" + item.GyartasiEv + item.Hordoszam;
                 string serial_nr = null;
                         string visarz = null;
                 string vigyev = null;
@@ -1564,7 +1564,7 @@ namespace Labor
 
                     if (serial_nr == null)
                     {
-                        hibák.Add(item.termékkód + " " + item.hordószám + " -nincs ilyen hordó");
+                        hibák.Add(item.Termekkod + " " + item.Hordoszam + " -nincs ilyen hordó");
                             continue;
                     }
                     else
@@ -1581,7 +1581,7 @@ namespace Labor
 
                         if (visarz != null)
                 {
-                            command = new SqlCommand("SELECT vigyev FROM l_vizslap WHERE (viteko=" + item.termékkód + ") AND (visarz= " + visarz + ");");
+                            command = new SqlCommand("SELECT vigyev FROM l_vizslap WHERE (viteko=" + item.Termekkod + ") AND (visarz= " + visarz + ");");
                     command.Connection = laborconnection;
                             reader = command.ExecuteReader();
                     while (reader.Read())
@@ -1592,7 +1592,7 @@ namespace Labor
 
                     if (vigyev == null)
                     {
-                        hibák.Add(item.termékkód + " " + item.hordószám + " -nincs vizsgálati lap");
+                        hibák.Add(item.Termekkod + " " + item.Hordoszam + " -nincs vizsgálati lap");
                     }
                         }
                     }
@@ -1609,9 +1609,9 @@ namespace Labor
         {
             List<string> sarzsok = new List<string>();
 
-            foreach (Import.Import_Hordó item in _import.import_hordók)
+            foreach (Import.Import_Hordo item in _import.ImportHordok)
             {
-                string iProdId = "12" + item.termékkód.Substring(0, 2) + "01" + item.gyártási_év + "_0" + item.gyártási_év + item.hordószám;
+                string iProdId = "12" + item.Termekkod.Substring(0, 2) + "01" + item.GyartasiEv + "_0" + item.GyartasiEv + item.Hordoszam;
                 string serial_nr = null;
 
                 lock (MarillenLock)

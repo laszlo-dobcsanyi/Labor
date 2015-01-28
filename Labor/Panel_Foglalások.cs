@@ -265,21 +265,25 @@ namespace Labor
 
     public struct Import
     {
-        public struct Import_Hordó
+        public struct Import_Hordo
         {
-            public string sorszám;
-            public string termékkód;
-            public string gyártási_év;
-            public string hordószám;
-            public Import_Hordó(string _sorszám,string _termékkód, string _gyártási_év, string _hordószám )
+            public string Sorszam;
+            public string Termekkod;
+            public string GyartasiEv;
+            public string Hordoszam;
+
+            public Import_Hordo(string _Sorszam, 
+                                string _Termekkod, 
+                                string _GyartasiEv, 
+                                string _Hordoszam)
             {
-                termékkód = _termékkód;
-                gyártási_év = _gyártási_év;
-                hordószám = _hordószám;
-                sorszám = _sorszám;
+                Sorszam = _Sorszam; 
+                Termekkod= _Termekkod;
+                GyartasiEv = _GyartasiEv;
+                Hordoszam = _Hordoszam;
             }
         }
-        public List<Import_Hordó> import_hordók;
+        public List<Import_Hordo> ImportHordok;
     }
 
     public sealed class Panel_Foglalások : Tokenized_Control<Foglalás>
@@ -395,8 +399,6 @@ namespace Labor
                 {
                     Directory.CreateDirectory("IMPORT");
                 }
-
-                //file.InitialDirectory = Path.GetFullPath("IMPORT");
                 file.InitialDirectory = Settings.import_mappa;
                 if (file.ShowDialog() == DialogResult.OK)
                 {
@@ -415,20 +417,22 @@ namespace Labor
             }
             
             Import import = new Import();
-            import.import_hordók = new List<Import.Import_Hordó>();
-            string[] splitted = data.Split('\r');
+            import.ImportHordok = new List<Import.Import_Hordo>();
+            string[] splitted = data.Split(new string[]{"\r\n"},StringSplitOptions.None);
 
             try
             {
                 for (int i = 0; i < splitted.Length - 1; i++)
                 {
-                    Import.Import_Hordó hordó = new Import.Import_Hordó(splitted[i].Substring(0, 3),
+                    Import.Import_Hordo hordo = new Import.Import_Hordo(splitted[i].Substring(0, 3),
                                                                         splitted[i].Substring(8, 3), 
                                                                         splitted[i].Substring(14, 1), 
                                                                         splitted[i].Substring(15, 4));
-                    import.import_hordók.Add(hordó);
+                    import.ImportHordok.Add(hordo);
                 }
             }
+
+
             catch (Exception _e)
             {
                 MessageBox.Show("Hiba a foglalás adatok szeparálása során, kérem ellenőrizze a file tartalmát!\n" + _e.Message, 
@@ -1531,9 +1535,9 @@ namespace Labor
                     if(outer.név == box_foglalás_neve.Text)
                     {
                         List< Tuple< bool, string, string, string > > data = new List< Tuple< bool,string,string,string > >();
-                        for (int i = 0; i < import.import_hordók.Count; i++)
+                        for (int i = 0; i < import.ImportHordok.Count; i++)
                         {
-                            data.Add(new Tuple< bool, string, string, string >(false, import.import_hordók[i].termékkód, sarzsok[i], import.import_hordók[i].hordószám));
+                            data.Add(new Tuple< bool, string, string, string >(false, import.ImportHordok[i].Termekkod, sarzsok[i], import.ImportHordok[i].Hordoszam));
                         }
 
                         int modified = Program.database.Hordók_ListaFoglalás(outer.id, data);
