@@ -289,226 +289,206 @@ namespace Labor
     {
         static Regex regex;
 
-		public static void
-		Nyomtat_Konszignacio( KonszignacioSzallitolevel _szállítólevél, List<Foglalás> _foglalások )
-		{
-			regex = new Regex( @"[ ]{2,}", RegexOptions.None );
+        public static void
+        Nyomtat_Konszignacio(KonszignacioSzallitolevel _szállítólevél, List<Foglalás> _foglalások)
+        {
+            regex = new Regex(@"[ ]{2,}", RegexOptions.None);
 
-			Node_Konszignacio Konszignacio = new Node_Konszignacio( );
+            Node_Konszignacio Konszignacio = new Node_Konszignacio();
 
-			Konszignacio.fejlec = new Node_Konszignacio.Fejlec( );
-			Konszignacio.fejlec.felado = new Node_Konszignacio.Fejlec.Felado( "Marillen Gyümölcsfeldolgozó Kft",
-																			 "Kiskunfélegyháza, VIII. kerület 99/A" );
-			Konszignacio.fejlec.vevo = Program.database.Konszignáció_Vevő( _szállítólevél.Vevo );
-			Konszignacio.fejlec.szallitolevel = new Node_Konszignacio.Fejlec.Szallitolevel( _szállítólevél );
-			Konszignacio.gyumolcstipusok = new List<Node_Konszignacio.GyumolcsTipus>( );
+            Konszignacio.fejlec = new Node_Konszignacio.Fejlec();
+            Konszignacio.fejlec.felado = new Node_Konszignacio.Fejlec.Felado("Marillen Gyümölcsfeldolgozó Kft",
+                                                                             "Kiskunfélegyháza, VIII. kerület 99/A");
+            Konszignacio.fejlec.vevo = Program.database.Konszignáció_Vevő(_szállítólevél.Vevo);
+            Konszignacio.fejlec.szallitolevel = new Node_Konszignacio.Fejlec.Szallitolevel(_szállítólevél);
+            Konszignacio.gyumolcstipusok = new List<Node_Konszignacio.GyumolcsTipus>();
 
-			double összes_súly = 0;
+            double összes_súly = 0;
 
-			foreach ( Foglalás foglalás_iterator in _foglalások )
-			{
-				összes_súly = 0;
+            foreach (Foglalás foglalás_iterator in _foglalások)
+            {
+                összes_súly = 0;
 
-				List<Hordó> hordók = Program.database.Konszignáció_Hordók( foglalás_iterator.id );
-				List<string> hordó_termékkódok = new List<string>( );
+                List<Hordó> hordók = Program.database.Konszignáció_Hordók(foglalás_iterator.id);
+                List<string> hordó_termékkódok = new List<string>();
 
-				for ( int i = 0; i < hordók.Count; i++ )
-				{
-					bool found = false;
-					for ( int j = 0; j < hordó_termékkódok.Count; j++ )
-					{
-						if ( hordók[i].termékkód == hordó_termékkódok[j] ) { found = true; break; }
-					}
-					if ( !found ) hordó_termékkódok.Add( hordók[i].termékkód );
-				}
+                for (int i = 0; i < hordók.Count; i++)
+                {
+                    bool found = false;
+                    for (int j = 0; j < hordó_termékkódok.Count; j++)
+                    {
+                        if (hordók[i].termékkód == hordó_termékkódok[j]) { found = true; break; }
+                    }
+                    if (!found) hordó_termékkódok.Add(hordók[i].termékkód);
+                }
 
-				foreach ( string item in hordó_termékkódok )
-				{
-					bool found = false;
-					Node_Konszignacio.GyumolcsTipus temp = Program.database.Konszignáció_Gyümölcstípus( item );
-					foreach ( Node_Konszignacio.GyumolcsTipus gyitem in Konszignacio.gyumolcstipusok )
-					{
-						if ( temp.Megnevezes == gyitem.Megnevezes && temp.VTSz == gyitem.VTSz )
-						{
-							found = true;
-						}
-					}
-					if ( !found )
-					{
-						Konszignacio.gyumolcstipusok.Add( Program.database.Konszignáció_Gyümölcstípus( item ) );
-					}
-				}
+                foreach (string item in hordó_termékkódok)
+                {
+                    bool found = false;
+                    Node_Konszignacio.GyumolcsTipus temp = Program.database.Konszignáció_Gyümölcstípus(item);
+                    foreach (Node_Konszignacio.GyumolcsTipus gyitem in Konszignacio.gyumolcstipusok)
+                    {
+                        if (temp.Megnevezes == gyitem.Megnevezes && temp.VTSz == gyitem.VTSz)
+                        {
+                            found = true;
+                        }
+                    }
+                    if (!found)
+                    {
+                        Konszignacio.gyumolcstipusok.Add(Program.database.Konszignáció_Gyümölcstípus(item));
+                    }
+                }
 
-				for ( int i = 0; i < Konszignacio.gyumolcstipusok.Count; i++ )
-				{
-					foreach ( Hordó inner in hordók )
-					{
-						if ( Konszignacio.gyumolcstipusok[i].Megnevezes == Program.database.Name( inner.termékkód ) )
-						{
-							Node_Konszignacio.GyumolcsTipus.Adat temp = new Node_Konszignacio.GyumolcsTipus.Adat( inner.gyártási_év[3] + inner.id, inner.sarzs, Convert.ToDouble( inner.mennyiség ), "", inner.time.Substring( 0, 11 ) );
-							List<Vizsgálat.Azonosító> vizsgálatok = Program.database.Vizsgálatok( );
-							foreach ( Vizsgálat.Azonosító item in vizsgálatok )
-							{
-								if ( item.termékkód == inner.termékkód && item.sarzs == inner.sarzs )
-								{
-									temp.HordoTipus = item.hordótípus;
-								}
-							}
-							Konszignacio.gyumolcstipusok[i].adat.Add( temp );
-							Node_Konszignacio.GyumolcsTipus tempgy = Konszignacio.gyumolcstipusok[i];
-							tempgy.OsszSuly += temp.NettoSuly;
-							Konszignacio.gyumolcstipusok[i] = tempgy;
-						}
-					}
-				}
-			}
+                for (int i = 0; i < Konszignacio.gyumolcstipusok.Count; i++)
+                {
+                    foreach (Hordó inner in hordók)
+                    {
+                        if (Konszignacio.gyumolcstipusok[i].Megnevezes == Program.database.Name(inner.termékkód))
+                        {
+                            Node_Konszignacio.GyumolcsTipus.Adat temp = new Node_Konszignacio.GyumolcsTipus.Adat(inner.gyártási_év[3] + inner.id, inner.sarzs, Convert.ToDouble(inner.mennyiség), "", inner.time.Substring(0, 11));
+                            List<Vizsgálat.Azonosító> vizsgálatok = Program.database.Vizsgálatok();
+                            foreach (Vizsgálat.Azonosító item in vizsgálatok)
+                            {
+                                if (item.termékkód == inner.termékkód && item.sarzs == inner.sarzs)
+                                {
+                                    temp.HordoTipus = item.hordótípus;
+                                }
+                            }
+                            Konszignacio.gyumolcstipusok[i].adat.Add(temp);
+                            Node_Konszignacio.GyumolcsTipus tempgy = Konszignacio.gyumolcstipusok[i];
+                            tempgy.OsszSuly += temp.NettoSuly;
+                            Konszignacio.gyumolcstipusok[i] = tempgy;
+                        }
+                    }
+                }
+            }
 
-			if ( !Directory.Exists( "Listák" ) )
-			{
-				Directory.CreateDirectory( "Listák" );
-			}
+            if (!Directory.Exists("Listák"))
+            {
+                Directory.CreateDirectory("Listák");
+            }
 
-			string filename = "Listák//" + _szállítólevél.Szallitolevel + ".docx";
-			var document = DocX.Create( filename );
-			document.DifferentFirstPage = true;
-			document.AddHeaders( );
+            string filename = "Listák//" + _szállítólevél.Szallitolevel + ".docx";
+            var document = DocX.Create(filename);
+            document.DifferentFirstPage = true;
+            document.AddHeaders();
 
-			document.MarginLeft = 20;
+            var titleFormat = new Formatting();
+            titleFormat.Size = 14D;
+            titleFormat.Position = 1;
+            titleFormat.Spacing = 5;
+            titleFormat.Bold = true;
 
-			var titleFormat = new Formatting( );
-			titleFormat.Size = 14D;
-			titleFormat.Position = 1;
-			titleFormat.Spacing = 5;
-			titleFormat.Bold = true;
-
-			Header FirstPageHeader = document.Headers.first;
+            Header FirstPageHeader = document.Headers.first;
 
 
-			Paragraph HeaderParagraph = FirstPageHeader.InsertParagraph( "Konszignáció                  \n", false, titleFormat );
+            Paragraph HeaderParagraph = FirstPageHeader.InsertParagraph("Konszignáció                  \n", false, titleFormat);
 
-			HeaderParagraph.Alignment = Alignment.center;
-			HeaderParagraph.Bold( );
-			titleFormat.Position = 12;
+            HeaderParagraph.Alignment = Alignment.center;
+            HeaderParagraph.Bold();
+            titleFormat.Position = 12;
 
-			#region Fejléc
-			Table table_fejléc = document.AddTable( 2, 4 );
-			table_fejléc.Alignment = Alignment.left;
-			table_fejléc.Rows[0].Cells[0].Paragraphs[0].Append( "Vevő:" ).Bold( );
-			table_fejléc.Rows[1].Cells[0].Paragraphs[0].Append( "Gépkocsi:" ).Bold( );
-			table_fejléc.Rows[0].Cells[2].Paragraphs[0].Append( "Feladó:" ).Bold( );
-			table_fejléc.Rows[1].Cells[2].Paragraphs[0].Append( "Dátum:" ).Bold( );
+            #region Fejléc
+            Table table_fejléc = document.AddTable(2, 4);
+            table_fejléc.Alignment = Alignment.left;
+            table_fejléc.Rows[0].Cells[0].Paragraphs[0].Append("Vevő:").Bold();
+            table_fejléc.Rows[1].Cells[0].Paragraphs[0].Append("Gépkocsi:").Bold();
+            table_fejléc.Rows[0].Cells[2].Paragraphs[0].Append("Feladó:").Bold();
+            table_fejléc.Rows[1].Cells[2].Paragraphs[0].Append("Dátum:").Bold();
 
-			table_fejléc.Rows[1].Cells[3].Paragraphs[0].Append( Konszignacio.fejlec.szallitolevel.Datum + "    " );
-			table_fejléc.Rows[1].Cells[3].Paragraphs[0].Append( "Szállítólevél:" ).Bold( );
-			table_fejléc.Rows[1].Cells[3].Paragraphs[0].Append( " " + Konszignacio.fejlec.szallitolevel.Szoveg );
+            table_fejléc.Rows[1].Cells[3].Paragraphs[0].Append(Konszignacio.fejlec.szallitolevel.Datum + "    ");
+            table_fejléc.Rows[1].Cells[3].Paragraphs[0].Append("Szállítólevél:").Bold();
+            table_fejléc.Rows[1].Cells[3].Paragraphs[0].Append(" " + Konszignacio.fejlec.szallitolevel.Szoveg);
 
 
-			table_fejléc.Rows[0].Cells[1].Paragraphs[0].Append( Konszignacio.fejlec.vevo.Nev );
-			table_fejléc.Rows[0].Cells[1].Paragraphs[0].AppendLine( Konszignacio.fejlec.vevo.Varos );
-			table_fejléc.Rows[0].Cells[1].Paragraphs[0].AppendLine( Konszignacio.fejlec.vevo.Cim + " " + Konszignacio.fejlec.vevo.HazSzam );
+            table_fejléc.Rows[0].Cells[1].Paragraphs[0].Append(Konszignacio.fejlec.vevo.Nev);
+            table_fejléc.Rows[0].Cells[1].Paragraphs[0].AppendLine(Konszignacio.fejlec.vevo.Varos);
+            table_fejléc.Rows[0].Cells[1].Paragraphs[0].AppendLine(Konszignacio.fejlec.vevo.Cim + " " + Konszignacio.fejlec.vevo.HazSzam);
 
-			table_fejléc.Rows[1].Cells[1].Paragraphs[0].Append( Konszignacio.fejlec.szallitolevel.Rendszamok[0] );
-			table_fejléc.Rows[1].Cells[1].Paragraphs[0].Append( " " + Konszignacio.fejlec.szallitolevel.Rendszamok[1] );
+            table_fejléc.Rows[1].Cells[1].Paragraphs[0].Append(Konszignacio.fejlec.szallitolevel.Rendszamok[0]);
+            table_fejléc.Rows[1].Cells[1].Paragraphs[0].Append(" " + Konszignacio.fejlec.szallitolevel.Rendszamok[1]);
 
-			table_fejléc.Rows[0].Cells[3].Paragraphs[0].Append( Konszignacio.fejlec.felado.Nev );
-			table_fejléc.Rows[0].Cells[3].Paragraphs[0].AppendLine( Konszignacio.fejlec.felado.Cim );
+            table_fejléc.Rows[0].Cells[3].Paragraphs[0].Append(Konszignacio.fejlec.felado.Nev);
+            table_fejléc.Rows[0].Cells[3].Paragraphs[0].AppendLine(Konszignacio.fejlec.felado.Cim);
 
-			KonszignacioFejlecTablazatFormazas( table_fejléc );
-			FirstPageHeader.InsertTable( table_fejléc );
+            KonszignacioFejlecTablazatFormazas(table_fejléc);
+            FirstPageHeader.InsertTable(table_fejléc);
 
 
 
-			#endregion
+            #endregion
 
-			#region HeaderTable
+            #region Data_Table
+            Paragraph paragraph_data_table = document.InsertParagraph();
 
-			Header TablazatFejlec = document.Headers.odd;
+            Table data_table = document.AddTable(1, 7);
+            data_table.AutoFit = AutoFit.ColumnWidth;
 
-			Table HeaderTable = document.AddTable( 1, 7 );
-			HeaderTable.AutoFit = AutoFit.ColumnWidth;
-
-			HeaderTable.Rows[0].Cells[0].Paragraphs[0].Append( "S.Sz." ).Bold( );
-			HeaderTable.Rows[0].Cells[1].Paragraphs[0].Append( "Megnevezés" ).Bold( );
-			HeaderTable.Rows[0].Cells[2].Paragraphs[0].Append( "Hordó" ).Bold( );
-			HeaderTable.Rows[0].Cells[3].Paragraphs[0].Append( "Sarzs" ).Bold( );
-			HeaderTable.Rows[0].Cells[4].Paragraphs[0].Append( "Nettó súly" ).Bold( );
-			HeaderTable.Rows[0].Cells[5].Paragraphs[0].Append( "Hordó típus" ).Bold( );
-			HeaderTable.Rows[0].Cells[6].Paragraphs[0].Append( "Gyártás dátum" ).Bold( );
-			KonszignacioDataTableFormazas( HeaderTable );
-			TablazatFejlec.InsertTable( HeaderTable );
-			#endregion
-
-			#region Data_Table
+            data_table.Rows[0].Cells[0].Paragraphs[0].Append("S.Sz.").Bold();
+            data_table.Rows[0].Cells[1].Paragraphs[0].Append("Megnevezés").Bold();
+            data_table.Rows[0].Cells[2].Paragraphs[0].Append("Hordó").Bold();
+            data_table.Rows[0].Cells[3].Paragraphs[0].Append("Sarzs").Bold();
+            data_table.Rows[0].Cells[4].Paragraphs[0].Append("Nettó súly").Bold();
+            data_table.Rows[0].Cells[5].Paragraphs[0].Append("Hordó típus").Bold();
+            data_table.Rows[0].Cells[6].Paragraphs[0].Append("Gyártás dátum").Bold();
 
 
-			Paragraph paragraph_data_table = document.InsertParagraph( );
-
-			Table data_table = document.AddTable( 1, 7 );
-			data_table.AutoFit = AutoFit.ColumnWidth;
-
-			data_table.Rows[0].Cells[0].Paragraphs[0].Append( "S.Sz." ).Bold( );
-			data_table.Rows[0].Cells[1].Paragraphs[0].Append( "Megnevezés" ).Bold( );
-			data_table.Rows[0].Cells[2].Paragraphs[0].Append( "Hordó" ).Bold( );
-			data_table.Rows[0].Cells[3].Paragraphs[0].Append( "Sarzs" ).Bold( );
-			data_table.Rows[0].Cells[4].Paragraphs[0].Append( "Nettó súly" ).Bold( );
-			data_table.Rows[0].Cells[5].Paragraphs[0].Append( "Hordó típus" ).Bold( );
-			data_table.Rows[0].Cells[6].Paragraphs[0].Append( "Gyártás dátum" ).Bold( );
-
-			int c = 1;
-			int sorszám = 1;
-			KonszignacioRendezes( Konszignacio );
-			foreach ( Node_Konszignacio.GyumolcsTipus outer in Konszignacio.gyumolcstipusok )
-			{
-				string temp = regex.Replace( outer.Megnevezes, @" " );
-				foreach ( Node_Konszignacio.GyumolcsTipus.Adat inner in outer.adat )
-				{
-					data_table.InsertRow( );
-
-					data_table.Rows[c].Cells[0].Paragraphs[0].Append( sorszám.ToString( ) + '.' );
-					sorszám++;
-					data_table.Rows[c].Cells[1].Paragraphs[0].Append( temp );
-					data_table.Rows[c].Cells[2].Paragraphs[0].Append( inner.Hordo.ToString( ) );
-					data_table.Rows[c].Cells[3].Paragraphs[0].Append( inner.Sarzs );
-					data_table.Rows[c].Cells[4].Paragraphs[0].Append( inner.NettoSuly + " kg" );
-					data_table.Rows[c].Cells[5].Paragraphs[0].Append( inner.HordoTipus );
-					data_table.Rows[c].Cells[6].Paragraphs[0].Append( inner.GyartasDatum );
-
-					c++;
-				}
-
-				data_table.InsertRow( );
-				data_table.InsertRow( );
-				data_table.Rows[c].Cells[1].Paragraphs[0].Append( temp + "összesen:" ).Bold( );
-				data_table.Rows[c].Cells[4].Paragraphs[0].Append( outer.OsszSuly + " kg" ).Bold( );
-				összes_súly += outer.OsszSuly;
-				data_table.Rows[c].Cells[5].Paragraphs[0].Append( "VTSZ:" ).Bold( );
-				data_table.Rows[c].Cells[6].Paragraphs[0].Append( outer.VTSz ).Bold( );
-				c += 2;
-			}
-			data_table.InsertRow( );
-			data_table.Rows[c].Cells[1].Paragraphs[0].Append( "Összes elszállítás:" ).Bold( );
-			data_table.Rows[c].Cells[4].Paragraphs[0].Append( összes_súly + " kg" ).Bold( );
 
 
-			for ( int i = 0;
-			      i < data_table.Rows.Count;
-				  ++i )
-			{
-				data_table.Rows[i].Cells[3].Paragraphs[0].Alignment = Alignment.right;
-				data_table.Rows[i].Cells[4].Paragraphs[0].Alignment = Alignment.right;
-				data_table.Rows[i].Cells[6].Paragraphs[0].Alignment = Alignment.right;
+            int c = 1;
+            int sorszám = 1;
+            KonszignacioRendezes(Konszignacio);
+            foreach (Node_Konszignacio.GyumolcsTipus outer in Konszignacio.gyumolcstipusok)
+            {
+                string temp = regex.Replace(outer.Megnevezes, @" ");
+                foreach (Node_Konszignacio.GyumolcsTipus.Adat inner in outer.adat)
+                {
+                    data_table.InsertRow();
 
-			}
+                    data_table.Rows[c].Cells[0].Paragraphs[0].Append(sorszám.ToString() + '.');
+                    sorszám++;
+                    data_table.Rows[c].Cells[1].Paragraphs[0].Append(temp);
+                    data_table.Rows[c].Cells[2].Paragraphs[0].Append(inner.Hordo.ToString());
+                    data_table.Rows[c].Cells[3].Paragraphs[0].Append(inner.Sarzs);
+                    data_table.Rows[c].Cells[4].Paragraphs[0].Append(inner.NettoSuly + " kg");
+                    data_table.Rows[c].Cells[5].Paragraphs[0].Append(inner.HordoTipus);
+                    data_table.Rows[c].Cells[6].Paragraphs[0].Append(inner.GyartasDatum);
 
-			KonszignacioDataTableFormazas( data_table );
-			document.InsertTable( data_table );
+                    c++;
+                }
 
-			#endregion
+                data_table.InsertRow();
+                data_table.InsertRow();
+                data_table.Rows[c].Cells[1].Paragraphs[0].Append(temp + "összesen:").Bold();
+                data_table.Rows[c].Cells[4].Paragraphs[0].Append(outer.OsszSuly + " kg").Bold();
+                összes_súly += outer.OsszSuly;
+                data_table.Rows[c].Cells[5].Paragraphs[0].Append("VTSZ:").Bold();
+                data_table.Rows[c].Cells[6].Paragraphs[0].Append(outer.VTSz).Bold();
+                c += 2;
+            }
+            data_table.InsertRow();
+            data_table.Rows[c].Cells[1].Paragraphs[0].Append("Összes elszállítás:").Bold();
+            data_table.Rows[c].Cells[4].Paragraphs[0].Append(összes_súly + " kg").Bold();
 
-			try { document.Save( ); }
-			catch ( System.Exception ) { MessageBox.Show( "A dokumentum meg van nyitva!" ); }
 
-		}
+            for (int i = 0;
+                i < data_table.Rows.Count;
+                ++i)
+            {
+                data_table.Rows[i].Cells[3].Paragraphs[0].Alignment = Alignment.right;
+                data_table.Rows[i].Cells[4].Paragraphs[0].Alignment = Alignment.right;
+                data_table.Rows[i].Cells[6].Paragraphs[0].Alignment = Alignment.right;
+
+            }
+            KonszignacioDataTableFormazas(data_table);
+            document.InsertTable(data_table);
+
+            #endregion
+
+            try { document.Save(); }
+            catch (System.Exception) { MessageBox.Show("A dokumentum meg van nyitva!"); }
+
+        }
 
         public static void
         Nyomtat_MinosegBizonylatok(KonszignacioSzallitolevel _szállítólevél, List<Foglalás> _foglalások)
@@ -914,7 +894,7 @@ namespace Labor
             for (int i = 0; i < _table.Rows.Count; i++)
             {
                 _table.Rows[i].Cells[0].Width = 45;
-                _table.Rows[i].Cells[1].Width = 180;
+                _table.Rows[i].Cells[1].Width = 110;
                 _table.Rows[i].Cells[2].Width = 60;
                 _table.Rows[i].Cells[3].Width = 50;
                 _table.Rows[i].Cells[4].Width = 80;
@@ -922,6 +902,7 @@ namespace Labor
                 _table.Rows[i].Cells[6].Width = 110;
             }
             _table.AutoFit = AutoFit.ColumnWidth;
+
 
         }
 
