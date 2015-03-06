@@ -681,7 +681,7 @@ namespace Labor
                 laborconnection.Open();
 
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT VITEKO, VISARZ, VIHOSZ, VIHOTI, VINETO, VISZAT, VIMEGR, VIMSSZ FROM L_VIZSLAP";
+                command.CommandText = "SELECT VITEKO, VISARZ, VIHOSZ, VIHOTI, VINETO, VISZAT, VIMEGR, VIMSSZ FROM L_VIZSLAP ORDER BY VITEKO, VISARZ, VIHOSZ";
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
@@ -1131,6 +1131,8 @@ namespace Labor
                 command3.Dispose();
                 laborconnection.Close();
             }
+            foreach ( Hordó_Adat adat in hordó_adatok )
+                Console.WriteLine( adat.év );
 
             return true;
         }
@@ -1519,7 +1521,7 @@ namespace Labor
 
                     command = laborconnection.CreateCommand();
                     command.CommandText = "SELECT HOTEKO, HOSARZ, SUM(case when FOSZAM IS NULL then 0 else 1 end), SUM(case when FOSZAM IS NULL then 1 else 0 end) " +
-                                        "FROM L_HORDO WHERE " + where + " GROUP BY HOTEKO, HOSARZ;";
+                                        "FROM L_HORDO WHERE " + where + " GROUP BY HOTEKO, HOSARZ ORDER BY HOTEKO, HOSARZ;";
                     reader.Close();
                     reader = command.ExecuteReader();
                     while (reader.Read())
