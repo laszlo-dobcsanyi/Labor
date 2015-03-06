@@ -232,7 +232,10 @@ namespace Labor
             table.DataBindingComplete += table_DataBindingComplete;
             table.CellDoubleClick += Vizsgálat_Módosítás;
             table.UserDeletingRow += table_UserDeletingRow;
-            table.DataSource = CreateSource();
+
+            CreateSource();
+            CreateView();
+            table.DataSource = view;
 
             //
 
@@ -315,6 +318,13 @@ namespace Labor
 
             return data;
         }
+
+        private DataView CreateView()
+        {
+                view = new DataView(data);
+                view.Sort = "Termékkód ASC, Sarzs ASC, Hordószám ASC";
+                return view;
+        }
         #endregion
 
         #region Tokenizer
@@ -385,44 +395,6 @@ namespace Labor
         }
 
         //
-
-        private sealed class Vizsgálatok_Rendező : IComparer
-        {
-                int IComparer.Compare(Object _object1, Object _object2)
-                {
-                        DataGridViewRow _row1 = (DataGridViewRow)_object1;
-                        DataGridViewRow _row2 = (DataGridViewRow)_object2;
-
-                        if (_row1 != null && _row2 != null)
-                        {
-                                if (_row1.Cells[0].Value != _row2.Cells[0].Value)
-                                {
-                                        return _row1.Cells[0].Value.ToString().CompareTo(_row2.Cells[0].Value.ToString());
-                                }
-                                else
-                                {
-                                        if (_row1.Cells[1].Value != _row2.Cells[1].Value)
-                                        {
-                                                return _row1.Cells[1].Value.ToString().CompareTo(_row2.Cells[1].Value.ToString());
-                                        }
-                                        else
-                                        {
-                                                return _row1.Cells[2].Value.ToString().CompareTo(_row2.Cells[2].Value.ToString());
-                                        }
-                                }
-                        }
-                        else
-                        {
-                                return 0;
-                        }
-                }
-        }
-
-        public override void Refresh()
-        {
-                table.Sort(new Vizsgálatok_Rendező());
-                base.Refresh();
-        }
 
         private void table_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {

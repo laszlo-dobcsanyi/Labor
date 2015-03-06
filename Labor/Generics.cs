@@ -142,6 +142,7 @@ namespace Labor
     public abstract class Tokenized_Control<T> : Control
     {
         protected DataTable data;
+        protected DataView view;
         protected DataGridView table;
         protected List<DataToken<T>> tokens = new List<DataToken<T>>();
 
