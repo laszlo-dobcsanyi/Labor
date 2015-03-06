@@ -399,7 +399,7 @@ namespace Labor
                 {
                     Directory.CreateDirectory("IMPORT");
                 }
-                file.InitialDirectory = Settings.import_mappa;
+                file.InitialDirectory = Settings.import_directory;
                 if (file.ShowDialog() == DialogResult.OK)
                 {
                     System.IO.StreamReader sr = new System.IO.StreamReader(file.FileName);

@@ -363,13 +363,9 @@ namespace Labor
 				}
 			}
 
-			if ( !Directory.Exists( "Listák" ) )
-			{
-				Directory.CreateDirectory( "Listák" );
-			}
-
-			string filename = "Listák//" + _szállítólevél.Szallitolevel + ".docx";
-			var document = DocX.Create( filename );
+            string filename = (Settings.save_directory==null) ? "Listák//" + _szállítólevél.Szallitolevel + ".docx" : Settings.save_directory + "//" + _szállítólevél.Szallitolevel + ".docx";
+     
+            var document = DocX.Create( filename );
 			document.DifferentFirstPage = true;
 			document.AddHeaders( );
 
@@ -533,12 +529,8 @@ namespace Labor
 
             #endregion
 
-            if (!Directory.Exists("Listák"))
-            {
-                Directory.CreateDirectory("Listák");
-            }
+            string filename = ( Settings.save_directory == null ) ? "Listák//" + _szállítólevél.Szallitolevel + "-MinBiz.docx" : Settings.save_directory + "//" + _szállítólevél.Szallitolevel + "-MinBiz.docx";
 
-            string filename = "Listák//" + _szállítólevél.Szallitolevel + "-MinBiz.docx";
             var document = DocX.Create(filename);
             document.AddHeaders();
             document.AddFooters();

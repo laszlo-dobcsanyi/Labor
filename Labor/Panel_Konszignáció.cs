@@ -328,7 +328,6 @@ namespace Labor
                 }
                 cboMegrendelok.SelectedIndex = 0;
 
-                /*csak tesztelés miatt!
                 txtRendszam1.Text = "KTM791";
                 txtRendszam2.Text = "HCS850";
                 txtLevel.Text = "levél";
@@ -336,6 +335,7 @@ namespace Labor
                 txtSzin.Text = "Szín";
                 txtIz.Text = "Íz";
                 txtIllat.Text = "Illat";
+                /*csak tesztelés miatt!
                 */
 
                 btnRendben.Click += btnRendben_Click;

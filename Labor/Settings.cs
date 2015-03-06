@@ -19,7 +19,8 @@ namespace Labor
         public static string ui_login_name = "";
         public static bool   ui_manual_locations = false;
 
-        public static string import_mappa = null;
+        public static string import_directory = null;
+        public static string save_directory = null;
 
         public static void Configurate()
         {  
@@ -51,7 +52,8 @@ namespace Labor
                                     case "ui_refresh": ui_refresh = Convert.ToInt32(arguments[1]); break;
                                     case "ui_login_name": ui_login_name = arguments[1]; break;
                                     case "ui_manual_locations": ui_manual_locations = true; break;
-                                    case "import": import_mappa = arguments[1]; break;
+                                    case "import": import_directory = arguments[1]; break;
+                                    case "save": save_directory = arguments[1]; break;
                                 }
                             }
                     }
