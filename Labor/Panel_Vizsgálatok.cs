@@ -237,6 +237,7 @@ namespace Labor
             CreateView();
             table.DataSource = view;
 
+
             //
 
             Label label_kereső = new Label();
@@ -319,11 +320,13 @@ namespace Labor
             return data;
         }
 
-        private DataView CreateView()
+        private DataView CreateView( )
         {
-                view = new DataView(data);
-                view.Sort = "Termékkód ASC, Sarzs ASC, Hordószám ASC";
-                return view;
+
+            view = new DataView( data );
+            view.Sort = "Termékkód ASC, Sarzs ASC, Hordószám ASC";
+            return view;
+
         }
         #endregion
 
@@ -352,10 +355,13 @@ namespace Labor
             if (!Program.felhasználó.Value.jogosultságok.Value.vizsgálatok.módosítás) return;
 
             Vizsgálat.Azonosító azonosító = new Vizsgálat.Azonosító((string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.termékkód].Value,
-                    (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.sarzs].Value, (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.hordószám].Value,
-                    (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.hordótípus].Value, (double)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.nettó_töltet].Value,
-                    (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.szita_átmérő].Value, (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.megrendelő].Value,
-                    (int)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.sorszám].Value);
+                                                                    (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.sarzs].Value.ToString(), 
+                                                                    (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.hordószám].Value,
+                                                                    (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.hordótípus].Value, 
+                                                                    (double)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.nettó_töltet].Value,
+                                                                    (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.szita_átmérő].Value,
+                                                                    (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.megrendelő].Value,
+                                                                    (int)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.sorszám].Value);
 
             Vizsgálat? _vizsgálat = Program.database.Vizsgálat(azonosító);
             if (_vizsgálat == null) { MessageBox.Show("A kiválasztott vizsgálati lap nem található!", "Adatbázis hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
@@ -375,10 +381,13 @@ namespace Labor
             foreach (DataGridViewRow selected in table.SelectedRows)
             {
                 Vizsgálat.Azonosító azonosító = new Vizsgálat.Azonosító((string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.termékkód].Value,
-                    (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.sarzs].Value, (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.hordószám].Value,
-                    (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.hordótípus].Value, (double)selected.Cells[Vizsgálat.Azonosító.TableIndexes.nettó_töltet].Value,
-                    (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.szita_átmérő].Value, (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.megrendelő].Value,
-                    (int)selected.Cells[Vizsgálat.Azonosító.TableIndexes.sorszám].Value);
+                                                                        (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.sarzs].Value,
+                                                                        (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.hordószám].Value,
+                                                                        (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.hordótípus].Value,
+                                                                        (double)selected.Cells[Vizsgálat.Azonosító.TableIndexes.nettó_töltet].Value,
+                                                                        (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.szita_átmérő].Value,
+                                                                        (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.megrendelő].Value,
+                                                                        (int)selected.Cells[Vizsgálat.Azonosító.TableIndexes.sorszám].Value);
 
                 Vizsgálat? vizsgálat = Program.database.Vizsgálat(azonosító);
                 if (vizsgálat == null) { MessageBox.Show("A kiválasztott vizsgálati lap nem található!", "Adatbázis hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
