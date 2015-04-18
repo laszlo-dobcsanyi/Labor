@@ -364,6 +364,12 @@ namespace Labor
 			}
 
             string filename = (Settings.save_directory==null) ? "Listák//" + _szállítólevél.Szallitolevel + ".docx" : Settings.save_directory + "//" + _szállítólevél.Szallitolevel + ".docx";
+
+            if (_szállítólevél.Szallitolevel.Contains('/'))
+            {
+                MessageBox.Show("Nem megengedett karakter a szállítólevél mezőben", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
      
             var document = DocX.Create( filename );
 			document.DifferentFirstPage = true;
@@ -528,6 +534,12 @@ namespace Labor
             }
 
             #endregion
+
+             if (_szállítólevél.Szallitolevel.Contains('/'))
+            {
+                return;
+            }
+
 
             string filename = ( Settings.save_directory == null ) ? "Listák//" + _szállítólevél.Szallitolevel + "-MinBiz.docx" : Settings.save_directory + "//" + _szállítólevél.Szallitolevel + "-MinBiz.docx";
 
@@ -900,7 +912,7 @@ namespace Labor
                 }
             }
 
-            //fater
+            //apu
             _table.AutoFit = AutoFit.ColumnWidth;
 
             for (int i = 0; i < _table.Rows.Count; i++)

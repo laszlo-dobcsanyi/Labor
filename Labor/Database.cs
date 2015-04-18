@@ -677,6 +677,7 @@ namespace Labor
         {
             lock (LaborLock)
             {
+  
                 List<Vizsgálat.Azonosító> data = new List<Vizsgálat.Azonosító>();
                 laborconnection.Open();
 
@@ -695,6 +696,8 @@ namespace Labor
                 return data;
             }
         }
+
+
 
         /// <summary>
         /// Egy Termékkód-Hordószám-Gyártási év hármashoz csak egy Hordótípus tartozhat.
@@ -1432,6 +1435,7 @@ namespace Labor
             }
         }
 
+
         public bool Foglalás_Törlés(Foglalás _azonosító)
         {
             lock (LaborLock)
@@ -1521,7 +1525,8 @@ namespace Labor
 
                     command = laborconnection.CreateCommand();
                     command.CommandText = "SELECT HOTEKO, HOSARZ, SUM(case when FOSZAM IS NULL then 0 else 1 end), SUM(case when FOSZAM IS NULL then 1 else 0 end) " +
-                                        "FROM L_HORDO WHERE " + where + " GROUP BY HOTEKO, HOSARZ ORDER BY HOTEKO, HOSARZ;";
+                                        "FROM L_HORDO WHERE " + where + 
+                                        " GROUP BY HOTEKO, HOSARZ ORDER BY HOTEKO,hosarz desc;";
                     reader.Close();
                     reader = command.ExecuteReader();
                     while (reader.Read())
@@ -1532,7 +1537,29 @@ namespace Labor
 
                 laborconnection.Close();
 
+                IComparer<Sarzs> Comparer = new SortBySarzs();
+                value.Sort(Comparer);
+
                 return value;
+            }
+        }
+
+        public class SortBySarzs : IComparer<Sarzs>
+        {
+            public int Compare(Sarzs v1, Sarzs v2)
+            {
+                int s1 = Convert.ToInt32(v1.sarzs);
+                int s2 = Convert.ToInt32(v2.sarzs);
+                int t1 = Convert.ToInt32(v1.termékkód);
+                int t2 = Convert.ToInt32(v2.termékkód);
+
+                if (t1 < t2) { return 1; }
+                else if (t1 == t2)
+                {
+                    if (s1 < s2) { return -1; }
+                    return 0;
+                }
+                else { return 0; }
             }
         }
 
@@ -1682,11 +1709,14 @@ namespace Labor
                 laborconnection.Open();
 
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT FOSZAM, FONEVE, FOFOHO, FOTIPU, FOFENE, FODATE FROM L_FOGLAL WHERE SZSZAM IS NULL";
+                
+                //command.CommandText = "SELECT FOSZAM, FONEVE, FOFOHO, FOTIPU, FOFENE, FODATE FROM L_FOGLAL WHERE SZSZAM IS NULL";
 
-/*                //teszteléshez
+                //teszteléshez
+                /*                
+                 */
                 command.CommandText = "SELECT FOSZAM, FONEVE, FOFOHO, FOTIPU, FOFENE, FODATE FROM L_FOGLAL;";// WHERE; SZSZAM IS NULL";
-*/
+
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {

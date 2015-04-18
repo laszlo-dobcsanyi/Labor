@@ -36,7 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DocX">
-      <HintPath>..\..\Ijasz\Íjász\bin\x86\Debug\DocX.dll</HintPath>
+      <HintPath>..\DocX.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

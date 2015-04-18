@@ -105,7 +105,7 @@ namespace Labor
             data.Columns.Add(new DataColumn("Vevő", System.Type.GetType("System.String")));
             data.Columns.Add(new DataColumn("Összes hordó", System.Type.GetType("System.Int16")));
             data.Columns.Add(new DataColumn("Készítette", System.Type.GetType("System.String")));
-            data.Columns.Add(new DataColumn("Készítetés ideje", System.Type.GetType("System.String")));
+            data.Columns.Add(new DataColumn("Készítés ideje", System.Type.GetType("System.String")));
 
             return data;
         }

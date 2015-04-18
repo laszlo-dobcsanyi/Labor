@@ -1113,7 +1113,6 @@ namespace Labor
                 private void InitializeContent()
                 {
                     table = new DataGridView();
-                    //table.Dock = DockStyle.Left;
                     table.RowHeadersVisible = false;
                     table.AllowUserToResizeRows = false;
                     table.AllowUserToResizeColumns = false;
@@ -1127,15 +1126,11 @@ namespace Labor
                     table.UserDeletingRow += table_UserDeletingRow;
                     table.DataSource = CreateSource();
 
-                    //
-
                     Button rendben = new Button();
                     rendben.Text = "Rendben";
                     rendben.Size = new System.Drawing.Size(96, 32);
                     rendben.Location = new Point(ClientRectangle.Width - rendben.Size.Width - 16, ClientRectangle.Height - rendben.Size.Height - 16);
                     rendben.Click += rendben_Click;
-
-                    //
 
                     Controls.Add(rendben);
                     Controls.Add(table);
@@ -1174,16 +1169,14 @@ namespace Labor
                     table.Columns[Sarzs.TableIndexes.szabad].Width = 75;
                 }
 
-                private void table_UserDeletingRow(object _sender, DataGridViewRowCancelEventArgs _event)
+                private void 
+                table_UserDeletingRow(object _sender, DataGridViewRowCancelEventArgs _event)
                 {
-                    // Delete lenyomása esetén kitörli az adott sorokat, ezt iktatjuk ki ezzel!
                     _event.Cancel = true;
-                    // A saját törlést azért elindítjuk Delete gomb lenyomása után.
-
-                    //Vizsgálat_Törlés(_sender, _event);
                 }
 
-                private void Sarzs_Módosítás(object _sender, DataGridViewCellEventArgs _event)
+                private void 
+                Sarzs_Módosítás(object _sender, DataGridViewCellEventArgs _event)
                 {
                     if (table.SelectedRows.Count != 1) return;
 
@@ -1198,7 +1191,8 @@ namespace Labor
                     Program.RefreshData();
                 }
 
-                private void rendben_Click(object _sender, EventArgs _event)
+                private void 
+                rendben_Click(object _sender, EventArgs _event)
                 {
                     Close();
                 }

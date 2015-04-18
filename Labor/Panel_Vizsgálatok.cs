@@ -236,6 +236,8 @@ namespace Labor
             CreateSource();
             CreateView();
             table.DataSource = view;
+            
+
 
 
             //
@@ -275,6 +277,7 @@ namespace Labor
             Controls.Add(label_kereső);
             Controls.Add(box_kereső);
         }
+
 
         void box_kereső_TextChanged(object sender, EventArgs e)
         {
@@ -322,12 +325,13 @@ namespace Labor
 
         private DataView CreateView( )
         {
-
             view = new DataView( data );
             view.Sort = "Termékkód ASC, Sarzs ASC, Hordószám ASC";
+
             return view;
 
         }
+
         #endregion
 
         #region Tokenizer

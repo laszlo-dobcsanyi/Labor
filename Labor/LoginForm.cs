@@ -44,6 +44,10 @@ namespace Labor
             rendben.Click += rendben_Click;
             rendben.Text = "Rendben";
 
+            this.KeyPreview = true;
+            this.KeyDown += LoginForm_KeyDown;
+
+
             string[] labels = new string[] { "Felhasználónév", "Jelszó", "Szerver elérése", "Marillen adatbázis", "Labor adatbázis" };
             for(int current = 0; current < labels.Length; ++current)
             { Label label = MainForm.createlabel(labels[current] + ":", offset, (current < 2 ? current : current + 1) * spacer + offset, this); }
@@ -55,6 +59,7 @@ namespace Labor
             box_marillen            = MainForm.createtextbox(128 + 32, 4 * spacer + offset, 20, 20 * 8, this, CharacterCasing.Normal);
             box_labor               = MainForm.createtextbox(128 + 32, 5 * spacer + offset, 20, 20 * 8, this, CharacterCasing.Normal);
         }
+
 
         private void InitializeData()
         {
@@ -93,6 +98,39 @@ namespace Labor
                 MessageBox.Show("A megadott felhasználónév, jelszó párosítás nem megfelelő!\nKérem ellenőrizze őket!", "Belépési hiba!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
+
+        void LoginForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                Settings.server = box_szerver.Text;
+                Settings.marillen_database = box_marillen.Text;
+                Settings.labor_database = box_labor.Text;
+
+                if (!Database.IsCorrectSQLText(box_felhasználónév.Text)) { MessageBox.Show("Nem megfelelő karakter a felhasználónévben!\n", "Belépési hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                felhasználó = Program.database.Felhasználó(box_felhasználónév.Text);
+
+                if (felhasználó != null)
+                {
+                    if (felhasználó.Value.jelszó == box_jelszó.Text)
+                    {
+                        Close();
+                    }
+                    else
+                    {
+                        felhasználó = null;
+                    }
+                }
+
+                if (felhasználó == null)
+                {
+                    MessageBox.Show("A megadott felhasználónév, jelszó párosítás nem megfelelő!\nKérem ellenőrizze őket!", "Belépési hiba!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+        }
+
+
+        
         #endregion
     }
 }
