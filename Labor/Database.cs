@@ -1553,11 +1553,11 @@ namespace Labor
                 int t1 = Convert.ToInt32(v1.termékkód);
                 int t2 = Convert.ToInt32(v2.termékkód);
 
-                if (t1 < t2) { return 1; }
+                if (t1 < t2) { return -1; }
                 else if (t1 == t2)
                 {
                     if (s1 < s2) { return -1; }
-                    return 0;
+                    return 1;
                 }
                 else { return 0; }
             }
@@ -1710,12 +1710,12 @@ namespace Labor
 
                 SqlCommand command = laborconnection.CreateCommand();
                 
-                //command.CommandText = "SELECT FOSZAM, FONEVE, FOFOHO, FOTIPU, FOFENE, FODATE FROM L_FOGLAL WHERE SZSZAM IS NULL";
+                command.CommandText = "SELECT FOSZAM, FONEVE, FOFOHO, FOTIPU, FOFENE, FODATE FROM L_FOGLAL WHERE SZSZAM IS NULL";
 
                 //teszteléshez
                 /*                
-                 */
                 command.CommandText = "SELECT FOSZAM, FONEVE, FOFOHO, FOTIPU, FOFENE, FODATE FROM L_FOGLAL;";// WHERE; SZSZAM IS NULL";
+                 */
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())

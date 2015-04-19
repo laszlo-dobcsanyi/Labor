@@ -21,7 +21,10 @@ namespace Labor
                 public string Cim;
                 public string HazSzam;
 
-                public VEVO( string _Nev, string _Varos, string _Cim, string _HazSzam )
+                public VEVO( string _Nev,
+                             string _Varos,
+                             string _Cim,
+                             string _HazSzam )
                 {
                     Nev = _Nev;
                     Varos = _Varos;
@@ -475,7 +478,7 @@ namespace Labor
                 data_table.Rows[ c ].Cells[ 1 ].Paragraphs[ 0 ].Append( temp + "összesen:" ).Bold( );
                 data_table.Rows[ c ].Cells[ 4 ].Paragraphs[ 0 ].Append( outer.OsszSuly + " kg" ).Bold( );
                 összes_súly += outer.OsszSuly;
-                data_table.Rows[ c ].Cells[ 5 ].Paragraphs[ 0 ].Append( "VTSZ:" ).Bold( );
+                data_table.Rows[ c ].Cells[ 5 ].Paragraphs[ 0 ].Append( "                                 VTSZ:" ).Bold( );        //BN
                 data_table.Rows[ c ].Cells[ 6 ].Paragraphs[ 0 ].Append( outer.VTSZ ).Bold( );
                 c += 2;
             }
