@@ -1777,9 +1777,9 @@ namespace Labor
         /// <summary>
         /// Marillenből, vevő adatai
         /// </summary>
-        public Node_Konszignacio.Fejlec.Vevo Konszignáció_Vevő(string _partner)
+        public KONSZIGNACIO.FEJLEC.VEVO Konszignáció_Vevő( string _partner )
         {
-            Node_Konszignacio.Fejlec.Vevo data = new Node_Konszignacio.Fejlec.Vevo();
+            KONSZIGNACIO.FEJLEC.VEVO data = new KONSZIGNACIO.FEJLEC.VEVO( );
 
             lock (MarillenLock)
             {
@@ -1790,7 +1790,7 @@ namespace Labor
                 while (reader.Read())
                 {
                     int c = -1;
-                    data = new Node_Konszignacio.Fejlec.Vevo(reader.GetString(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c));
+                    data = new KONSZIGNACIO.FEJLEC.VEVO( reader.GetString( ++c ), reader.GetString( ++c ), reader.GetString( ++c ), reader.GetString( ++c ) );
                 }
                 command.Dispose();
                 marillenconnection.Close();
@@ -1809,9 +1809,9 @@ namespace Labor
         /// <summary>
         /// Marillenből, gyümölcsnév, vtsz
         /// </summary>
-        public Node_Konszignacio.GyumolcsTipus Konszignáció_Gyümölcstípus(string _termékkód)
+        public KONSZIGNACIO.GYUMOLCSTIPUS Konszignáció_Gyümölcstípus( string _termékkód )
         {
-            Node_Konszignacio.GyumolcsTipus data = new Node_Konszignacio.GyumolcsTipus();
+            KONSZIGNACIO.GYUMOLCSTIPUS data = new KONSZIGNACIO.GYUMOLCSTIPUS( );
             lock (MarillenLock)
             {
                 marillenconnection.Open();
@@ -1821,7 +1821,7 @@ namespace Labor
                 while (reader.Read())
                 {
                     int c = -1;
-                    data = new Node_Konszignacio.GyumolcsTipus(reader.GetString(++c), reader.GetString(++c));
+                    data = new KONSZIGNACIO.GYUMOLCSTIPUS( reader.GetString( ++c ), reader.GetString( ++c ) );
                 }
                 command.Dispose();
                 marillenconnection.Close();
@@ -1919,9 +1919,9 @@ namespace Labor
         }
 
 
-        public Node_MinosegBizonylat.VizsgalatiLap MinőségBizonylat(List<Foglalás> _foglalások, string _hoteko)
+        public MINOSEGBIZONYLAT.VIZSGALATILAP MinőségBizonylat( List<Foglalás> _foglalások, string _hoteko )
         {
-            Node_MinosegBizonylat.VizsgalatiLap data = new Node_MinosegBizonylat.VizsgalatiLap();
+            MINOSEGBIZONYLAT.VIZSGALATILAP data = new MINOSEGBIZONYLAT.VIZSGALATILAP( );
 
             lock (LaborLock)
             {
@@ -1971,9 +1971,9 @@ namespace Labor
             return data;
         }
 
-        public Node_MinosegBizonylat.Tapertek MinBiz_Tápérték(string _hoteko)
+        public MINOSEGBIZONYLAT.TAPERTEK MinBiz_Tápérték( string _hoteko )
         {
-            Node_MinosegBizonylat.Tapertek data = new Node_MinosegBizonylat.Tapertek();
+            MINOSEGBIZONYLAT.TAPERTEK data = new MINOSEGBIZONYLAT.TAPERTEK( );
             lock (LaborLock)
             {
                 laborconnection.Open();
@@ -1984,7 +1984,7 @@ namespace Labor
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    data = new Node_MinosegBizonylat.Tapertek(
+                    data = new MINOSEGBIZONYLAT.TAPERTEK(
                     GetNullable<short>(reader, 0), GetNullable<short>(reader, 1),
                     (double)GetNullable<decimal>(reader, 2), (double)GetNullable<decimal>(reader, 3),
                     (double)GetNullable<decimal>(reader, 4), (double)GetNullable<decimal>(reader, 5));
@@ -1995,9 +1995,9 @@ namespace Labor
             return data;
         }
 
-        public Node_MinBiz_Szöveg MinőségBizonylat_Szöveg()
+        public MINOSEGBIZONYLAT_SZOVEG MinőségBizonylat_Szöveg( )
         {
-            Node_MinBiz_Szöveg data = new Node_MinBiz_Szöveg();
+            MINOSEGBIZONYLAT_SZOVEG data = new MINOSEGBIZONYLAT_SZOVEG( );
 
             lock (LaborLock)
             {

@@ -6,6 +6,7 @@ namespace Labor
 {
     public static class Settings
     {
+        
         public static string server = @".\SQLEXPRESS";
         public static bool integrated_security = false;
 
@@ -63,5 +64,6 @@ namespace Labor
             }
             catch { }
         }
+
     }
 }

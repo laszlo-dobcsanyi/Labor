@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
+
 namespace Labor
 {
-
     public struct KonszignacioSzallitolevel
     {
         public Int16 SzallitolevelSzam;
@@ -22,10 +22,19 @@ namespace Labor
         public string Iz;
         public string Illat;
 
-        public KonszignacioSzallitolevel(Int16 _SzallitolevelSzam, string _Szallitolevel, string _FelhasznaloNev,
-                                            string _ElszallitasIdeje, string _Nyelv, string _Vevo,
-                                            string _Rendszam1, string _Rendszam2, Int16 _FoglaltHordo, string _GyartasiIdo,
-                                            string _Szin, string _Iz, string _Illat)
+        public KonszignacioSzallitolevel(Int16 _SzallitolevelSzam,
+                                         string _Szallitolevel, 
+                                         string _FelhasznaloNev,
+                                         string _ElszallitasIdeje, 
+                                         string _Nyelv, 
+                                         string _Vevo,
+                                         string _Rendszam1, 
+                                         string _Rendszam2, 
+                                         Int16 _FoglaltHordo, 
+                                         string _GyartasiIdo,
+                                         string _Szin, 
+                                         string _Iz, 
+                                         string _Illat)
         {
             SzallitolevelSzam = _SzallitolevelSzam;
             Szallitolevel = _Szallitolevel;
@@ -349,8 +358,7 @@ namespace Labor
             private void 
             btnRendben_Click(object _sender, EventArgs _event)
             {
-                //TODO(máté): check jó-é, gyártási idő??
-                string date = DateTime.Now.Year.ToString() + '.'+ DateTime.Now.Month + '.' + DateTime.Now.Day;
+                string date = DateTime.Now.Year.ToString() + '.'+ DateTime.Now.Month.ToString("d2") + '.' + DateTime.Now.Day.ToString("d2");
 
                 if (cboNyelv.Text == "3. label_nyelv")
                 { MessageBox.Show("Nyelv mező nem lehet" + '"'+ "3. label_nyelv" + '"' , "Egyenlőre!", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
@@ -380,11 +388,11 @@ namespace Labor
                                                                                         txtGyartasiIdo.Text, 
                                                                                         txtSzin.Text, txtIz.Text, 
                                                                                         txtIllat.Text);
-                Nyomtat.Nyomtat_Konszignacio(szállítólevél, Foglalasok);
+                Nyomtat.Konszignacio(szállítólevél, Foglalasok);
                 szállítólevél.SzallitolevelSzam =  Convert.ToInt16( Program.database.Konszignáció_ÚJSzállítólevél(szállítólevél));
                 Program.database.Konszignáció_FoglalásokKiszállítása(szállítólevél.SzallitolevelSzam, Foglalasok);
 
-                 Nyomtat.Nyomtat_MinosegBizonylatok(szállítólevél, Foglalasok);
+                 Nyomtat.MinosegBizonylatok(szállítólevél, Foglalasok);
                  
                 Close();
             }

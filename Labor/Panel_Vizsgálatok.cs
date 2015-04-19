@@ -221,6 +221,7 @@ namespace Labor
         private void InitializeContent()
         {
             table = new DataGridView();
+
             table.Dock = DockStyle.Left;
             table.RowHeadersVisible = false;
             table.AllowUserToResizeRows = false;
@@ -237,9 +238,6 @@ namespace Labor
             CreateView();
             table.DataSource = view;
             
-
-
-
             //
 
             Label label_kereső = new Label();
@@ -326,7 +324,7 @@ namespace Labor
         private DataView CreateView( )
         {
             view = new DataView( data );
-            view.Sort = "Termékkód ASC, Sarzs ASC, Hordószám ASC";
+            view.Sort = "Termékkód ASC, Hordószám ASC";
 
             return view;
 
