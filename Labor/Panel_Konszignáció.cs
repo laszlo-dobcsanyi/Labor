@@ -348,6 +348,7 @@ namespace Labor
                 txtIllat.Text = "Illat";
                 */
 
+
                 btnRendben.Click += btnRendben_Click;
                 Controls.Add(btnRendben);
             }
@@ -366,7 +367,8 @@ namespace Labor
                 { MessageBox.Show("Rendszám1 mező nem lehet üres!", "Egyenlőre!", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 if (txtLevel.Text == "")
                 { MessageBox.Show("Szállítólevél mező nem lehet üres!", "Egyenlőre!", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
-
+                if(txtLevel.Text.Contains("/"))
+                { MessageBox.Show( "Nem megengedett karakter a szállítólevél mezőben!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning ); return; }
                 if (txtGyartasiIdo.Text == "" || txtGyartasiIdo.Text.Length < 4)
                 { MessageBox.Show("Gyártási idő mező nem lehet üres és minimum 4 karakter!", "Egyenlőre!", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 if (txtSzin.Text == "")
