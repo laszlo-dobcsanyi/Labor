@@ -1,10 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
-using System.Collections;
 using System.Windows.Forms;
-using System.Collections.Generic;
-using System.Globalization;
 
 namespace Labor
 {
@@ -57,13 +55,13 @@ namespace Labor
                 _row[TableIndexes.sorszám] = _azonosító.sorszám;
             }
 
-            public static bool SameKeys(Vizsgálat.Azonosító _1, Vizsgálat.Azonosító _2)
+            public static bool SameKeys(Azonosító _1, Azonosító _2)
             {
                 if (_1.termékkód == _2.termékkód && _1.sarzs == _2.sarzs && _1.hordószám == _2.hordószám && _1.hordótípus == _2.hordótípus) return true;
                 return false;
             }
 
-            public static bool SameKeys(Vizsgálat.Azonosító _1, DataRow _row)
+            public static bool SameKeys(Azonosító _1, DataRow _row)
             {
                 if (_1.termékkód == (string)_row[TableIndexes.termékkód] && _1.sarzs == (string)_row[TableIndexes.sarzs] &&
                         _1.hordószám == (string)_row[TableIndexes.hordószám] && _1.hordótípus == (string)_row[TableIndexes.hordótípus]) return true;
@@ -254,17 +252,17 @@ namespace Labor
             Button törlés = new Button();
             törlés.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
             törlés.Text = "Törlés";
-            törlés.Size = new System.Drawing.Size(96, 32);
+            törlés.Size = new Size(96, 32);
             törlés.Location = new Point(ClientRectangle.Width - 224 - 16, ClientRectangle.Height - 32 - 16);
-            törlés.Enabled = Program.felhasználó.Value.jogosultságok.Value.vizsgálatok.törlés ? true : false;
+            törlés.Enabled = Program.felhasználó.Value.Jogosultsagok.Value.Vizsgalatok.Torles ? true : false;
             törlés.Click += Vizsgálat_Törlés;
 
             Button hozzáadás = new Button();
             hozzáadás.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
             hozzáadás.Text = "Hozzáadás";
-            hozzáadás.Size = new System.Drawing.Size(96, 32);
+            hozzáadás.Size = new Size(96, 32);
             hozzáadás.Location = new Point(törlés.Location.X + törlés.Width + 16, törlés.Location.Y);
-            hozzáadás.Enabled = Program.felhasználó.Value.jogosultságok.Value.vizsgálatok.hozzáadás ? true : false;
+            hozzáadás.Enabled = Program.felhasználó.Value.Jogosultsagok.Value.Vizsgalatok.Hozzaadas ? true : false;
             hozzáadás.Click += Vizsgálat_Hozzáadás;
 
             //
@@ -309,14 +307,14 @@ namespace Labor
         {
             data = new DataTable();
 
-            data.Columns.Add(new DataColumn("Termékkód", System.Type.GetType("System.String")));
-            data.Columns.Add(new DataColumn("Sarzs", System.Type.GetType("System.String")));
-            data.Columns.Add(new DataColumn("Hordószám", System.Type.GetType("System.String")));
-            data.Columns.Add(new DataColumn("Hordótípus", System.Type.GetType("System.String")));
-            data.Columns.Add(new DataColumn("Nettó töltet", System.Type.GetType("System.Double")));
-            data.Columns.Add(new DataColumn("Szitaátmérő", System.Type.GetType("System.String")));
-            data.Columns.Add(new DataColumn("Megrendelő", System.Type.GetType("System.String")));
-            data.Columns.Add(new DataColumn("Sorszám", System.Type.GetType("System.Int32")));
+            data.Columns.Add(new DataColumn("Termékkód", Type.GetType("System.String")));
+            data.Columns.Add(new DataColumn("Sarzs", Type.GetType("System.String")));
+            data.Columns.Add(new DataColumn("Hordószám", Type.GetType("System.String")));
+            data.Columns.Add(new DataColumn("Hordótípus", Type.GetType("System.String")));
+            data.Columns.Add(new DataColumn("Nettó töltet", Type.GetType("System.Double")));
+            data.Columns.Add(new DataColumn("Szitaátmérő", Type.GetType("System.String")));
+            data.Columns.Add(new DataColumn("Megrendelő", Type.GetType("System.String")));
+            data.Columns.Add(new DataColumn("Sorszám", Type.GetType("System.Int32")));
 
             return data;
         }
@@ -343,7 +341,7 @@ namespace Labor
         #endregion
 
         #region EventHandlers
-        private void Vizsgálat_Hozzáadás(object _sender, System.EventArgs _event)
+        private void Vizsgálat_Hozzáadás(object _sender, EventArgs _event)
         {
             Vizsgálati_Lap vizsgálati_lap = new Vizsgálati_Lap();
             vizsgálati_lap.ShowDialog();
@@ -354,10 +352,10 @@ namespace Labor
         private void Vizsgálat_Módosítás(object _sender, EventArgs _event)
         {
             if (table.SelectedRows.Count != 1) return;
-            if (!Program.felhasználó.Value.jogosultságok.Value.vizsgálatok.módosítás) return;
+            if (!Program.felhasználó.Value.Jogosultsagok.Value.Vizsgalatok.Modositas) return;
 
             Vizsgálat.Azonosító azonosító = new Vizsgálat.Azonosító((string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.termékkód].Value,
-                                                                    (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.sarzs].Value.ToString(), 
+                                                                    table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.sarzs].Value.ToString(), 
                                                                     (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.hordószám].Value,
                                                                     (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.hordótípus].Value, 
                                                                     (double)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.nettó_töltet].Value,
@@ -378,7 +376,7 @@ namespace Labor
         {
             if (table.SelectedRows.Count == 1) { if (MessageBox.Show("Biztosan törli a kiválasztott vizsgálatot?", "Megerősítés", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return; }
             else if (table.SelectedRows.Count != 0) { if (MessageBox.Show("Biztosan törli a kiválasztott vizsgálatokat?", "Megerősítés", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return; }
-            if (!Program.felhasználó.Value.jogosultságok.Value.vizsgálatok.törlés) return;
+            if (!Program.felhasználó.Value.Jogosultsagok.Value.Vizsgalatok.Torles) return;
             
             foreach (DataGridViewRow selected in table.SelectedRows)
             {
@@ -437,7 +435,7 @@ namespace Labor
         public sealed class Vizsgálati_Lap : Form
         {
             private string gyártási_év = "2013";
-            private Vizsgálat? eredeti = null;
+            private Vizsgálat? eredeti;
 
             #region Declaration
             TextBox box_termékkód;
@@ -519,7 +517,7 @@ namespace Labor
                 ClientSize = new Size(1024, 568);
                 MinimumSize = ClientSize;
                 StartPosition = FormStartPosition.CenterScreen;
-                FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+                FormBorderStyle = FormBorderStyle.FixedToolWindow;
             }
 
             private void InitializeContent()
@@ -528,15 +526,15 @@ namespace Labor
                 int sor = 30;
                 int oszlop = 160;
                 int köz = 16;
-                int[] méret = new int[] { 45, 30, 55, 20, 120, 90, 110, 273, 435, 280, 230 };
+                int[] méret = { 45, 30, 55, 20, 120, 90, 110, 273, 435, 280, 230 };
 
                 #region Labels
                 Label termékkód = MainForm.createlabel("Termékkód:", 10, 10, this);
-                termékkód.Font = new System.Drawing.Font(termékkód.Font, FontStyle.Bold);
+                termékkód.Font = new Font(termékkód.Font, FontStyle.Bold);
                 Label szita_átmérő = MainForm.createlabel("Szita átmérő:", termékkód.Location.X, termékkód.Location.Y + sor, this);
                 Label megrendelő = MainForm.createlabel("Megrendelő:", termékkód.Location.X, szita_átmérő.Location.Y + sor, this);
                 Label hordószám = MainForm.createlabel("Hordószám:", termékkód.Location.X + oszlop, termékkód.Location.Y, this);
-                hordószám.Font = new System.Drawing.Font(hordószám.Font, FontStyle.Bold);
+                hordószám.Font = new Font(hordószám.Font, FontStyle.Bold);
                 Label hőkezelés = MainForm.createlabel("Hőkezelés °C:", hordószám.Location.X, szita_átmérő.Location.Y, this);
                 Label vonal = new Label();
                 vonal.Location = new Point(termékkód.Location.X, megrendelő.Location.Y + sor);
@@ -692,32 +690,32 @@ namespace Labor
                 }
                 combo_megrendelő.SelectedIndex = 0;
 
-                List<Törzsadat> seged = Program.database.Törzsadatok("Hordótípus");
-                foreach (Törzsadat item in seged)
+                List<TORZSADAT> seged = Program.database.Törzsadatok("Hordótípus");
+                foreach (TORZSADAT item in seged)
                 {
-                    combo_hordótípus.Items.Add(item.azonosító);
+                    combo_hordótípus.Items.Add(item.Azonosito);
                 }
                 combo_hordótípus.SelectedIndex = 0;
 
                 seged.Clear();
                 seged = Program.database.Törzsadatok("Származási ország");
-                foreach (Törzsadat item in seged)
+                foreach (TORZSADAT item in seged)
                 {
-                    combo_származási_ország.Items.Add(item.azonosító);
+                    combo_származási_ország.Items.Add(item.Azonosito);
                 }
                 combo_származási_ország.SelectedIndex = 0;
 
                 seged.Clear();
                 seged = Program.database.Törzsadatok("Laboros");
-                foreach (Törzsadat item in seged)
+                foreach (TORZSADAT item in seged)
                 {
-                    combo_laboros.Items.Add(item.azonosító);
+                    combo_laboros.Items.Add(item.Azonosito);
                 }
                 #endregion
 
                 Button rendben = new Button();
                 rendben.Text = "Rendben";
-                rendben.Size = new System.Drawing.Size(96, 32);
+                rendben.Size = new Size(96, 32);
                 rendben.Location = new Point(ClientRectangle.Width - rendben.Size.Width - 16, ClientRectangle.Height - rendben.Size.Height - 16);
                 rendben.Click += rendben_Click;
 
@@ -730,8 +728,8 @@ namespace Labor
                 if (eredeti != null)
                 {
                     box_termékkód.Text = eredeti.Value.azonosító.termékkód;
-                    box_szita_átmérő.Text = eredeti.Value.azonosító.szita_átmérő.ToString();
-                    box_hordószám.Text = eredeti.Value.azonosító.hordószám.ToString();
+                    box_szita_átmérő.Text = eredeti.Value.azonosító.szita_átmérő;
+                    box_hordószám.Text = eredeti.Value.azonosító.hordószám;
                     box_hőkezelés.Text = eredeti.Value.adatok1.hőkezelés.ToString();
                     box_brix.Text = eredeti.Value.adatok2.brix.ToString();
                     box_citromsav.Text = eredeti.Value.adatok2.citromsav.ToString();
@@ -984,7 +982,7 @@ namespace Labor
             }
 
 
-            private void rendben_Click(object _sender, System.EventArgs _event)
+            private void rendben_Click(object _sender, EventArgs _event)
             {
                 gyártási_év = "201" +  box_termékkód.Text.Substring(box_termékkód.Text.Length - 1, 1);
                 Vizsgálat.Azonosító azonosító = new Vizsgálat.Azonosító(

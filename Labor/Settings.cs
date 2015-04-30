@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Windows.Forms;
 
 namespace Labor
 {
@@ -8,7 +7,7 @@ namespace Labor
     {
         
         public static string server = @".\SQLEXPRESS";
-        public static bool integrated_security = false;
+        public static bool integrated_security;
 
         public static string marillen_database = "marillen2013";
         public static string labor_database = "Labor";
@@ -18,10 +17,10 @@ namespace Labor
 
         public static int    ui_refresh = 5;
         public static string ui_login_name = "";
-        public static bool   ui_manual_locations = false;
+        public static bool   ui_manual_locations;
 
-        public static string import_directory = null;
-        public static string save_directory = null;
+        public static string import_directory;
+        public static string save_directory;
 
         public static void Configurate()
         {  

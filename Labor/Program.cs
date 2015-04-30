@@ -7,7 +7,7 @@ namespace Labor
     public static class Program
     {
         public static Database database;
-        public static Felhasználó? felhasználó;
+        public static FELHASZNALO? felhasználó;
 
         private static Timer refresher;
 

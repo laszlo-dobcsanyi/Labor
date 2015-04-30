@@ -1,283 +1,335 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Collections.Generic;
 
 namespace Labor
 {
-    public struct Felhasználó
+    public struct FELHASZNALO
     {
-        public string név1;
-        public string név2;
-        public string beosztás1;
-        public string beosztás2;
-        public string felhasználó_név;
-        public string jelszó;
+        public string Nev1;
+        public string Nev2;
+        public string Beosztas1;
+        public string Beosztas2;
+        public string FelhasznaloNev;
+        public string Jelszo;
 
-        public Jogosultságok? jogosultságok;
+        public JOGOSULTSAGOK? Jogosultsagok;
 
-        public Felhasználó(string _név1, string _név2, string _beosztás1, string _beosztás2, string _felhasználó_név, string _jelszó, Jogosultságok? _jogosultságok)
+        public FELHASZNALO( string _Nev1,
+                           string _Nev2,
+                           string _Beosztas1,
+                           string _Beosztas2,
+                           string _FelhasznaloNev,
+                           string _Jelszo,
+                           JOGOSULTSAGOK? _Jogosultsagok )
         {
-            név1 = _név1;
-            név2 = _név2;
-            beosztás1 = _beosztás1;
-            beosztás2 = _beosztás2;
-            felhasználó_név = _felhasználó_név;
-            jelszó = _jelszó;
-            jogosultságok = _jogosultságok;
+            Nev1 = _Nev1;
+            Nev2 = _Nev2;
+            Beosztas1 = _Beosztas1;
+            Beosztas2 = _Beosztas2;
+            FelhasznaloNev = _FelhasznaloNev;
+            Jelszo = _Jelszo;
+            Jogosultsagok = _Jogosultsagok;
         }
 
-        public struct TableIndexes
+        public struct TABLEINDEXES
         {
-            public const int név1 = 0;
-            public const int beosztás1 = 1;
-            public const int felhasználó_név = 2;
+            public const int Nev1 = 0;
+            public const int Beosztas1 = 1;
+            public const int FelhasznaloNev = 2;
         }
 
-        public struct Jogosultságok
+        public struct JOGOSULTSAGOK
         {
-            public struct Műveletek
+            public struct Muveletek
             {
-                public bool hozzáadás;
-                public bool módosítás;
-                public bool törlés;
+                public bool Hozzaadas;
+                public bool Modositas;
+                public bool Torles;
 
-                public Műveletek(bool _hozzáadás, bool _módosítás, bool _törlés)
+                public Muveletek( bool _Hozzaadas,
+                                 bool _Modositas,
+                                 bool _Torles )
                 {
-                    hozzáadás = _hozzáadás;
-                    módosítás = _módosítás;
-                    törlés = _törlés;
+                    Hozzaadas = _Hozzaadas;
+                    Modositas = _Modositas;
+                    Torles = _Torles;
                 }
             }
 
-            public Műveletek törzsadatok;
-            public Műveletek vizsgálatok;
-            public Műveletek foglalások;
-            public bool konszignáció_nyomtatás;
-            public bool kiszállítások_törlés;
-            public Műveletek felhasználók;
+            public Muveletek Torzsadatok;
+            public Muveletek Vizsgalatok;
+            public Muveletek Foglalasok;
+            public bool KonszignacioNyomtatas;
+            public bool KiszallitasokTorlese;
+            public Muveletek Felhasznalok;
 
-            public Jogosultságok(Műveletek _törzsadatok, Műveletek _vizsgálatok, Műveletek _foglalások, bool _konszignáció_nyomtatás, bool _kiszállítások_törlés, Műveletek _felhasználók)
+            public JOGOSULTSAGOK( Muveletek _Torzsadatok,
+                                 Muveletek _Vizsgalatok,
+                                 Muveletek _Foglalasok,
+                                 bool _KonszignacioNyomtatas,
+                                 bool _KiszallitasokTorles,
+                                 Muveletek _Felhasznalok )
             {
-                törzsadatok = _törzsadatok;
-                vizsgálatok = _vizsgálatok;
-                foglalások = _foglalások;
-                konszignáció_nyomtatás = _konszignáció_nyomtatás;
-                kiszállítások_törlés = _kiszállítások_törlés;
-                felhasználók = _felhasználók;
+                Torzsadatok = _Torzsadatok;
+                Vizsgalatok = _Vizsgalatok;
+                Foglalasok = _Foglalasok;
+                KonszignacioNyomtatas = _KonszignacioNyomtatas;
+                KiszallitasokTorlese = _KiszallitasokTorles;
+                Felhasznalok = _Felhasznalok;
             }
         }
 
-        public static void SetRow(DataRow _row, Felhasználó _felhasználó)
+        #region Tokenizer
+
+        public static void
+        SetRow( DataRow _row, FELHASZNALO _felhasználó )
         {
-            _row[TableIndexes.név1] = _felhasználó.név1;
-            _row[TableIndexes.beosztás1] = _felhasználó.beosztás1;
-            _row[TableIndexes.felhasználó_név] = _felhasználó.felhasználó_név;
+            _row[ TABLEINDEXES.Nev1 ] = _felhasználó.Nev1;
+            _row[ TABLEINDEXES.Beosztas1 ] = _felhasználó.Beosztas1;
+            _row[ TABLEINDEXES.FelhasznaloNev ] = _felhasználó.FelhasznaloNev;
         }
 
-        public static bool SameKeys(Felhasználó _1, Felhasználó _2)
+        public static bool
+        SameKeys( FELHASZNALO _1, FELHASZNALO _2 )
         {
-            if (_1.felhasználó_név == _2.felhasználó_név) return true;
-            return false;
+            return _1.FelhasznaloNev == _2.FelhasznaloNev;
         }
 
-        public static bool SameKeys(Felhasználó _1, DataRow _row)
+        public static bool
+        SameKeys( FELHASZNALO _1, DataRow _row )
         {
-            if (_1.felhasználó_név == (string)_row[TableIndexes.felhasználó_név]) return true;
-            return false;
+            return _1.FelhasznaloNev == ( string )_row[ TABLEINDEXES.FelhasznaloNev ];
         }
+
+        #endregion
     }
 
-    public sealed class Panel_Felhasználók : Tokenized_Control<Felhasználó>
+    public sealed class Panel_Felhasználók : Tokenized_Control<FELHASZNALO>
     {
         #region Constructor
-        public Panel_Felhasználók()
+
+        public Panel_Felhasználók( )
         {
-            InitializeContent();
-            InitializeTokens();
+            InitializeContent( );
+            InitializeTokens( );
         }
 
-        private void InitializeContent()
+        private void
+        InitializeContent( )
         {
-            table = new DataGridView();
-            table.Dock = DockStyle.Left;
-            table.RowHeadersVisible = false;
-            table.AllowUserToResizeRows = false;
-            table.AllowUserToResizeColumns = false;
-            table.AllowUserToAddRows = false;
-            table.Width = 75 * 8 + 3;
-            table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            table.ReadOnly = true;
+            table = new DataGridView
+            {
+                Dock = DockStyle.Left,
+                RowHeadersVisible = false,
+                AllowUserToResizeRows = false,
+                AllowUserToResizeColumns = false,
+                AllowUserToAddRows = false,
+                Width = 75 * 8 + 3,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                ReadOnly = true
+            };
             table.DataBindingComplete += table_DataBindingComplete;
             table.CellDoubleClick += Felhasználó_Módosítás;
             table.UserDeletingRow += table_UserDeletingRow;
-            table.DataSource = CreateSource();
+            table.DataSource = CreateSource( );
 
             //
 
-            Button törlés = new Button();
-            törlés.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
-            törlés.Text = "Törlés";
-            törlés.Size = new System.Drawing.Size(96, 32);
-            törlés.Location = new Point(ClientRectangle.Width - 224 - 16, ClientRectangle.Height - 32 - 16);
-            törlés.Enabled = Program.felhasználó.Value.jogosultságok.Value.felhasználók.törlés ? true : false;
-            törlés.Click += Felhasználó_Törlés;
+            Button btnTorles = new Button
+            {
+                Anchor = AnchorStyles.Right | AnchorStyles.Bottom,
+                Text = "Törlés",
+                Size = new Size( 96, 32 ),
+                Location = new Point( ClientRectangle.Width - 224 - 16, ClientRectangle.Height - 32 - 16 ),
+                Enabled = Program.felhasználó.Value.Jogosultsagok.Value.Felhasznalok.Torles ? true : false
+            };
+            btnTorles.Click += Felhasználó_Törlés;
 
-            Button hozzáadás = new Button();
-            hozzáadás.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
-            hozzáadás.Text = "Hozzáadás";
-            hozzáadás.Size = new System.Drawing.Size(96, 32);
-            hozzáadás.Location = new Point(törlés.Location.X + törlés.Width + 16, törlés.Location.Y);
-            hozzáadás.Enabled = Program.felhasználó.Value.jogosultságok.Value.felhasználók.hozzáadás ? true : false;
-            hozzáadás.Click += Felhasználó_Hozzáadás;
+            Button btnHozzaadas = new Button
+            {
+                Anchor = AnchorStyles.Right | AnchorStyles.Bottom,
+                Text = "Hozzáadás",
+                Size = new Size( 96, 32 ),
+                Location = new Point( btnTorles.Location.X + btnTorles.Width + 16,
+                btnTorles.Location.Y ),
+                Enabled = Program.felhasználó.Value.Jogosultsagok.Value.Felhasznalok.Hozzaadas
+            };
+            btnHozzaadas.Click += Felhasználó_Hozzáadás;
 
             //
 
-            Controls.Add(table);
-            Controls.Add(törlés);
-            Controls.Add(hozzáadás);
+            Controls.Add( table );
+            Controls.Add( btnTorles );
+            Controls.Add( btnHozzaadas );
         }
 
-        private DataTable CreateSource()
+        private DataTable
+        CreateSource( )
         {
-            data = new DataTable();
+            data = new DataTable( );
 
-            data.Columns.Add(new DataColumn("Név", System.Type.GetType("System.String")));
-            data.Columns.Add(new DataColumn("Beosztás", System.Type.GetType("System.String")));
-            data.Columns.Add(new DataColumn("Felhasználónév", System.Type.GetType("System.String")));
+            data.Columns.Add( new DataColumn( "Név", typeof( string ) ) );
+            data.Columns.Add( new DataColumn( "Beosztás", typeof( string ) ) );
+            data.Columns.Add( new DataColumn( "Felhasználónév", typeof( string ) ) );
 
             return data;
         }
+
         #endregion
 
         #region Tokenizer
-        protected override void SetRow(DataRow _row, Felhasználó _felhasználó) { Felhasználó.SetRow(_row, _felhasználó); }
 
-        protected override bool SameKeys(Felhasználó _1, Felhasználó _2) { return Felhasználó.SameKeys(_1, _2); }
+        protected override void
+        SetRow( DataRow _row, FELHASZNALO _felhasználó ) { FELHASZNALO.SetRow( _row, _felhasználó ); }
 
-        protected override bool SameKeys(Felhasználó _1, DataRow _row) { return Felhasználó.SameKeys(_1, _row); }
+        protected override bool
+        SameKeys( FELHASZNALO _1, FELHASZNALO _2 ) { return FELHASZNALO.SameKeys( _1, _2 ); }
 
-        protected override List<Felhasználó> CurrentData() { return Program.database.Felhasználók(); }
+        protected override bool
+        SameKeys( FELHASZNALO _1, DataRow _row ) { return FELHASZNALO.SameKeys( _1, _row ); }
+
+        protected override List<FELHASZNALO>
+        CurrentData( ) { return Program.database.Felhasználók( ); }
+
         #endregion
 
         #region EventHandlers
-        private void Felhasználó_Hozzáadás(object _sender, EventArgs _event)
-        {
-            Felhasználó_Megjelenítő hozzáadó = new Felhasználó_Megjelenítő();
-            hozzáadó.ShowDialog();
 
+        private static void
+        Felhasználó_Hozzáadás( object _sender, EventArgs _event )
+        {
+            FelhasználóMegjelenítő hozzáadó = new FelhasználóMegjelenítő( );
+            hozzáadó.ShowDialog( );
+            Program.RefreshData( );
+        }
+
+        private void
+        Felhasználó_Módosítás( object _sender, EventArgs _event )
+        {
+            if ( table.SelectedRows.Count != 1 ) return;
+            if ( !Program.felhasználó.Value.Jogosultsagok.Value.Felhasznalok.Modositas ) return;
+
+            FELHASZNALO? felhasználó = Program.database.Felhasználó( ( string )table.SelectedRows[ 0 ].Cells[ FELHASZNALO.TABLEINDEXES.FelhasznaloNev ].Value );
+            if ( felhasználó == null )
+            {
+                MessageBox.Show( "Hiba a felhasználó lekérdezésekor!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error );
+                return;
+            }
+
+            FelhasználóMegjelenítő módosító = new FelhasználóMegjelenítő( felhasználó.Value );
+            módosító.ShowDialog( );
+
+            Program.RefreshData( );
+        }
+
+        private void 
+        Felhasználó_Törlés(object sender, EventArgs _event)
+        {
+            if (table.SelectedRows.Count != 1) return;
+            if (!Program.felhasználó.Value.Jogosultsagok.Value.Felhasznalok.Torles) return;
+
+            if (!Program.database.Felhasználó_Törlés((string) table.SelectedRows[0].Cells[FELHASZNALO.TABLEINDEXES.FelhasznaloNev].Value))
+            {
+                MessageBox.Show("Hiba a felhasználó törlésekor!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             Program.RefreshData();
         }
 
-        private void Felhasználó_Módosítás(object _sender, EventArgs _event)
-        {
-            if (table.SelectedRows.Count != 1) return;
-            if (!Program.felhasználó.Value.jogosultságok.Value.felhasználók.módosítás) return;
-
-            Felhasználó? felhasználó = Program.database.Felhasználó((string)table.SelectedRows[0].Cells[Felhasználó.TableIndexes.felhasználó_név].Value);
-            if (felhasználó == null) { MessageBox.Show("Hiba a felhasználó lekérdezésekor!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-
-            Felhasználó_Megjelenítő módosító = new Felhasználó_Megjelenítő(felhasználó.Value);
-            módosító.ShowDialog();
-
-            Program.RefreshData();
-        }
-
-        private void Felhasználó_Törlés(object _sender, EventArgs _event)
-        {
-            if (table.SelectedRows.Count != 1) return;
-            if (!Program.felhasználó.Value.jogosultságok.Value.felhasználók.törlés) return;
-
-            if (!Program.database.Felhasználó_Törlés((string)table.SelectedRows[0].Cells[Felhasználó.TableIndexes.felhasználó_név].Value))
-                { MessageBox.Show("Hiba a felhasználó törlésekor!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-            else Program.RefreshData();
-        }
-
-        //
-
-        private void table_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        private void
+        table_DataBindingComplete( object sender, DataGridViewBindingCompleteEventArgs e )
         {
             table.DataBindingComplete -= table_DataBindingComplete;
-            table.Columns[Felhasználó.TableIndexes.név1].Width = 30 * 8;
-            table.Columns[Felhasználó.TableIndexes.beosztás1].Width = 30 * 8;
-            table.Columns[Felhasználó.TableIndexes.felhasználó_név].Width = 15 * 8;
+            table.Columns[ FELHASZNALO.TABLEINDEXES.Nev1 ].Width = 30 * 8;
+            table.Columns[ FELHASZNALO.TABLEINDEXES.Beosztas1 ].Width = 30 * 8;
+            table.Columns[ FELHASZNALO.TABLEINDEXES.FelhasznaloNev ].Width = 15 * 8;
         }
 
-        private void table_UserDeletingRow(object _sender, DataGridViewRowCancelEventArgs _event)
+        private void
+        table_UserDeletingRow( object _sender, DataGridViewRowCancelEventArgs _event )
         {
             // Delete lenyomása esetén kitörli az adott sorokat, ezt iktatjuk ki ezzel!
             _event.Cancel = true;
             // A saját törlést azért elindítjuk Delete gomb lenyomása után.
-            Felhasználó_Törlés(_sender, _event);
+            Felhasználó_Törlés( _sender,
+            _event );
         }
+
         #endregion
 
-        public class Felhasználó_Megjelenítő : Form
+        public class FelhasználóMegjelenítő : Form
         {
             #region Declaration
-            private Felhasználó? felhasználó = null;
 
-            private TextBox box_név1;
-            private TextBox box_név2;
-            private TextBox box_beosztás1;
-            private TextBox box_beosztás2;
-            private TextBox box_felhasználó_név;
-            private TextBox box_jelszó;
+            private FELHASZNALO? felhasznalo;
 
-            private CheckBox check_törzs_új;
-            private CheckBox check_törzs_módosít;
-            private CheckBox check_törzs_töröl;
+            private TextBox txtNev;
+            private TextBox txtNev2;
+            private TextBox txtBeosztas1;
+            private TextBox txtBeosztas2;
+            private TextBox txtFelhasznaloNev;
+            private TextBox txtJelszo;
 
-            private CheckBox check_vizsgálat_új;
-            private CheckBox check_vizsgálat_módosít;
-            private CheckBox check_vizsgálat_töröl;
+            private CheckBox chkTorzsadatUj;
+            private CheckBox chkTorzsadatModositas;
+            private CheckBox chkTorzsadatTorles;
 
-            private CheckBox check_foglalás_új;
-            private CheckBox check_foglalás_módosít;
-            private CheckBox check_foglalás_töröl;
+            private CheckBox chkVizsgalatUj;
+            private CheckBox chkVizsgalatModositas;
+            private CheckBox chkVizsgalatTorles;
 
-            private CheckBox check_konszignáció_nyomtat;
+            private CheckBox chkFoglalasUj;
+            private CheckBox chkFoglalasModositas;
+            private CheckBox chkFoglalasTorles;
 
-            private CheckBox check_kiszállítások_törlés;
+            private CheckBox chkKonszignacioNyomtat;
 
-            private CheckBox check_felhasználók_új;
-            private CheckBox check_felhasználók_módosít;
-            private CheckBox check_felhasználók_töröl;
+            private CheckBox chkKiszallitasokTorles;
+
+            private CheckBox chkFelhasznalokUj;
+            private CheckBox chkFelhasznalokModositas;
+            private CheckBox chkFelhasznalokTorles;
+
             #endregion
 
             #region Constructor
-            public Felhasználó_Megjelenítő()
+
+            public FelhasználóMegjelenítő( )
             {
-                InitializeForm();
-                InitializeContent();
-                InitializeData();
+                InitializeForm( );
+                InitializeContent( );
+                InitializeData( );
             }
 
-            public Felhasználó_Megjelenítő(Felhasználó _felhasználó)
+            public
+            FelhasználóMegjelenítő( FELHASZNALO _Felhasználó )
             {
-                felhasználó = _felhasználó;
+                felhasznalo = _Felhasználó;
 
-                InitializeForm();
-                InitializeContent();
-                InitializeData();
+                InitializeForm( );
+                InitializeContent( );
+                InitializeData( );
             }
 
-            public void InitializeForm()
+            public void
+            InitializeForm( )
             {
-                ClientSize = new Size(450, 600 + 64);
+                ClientSize = new Size( 450, 600 + 64 );
                 MaximumSize = ClientSize;
-                FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-                Text = felhasználó == null ? "Új felhasználó" : felhasználó.Value.név1;
+                FormBorderStyle = FormBorderStyle.FixedToolWindow;
+                Text = felhasznalo == null ? "Új felhasználó" : felhasznalo.Value.Nev1;
                 StartPosition = FormStartPosition.CenterScreen;
             }
 
-            public void InitializeContent()
+            public void
+            InitializeContent( )
             {
                 const int offset = 16;
                 const int spacer = 24;
-                const int group_spacer = 8;
-                Tuple<string, int, int>[] labels = new Tuple<string, int, int>[]{
+                const int groupSpacer = 8;
+                Tuple<string, int, int>[] labels = {
                     new Tuple<string, int, int>("Név", 2, 1),
                     new Tuple<string, int, int>("Beosztás", 2, 1),
                     new Tuple<string, int, int>("Belépési kód", 1, 0),
@@ -287,156 +339,320 @@ namespace Labor
                     new Tuple<string, int, int>("Foglalások", 2, 1),
                     new Tuple<string, int, int>("Konszignáció", 2, 1),
                     new Tuple<string, int, int>("Kiszállítások", 2, 1),
-                    new Tuple<string, int, int>("Felhasználók", 2, 1)};
+                    new Tuple<string, int, int>("Felhasználók", 2, 1)
+                };
 
                 int count = 0;
                 int group = 0;
+
                 for (int current = 0; current < labels.Length; ++current)
                 {
-                    Label label = MainForm.createlabel(labels[current].Item1 + ":", offset, count * spacer + group * group_spacer + offset, this);
+                    Label label = MainForm.createlabel(labels[current].Item1 + ":",
+                        offset,
+                        count*spacer + group*groupSpacer + offset,
+                        this);
                     count += labels[current].Item2;
                     group += labels[current].Item3;
                 }
 
-                //
 
                 const int column = 100;
-                box_név1 = MainForm.createtextbox(column, 0 * spacer + 0 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
-                box_név2 = MainForm.createtextbox(column, 1 * spacer + 0 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
+                txtNev = MainForm.createtextbox( column,
+                                                0 * spacer + 0 * groupSpacer + offset,
+                                                30,
+                                                30 * 8,
+                                                this,
+                                                CharacterCasing.Normal );
 
-                box_beosztás1 = MainForm.createtextbox(column, 2 * spacer + 1 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
-                box_beosztás2 = MainForm.createtextbox(column, 3 * spacer + 1 * group_spacer + offset, 30, 30 * 8, this, CharacterCasing.Normal);
+                txtNev2 = MainForm.createtextbox( column,
+                                                1 * spacer + 0 * groupSpacer + offset,
+                                                30,
+                                                30 * 8,
+                                                this,
+                                                CharacterCasing.Normal );
 
-                box_felhasználó_név = MainForm.createtextbox(column, 4 * spacer + 2 * group_spacer + offset, 15, 15 * 8, this, CharacterCasing.Normal);
-                box_jelszó = MainForm.createtextbox(column, 5 * spacer + 2 * group_spacer + offset, 15, 15 * 8, this, CharacterCasing.Normal);
-                box_jelszó.PasswordChar = '*';
+                txtBeosztas1 = MainForm.createtextbox( column,
+                                                        2 * spacer + 1 * groupSpacer + offset,
+                                                        30,
+                                                        30 * 8,
+                                                        this,
+                                                        CharacterCasing.Normal );
+                txtBeosztas2 = MainForm.createtextbox( column,
+                                                        3 * spacer + 1 * groupSpacer + offset,
+                                                        30,
+                                                        30 * 8,
+                                                        this,
+                                                        CharacterCasing.Normal );
 
-                //
+                txtFelhasznaloNev = MainForm.createtextbox( column,
+                                                            4 * spacer + 2 * groupSpacer + offset,
+                                                            15,
+                                                            15 * 8,
+                                                            this,
+                                                            CharacterCasing.Normal );
+                txtJelszo = MainForm.createtextbox( column,
+                                                    5 * spacer + 2 * groupSpacer + offset,
+                                                    15,
+                                                    15 * 8,
+                                                    this,
+                                                    CharacterCasing.Normal );
+                txtJelszo.PasswordChar = '*';
 
-                int[] columns = new int[] { 100, 245, 375 };
+
+                int[] columns = { 100, 245, 375 };
 
                 group = 0;
-                MainForm.createlabel("Hozzáadás:",   0 * 150 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                check_törzs_új = MainForm.Create_CheckBox(columns[0], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                MainForm.createlabel("Módosítás:",   1 * 150 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                check_törzs_módosít = MainForm.Create_CheckBox(columns[1], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                MainForm.createlabel("Törlés:", 2 * 150 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                check_törzs_töröl = MainForm.Create_CheckBox(columns[2], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
+
+                MainForm.createlabel( "Hozzáadás:",
+                                        0 * 150 + 2 * offset,
+                                        ( 8 + 2 * group ) * spacer + ( 3 + group ) * groupSpacer + offset,
+                                        this );
+
+                chkTorzsadatUj = MainForm.Create_CheckBox( columns[ 0 ],
+                                                            ( 8 + 2 * group ) * spacer + ( 3 + group ) * groupSpacer + offset,
+                                                            this );
+                MainForm.createlabel( "Módosítás:",
+                                        1 * 150 + 2 * offset,
+                                        ( 8 + 2 * group ) * spacer + ( 3 + group ) * groupSpacer + offset,
+                                        this );
+                chkTorzsadatModositas = MainForm.Create_CheckBox( columns[ 1 ],
+                                                ( 8 + 2 * group ) * spacer + ( 3 + group ) * groupSpacer + offset,
+                                                this );
+                MainForm.createlabel( "Törlés:",
+                                    2 * 150 + 2 * offset,
+                                    ( 8 + 2 * group ) * spacer + ( 3 + group ) * groupSpacer + offset,
+                                    this );
+                chkTorzsadatTorles = MainForm.Create_CheckBox( columns[ 2 ],
+                                                            ( 8 + 2 * group ) * spacer + ( 3 + group ) * groupSpacer + offset,
+                                                            this );
 
                 ++group;
-                MainForm.createlabel("Hozzáadás:", 0 * 150 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                check_vizsgálat_új = MainForm.Create_CheckBox(columns[0], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                MainForm.createlabel("Módosítás:", 1 * 150 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                check_vizsgálat_módosít = MainForm.Create_CheckBox(columns[1], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                MainForm.createlabel("Törlés:", 2 * 150 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                check_vizsgálat_töröl = MainForm.Create_CheckBox(columns[2], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
+                MainForm.createlabel( "Hozzáadás:",
+                                    0 * 150 + 2 * offset,
+                                    ( 8 + 2 * group ) * spacer + ( 3 + group ) * groupSpacer + offset,
+                                    this );
+                chkVizsgalatUj = MainForm.Create_CheckBox( columns[ 0 ],
+                                                            ( 8 + 2 * group ) * spacer + ( 3 + group ) * groupSpacer + offset,
+                                                            this );
+                MainForm.createlabel( "Módosítás:",
+                                                1 * 150 + 2 * offset,
+                                                ( 8 + 2 * group ) * spacer + ( 3 + group ) * groupSpacer + offset,
+                                                this );
+                chkVizsgalatModositas = MainForm.Create_CheckBox( columns[ 1 ],
+                                                ( 8 + 2 * group ) * spacer + ( 3 + group ) * groupSpacer + offset,
+                                                this );
+                MainForm.createlabel( "Törlés:",
+                                                2 * 150 + 2 * offset,
+                                                ( 8 + 2 * group ) * spacer + ( 3 + group ) * groupSpacer + offset,
+                                                this );
+                chkVizsgalatTorles = MainForm.Create_CheckBox( columns[ 2 ],
+                                                ( 8 + 2 * group ) * spacer + ( 3 + group ) * groupSpacer + offset,
+                                                this );
 
                 ++group;
-                MainForm.createlabel("Hozzáadás:", 0 * 150 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                check_foglalás_új = MainForm.Create_CheckBox(columns[0], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                MainForm.createlabel("Módosítás:", 1 * 150 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                check_foglalás_módosít = MainForm.Create_CheckBox(columns[1], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                MainForm.createlabel("Törlés:", 2 * 150 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                check_foglalás_töröl = MainForm.Create_CheckBox(columns[2], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
+                MainForm.createlabel( "Hozzáadás:",
+                                    0 * 150 + 2 * offset,
+                                    ( 8 + 2 * group ) * spacer + ( 3 + group ) * groupSpacer + offset,
+                                    this );
+                chkFoglalasUj = MainForm.Create_CheckBox( columns[ 0 ],
+                                                ( 8 + 2 * group ) * spacer + ( 3 + group ) * groupSpacer + offset,
+                                                this );
+
+                MainForm.createlabel( "Módosítás:",
+                1 * 150 + 2 * offset,
+                ( 8 + 2 * group ) * spacer + ( 3 + group ) * groupSpacer + offset,
+                this );
+                chkFoglalasModositas = MainForm.Create_CheckBox( columns[ 1 ],
+                                                ( 8 + 2 * group ) * spacer + ( 3 + group ) * groupSpacer + offset,
+                                                this );
+                MainForm.createlabel( "Törlés:",
+                                                2 * 150 + 2 * offset,
+                                                ( 8 + 2 * group ) * spacer + ( 3 + group ) * groupSpacer + offset,
+                                                this );
+                chkFoglalasTorles = MainForm.Create_CheckBox( columns[ 2 ],
+                                                ( 8 + 2 * group ) * spacer + ( 3 + group ) * groupSpacer + offset,
+                                                this );
 
                 ++group;
-                MainForm.createlabel("Nyomtatás:", 0 * 150 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                check_konszignáció_nyomtat = MainForm.Create_CheckBox(columns[0], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
+                MainForm.createlabel( "Nyomtatás:",
+                                                0 * 150 + 2 * offset,
+                                                ( 8 + 2 * group ) * spacer + ( 3 + group ) * groupSpacer + offset,
+                                                this );
+                chkKonszignacioNyomtat = MainForm.Create_CheckBox( columns[ 0 ],
+                                                ( 8 + 2 * group ) * spacer + ( 3 + group ) * groupSpacer + offset,
+                                                this );
 
                 ++group;
-                MainForm.createlabel("Törlés:", 0 * 150 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                check_kiszállítások_törlés = MainForm.Create_CheckBox(columns[0], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
+                MainForm.createlabel( "Törlés:",
+                                                0 * 150 + 2 * offset,
+                                                ( 8 + 2 * group ) * spacer + ( 3 + group ) * groupSpacer + offset,
+                                                this );
+                chkKiszallitasokTorles = MainForm.Create_CheckBox( columns[ 0 ],
+                                                ( 8 + 2 * group ) * spacer + ( 3 + group ) * groupSpacer + offset,
+                                                this );
 
                 ++group;
-                MainForm.createlabel("Hozzáadás:", 0 * 150 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                check_felhasználók_új = MainForm.Create_CheckBox(columns[0], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                MainForm.createlabel("Módosítás:", 1 * 150 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                check_felhasználók_módosít = MainForm.Create_CheckBox(columns[1], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                MainForm.createlabel("Törlés:", 2 * 150 + 2 * offset, (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
-                check_felhasználók_töröl = MainForm.Create_CheckBox(columns[2], (8 + 2 * group) * spacer + (3 + group) * group_spacer + offset, this);
+                MainForm.createlabel( "Hozzáadás:",
+                                                0 * 150 + 2 * offset,
+                                                ( 8 + 2 * group ) * spacer + ( 3 + group ) * groupSpacer + offset,
+                                                this );
+                chkFelhasznalokUj = MainForm.Create_CheckBox( columns[ 0 ],
+                                                ( 8 + 2 * group ) * spacer + ( 3 + group ) * groupSpacer + offset,
+                                                this );
+                MainForm.createlabel( "Módosítás:",
+                                                1 * 150 + 2 * offset,
+                                                ( 8 + 2 * group ) * spacer + ( 3 + group ) * groupSpacer + offset,
+                                                this );
+                chkFelhasznalokModositas = MainForm.Create_CheckBox( columns[ 1 ],
+                                                ( 8 + 2 * group ) * spacer + ( 3 + group ) * groupSpacer + offset,
+                                                this );
+                MainForm.createlabel( "Törlés:",
+                                                2 * 150 + 2 * offset,
+                                                ( 8 + 2 * group ) * spacer + ( 3 + group ) * groupSpacer + offset,
+                                                this );
+                chkFelhasznalokTorles = MainForm.Create_CheckBox( columns[ 2 ],
+                                                ( 8 + 2 * group ) * spacer + ( 3 + group ) * groupSpacer + offset,
+                                                this );
 
-                //
 
-                Button rendben = new Button();
-                rendben.Size = new Size(96, 32);
-                rendben.Location = new Point(ClientSize.Width - rendben.Width - spacer, ClientSize.Height - rendben.Height - spacer);
-                rendben.Click += rendben_Click;
-                rendben.Text = "Rendben";
 
-                Controls.Add(rendben);
+                Button btnRendben = new Button();
+                btnRendben.Size = new Size(96, 32);
+
+                btnRendben.Location = new Point( ClientSize.Width - btnRendben.Width - spacer,
+                                                ClientSize.Height - btnRendben.Height - spacer );
+                btnRendben.Click += btnRendben_Click;
+                btnRendben.Text = "Rendben";
+
+                Controls.Add( btnRendben );
             }
 
-            public void InitializeData()
+            public void InitializeData( )
             {
-                if (felhasználó != null)
+                if ( felhasznalo != null )
                 {
-                    box_név1.Text = felhasználó.Value.név1;
-                    box_név2.Text = felhasználó.Value.név2;
+                    txtNev.Text = felhasznalo.Value.Nev1;
+                    txtNev2.Text = felhasznalo.Value.Nev2;
 
-                    box_beosztás1.Text = felhasználó.Value.beosztás1;
-                    box_beosztás2.Text = felhasználó.Value.beosztás2;
+                    txtBeosztas1.Text = felhasznalo.Value.Beosztas1;
+                    txtBeosztas2.Text = felhasznalo.Value.Beosztas2;
 
-                    box_felhasználó_név.Text = felhasználó.Value.felhasználó_név;
-                    box_felhasználó_név.Enabled = false;
-                    box_jelszó.Text = felhasználó.Value.jelszó;
+                    txtFelhasznaloNev.Text = felhasznalo.Value.FelhasznaloNev;
+                    txtFelhasznaloNev.Enabled = false;
+                    txtJelszo.Text = felhasznalo.Value.Jelszo;
 
-                    check_törzs_új.CheckState = felhasználó.Value.jogosultságok.Value.törzsadatok.hozzáadás ? CheckState.Checked : CheckState.Unchecked;
-                    check_törzs_módosít.CheckState = felhasználó.Value.jogosultságok.Value.törzsadatok.módosítás ? CheckState.Checked : CheckState.Unchecked;
-                    check_törzs_töröl.CheckState = felhasználó.Value.jogosultságok.Value.törzsadatok.törlés ? CheckState.Checked : CheckState.Unchecked;
+                    chkTorzsadatUj.CheckState = felhasznalo.Value.Jogosultsagok.Value.Torzsadatok.Hozzaadas ? CheckState.Checked : CheckState.Unchecked;
+                    chkTorzsadatModositas.CheckState = felhasznalo.Value.Jogosultsagok.Value.Torzsadatok.Modositas ? CheckState.Checked : CheckState.Unchecked;
+                    chkTorzsadatTorles.CheckState = felhasznalo.Value.Jogosultsagok.Value.Torzsadatok.Torles ? CheckState.Checked : CheckState.Unchecked;
 
-                    check_vizsgálat_új.CheckState = felhasználó.Value.jogosultságok.Value.vizsgálatok.hozzáadás ? CheckState.Checked : CheckState.Unchecked;
-                    check_vizsgálat_módosít.CheckState = felhasználó.Value.jogosultságok.Value.vizsgálatok.módosítás ? CheckState.Checked : CheckState.Unchecked;
-                    check_vizsgálat_töröl.CheckState = felhasználó.Value.jogosultságok.Value.vizsgálatok.törlés ? CheckState.Checked : CheckState.Unchecked;
+                    chkVizsgalatUj.CheckState = felhasznalo.Value.Jogosultsagok.Value.Vizsgalatok.Hozzaadas ? CheckState.Checked : CheckState.Unchecked;
+                    chkVizsgalatModositas.CheckState = felhasznalo.Value.Jogosultsagok.Value.Vizsgalatok.Modositas ? CheckState.Checked : CheckState.Unchecked;
+                    chkVizsgalatTorles.CheckState = felhasznalo.Value.Jogosultsagok.Value.Vizsgalatok.Torles ? CheckState.Checked : CheckState.Unchecked;
 
-                    check_foglalás_új.CheckState = felhasználó.Value.jogosultságok.Value.foglalások.hozzáadás ? CheckState.Checked : CheckState.Unchecked;
-                    check_foglalás_módosít.CheckState = felhasználó.Value.jogosultságok.Value.foglalások.módosítás ? CheckState.Checked : CheckState.Unchecked;
-                    check_foglalás_töröl.CheckState = felhasználó.Value.jogosultságok.Value.foglalások.törlés ? CheckState.Checked : CheckState.Unchecked;
+                    chkFoglalasUj.CheckState = felhasznalo.Value.Jogosultsagok.Value.Foglalasok.Hozzaadas ? CheckState.Checked : CheckState.Unchecked;
+                    chkFoglalasModositas.CheckState = felhasznalo.Value.Jogosultsagok.Value.Foglalasok.Modositas ? CheckState.Checked : CheckState.Unchecked;
+                    chkFoglalasTorles.CheckState = felhasznalo.Value.Jogosultsagok.Value.Foglalasok.Torles ? CheckState.Checked : CheckState.Unchecked;
 
-                    check_konszignáció_nyomtat.CheckState = felhasználó.Value.jogosultságok.Value.konszignáció_nyomtatás ? CheckState.Checked : CheckState.Unchecked;
+                    chkKonszignacioNyomtat.CheckState = felhasznalo.Value.Jogosultsagok.Value.KonszignacioNyomtatas ? CheckState.Checked : CheckState.Unchecked;
 
-                    check_kiszállítások_törlés.CheckState = felhasználó.Value.jogosultságok.Value.kiszállítások_törlés ? CheckState.Checked : CheckState.Unchecked;
+                    chkKiszallitasokTorles.CheckState = felhasznalo.Value.Jogosultsagok.Value.KiszallitasokTorlese ? CheckState.Checked : CheckState.Unchecked;
 
-                    check_felhasználók_új.CheckState = felhasználó.Value.jogosultságok.Value.felhasználók.hozzáadás ? CheckState.Checked : CheckState.Unchecked;
-                    check_felhasználók_módosít.CheckState = felhasználó.Value.jogosultságok.Value.felhasználók.módosítás ? CheckState.Checked : CheckState.Unchecked;
-                    check_felhasználók_töröl.CheckState = felhasználó.Value.jogosultságok.Value.felhasználók.törlés ? CheckState.Checked : CheckState.Unchecked;
+                    chkFelhasznalokUj.CheckState = felhasznalo.Value.Jogosultsagok.Value.Felhasznalok.Hozzaadas ? CheckState.Checked : CheckState.Unchecked;
+                    chkFelhasznalokModositas.CheckState = felhasznalo.Value.Jogosultsagok.Value.Felhasznalok.Modositas ? CheckState.Checked : CheckState.Unchecked;
+                    chkFelhasznalokTorles.CheckState = felhasznalo.Value.Jogosultsagok.Value.Felhasznalok.Torles ? CheckState.Checked : CheckState.Unchecked;
                 }
             }
+
             #endregion
 
             #region EventHandlers
-            private bool Checked(CheckBox _checkbox)
+
+            private static bool
+            Checked( CheckBox _checkbox )
             {
-                return _checkbox.CheckState == CheckState.Checked ? true : false;
+                return _checkbox.CheckState == CheckState.Checked;
             }
 
-            private void rendben_Click(object _sender, EventArgs _event)
+            private void
+            btnRendben_Click( object _sender, EventArgs _event )
             {
-                if (!Database.IsCorrectSQLText(box_név1.Text)) { MessageBox.Show("Nem megengedett karakter a név1 mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-                if (!Database.IsCorrectSQLText(box_név2.Text)) { MessageBox.Show("Nem megengedett karakter a név2 mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-                if (!Database.IsCorrectSQLText(box_beosztás1.Text)) { MessageBox.Show("Nem megengedett karakter a beosztás1 mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-                if (!Database.IsCorrectSQLText(box_beosztás2.Text)) { MessageBox.Show("Nem megengedett karakter a beosztás2 mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-                if (!Database.IsCorrectSQLText(box_felhasználó_név.Text)) { MessageBox.Show("Nem megengedett karakter a felhasználó név mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-                if (!Database.IsCorrectSQLText(box_jelszó.Text)) { MessageBox.Show("Nem megengedett karakter a jelszó mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-
-                Felhasználó.Jogosultságok.Műveletek törzsadat = new Felhasználó.Jogosultságok.Műveletek(Checked(check_törzs_új), Checked(check_törzs_módosít), Checked(check_törzs_töröl));
-                Felhasználó.Jogosultságok.Műveletek vizsgálat = new Felhasználó.Jogosultságok.Műveletek(Checked(check_vizsgálat_új), Checked(check_vizsgálat_módosít), Checked(check_vizsgálat_töröl));
-                Felhasználó.Jogosultságok.Műveletek foglalás = new Felhasználó.Jogosultságok.Műveletek(Checked(check_foglalás_új), Checked(check_foglalás_módosít), Checked(check_foglalás_töröl));
-                Felhasználó.Jogosultságok.Műveletek felhasználók = new Felhasználó.Jogosultságok.Műveletek(Checked(check_felhasználók_új), Checked(check_felhasználók_módosít), Checked(check_felhasználók_töröl));
-                Felhasználó.Jogosultságok jogosultságok = new Felhasználó.Jogosultságok(törzsadat, vizsgálat, foglalás, Checked(check_konszignáció_nyomtat), Checked(check_kiszállítások_törlés), felhasználók);
-                Felhasználó felhasználó_adatok = new Felhasználó(box_név1.Text, box_név2.Text, box_beosztás1.Text, box_beosztás2.Text, box_felhasználó_név.Text, box_jelszó.Text, jogosultságok);
-
-                if (felhasználó == null)
+                if ( !Database.IsCorrectSQLText( txtNev.Text ) )
                 {
-                    if (!Program.database.Felhasználó_Hozzáadás(felhasználó_adatok)) { MessageBox.Show("Hiba a felhasználó hozzáadása során!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-                    else Program.RefreshData();
+                    MessageBox.Show( "Nem megengedett karakter a név1 mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error );
+                    return;
+                }
+                if ( !Database.IsCorrectSQLText( txtNev2.Text ) )
+                {
+                    MessageBox.Show( "Nem megengedett karakter a név2 mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error );
+                    return;
+                }
+                if ( !Database.IsCorrectSQLText( txtBeosztas1.Text ) )
+                {
+                    MessageBox.Show( "Nem megengedett karakter a beosztás1 mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error );
+                    return;
+                }
+                if ( !Database.IsCorrectSQLText( txtBeosztas2.Text ) )
+                {
+                    MessageBox.Show( "Nem megengedett karakter a beosztás2 mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error );
+                    return;
+                }
+                if ( !Database.IsCorrectSQLText( txtFelhasznaloNev.Text ) )
+                {
+                    MessageBox.Show( "Nem megengedett karakter a felhasználó név mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error );
+                    return;
+                }
+                if ( !Database.IsCorrectSQLText( txtJelszo.Text ) )
+                {
+                    MessageBox.Show( "Nem megengedett karakter a jelszó mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error );
+                    return;
+                }
+
+                FELHASZNALO.JOGOSULTSAGOK.Muveletek törzsadat = new FELHASZNALO.JOGOSULTSAGOK.Muveletek( Checked( chkTorzsadatUj ),
+                                                                                                        Checked( chkTorzsadatModositas ),
+                                                                                                        Checked( chkTorzsadatTorles ) );
+                FELHASZNALO.JOGOSULTSAGOK.Muveletek vizsgálat = new FELHASZNALO.JOGOSULTSAGOK.Muveletek( Checked( chkVizsgalatUj ),
+                                                                                                        Checked( chkVizsgalatModositas ),
+                                                                                                        Checked( chkVizsgalatTorles ) );
+                FELHASZNALO.JOGOSULTSAGOK.Muveletek foglalás = new FELHASZNALO.JOGOSULTSAGOK.Muveletek( Checked( chkFoglalasUj ),
+                                                                                                        Checked( chkFoglalasModositas ),
+                                                                                                        Checked( chkFoglalasTorles ) );
+                FELHASZNALO.JOGOSULTSAGOK.Muveletek felhasználók = new FELHASZNALO.JOGOSULTSAGOK.Muveletek( Checked( chkFelhasznalokUj ),
+                                                                                                            Checked( chkFelhasznalokModositas ),
+                                                                                                            Checked( chkFelhasznalokTorles ) );
+                FELHASZNALO.JOGOSULTSAGOK jogosultságok = new FELHASZNALO.JOGOSULTSAGOK( törzsadat,
+                                                                                        vizsgálat,
+                                                                                        foglalás,
+                                                                                        Checked( chkKonszignacioNyomtat ),
+                                                                                        Checked( chkKiszallitasokTorles ),
+                                                                                        felhasználók );
+                FELHASZNALO felhasználó_adatok = new FELHASZNALO( txtNev.Text,
+                                                                txtNev2.Text,
+                                                                txtBeosztas1.Text,
+                                                                txtBeosztas2.Text,
+                                                                txtFelhasznaloNev.Text,
+                                                                txtJelszo.Text,
+                                                                jogosultságok );
+
+                if ( felhasznalo == null )
+                {
+                    if ( !Program.database.Felhasználó_Hozzáadás( felhasználó_adatok ) )
+                    {
+                        MessageBox.Show( "Hiba a felhasználó hozzáadása során!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error );
+                        return;
+                    }
+                    Program.RefreshData( );
                 }
                 else
                 {
-                    if (!Program.database.Felhasználó_Módosítás(felhasználó.Value.felhasználó_név, felhasználó_adatok)) { MessageBox.Show("Hiba a felhasználó módosítása során!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-                    else Program.RefreshData();
+                    if ( !Program.database.Felhasználó_Módosítás( felhasznalo.Value.FelhasznaloNev, felhasználó_adatok ) )
+                    {
+                        MessageBox.Show( "Hiba a felhasználó módosítása során!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error );
+                        return;
+                    }
+                    Program.RefreshData( );
                 }
 
-                Close();
+                Close( );
             }
             #endregion
         }

@@ -1,5 +1,4 @@
-﻿using Novacode;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
@@ -7,6 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Novacode;
+using BorderStyle = Novacode.BorderStyle;
+using Image = System.Drawing.Image;
 
 namespace Labor
 {
@@ -51,9 +53,9 @@ namespace Labor
                 public string Datum;
                 public string Szoveg;
 
-                public SZALLITOLEVEL( KonszignacioSzallitolevel _szallitolevel )
+                public SZALLITOLEVEL( KONSZIGNACIOSZALLITOLEVEL _szallitolevel )
                 {
-                    Rendszamok = new string[ ] { _szallitolevel.Rendszam1, _szallitolevel.Rendszam2 };
+                    Rendszamok = new[ ] { _szallitolevel.Rendszam1, _szallitolevel.Rendszam2 };
                     Datum = _szallitolevel.ElszallitasIdeje;
                     Szoveg = _szallitolevel.Szallitolevel;
                 }
@@ -114,7 +116,7 @@ namespace Labor
             public string Iz;
             public string Illat;
 
-            public SZALLITOLEVEL( KonszignacioSzallitolevel _szallitolevel )
+            public SZALLITOLEVEL( KONSZIGNACIOSZALLITOLEVEL _szallitolevel )
             {
                 SzallitolevelSzam = _szallitolevel.SzallitolevelSzam;
                 Vevo = _szallitolevel.Vevo;
@@ -248,13 +250,13 @@ namespace Labor
             {
                 if ( _nyelv == "M" )
                 {
-                    Nev = Program.felhasználó.Value.név1;
-                    Beosztas = Program.felhasználó.Value.beosztás1;
+                    Nev = Program.felhasználó.Value.Nev1;
+                    Beosztas = Program.felhasználó.Value.Beosztas1;
                 }
                 else
                 {
-                    Nev = Program.felhasználó.Value.név2;
-                    Beosztas = Program.felhasználó.Value.beosztás2;
+                    Nev = Program.felhasználó.Value.Nev2;
+                    Beosztas = Program.felhasználó.Value.Beosztas2;
                 }
             }
         }
@@ -290,7 +292,7 @@ namespace Labor
         static Regex regex;
 
         public static void
-        Konszignacio( KonszignacioSzallitolevel _szállítólevél, List<Foglalás> _foglalások )
+        Konszignacio( KONSZIGNACIOSZALLITOLEVEL _szállítólevél, List<FOGLALAS> _foglalások )
         {
             regex = new Regex( @"[ ]{2,}", RegexOptions.None );
 
@@ -305,11 +307,11 @@ namespace Labor
 
             double összes_súly = 0;
 
-            foreach ( Foglalás foglalás_iterator in _foglalások )
+            foreach ( FOGLALAS foglalás_iterator in _foglalások )
             {
                 összes_súly = 0;
 
-                List<Hordó> hordók = Program.database.Konszignáció_Hordók( foglalás_iterator.id );
+                List<HORDO> hordók = Program.database.Konszignáció_Hordók( foglalás_iterator.ID );
                 List<string> hordó_termékkódok = new List<string>( );
 
                 for ( int i = 0 ; i < hordók.Count ; i++ )
@@ -317,9 +319,10 @@ namespace Labor
                     bool found = false;
                     for ( int j = 0 ; j < hordó_termékkódok.Count ; j++ )
                     {
-                        if ( hordók[ i ].termékkód == hordó_termékkódok[ j ] ) { found = true; break; }
+                        if ( hordók[ i ].Termekkod == hordó_termékkódok[ j ] ) { found = true; break; }
+
                     }
-                    if ( !found ) hordó_termékkódok.Add( hordók[ i ].termékkód );
+                    if ( !found ) hordó_termékkódok.Add( hordók[ i ].Termekkod );
                 }
 
                 foreach ( string item in hordó_termékkódok )
@@ -341,15 +344,15 @@ namespace Labor
 
                 for ( int i = 0 ; i < Konszignacio.gyumolcstipusok.Count ; i++ )
                 {
-                    foreach ( Hordó inner in hordók )
+                    foreach ( HORDO inner in hordók )
                     {
-                        if ( Konszignacio.gyumolcstipusok[ i ].Megnevezes == Program.database.Name( inner.termékkód ) )
+                        if ( Konszignacio.gyumolcstipusok[ i ].Megnevezes == Program.database.Name( inner.Termekkod ) )
                         {
-                            KONSZIGNACIO.GYUMOLCSTIPUS.ADAT temp = new KONSZIGNACIO.GYUMOLCSTIPUS.ADAT( inner.gyártási_év[ 3 ] + inner.id, inner.sarzs, Convert.ToDouble( inner.mennyiség ), "", inner.time.Substring( 0, 11 ) );
+                            KONSZIGNACIO.GYUMOLCSTIPUS.ADAT temp = new KONSZIGNACIO.GYUMOLCSTIPUS.ADAT( inner.GyartasiEv[ 3 ] + inner.ID, inner.Sarzs, Convert.ToDouble( inner.Mennyiseg ), "", inner.Time.Substring( 0, 11 ) );
                             List<Vizsgálat.Azonosító> vizsgálatok = Program.database.Vizsgálatok( );
                             foreach ( Vizsgálat.Azonosító item in vizsgálatok )
                             {
-                                if ( item.termékkód == inner.termékkód && item.sarzs == inner.sarzs )
+                                if ( item.termékkód == inner.Termekkod && item.sarzs == inner.Sarzs )
                                 {
                                     temp.HordoTipus = item.hordótípus;
                                 }
@@ -379,11 +382,13 @@ namespace Labor
             document.MarginRight = 40;      //BN
             document.MarginTop = 40;        //BN
 
-            var titleFormat = new Formatting( );
-            titleFormat.Size = 14D;
-            titleFormat.Position = 1;
-            titleFormat.Spacing = 5;
-            titleFormat.Bold = true;
+            var titleFormat = new Formatting
+            {
+                Size = 14D,
+                Position = 1,
+                Spacing = 5,
+                Bold = true
+            };
 
             Header FirstPageHeader = document.Headers.first;
             Paragraph HeaderParagraph = FirstPageHeader.InsertParagraph( "Konszignáció\n", false, titleFormat ); //BN
@@ -464,7 +469,7 @@ namespace Labor
                     data_table.Rows[ c ].Cells[ 0 ].Paragraphs[ 0 ].Append( sorszám.ToString( ) + '.' );
                     sorszám++;
                     data_table.Rows[ c ].Cells[ 1 ].Paragraphs[ 0 ].Append( temp );
-                    data_table.Rows[ c ].Cells[ 2 ].Paragraphs[ 0 ].Append( inner.Hordo.ToString( ) );
+                    data_table.Rows[ c ].Cells[ 2 ].Paragraphs[ 0 ].Append( inner.Hordo );
                     data_table.Rows[ c ].Cells[ 3 ].Paragraphs[ 0 ].Append( inner.Sarzs );
                     data_table.Rows[ c ].Cells[ 4 ].Paragraphs[ 0 ].Append( inner.NettoSuly + " kg" );
                     data_table.Rows[ c ].Cells[ 5 ].Paragraphs[ 0 ].Append( inner.HordoTipus );
@@ -498,11 +503,11 @@ namespace Labor
             #endregion
 
             try { document.Save( ); }
-            catch ( System.Exception ) { MessageBox.Show( "A dokumentum meg van nyitva!" ); }
+            catch ( Exception ) { MessageBox.Show( "A dokumentum meg van nyitva!" ); }
         }
 
         public static void
-        MinosegBizonylatok( KonszignacioSzallitolevel _szállítólevél, List<Foglalás> _foglalások )
+        MinosegBizonylatok( KONSZIGNACIOSZALLITOLEVEL _szállítólevél, List<FOGLALAS> _foglalások )
         {
             regex = new Regex( @"[ ]{2,}", RegexOptions.None );
 
@@ -540,7 +545,7 @@ namespace Labor
 
             using ( MemoryStream ms = new MemoryStream( ) )
             {
-                System.Drawing.Image myImg = System.Drawing.Image.FromFile( @"Marillen_fejlec.jpg" );     //BN
+                Image myImg = Image.FromFile( @"Marillen_fejlec.jpg" );     //BN
 
                 myImg.Save( ms, myImg.RawFormat );  // Save your picture in a memory stream.
                 ms.Seek( 0, SeekOrigin.Begin );
@@ -578,7 +583,7 @@ namespace Labor
 
             using ( MemoryStream ms = new MemoryStream( ) )
             {
-                System.Drawing.Image myImg = System.Drawing.Image.FromFile( @"Marillen_lablec.jpg" );     //BN
+                Image myImg = Image.FromFile( @"Marillen_lablec.jpg" );     //BN
 
                 myImg.Save( ms, myImg.RawFormat );  // Save your picture in a memory stream.
                 ms.Seek( 0, SeekOrigin.Begin );
@@ -621,13 +626,13 @@ namespace Labor
             }
 
             try { document.Save( ); }
-            catch ( System.Exception ) { MessageBox.Show( "A dokumentum meg van nyitva!" ); }
+            catch ( Exception ) { MessageBox.Show( "A dokumentum meg van nyitva!" ); }
         }
 
         #region SegédFüggvények
 
         public static void
-        MinBizDataTable( MINOSEGBIZONYLAT _data, KonszignacioSzallitolevel _szállítólevél, int i, Table table )
+        MinBizDataTable( MINOSEGBIZONYLAT _data, KONSZIGNACIOSZALLITOLEVEL _szállítólevél, int i, Table table )
         {
             int c;
             if ( _szállítólevél.Nyelv == "M" )
@@ -669,7 +674,7 @@ namespace Labor
 
                 #region data
                 c = -1;
-                table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _szállítólevél.Szallitolevel.ToString( ) ).Bold( );
+                table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _szállítólevél.Szallitolevel ).Bold( );
                 table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.szallitolevel.Vevo ).Bold( );
                 table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.vizsgalatilap.Megnevezes ).Bold( );
                 table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.szallitolevel.GyartasiIdo.Substring( 0, 4 ) + ". évben" ).Bold( );
@@ -689,11 +694,11 @@ namespace Labor
                 table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.fixstring.Aroma );
                 table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.fixstring.Aroma );
                 table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( "" );
-                table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.tapertek.EnergiaTartalom1.ToString( ) + " kj / " + _data.tapertek.EnergiaTartalom2.ToString( ) + " kcal" );
-                table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.tapertek.Feherje.ToString( ) + " g" );
-                table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.tapertek.Szenhidrat.ToString( ) + " g" );
-                table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.tapertek.Zsir.ToString( ) + " g" );
-                table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.tapertek.Elelmirost.ToString( ) + " g" );
+                table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.tapertek.EnergiaTartalom1 + " kj / " + _data.tapertek.EnergiaTartalom2 + " kcal" );
+                table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.tapertek.Feherje + " g" );
+                table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.tapertek.Szenhidrat + " g" );
+                table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.tapertek.Zsir + " g" );
+                table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.tapertek.Elelmirost + " g" );
                 table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.fixstring.MikroBiologia );
                 table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.fixstring.MinosegetMegorzi );
                 table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.vizsgalatilap.Paszirozottsag + "-es szitán" );
@@ -759,11 +764,11 @@ namespace Labor
                 table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.fixstring.Aroma );
                 table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.fixstring.Aroma );
                 table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( "" );
-                table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.tapertek.EnergiaTartalom1.ToString( ) + " kj / " + _data.tapertek.EnergiaTartalom2.ToString( ) + " kcal" );
-                table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.tapertek.Feherje.ToString( ) + " g" );
-                table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.tapertek.Szenhidrat.ToString( ) + " g" );
-                table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.tapertek.Zsir.ToString( ) + " g" );
-                table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.tapertek.Elelmirost.ToString( ) + " g" );
+                table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.tapertek.EnergiaTartalom1 + " kj / " + _data.tapertek.EnergiaTartalom2 + " kcal" );
+                table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.tapertek.Feherje + " g" );
+                table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.tapertek.Szenhidrat + " g" );
+                table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.tapertek.Zsir + " g" );
+                table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.tapertek.Elelmirost + " g" );
                 table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.fixstring.MikroBiologia );
                 table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.fixstring.MinosegetMegorzi );
                 table.Rows[ ++c ].Cells[ 1 ].Paragraphs[ 0 ].Append( _data.vizsgalatilap.Paszirozottsag );
@@ -811,7 +816,7 @@ namespace Labor
             string value = null;
 
             if ( _minmax.min == null && _minmax.max == null ) { return value; }
-            else if ( _minmax.min != null && _minmax.max != null ) { value = _minmax.min.ToString( ) + " - " + _minmax.max.ToString( ); }
+            if ( _minmax.min != null && _minmax.max != null ) { value = _minmax.min + " - " + _minmax.max; }
             else if ( _minmax.min != null ) { value = _minmax.min.ToString( ); }
             else { value = _minmax.max.ToString( ); }
             return value;
@@ -822,7 +827,7 @@ namespace Labor
         {
             _table.AutoFit = AutoFit.Contents;
 
-            Border c = new Border( Novacode.BorderStyle.Tcbs_none, BorderSize.seven, 0, Color.Black );
+            Border c = new Border( BorderStyle.Tcbs_none, BorderSize.seven, 0, Color.Black );
             _table.SetBorder( TableBorderType.InsideH, c );
             _table.SetBorder( TableBorderType.InsideV, c );
             _table.SetBorder( TableBorderType.Bottom, c );
@@ -834,7 +839,7 @@ namespace Labor
         public static void
         KonszignacioFejlecTablazatFormazas( Table _table )
         {
-            Border c = new Border( Novacode.BorderStyle.Tcbs_none, BorderSize.seven, 0, Color.Black );
+            Border c = new Border( BorderStyle.Tcbs_none, BorderSize.seven, 0, Color.Black );
             _table.SetBorder( TableBorderType.InsideH, c );
             _table.SetBorder( TableBorderType.InsideV, c );
             _table.SetBorder( TableBorderType.Bottom, c );
@@ -859,7 +864,7 @@ namespace Labor
         KonszignacioDataTableFormazas( Table _table )
         {
             _table.AutoFit = AutoFit.Contents;
-            Border c = new Border( Novacode.BorderStyle.Tcbs_none, BorderSize.two, 0, Color.Black );
+            Border c = new Border( BorderStyle.Tcbs_none, BorderSize.two, 0, Color.Black );
             _table.SetBorder( TableBorderType.InsideH, c );
             _table.SetBorder( TableBorderType.InsideV, c );
             _table.SetBorder( TableBorderType.Bottom, c );
@@ -869,8 +874,8 @@ namespace Labor
 
             for ( int i = 0 ; i < _table.Rows[ 0 ].Cells.Count ; i++ )
             {
-                _table.Rows[ 0 ].Cells[ i ].SetBorder( TableCellBorderType.Top, new Border( Novacode.BorderStyle.Tcbs_single, BorderSize.six, 0, Color.Black ) );
-                _table.Rows[ 0 ].Cells[ i ].SetBorder( TableCellBorderType.Bottom, new Border( Novacode.BorderStyle.Tcbs_single, BorderSize.six, 0, Color.Black ) );
+                _table.Rows[ 0 ].Cells[ i ].SetBorder( TableCellBorderType.Top, new Border( BorderStyle.Tcbs_single, BorderSize.six, 0, Color.Black ) );
+                _table.Rows[ 0 ].Cells[ i ].SetBorder( TableCellBorderType.Bottom, new Border( BorderStyle.Tcbs_single, BorderSize.six, 0, Color.Black ) );
             }
             for ( int i = 0 ; i < _table.Rows.Count ; i++ )
             {
@@ -880,7 +885,7 @@ namespace Labor
                          j < _table.Rows[ i ].Cells.Count ;
                          j++ )
                     {
-                        _table.Rows[ i ].Cells[ j ].SetBorder( TableCellBorderType.Top, new Border( Novacode.BorderStyle.Tcbs_single,
+                        _table.Rows[ i ].Cells[ j ].SetBorder( TableCellBorderType.Top, new Border( BorderStyle.Tcbs_single,
                                                                                        BorderSize.six, 0, Color.Black ) );
                     }
                 }
@@ -890,14 +895,14 @@ namespace Labor
                          j < _table.Rows[ i ].Cells.Count ;
                          j++ )
                     {
-                        _table.Rows[ i ].Cells[ j ].SetBorder( TableCellBorderType.Top, new Border( Novacode.BorderStyle.Tcbs_single,
+                        _table.Rows[ i ].Cells[ j ].SetBorder( TableCellBorderType.Top, new Border( BorderStyle.Tcbs_single,
                                                                                                BorderSize.six, 0, Color.Black ) );
-                        _table.Rows[ i ].Cells[ j ].SetBorder( TableCellBorderType.Bottom, new Border( Novacode.BorderStyle.Tcbs_single,
+                        _table.Rows[ i ].Cells[ j ].SetBorder( TableCellBorderType.Bottom, new Border( BorderStyle.Tcbs_single,
                                                                                                 BorderSize.six, 0, Color.Black ) );
                     }
-                    _table.Rows[ i ].Cells[ 0 ].SetBorder( TableCellBorderType.Left, new Border( Novacode.BorderStyle.Tcbs_single,
+                    _table.Rows[ i ].Cells[ 0 ].SetBorder( TableCellBorderType.Left, new Border( BorderStyle.Tcbs_single,
                                                                                             BorderSize.six, 0, Color.Black ) );
-                    _table.Rows[ i ].Cells[ 6 ].SetBorder( TableCellBorderType.Right, new Border( Novacode.BorderStyle.Tcbs_single,
+                    _table.Rows[ i ].Cells[ 6 ].SetBorder( TableCellBorderType.Right, new Border( BorderStyle.Tcbs_single,
                                                                                             BorderSize.six, 0, Color.Black ) );
                 }
             }

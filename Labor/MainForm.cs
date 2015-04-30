@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace Labor
 {
-    public partial class MainForm : Form
+    public class MainForm : Form
     {
         #region Declaration
         public Panel_Törzsadatok    törzsadatok_panel;
@@ -51,14 +51,14 @@ namespace Labor
             ToolStripStatusLabel Készítők = new ToolStripStatusLabel("Belinyák Nándor és Társai. \u00A9 2014");
             Készítők.BorderSides = ToolStripStatusLabelBorderSides.Left;
 
-            ToolStripStatusLabel Verzió = new ToolStripStatusLabel("Verzió: 0.5.6-2015.04.19");
+            ToolStripStatusLabel Verzió = new ToolStripStatusLabel("Verzió: 0.5.6-2015.04.26");
             Verzió.BorderSides = ToolStripStatusLabelBorderSides.Left;
 
             ToolStripStatusLabel MarillenAdatbazis = new ToolStripStatusLabel( "Adatbázis:  " +  Settings.marillen_database );
             MarillenAdatbazis.BorderSides = ToolStripStatusLabelBorderSides.Left;
 
 
-            ToolStripStatusLabel Bejelentkezve = new ToolStripStatusLabel("Bejelentkezve " + Program.felhasználó.Value.név1 + " néven." );
+            ToolStripStatusLabel Bejelentkezve = new ToolStripStatusLabel("Bejelentkezve " + Program.felhasználó.Value.Nev1 + " néven." );
             Bejelentkezve.BorderSides = ToolStripStatusLabelBorderSides.Left;
 
 
@@ -159,7 +159,8 @@ namespace Labor
             if (_event.KeyCode == Keys.F3) { menu.SelectedIndex = 2; return; }
             if (_event.KeyCode == Keys.F4) { menu.SelectedIndex = 3; return; }
             if (_event.KeyCode == Keys.F5) { menu.SelectedIndex = 4; return; }
-            if (_event.KeyCode == Keys.F6) { menu.SelectedIndex = 5; return; }
+            if (_event.KeyCode == Keys.F6) { menu.SelectedIndex = 5;
+            }
         }
         #endregion
 
@@ -191,7 +192,8 @@ namespace Labor
             if (box.Text.Length == 0) return;
 
             DateTime dt;
-            if (!DateTime.TryParseExact(box.Text, "yy.MM.dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out dt)) { box.Focus(); return; }
+            if (!DateTime.TryParseExact(box.Text, "yy.MM.dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out dt)) { box.Focus();
+            }
         }
 
         public static void OnlyTime(object _sender, EventArgs _event)
@@ -201,7 +203,8 @@ namespace Labor
             if (box.Text.Length == 0) return;
 
             DateTime dt;
-            if (!DateTime.TryParseExact(box.Text, "MMdd HHmm", CultureInfo.InvariantCulture, DateTimeStyles.None, out dt)) { box.Focus(); return; }
+            if (!DateTime.TryParseExact(box.Text, "MMdd HHmm", CultureInfo.InvariantCulture, DateTimeStyles.None, out dt)) { box.Focus();
+            }
         }
 
         public static string ConvertOrDieSQLString(string _text)

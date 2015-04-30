@@ -1,8 +1,10 @@
 ﻿using System;
-using System.Data.SqlClient;
 using System.Collections.Generic;
-using System.Windows.Forms;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace Labor
 {
@@ -128,13 +130,16 @@ namespace Labor
         }
 
         #region Segédfüggvények
-        public static bool IsCorrectSQLText(string _text)
+
+        public static bool 
+        IsCorrectSQLText(string _text)
         {
             if (_text.Contains("'") || _text.Contains("\"") || _text.Contains("(") || _text.Contains(")")) return false;
             return true;
         }
 
-        public static string A(string[] _texts)
+        public static string 
+        A(string[] _texts)
         {
             string value = null;
             int length = 0;
@@ -148,7 +153,8 @@ namespace Labor
             return value.Substring(0, value.Length - 5);
         }
 
-        public static string V(string[] _texts)
+        public static string 
+        V(string[] _texts)
         {
             string value = null;
             int length = 0;
@@ -162,7 +168,8 @@ namespace Labor
             return value.Substring(0, value.Length - 2);
         }
 
-        public static string V_Apostrophe(string[] _texts)
+        public static string 
+        V_Apostrophe(string[] _texts)
         {
             string value = null;
             int length = 0;
@@ -176,57 +183,84 @@ namespace Labor
             return value.Substring(0, value.Length - 2);
         }
 
-        public static string Update<T>(string _column_name, T _value)
+        public static string 
+        Update<T>(string _column_name, T _value)
         {
             Type type = typeof(T);
             if (type == typeof(char)) { return _column_name + " = '" + _value + "'"; }
-            if (type == typeof(string)) { if (_value != null) return _column_name + " = '" + _value + "'"; else return _column_name + " = NULL"; }
+            if (type == typeof(string))
+            {
+                if (_value != null) return _column_name + " = '" + _value + "'";
+                return _column_name + " = NULL";
+            }
 
             if (type == typeof(Int16)) { return _column_name + " = " + _value; }
-            if (type == typeof(Int16?)) { if (_value != null) return _column_name + " = " + _value; else return _column_name + " = NULL"; }
+            if (type == typeof(Int16?))
+            {
+                if (_value != null) return _column_name + " = " + _value;
+                return _column_name + " = NULL";
+            }
 
             if (type == typeof(short)) { return _column_name + " = " + _value; }
-            if (type == typeof(short?)) { if (_value != null) return _column_name + " = " + _value; else return _column_name + " = NULL"; }
+            if (type == typeof(short?))
+            {
+                if (_value != null) return _column_name + " = " + _value;
+                return _column_name + " = NULL";
+            }
 
             if (type == typeof(int)) { return _column_name + " = " + _value; }
-            if (type == typeof(int?)) { if (_value != null) return _column_name + " = " + _value; else return _column_name + " = NULL"; }
+            if (type == typeof(int?))
+            {
+                if (_value != null) return _column_name + " = " + _value;
+                return _column_name + " = NULL";
+            }
 
             if (type == typeof(double)) { return _column_name + " = " + _value.ToString().Replace(',', '.'); }
-            if (type == typeof(double?)) { if (_value != null) return _column_name + " = " + _value.ToString().Replace(',', '.'); else return _column_name + " = NULL"; }
+            if (type == typeof(double?))
+            {
+                if (_value != null) return _column_name + " = " + _value.ToString().Replace(',', '.');
+                return _column_name + " = NULL";
+            }
 
             throw new IndexOutOfRangeException();
         }
 
-        public static T? GetNullable<T>(SqlDataReader _reader, int _column) where T : struct
+        public static T? 
+        GetNullable<T>(SqlDataReader _reader, int _column) where T : struct
         {
             if (!_reader.IsDBNull(_column))
                 return _reader.GetFieldValue<T>(_column);
             return null;
         }
 
-        public static string GetNullableString(SqlDataReader _reader, int _column)
+        public static string 
+        GetNullableString(SqlDataReader _reader, int _column)
         {
             if (!_reader.IsDBNull(_column)) return _reader.GetString(_column);
             return null;
         }
 
-        public static bool VB(string _value)
+        public static bool 
+        VB(string _value)
         {
             return (_value == "I" ? true : false);
         }
 
-        public static string BV(bool _value)
+        public static string 
+        BV(bool _value)
         {
             return (_value ? "I" : "H");
         }
 
-        public static string Is(string _filter, string _value_field)
+        public static string 
+        Is(string _filter, string _value_field)
         {
             if (_filter != null) return _value_field + " = " + "'" + _filter + "'";
             return null;
         }
 
-        public static string Between<T>(MinMaxPair<T?> _filter, string _value_field) where T : struct
+        public static string 
+        Between<T>(MinMaxPair<T?> _filter, string _value_field) where T : struct
         {
             if (typeof(T) != typeof(double))
             {
@@ -246,7 +280,8 @@ namespace Labor
             }
         }
 
-        public static string BetweenString(MinMaxPair<string> _filter, string _value_field)
+        public static string 
+        BetweenString(MinMaxPair<string> _filter, string _value_field)
         {
             string value = _value_field + " IS NOT NULL AND ";
             if ((_filter.min != null) && (_filter.max == null)) return value + "'" + _filter.min + "' <= " + _value_field;
@@ -439,18 +474,18 @@ namespace Labor
         #endregion
 
         #region Törzsadatok
-        public List<Törzsadat> Törzsadatok(string _TOTIPU)
+        public List<TORZSADAT> Törzsadatok(string _TOTIPU)
         {
             lock (LaborLock)
             {
-                List<Törzsadat> data = new List<Törzsadat>();
+                List<TORZSADAT> data = new List<TORZSADAT>();
                 laborconnection.Open();
                 SqlCommand command = laborconnection.CreateCommand();
                 command.CommandText = "SELECT TOTIPU, TOAZON, TOSZO2, TOSZO3 FROM L_TORZSA WHERE TOTIPU = '" + _TOTIPU + "'";
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    data.Add(new Törzsadat(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3)));
+                    data.Add(new TORZSADAT(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3)));
                 }
                 command.Dispose();
                 laborconnection.Close();
@@ -459,13 +494,13 @@ namespace Labor
             }
         }
 
-        public bool Törzsadat_Hozzáadás(Törzsadat _törzsadat)
+        public bool Törzsadat_Hozzáadás(TORZSADAT _törzsadat)
         {
             lock (LaborLock)
             {
                 laborconnection.Open();
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "INSERT INTO L_TORZSA (TOTIPU, TOAZON, TOSZO2,TOSZO3) VALUES('" + _törzsadat.típus + "','" + _törzsadat.azonosító + "','" + _törzsadat.megnevezés_2 + "','" + _törzsadat.megnevezés_3 + "');";
+                command.CommandText = "INSERT INTO L_TORZSA (TOTIPU, TOAZON, TOSZO2,TOSZO3) VALUES('" + _törzsadat.Tipus + "','" + _törzsadat.Azonosito + "','" + _törzsadat.Megnevezes + "','" + _törzsadat.Megnevezes2 + "');";
                 try
                 {
                     command.ExecuteNonQuery();
@@ -503,18 +538,18 @@ namespace Labor
             }
         }
 
-        public bool Törzsadat_Módosítás(string _azonosító, Törzsadat törzsadat)
+        public bool Törzsadat_Módosítás(string _azonosító, TORZSADAT törzsadat)
         {
             lock (LaborLock)
             {
                 laborconnection.Open();
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "UPDATE L_TORZSA SET TOAZON='" + törzsadat.azonosító + "', TOSZO2= '" + törzsadat.megnevezés_2 + "', TOSZO3= '" + törzsadat.megnevezés_3 + "' WHERE TOAZON = '" + _azonosító + "';";
+                command.CommandText = "UPDATE L_TORZSA SET TOAZON='" + törzsadat.Azonosito + "', TOSZO2= '" + törzsadat.Megnevezes + "', TOSZO3= '" + törzsadat.Megnevezes2 + "' WHERE TOAZON = '" + _azonosító + "';";
                 try
                 {
                     command.ExecuteNonQuery();
                 }
-                catch (System.Exception)
+                catch (Exception)
                 {
                     return false;
                 }
@@ -578,7 +613,7 @@ namespace Labor
                 SqlCommand command;
                 SqlDataReader reader;
 
-                string where = A(new string[] { Update<string>("VITEKO", _azonosító.termékkód), Update<string>("VIHOSZ", _azonosító.hordószám), Update<string>("VISARZ", _azonosító.sarzs) });
+                string where = A(new[] { Update("VITEKO", _azonosító.termékkód), Update("VIHOSZ", _azonosító.hordószám), Update("VISARZ", _azonosító.sarzs) });
 
                 // Azonosító
                 Vizsgálat.Azonosító? azonosító = null;
@@ -595,7 +630,7 @@ namespace Labor
                     reader.Close();
                 }
                 catch (SqlException q) { MessageBox.Show("Vizsgálat -> Azonosító lekérdezés hiba:\n" + q.Message); }
-                if (laborconnection.State != System.Data.ConnectionState.Open || azonosító == null) return null;
+                if (laborconnection.State != ConnectionState.Open || azonosító == null) return null;
 
                 // Adatok1
                 Vizsgálat.Adatok1? adatok1 = null;
@@ -611,7 +646,7 @@ namespace Labor
                     reader.Close();
                 }
                 catch (SqlException q) { MessageBox.Show("Vizsgálat -> Adatok1 lekérdezés hiba:\n" + q.Message); }
-                if (laborconnection.State != System.Data.ConnectionState.Open || azonosító == null) return null;
+                if (laborconnection.State != ConnectionState.Open || azonosító == null) return null;
 
                 // Adatok2
                 Vizsgálat.Adatok2? adatok2 = null;
@@ -629,7 +664,7 @@ namespace Labor
                     reader.Close();
                 }
                 catch (SqlException q) { MessageBox.Show("Vizsgálat -> Adatok2 lekérdezés hiba:\n" + q.Message); }
-                if (laborconnection.State != System.Data.ConnectionState.Open || azonosító == null) return null;
+                if (laborconnection.State != ConnectionState.Open || azonosító == null) return null;
 
                 // Adatok3
                 Vizsgálat.Adatok3? adatok3 = null;
@@ -646,7 +681,7 @@ namespace Labor
                     reader.Close();
                 }
                 catch (SqlException q) { MessageBox.Show("Vizsgálat -> Adatok1 lekérdezés hiba:\n" + q.Message); }
-                if (laborconnection.State != System.Data.ConnectionState.Open || azonosító == null) return null;
+                if (laborconnection.State != ConnectionState.Open || azonosító == null) return null;
 
                 // Adatok4
                 Vizsgálat.Adatok4? adatok4 = null;
@@ -664,7 +699,7 @@ namespace Labor
                     reader.Close();
                 }
                 catch (SqlException q) { MessageBox.Show("Vizsgálat -> Adatok1 lekérdezés hiba:\n" + q.Message); }
-                if (laborconnection.State != System.Data.ConnectionState.Open || azonosító == null) return null;
+                if (laborconnection.State != ConnectionState.Open || azonosító == null) return null;
 
                 command.Dispose();
                 laborconnection.Close();
@@ -703,7 +738,8 @@ namespace Labor
         /// Egy Termékkód-Hordószám-Gyártási év hármashoz csak egy Hordótípus tartozhat.
         /// Ez a függvény ellenőrzi, hogy az adott Hordószámon kívül van-e ilyen hordó, és lekérdezi annak típusát.
         /// </summary>
-        public string Vizsgálat_Hordótípus_Ellenőrzés(string _termékkód, string _hordószám, string _gyártási_év, string _sarzs)
+        public string 
+        Vizsgálat_Hordótípus_Ellenőrzés(string _termékkód, string _hordószám, string _gyártási_év, string _sarzs)
         {
             string hordó_típus = null;
 
@@ -711,7 +747,7 @@ namespace Labor
             {
                 laborconnection.Open();
 
-                string where = A(new string[] { Update<string>("VITEKO", _termékkód), Update<string>("VIGYEV", _gyártási_év[_gyártási_év.Length - 1].ToString()), Update<string>("VISARZ", _sarzs) });
+                string where = A(new[] { Update("VITEKO", _termékkód), Update("VIGYEV", _gyártási_év[_gyártási_év.Length - 1].ToString()), Update("VISARZ", _sarzs) });
 
                 SqlCommand command = new SqlCommand("SELECT VIHOTI FROM L_VIZSLAP WHERE " + where + " AND VIHOSZ <> '" + _hordószám + "';");
                 command.Connection = laborconnection;
@@ -740,7 +776,7 @@ namespace Labor
             {
                 laborconnection.Open();
 
-                string where = A(new string[] { Update<string>("VITEKO", _termékkód), Update<string>("VIGYEV", _gyártási_év[_gyártási_év.Length - 1].ToString()), Update<string>("VIHOSZ", _hordószám) });
+                string where = A(new[] { Update("VITEKO", _termékkód), Update("VIGYEV", _gyártási_év[_gyártási_év.Length - 1].ToString()), Update("VIHOSZ", _hordószám) });
 
                 SqlCommand command = new SqlCommand("SELECT VIHOSZ FROM L_VIZSLAP WHERE " + where + ";");
                 command.Connection = laborconnection;
@@ -763,7 +799,7 @@ namespace Labor
             {
                 string data;
                 SqlCommand command;
-                string where = A(new string[] { Update<string>("VITEKO", _vizsgálat.azonosító.termékkód), Update<string>("VIHOSZ", _vizsgálat.azonosító.hordószám), Update<string>("VISARZ", _vizsgálat.azonosító.sarzs) });
+                string where = A(new[] { Update("VITEKO", _vizsgálat.azonosító.termékkód), Update("VIHOSZ", _vizsgálat.azonosító.hordószám), Update("VISARZ", _vizsgálat.azonosító.sarzs) });
 
                 laborconnection.Open();
 
@@ -772,16 +808,16 @@ namespace Labor
                 command.CommandText = "INSERT INTO L_VIZSLAP (VITEKO, VISARZ, VIHOSZ, VIHOTI, VINETO, VISZAT, VIMEGR, VIMSSZ)" +
                                     " VALUES('" + _vizsgálat.azonosító.termékkód + "', '" + _vizsgálat.azonosító.sarzs + "', '" + _vizsgálat.azonosító.hordószám + "', '" + _vizsgálat.azonosító.hordótípus + "', " +
                                     _vizsgálat.azonosító.nettó_töltet.ToString().Replace(',', '.') + ", '" + _vizsgálat.azonosító.szita_átmérő + "', '" + _vizsgálat.azonosító.megrendelő + "', " +
-                                    "(SELECT COUNT(*) FROM L_VIZSLAP WHERE " + A(new string[] { Update<string>("VITEKO", _vizsgálat.azonosító.termékkód), Update<string>("VISARZ", _vizsgálat.azonosító.sarzs) }) + ") + 1)";
+                                    "(SELECT COUNT(*) FROM L_VIZSLAP WHERE " + A(new[] { Update("VITEKO", _vizsgálat.azonosító.termékkód), Update("VISARZ", _vizsgálat.azonosító.sarzs) }) + ") + 1)";
 
                 try { command.ExecuteNonQuery(); command.Dispose(); }
                 catch (SqlException q) { MessageBox.Show("Vizsgálat_Hozzáadás -> INSERT hiba:\n" + q.Message); }
-                if (laborconnection.State != System.Data.ConnectionState.Open) return false;
+                if (laborconnection.State != ConnectionState.Open) return false;
 
                 // Adatok1
-                data = V(new string[] {Update<string>("VITENE", _vizsgálat.adatok1.terméknév), Update<int>("VIHOKE", _vizsgálat.adatok1.hőkezelés), Update<char>("VIGYEV", _vizsgálat.adatok1.gyártási_év[_vizsgálat.adatok1.gyártási_év.Length - 1]),
-                Update<string>("VIMUJE", _vizsgálat.adatok1.műszak_jele), Update<string>("VITOGE", _vizsgálat.adatok1.töltőgép), Update<string>("VISZOR", _vizsgálat.adatok1.szárm_ország),
-                Update<string>("VIFAJT", _vizsgálat.adatok1.gyümölcsfajta)});
+                data = V(new[] {Update("VITENE", _vizsgálat.adatok1.terméknév), Update("VIHOKE", _vizsgálat.adatok1.hőkezelés), Update("VIGYEV", _vizsgálat.adatok1.gyártási_év[_vizsgálat.adatok1.gyártási_év.Length - 1]),
+                Update("VIMUJE", _vizsgálat.adatok1.műszak_jele), Update("VITOGE", _vizsgálat.adatok1.töltőgép), Update("VISZOR", _vizsgálat.adatok1.szárm_ország),
+                Update("VIFAJT", _vizsgálat.adatok1.gyümölcsfajta)});
 
                 if (data != null)
                 {
@@ -791,14 +827,14 @@ namespace Labor
                     try { command.ExecuteNonQuery(); command.Dispose(); }
                     catch (SqlException q) { MessageBox.Show("Vizsgálat_Hozzáadás -> UPDATE #1 hiba:\n" + q.Message); }
                 }
-                if (laborconnection.State != System.Data.ConnectionState.Open) return false;
+                if (laborconnection.State != ConnectionState.Open) return false;
 
                 // Adatok2
-                data = V(new string[] {Update<double?>("VIBRIX", _vizsgálat.adatok2.brix), Update<double?>("VICSAV", _vizsgálat.adatok2.citromsav),
-                Update<double?>("VIBOSA", _vizsgálat.adatok2.borkősav), Update<double?>("VIPEHA", _vizsgálat.adatok2.ph), Update<double?>("VIBOST", _vizsgálat.adatok2.bostwick),
-                Update<int?>("VIASAV", _vizsgálat.adatok2.aszkorbinsav), Update<int?>("VICIAD", _vizsgálat.adatok2.citromsav_adagolás),  Update<int?>("VIMATO", _vizsgálat.adatok2.magtöret),
-                Update<int?>("VIFEFE", _vizsgálat.adatok2.feketepont),  Update<int?>("VIFEBA", _vizsgálat.adatok2.barnapont),  Update<string>("VISZIN", _vizsgálat.adatok2.szín),
-                Update<string>("VIIZEK", _vizsgálat.adatok2.íz), Update<string>("VIILLA", _vizsgálat.adatok2.illat)});
+                data = V(new[] {Update("VIBRIX", _vizsgálat.adatok2.brix), Update("VICSAV", _vizsgálat.adatok2.citromsav),
+                Update("VIBOSA", _vizsgálat.adatok2.borkősav), Update("VIPEHA", _vizsgálat.adatok2.ph), Update("VIBOST", _vizsgálat.adatok2.bostwick),
+                Update("VIASAV", _vizsgálat.adatok2.aszkorbinsav), Update("VICIAD", _vizsgálat.adatok2.citromsav_adagolás),  Update("VIMATO", _vizsgálat.adatok2.magtöret),
+                Update("VIFEFE", _vizsgálat.adatok2.feketepont),  Update("VIFEBA", _vizsgálat.adatok2.barnapont),  Update("VISZIN", _vizsgálat.adatok2.szín),
+                Update("VIIZEK", _vizsgálat.adatok2.íz), Update("VIILLA", _vizsgálat.adatok2.illat)});
 
                 if (data != null)
                 {
@@ -808,13 +844,13 @@ namespace Labor
                     try { command.ExecuteNonQuery(); command.Dispose(); }
                     catch (SqlException q) { MessageBox.Show("Vizsgálat_Hozzáadás -> UPDATE #2 hiba:\n" + q.Message); }
                 }
-                if (laborconnection.State != System.Data.ConnectionState.Open) return false;
+                if (laborconnection.State != ConnectionState.Open) return false;
 
                 // Adatok3
-                data = V(new string[] {Update<string>("VILEOL", _vizsgálat.adatok3.leoltás), Update<string>("VIERDA", _vizsgálat.adatok3.értékelés),
-                Update<int?>("VIOCS1", _vizsgálat.adatok3.összcsíra_1), Update<int?>("VIOCS2", _vizsgálat.adatok3.összcsíra_2), Update<int?>("VIPEN1", _vizsgálat.adatok3.penész_1),
-                Update<int?>("VIPEN2", _vizsgálat.adatok3.penész_2), Update<int?>("VIELE1", _vizsgálat.adatok3.élesztő_1),  Update<int?>("VIELE2", _vizsgálat.adatok3.élesztő_2),
-                Update<string>("VIEMEJE", _vizsgálat.adatok3.megjegyzés)});
+                data = V(new[] {Update("VILEOL", _vizsgálat.adatok3.leoltás), Update("VIERDA", _vizsgálat.adatok3.értékelés),
+                Update("VIOCS1", _vizsgálat.adatok3.összcsíra_1), Update("VIOCS2", _vizsgálat.adatok3.összcsíra_2), Update("VIPEN1", _vizsgálat.adatok3.penész_1),
+                Update("VIPEN2", _vizsgálat.adatok3.penész_2), Update("VIELE1", _vizsgálat.adatok3.élesztő_1),  Update("VIELE2", _vizsgálat.adatok3.élesztő_2),
+                Update("VIEMEJE", _vizsgálat.adatok3.megjegyzés)});
 
                 if (data != null)
                 {
@@ -824,14 +860,14 @@ namespace Labor
                     try { command.ExecuteNonQuery(); command.Dispose(); }
                     catch (SqlException q) { MessageBox.Show("Vizsgálat_Hozzáadás -> UPDATE #3 hiba:\n" + q.Message); }
                 }
-                if (laborconnection.State != System.Data.ConnectionState.Open) return false;
+                if (laborconnection.State != ConnectionState.Open) return false;
 
                 // Adatok4
-                data = V(new string[] { Update<string>("VIMTS1", _vizsgálat.adatok4.címzett_t), Update<string>("VIMTD1", _vizsgálat.adatok4.dátum_t),
-                Update<string>("VIMKS1", _vizsgálat.adatok4.címzett_k1), Update<string>("VIMKD1", _vizsgálat.adatok4.dátum_k1), Update<string>("VIMKS2", _vizsgálat.adatok4.címzett_k2), Update<string>("VIMKD2", _vizsgálat.adatok4.dátum_k2),
-                Update<string>("VIMKS3", _vizsgálat.adatok4.címzett_k3), Update<string>("VIMKD3", _vizsgálat.adatok4.dátum_k3), Update<string>("VIMKS4", _vizsgálat.adatok4.címzett_k4), Update<string>("VIMKD4", _vizsgálat.adatok4.dátum_k4),
-                Update<string>("VIMKS5", _vizsgálat.adatok4.címzett_k5), Update<string>("VIMKD5", _vizsgálat.adatok4.dátum_k5), Update<string>("VIMKS6", _vizsgálat.adatok4.címzett_k6), Update<string>("VIMKD6", _vizsgálat.adatok4.dátum_k6),
-                Update<string>("VILABO", _vizsgálat.adatok4.laboros)});
+                data = V(new[] { Update("VIMTS1", _vizsgálat.adatok4.címzett_t), Update("VIMTD1", _vizsgálat.adatok4.dátum_t),
+                Update("VIMKS1", _vizsgálat.adatok4.címzett_k1), Update("VIMKD1", _vizsgálat.adatok4.dátum_k1), Update("VIMKS2", _vizsgálat.adatok4.címzett_k2), Update("VIMKD2", _vizsgálat.adatok4.dátum_k2),
+                Update("VIMKS3", _vizsgálat.adatok4.címzett_k3), Update("VIMKD3", _vizsgálat.adatok4.dátum_k3), Update("VIMKS4", _vizsgálat.adatok4.címzett_k4), Update("VIMKD4", _vizsgálat.adatok4.dátum_k4),
+                Update("VIMKS5", _vizsgálat.adatok4.címzett_k5), Update("VIMKD5", _vizsgálat.adatok4.dátum_k5), Update("VIMKS6", _vizsgálat.adatok4.címzett_k6), Update("VIMKD6", _vizsgálat.adatok4.dátum_k6),
+                Update("VILABO", _vizsgálat.adatok4.laboros)});
 
                 if (data != null)
                 {
@@ -841,7 +877,7 @@ namespace Labor
                     try { command.ExecuteNonQuery(); command.Dispose(); }
                     catch (SqlException q) { MessageBox.Show("Vizsgálat_Hozzáadás -> UPDATE #3 hiba:\n" + q.Message); }
                 }
-                if (laborconnection.State != System.Data.ConnectionState.Open) return false;
+                if (laborconnection.State != ConnectionState.Open) return false;
 
                 laborconnection.Close();
             }
@@ -854,7 +890,7 @@ namespace Labor
             lock (LaborLock)
             {
                 string data;
-                string where = A(new string[] { Update<string>("VITEKO", _eredeti.azonosító.termékkód), Update<string>("VIHOSZ", _eredeti.azonosító.hordószám), Update<string>("VISARZ", _eredeti.azonosító.sarzs) });
+                string where = A(new[] { Update("VITEKO", _eredeti.azonosító.termékkód), Update("VIHOSZ", _eredeti.azonosító.hordószám), Update("VISARZ", _eredeti.azonosító.sarzs) });
                 SqlCommand command;
 
                 laborconnection.Open();
@@ -866,13 +902,13 @@ namespace Labor
 
                 try { command.ExecuteNonQuery(); command.Dispose(); }
                 catch (SqlException q) { MessageBox.Show("Vizsgálat_Hozzáadás -> UPDATE #1 hiba:\n" + q.Message); }
-                if (laborconnection.State != System.Data.ConnectionState.Open) return false;
+                if (laborconnection.State != ConnectionState.Open) return false;
                 
                 // Adatok1
 
-                data = V(new string[] {Update<string>("VITENE", _új.adatok1.terméknév), Update<int>("VIHOKE", _új.adatok1.hőkezelés),
-                Update<string>("VIGYEV", _új.adatok1.gyártási_év[_új.adatok1.gyártási_év.Length - 1].ToString()), Update<string>("VIMUJE", _új.adatok1.műszak_jele),
-                Update<string>("VITOGE", _új.adatok1.töltőgép), Update<string>("VISZOR", _új.adatok1.szárm_ország), Update<string>("VIFAJT", _új.adatok1.gyümölcsfajta)});
+                data = V(new[] {Update("VITENE", _új.adatok1.terméknév), Update("VIHOKE", _új.adatok1.hőkezelés),
+                Update("VIGYEV", _új.adatok1.gyártási_év[_új.adatok1.gyártási_év.Length - 1].ToString()), Update("VIMUJE", _új.adatok1.műszak_jele),
+                Update("VITOGE", _új.adatok1.töltőgép), Update("VISZOR", _új.adatok1.szárm_ország), Update("VIFAJT", _új.adatok1.gyümölcsfajta)});
 
                 if (data != null)
                 {
@@ -882,15 +918,15 @@ namespace Labor
                     try { command.ExecuteNonQuery(); command.Dispose(); }
                     catch (SqlException q) { MessageBox.Show("Vizsgálat_Hozzáadás -> UPDATE #1 hiba:\n" + q.Message); }
                 }
-                if (laborconnection.State != System.Data.ConnectionState.Open) return false;
+                if (laborconnection.State != ConnectionState.Open) return false;
 
                 // Adatok2
 
-                data = V(new string[] {Update<double?>("VIBRIX", _új.adatok2.brix), Update<double?>("VICSAV", _új.adatok2.citromsav),
-                Update<double?>("VIBOSA", _új.adatok2.borkősav), Update<double?>("VIPEHA", _új.adatok2.ph), Update<double?>("VIBOST", _új.adatok2.bostwick),
-                Update<int?>("VIASAV", _új.adatok2.aszkorbinsav), Update<int?>("VICIAD", _új.adatok2.citromsav_adagolás),  Update<int?>("VIMATO", _új.adatok2.magtöret),
-                Update<int?>("VIFEFE", _új.adatok2.feketepont),  Update<int?>("VIFEBA", _új.adatok2.barnapont),  Update<string>("VISZIN", _új.adatok2.szín),
-                Update<string>("VIIZEK", _új.adatok2.íz), Update<string>("VIILLA", _új.adatok2.illat)});
+                data = V(new[] {Update("VIBRIX", _új.adatok2.brix), Update("VICSAV", _új.adatok2.citromsav),
+                Update("VIBOSA", _új.adatok2.borkősav), Update("VIPEHA", _új.adatok2.ph), Update("VIBOST", _új.adatok2.bostwick),
+                Update("VIASAV", _új.adatok2.aszkorbinsav), Update("VICIAD", _új.adatok2.citromsav_adagolás),  Update("VIMATO", _új.adatok2.magtöret),
+                Update("VIFEFE", _új.adatok2.feketepont),  Update("VIFEBA", _új.adatok2.barnapont),  Update("VISZIN", _új.adatok2.szín),
+                Update("VIIZEK", _új.adatok2.íz), Update("VIILLA", _új.adatok2.illat)});
 
                 if (data != null)
                 {
@@ -900,14 +936,14 @@ namespace Labor
                     try { command.ExecuteNonQuery(); command.Dispose(); }
                     catch (SqlException q) { MessageBox.Show("Vizsgálat_Hozzáadás -> UPDATE #2 hiba:\n" + q.Message); }
                 }
-                if (laborconnection.State != System.Data.ConnectionState.Open) return false;
+                if (laborconnection.State != ConnectionState.Open) return false;
 
                 // Adatok3
 
-                data = V(new string[] {Update<string>("VILEOL", _új.adatok3.leoltás), Update<string>("VIERDA", _új.adatok3.értékelés),
-                Update<int?>("VIOCS1", _új.adatok3.összcsíra_1), Update<int?>("VIOCS2", _új.adatok3.összcsíra_2), Update<int?>("VIPEN1", _új.adatok3.penész_1),
-                Update<int?>("VIPEN2", _új.adatok3.penész_2), Update<int?>("VIELE1", _új.adatok3.élesztő_1),  Update<int?>("VIELE2", _új.adatok3.élesztő_2),
-                Update<string>("VIEMEJE", _új.adatok3.megjegyzés)});
+                data = V(new[] {Update("VILEOL", _új.adatok3.leoltás), Update("VIERDA", _új.adatok3.értékelés),
+                Update("VIOCS1", _új.adatok3.összcsíra_1), Update("VIOCS2", _új.adatok3.összcsíra_2), Update("VIPEN1", _új.adatok3.penész_1),
+                Update("VIPEN2", _új.adatok3.penész_2), Update("VIELE1", _új.adatok3.élesztő_1),  Update("VIELE2", _új.adatok3.élesztő_2),
+                Update("VIEMEJE", _új.adatok3.megjegyzés)});
 
                 if (data != null)
                 {
@@ -917,15 +953,15 @@ namespace Labor
                     try { command.ExecuteNonQuery(); command.Dispose(); }
                     catch (SqlException q) { MessageBox.Show("Vizsgálat_Hozzáadás -> UPDATE #3 hiba:\n" + q.Message); }
                 }
-                if (laborconnection.State != System.Data.ConnectionState.Open) return false;
+                if (laborconnection.State != ConnectionState.Open) return false;
 
                 // Adatok4
 
-                data = V(new string[] { Update<string>("VIMTS1", _új.adatok4.címzett_t), Update<string>("VIMTD1", _új.adatok4.dátum_t),
-                Update<string>("VIMKS1", _új.adatok4.címzett_k1), Update<string>("VIMKD1", _új.adatok4.dátum_k1), Update<string>("VIMKS2", _új.adatok4.címzett_k2), Update<string>("VIMKD2", _új.adatok4.dátum_k2),
-                Update<string>("VIMKS3", _új.adatok4.címzett_k3), Update<string>("VIMKD3", _új.adatok4.dátum_k3), Update<string>("VIMKS4", _új.adatok4.címzett_k4), Update<string>("VIMKD4", _új.adatok4.dátum_k4),
-                Update<string>("VIMKS5", _új.adatok4.címzett_k5), Update<string>("VIMKD5", _új.adatok4.dátum_k5), Update<string>("VIMKS6", _új.adatok4.címzett_k6), Update<string>("VIMKD6", _új.adatok4.dátum_k6),
-                Update<string>("VILABO", _új.adatok4.laboros)});
+                data = V(new[] { Update("VIMTS1", _új.adatok4.címzett_t), Update("VIMTD1", _új.adatok4.dátum_t),
+                Update("VIMKS1", _új.adatok4.címzett_k1), Update("VIMKD1", _új.adatok4.dátum_k1), Update("VIMKS2", _új.adatok4.címzett_k2), Update("VIMKD2", _új.adatok4.dátum_k2),
+                Update("VIMKS3", _új.adatok4.címzett_k3), Update("VIMKD3", _új.adatok4.dátum_k3), Update("VIMKS4", _új.adatok4.címzett_k4), Update("VIMKD4", _új.adatok4.dátum_k4),
+                Update("VIMKS5", _új.adatok4.címzett_k5), Update("VIMKD5", _új.adatok4.dátum_k5), Update("VIMKS6", _új.adatok4.címzett_k6), Update("VIMKD6", _új.adatok4.dátum_k6),
+                Update("VILABO", _új.adatok4.laboros)});
 
                 if (data != null)
                 {
@@ -935,7 +971,7 @@ namespace Labor
                     try { command.ExecuteNonQuery(); command.Dispose(); }
                     catch (SqlException q) { MessageBox.Show("Vizsgálat_Hozzáadás -> UPDATE #3 hiba:\n" + q.Message); }
                 }
-                if (laborconnection.State != System.Data.ConnectionState.Open) return false;
+                if (laborconnection.State != ConnectionState.Open) return false;
 
                 laborconnection.Close();
 
@@ -949,13 +985,13 @@ namespace Labor
             {
                 laborconnection.Open();
 
-                string where = A(new string[] { Update<string>("VITEKO", _termékkód), Update<string>("VISARZ", _sarzs), Update<string>("VIGYEV", _gyártási_év[_gyártási_év.Length - 1].ToString()) });
+                string where = A(new[] { Update("VITEKO", _termékkód), Update("VISARZ", _sarzs), Update("VIGYEV", _gyártási_év[_gyártási_év.Length - 1].ToString()) });
 
                 SqlCommand command = new SqlCommand("UPDATE L_VIZSLAP SET VIHOTI = '" + _hordó_típus + "' WHERE " + where);
                 command.Connection = laborconnection;
                 try { command.ExecuteNonQuery(); command.Dispose(); }
                 catch (SqlException q) { MessageBox.Show("Vizsgálat_Módosítás_Hordótípus -> UPDATE hiba:\n" + q.Message); }
-                if (laborconnection.State != System.Data.ConnectionState.Open) return false;
+                if (laborconnection.State != ConnectionState.Open) return false;
 
                 laborconnection.Close();
             }
@@ -981,20 +1017,20 @@ namespace Labor
         #endregion
 
         #region Hordók
-        public List<Hordó> Hordók(Sarzs _sarzs)
+        public List<HORDO> Hordók(SARZS _sarzs)
         {
             lock (LaborLock)
             {
-                List<Hordó> value = new List<Hordó>();
+                List<HORDO> value = new List<HORDO>();
 
                 laborconnection.Open();
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT HOTEKO, HOSARZ, HOSZAM, VIGYEV, FOSZAM, HOQTY, HOTIME FROM L_HORDO WHERE HOTEKO = '" + _sarzs.termékkód + "' AND HOSARZ = '" + _sarzs.sarzs + "';";
+                command.CommandText = "SELECT HOTEKO, HOSARZ, HOSZAM, VIGYEV, FOSZAM, HOQTY, HOTIME FROM L_HORDO WHERE HOTEKO = '" + _sarzs.Termekkod + "' AND HOSARZ = '" + _sarzs.Sarzs + "';";
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    value.Add(new Hordó(reader.GetString(0), reader.GetString(1), reader.GetString(2), GetNullable<int>(reader, 4), reader.GetString(3), reader.GetDecimal(5), reader.GetString(6)));
+                    value.Add(new HORDO(reader.GetString(0), reader.GetString(1), reader.GetString(2), GetNullable<int>(reader, 4), reader.GetString(3), reader.GetDecimal(5), reader.GetString(6)));
                 }
 
                 command.Dispose();
@@ -1004,20 +1040,20 @@ namespace Labor
             }
         }
         
-        public List<Hordó> Hordók(Foglalás _foglalás)
+        public List<HORDO> Hordók(FOGLALAS _foglalás)
         {
-            List<Hordó> value = new List<Hordó>();
+            List<HORDO> value = new List<HORDO>();
             
             lock (LaborLock)
             {
                 laborconnection.Open();
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT HOTEKO, HOSARZ, HOSZAM, VIGYEV, HOQTY, HOTIME FROM L_HORDO WHERE FOSZAM = " + _foglalás.id;
+                command.CommandText = "SELECT HOTEKO, HOSARZ, HOSZAM, VIGYEV, HOQTY, HOTIME FROM L_HORDO WHERE FOSZAM = " + _foglalás.ID;
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    value.Add(new Hordó(reader.GetString(0), reader.GetString(1), reader.GetString(2), _foglalás.id, reader.GetString(3),reader.GetDecimal(4),reader.GetString(5)));
+                    value.Add(new HORDO(reader.GetString(0), reader.GetString(1), reader.GetString(2), _foglalás.ID, reader.GetString(3),reader.GetDecimal(4),reader.GetString(5)));
                 }
 
                 command.Dispose();
@@ -1027,20 +1063,20 @@ namespace Labor
             return value;
         }
 
-        public List<Hordó> Hordók(Foglalás _foglalás, Sarzs _sarzs)
+        public List<HORDO> Hordók(FOGLALAS _foglalás, SARZS _sarzs)
         {
-            List<Hordó> value = new List<Hordó>();
+            List<HORDO> value = new List<HORDO>();
 
             lock (LaborLock)
             {
                 laborconnection.Open();
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT HOSZAM, FOSZAM, VIGYEV, HOQTY, HOTIME FROM L_HORDO WHERE (FOSZAM IS NULL OR FOSZAM = " + _foglalás.id + ") AND HOTEKO = '" + _sarzs.termékkód + "' AND HOSARZ = '" + _sarzs.sarzs + "';";
+                command.CommandText = "SELECT HOSZAM, FOSZAM, VIGYEV, HOQTY, HOTIME FROM L_HORDO WHERE (FOSZAM IS NULL OR FOSZAM = " + _foglalás.ID + ") AND HOTEKO = '" + _sarzs.Termekkod + "' AND HOSARZ = '" + _sarzs.Sarzs + "';";
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    value.Add(new Hordó(_sarzs.termékkód, _sarzs.sarzs, reader.GetString(0), GetNullable<int>(reader, 1), reader.GetString(2),reader.GetDecimal(3),reader.GetString(4)));
+                    value.Add(new HORDO(_sarzs.Termekkod, _sarzs.Sarzs, reader.GetString(0), GetNullable<int>(reader, 1), reader.GetString(2),reader.GetDecimal(3),reader.GetString(4)));
                 }
 
                 command.Dispose();
@@ -1066,7 +1102,7 @@ namespace Labor
 
         public bool Hordók_Másolás(Vizsgálat _vizsgálat)
         {
-            string where = A(new string[] { Update<string>("VITEKO", _vizsgálat.azonosító.termékkód), Update<string>("VISARZ", _vizsgálat.azonosító.sarzs), Update<string>("VIGYEV", _vizsgálat.adatok1.gyártási_év.Substring(3, 1)) });
+            string where = A(new[] { Update("VITEKO", _vizsgálat.azonosító.termékkód), Update("VISARZ", _vizsgálat.azonosító.sarzs), Update("VIGYEV", _vizsgálat.adatok1.gyártási_év.Substring(3, 1)) });
 
             lock (LaborLock)
             {
@@ -1087,7 +1123,7 @@ namespace Labor
             }
 
             List<Hordó_Adat> hordó_adatok = new List<Hordó_Adat>();
-            string iPROD_ID = "12" + _vizsgálat.azonosító.termékkód.ToString().Substring(0, 2) + "01" + _vizsgálat.adatok1.gyártási_év[_vizsgálat.adatok1.gyártási_év.Length - 1];
+            string iPROD_ID = "12" + _vizsgálat.azonosító.termékkód.Substring(0, 2) + "01" + _vizsgálat.adatok1.gyártási_év[_vizsgálat.adatok1.gyártási_év.Length - 1];
 
             lock (MarillenLock)
             {
@@ -1208,7 +1244,7 @@ namespace Labor
 
         public bool Hordók_Törlés(Vizsgálat _vizsgálat)
         {
-            string where = A(new string[] { Update<string>("VITEKO", _vizsgálat.azonosító.termékkód), Update<string>("VISARZ", _vizsgálat.azonosító.sarzs), Update<string>("VIGYEV", _vizsgálat.adatok1.gyártási_év) });
+            string where = A(new[] { Update("VITEKO", _vizsgálat.azonosító.termékkód), Update("VISARZ", _vizsgálat.azonosító.sarzs), Update("VIGYEV", _vizsgálat.adatok1.gyártási_év) });
 
             lock (LaborLock)
             {
@@ -1244,21 +1280,21 @@ namespace Labor
         #endregion
 
         #region Foglalások
-        public List<Foglalás> Foglalások()
+        public List<FOGLALAS> Foglalások()
         {
             lock (LaborLock)
             {
-                List<Foglalás> data = new List<Foglalás>();
+                List<FOGLALAS> data = new List<FOGLALAS>();
                 laborconnection.Open();
 
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT FOSZAM, FONEVE, FOFOHO, FOTIPU, FOFENE, FODATE FROM L_FOGLAL";
+                command.CommandText = "SELECT FOSZAM, FONEVE, FOFOHO, FOTIPU, FOFENE, FODATE FROM L_FOGLAL order by foszam desc";
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
                     int c = -1;
-                    Foglalás temp_foglalás = new Foglalás(reader.GetInt32(++c), reader.GetString(++c), reader.GetInt16(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c));
+                    FOGLALAS temp_foglalás = new FOGLALAS(reader.GetInt32(++c), reader.GetString(++c), reader.GetInt16(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c));
                     data.Add(temp_foglalás);
                 }
                 command.Dispose();
@@ -1267,18 +1303,18 @@ namespace Labor
             }
         }
 
-        public Vizsgalap_Szűrő? Foglalás_Vizsgálat_Szűrő(Foglalás _foglalás)
+        public VIZSGALAP_SZURO? Foglalás_Vizsgálat_Szűrő(FOGLALAS _foglalás)
         {
             lock (LaborLock)
             {
-                Vizsgalap_Szűrő data = new Vizsgalap_Szűrő();
+                VIZSGALAP_SZURO data = new VIZSGALAP_SZURO();
 
                 laborconnection.Open();
 
                 SqlCommand command = laborconnection.CreateCommand();
                 command.CommandText = "SELECT FOFAJT, FOHOTI, FOMEGR, FOSZOR, FOMUJE, FOTOGE, FOTEKO, " +
                     "FOSARZT, FOSARZI, FOHOSZT, FOHOSZI, FOBRIXT, FOBRIXI, FOCSAVT, FOCSAVI, FOBOSAT, FOBOSAI, FOPEHAT, FOPEHAI, FOBOSTT, FOBOSTI, FOASAVT, FOASAVI, FONETOT, FONETOI, FOHOFOT, FOHOFOI, " +
-                    "FOCIADT, FOCIADI, FOSZATI, FOSZATT  FROM L_FOGLAL WHERE FOSZAM = " + _foglalás.id;
+                    "FOCIADT, FOCIADI, FOSZATI, FOSZATT  FROM L_FOGLAL WHERE FOSZAM = " + _foglalás.ID;
 
                 try
                 {
@@ -1286,7 +1322,7 @@ namespace Labor
                     while (reader.Read())
                     {
                         int c = -1;
-                        data.adatok1 = new Vizsgalap_Szűrő.Adatok1(
+                        data.adatok1 = new VIZSGALAP_SZURO.ADATOK1(
                             GetNullableString(reader, ++c),
                             GetNullableString(reader, ++c),
                             GetNullableString(reader, ++c),
@@ -1295,7 +1331,7 @@ namespace Labor
                             GetNullableString(reader, ++c),
                             GetNullableString(reader, ++c));
 
-                        data.adatok2 = new Vizsgalap_Szűrő.Adatok2(
+                        data.adatok2 = new VIZSGALAP_SZURO.ADATOK2(
                             GetNullableString(reader, ++c),
                             GetNullableString(reader, ++c),
                             GetNullableString(reader, ++c),
@@ -1340,7 +1376,7 @@ namespace Labor
             }
         }
 
-        public bool Foglalás_Vizsgálat_Szűrő_Hozzáadás(Foglalás _azonosító, Vizsgalap_Szűrő _szűrő)
+        public bool Foglalás_Vizsgálat_Szűrő_Hozzáadás(FOGLALAS _azonosító, VIZSGALAP_SZURO _szűrő)
         {
             lock (LaborLock)
             {
@@ -1350,51 +1386,51 @@ namespace Labor
                 command = laborconnection.CreateCommand();
 
                 // Adatok1
-                data = V(new string[] {Update<string>("FOFAJT", _szűrő.adatok1.gyümölcsfajta), Update<string>("FOHOTI", _szűrő.adatok1.hordótípus), Update<string>("FOMEGR", _szűrő.adatok1.megrendelő),
-                Update<string>("FOSZOR", _szűrő.adatok1.származási_ország), Update<string>("FOMUJE", _szűrő.adatok1.műszak_jele), Update<string>("FOTOGE", _szűrő.adatok1.töltőgép_száma),
-                Update<string>("FOTEKO", _szűrő.adatok1.termékkód)});
+                data = V(new[] {Update("FOFAJT", _szűrő.adatok1.GyumolcsFajta), Update("FOHOTI", _szűrő.adatok1.HordoTipus), Update("FOMEGR", _szűrő.adatok1.Megrendelo),
+                Update("FOSZOR", _szűrő.adatok1.SzarmazasiOrszag), Update("FOMUJE", _szűrő.adatok1.MuszakJele), Update("FOTOGE", _szűrő.adatok1.ToltogepSzama),
+                Update("FOTEKO", _szűrő.adatok1.Termekkod)});
 
                 if (data != null)
                 {
                     command = laborconnection.CreateCommand();
-                    command.CommandText = "UPDATE L_FOGLAL SET " + data + " WHERE FOSZAM = " + _azonosító.id;
+                    command.CommandText = "UPDATE L_FOGLAL SET " + data + " WHERE FOSZAM = " + _azonosító.ID;
 
                     try { command.ExecuteNonQuery(); command.Dispose(); }
                     catch (SqlException) { MessageBox.Show("Foglalás_ÚjVizsgalap -> adat1 hiba"); }
                 }
 
                 // Adatok2
-                data = V(new string[] {
-                Update<string>("FOSARZT", _szűrő.adatok2.sarzs.min), Update<string>("FOSARZI", _szűrő.adatok2.sarzs.max),
-                Update<string>("FOHOSZT", _szűrő.adatok2.hordó_id.min), Update<string>("FOHOSZI", _szűrő.adatok2.hordó_id.max),
-                Update<double?>("FOBRIXT", _szűrő.adatok2.brix.min), Update<double?>("FOBRIXI", _szűrő.adatok2.brix.max),
-                Update<double?>("FOCSAVT", _szűrő.adatok2.citromsav.min), Update<double?>("FOCSAVI", _szűrő.adatok2.citromsav.max),
-                Update<double?>("FOBOSAT", _szűrő.adatok2.borkősav.min), Update<double?>("FOBOSAI", _szűrő.adatok2.borkősav.max),
-                Update<double?>("FOPEHAT", _szűrő.adatok2.ph.min), Update<double?>("FOPEHAI", _szűrő.adatok2.ph.max),
-                Update<double?>("FOBOSTT", _szűrő.adatok2.bostwick.min), Update<double?>("FOBOSTI", _szűrő.adatok2.bostwick.max),
-                Update<short?>("FOASAVT", _szűrő.adatok2.aszkorbinsav.min), Update<short?>("FOASAVI", _szűrő.adatok2.aszkorbinsav.max),
-                Update<short?>("FONETOT", _szűrő.adatok2.nettó_töltet.min), Update<short?>("FONETOI", _szűrő.adatok2.nettó_töltet.max),
-                Update<Int16?>("FOHOFOT", _szűrő.adatok2.hőkezelés.min), Update<Int16?>("FOHOFOI", _szűrő.adatok2.hőkezelés.max),
-                Update<Int16?>("FOCIADT", _szűrő.adatok2.citromsav_ad.min), Update<Int16?>("FOCIADI", _szűrő.adatok2.citromsav_ad.max),
-                Update<Int16?>("FOSZATT", _szűrő.adatok2.szita_átmérő.min), Update<Int16?>("FOSZATI", _szűrő.adatok2.szita_átmérő.max)});
+                data = V(new[] {
+                Update("FOSARZT", _szűrő.adatok2.Sarzs.min), Update("FOSARZI", _szűrő.adatok2.Sarzs.max),
+                Update("FOHOSZT", _szűrő.adatok2.HordoID.min), Update("FOHOSZI", _szűrő.adatok2.HordoID.max),
+                Update("FOBRIXT", _szűrő.adatok2.Brix.min), Update("FOBRIXI", _szűrő.adatok2.Brix.max),
+                Update("FOCSAVT", _szűrő.adatok2.Citromsav.min), Update("FOCSAVI", _szűrő.adatok2.Citromsav.max),
+                Update("FOBOSAT", _szűrő.adatok2.Borkosav.min), Update("FOBOSAI", _szűrő.adatok2.Borkosav.max),
+                Update("FOPEHAT", _szűrő.adatok2.Ph.min), Update("FOPEHAI", _szűrő.adatok2.Ph.max),
+                Update("FOBOSTT", _szűrő.adatok2.Bostwick.min), Update("FOBOSTI", _szűrő.adatok2.Bostwick.max),
+                Update("FOASAVT", _szűrő.adatok2.Aszkorbinsav.min), Update("FOASAVI", _szűrő.adatok2.Aszkorbinsav.max),
+                Update("FONETOT", _szűrő.adatok2.NettoToltet.min), Update("FONETOI", _szűrő.adatok2.NettoToltet.max),
+                Update("FOHOFOT", _szűrő.adatok2.Hokezeles.min), Update("FOHOFOI", _szűrő.adatok2.Hokezeles.max),
+                Update("FOCIADT", _szűrő.adatok2.CitromsavAd.min), Update("FOCIADI", _szűrő.adatok2.CitromsavAd.max),
+                Update("FOSZATT", _szűrő.adatok2.SzitaAtmero.min), Update("FOSZATI", _szűrő.adatok2.SzitaAtmero.max)});
 
                 if (data != null)
                 {
                     command = laborconnection.CreateCommand();
-                    command.CommandText = "UPDATE L_FOGLAL SET " + data + " WHERE FOSZAM = " + _azonosító.id;
+                    command.CommandText = "UPDATE L_FOGLAL SET " + data + " WHERE FOSZAM = " + _azonosító.ID;
 
                     try { command.ExecuteNonQuery(); }
                     catch (SqlException q) { MessageBox.Show("Foglalás_ÚjVizsgalap -> adat2 hiba:\n" + q.Message); }
                 }
 
-                if (laborconnection.State != System.Data.ConnectionState.Open) return false;
+                if (laborconnection.State != ConnectionState.Open) return false;
 
                 laborconnection.Close();
                 return true;
             }
         }
 
-        public bool Foglalás_Hozzáadás(Foglalás _foglalás)
+        public bool Foglalás_Hozzáadás(FOGLALAS _foglalás)
         {
             lock (LaborLock)
             {
@@ -1404,8 +1440,8 @@ namespace Labor
 
                 command = laborconnection.CreateCommand();
                 command.CommandText = "INSERT INTO L_FOGLAL (FONEVE, FOFOHO, FOTIPU, FOFENE, FODATE, FOFAJT)" +
-                                    " VALUES('" + _foglalás.név + "', " + _foglalás.hordók_száma + ", '" + _foglalás.típus + "', '"
-                                    + _foglalás.készítő + "', '" + _foglalás.idő + "', '" + _foglalás.típus + "')";
+                                    " VALUES('" + _foglalás.Nev + "', " + _foglalás.HordokSzama + ", '" + _foglalás.Tipus + "', '"
+                                    + _foglalás.Keszito + "', '" + _foglalás.Ido + "', '" + _foglalás.Tipus + "')";
 
                 try { command.ExecuteNonQuery(); }
                 catch (Exception e) { MessageBox.Show(e.Message); return false; }
@@ -1416,27 +1452,27 @@ namespace Labor
             }
         }
 
-        public bool Foglalás_Módosítás(Foglalás _eredeti, Foglalás _új)
+        public bool Foglalás_Módosítás(FOGLALAS _eredeti, FOGLALAS _új)
         {
             lock (LaborLock)
             {
                 SqlCommand command;
-                string where = A(new string[] { Update<int>("FOSZAM", _eredeti.id)});
+                string where = A(new[] { Update("FOSZAM", _eredeti.ID)});
 
                 laborconnection.Open();
 
                 command = laborconnection.CreateCommand();
-                command.CommandText = "UPDATE L_FOGLAL SET FONEVE='" + _új.név + "', FOTIPU= '" + _új.típus + "' WHERE " + where + ";";
+                command.CommandText = "UPDATE L_FOGLAL SET FONEVE='" + _új.Nev + "', FOTIPU= '" + _új.Tipus + "' WHERE " + where + ";";
                 try { command.ExecuteNonQuery(); command.Dispose(); }
                 catch (SqlException q) { MessageBox.Show("Foglalás Módosítás hiba:\n" + q.Message); }
-                if (laborconnection.State != System.Data.ConnectionState.Open) return false;
+                if (laborconnection.State != ConnectionState.Open) return false;
                 laborconnection.Close();
                 return true;
             }
         }
 
 
-        public bool Foglalás_Törlés(Foglalás _azonosító)
+        public bool Foglalás_Törlés(FOGLALAS _azonosító)
         {
             lock (LaborLock)
             {
@@ -1445,7 +1481,7 @@ namespace Labor
                 laborconnection.Open();
 
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "DELETE FROM L_FOGLAL WHERE FOSZAM = " + _azonosító.id + "; UPDATE L_HORDO SET FOSZAM = NULL WHERE FOSZAM = " + _azonosító.id;
+                command.CommandText = "DELETE FROM L_FOGLAL WHERE FOSZAM = " + _azonosító.ID + "; UPDATE L_HORDO SET FOSZAM = NULL WHERE FOSZAM = " + _azonosító.ID;
                 if (command.ExecuteNonQuery() == 0) found = false;
 
                 command.Dispose();
@@ -1455,35 +1491,35 @@ namespace Labor
             }
         }
 
-        public List<Sarzs> Sarzsok(Vizsgalap_Szűrő _szűrő)
+        public List<SARZS> Sarzsok(VIZSGALAP_SZURO _szűrő)
         {
             lock (LaborLock)
             {
-                List<Sarzs> value = new List<Sarzs>();
+                List<SARZS> value = new List<SARZS>();
 
-                string Filter = A(new string[]
+                string Filter = A(new[]
                 {
-                    Is(_szűrő.adatok1.gyümölcsfajta, "VIFAJT"),
-                    Is(_szűrő.adatok1.hordótípus, "VIHOTI"),
-                    Is(_szűrő.adatok1.megrendelő, "VIMEGR"),
-                    Is(_szűrő.adatok1.származási_ország, "VISZOR"), 
-                    Is(_szűrő.adatok1.műszak_jele, "VIMUJE"),
-                    Is(_szűrő.adatok1.töltőgép_száma, "VITOGE"),
-                    Is(_szűrő.adatok1.termékkód, "VITEKO"),
-                    BetweenString(_szűrő.adatok2.sarzs, "CAST( VISARZ AS smallint)"),
-                    BetweenString(_szűrő.adatok2.hordó_id, "VIHOSZ"),
+                    Is(_szűrő.adatok1.GyumolcsFajta, "VIFAJT"),
+                    Is(_szűrő.adatok1.HordoTipus, "VIHOTI"),
+                    Is(_szűrő.adatok1.Megrendelo, "VIMEGR"),
+                    Is(_szűrő.adatok1.SzarmazasiOrszag, "VISZOR"), 
+                    Is(_szűrő.adatok1.MuszakJele, "VIMUJE"),
+                    Is(_szűrő.adatok1.ToltogepSzama, "VITOGE"),
+                    Is(_szűrő.adatok1.Termekkod, "VITEKO"),
+                    BetweenString(_szűrő.adatok2.Sarzs, "CAST( VISARZ AS smallint)"),
+                    BetweenString(_szűrő.adatok2.HordoID, "VIHOSZ"),
 
-                    Between<double>(_szűrő.adatok2.brix, "VIBRIX") ,
-                    Between<double>(_szűrő.adatok2.citromsav, "VICSAV") ,
-                    Between<double>(_szűrő.adatok2.borkősav, "VIBOSA") ,
-                    Between<double>(_szűrő.adatok2.ph, "VIPEHA") ,
-                    Between<double>(_szűrő.adatok2.bostwick, "VIBOST") ,
+                    Between(_szűrő.adatok2.Brix, "VIBRIX") ,
+                    Between(_szűrő.adatok2.Citromsav, "VICSAV") ,
+                    Between(_szűrő.adatok2.Borkosav, "VIBOSA") ,
+                    Between(_szűrő.adatok2.Ph, "VIPEHA") ,
+                    Between(_szűrő.adatok2.Bostwick, "VIBOST") ,
 
-                    Between<Int16>(_szűrő.adatok2.aszkorbinsav, "VIASAV") ,
-                    Between<Int16>(_szűrő.adatok2.nettó_töltet, "VINETO") ,
-                    Between<Int16>(_szűrő.adatok2.hőkezelés, "VIHOKE") ,
-                    Between<Int16>(_szűrő.adatok2.citromsav_ad, "VICIAD") ,
-                    Between<Int16>(_szűrő.adatok2.szita_átmérő, "VISZAT") ,
+                    Between(_szűrő.adatok2.Aszkorbinsav, "VIASAV") ,
+                    Between(_szűrő.adatok2.NettoToltet, "VINETO") ,
+                    Between(_szűrő.adatok2.Hokezeles, "VIHOKE") ,
+                    Between(_szűrő.adatok2.CitromsavAd, "VICIAD") ,
+                    Between(_szűrő.adatok2.SzitaAtmero, "VISZAT") 
 
                 });
 
@@ -1521,7 +1557,7 @@ namespace Labor
                     if (found) continue;
 
                     command.Dispose();
-                    string where = A(new string[] { Update<string>("HOTEKO", item.min), Update<string>("HOSARZ", item.max)});
+                    string where = A(new[] { Update("HOTEKO", item.min), Update("HOSARZ", item.max)});
 
                     command = laborconnection.CreateCommand();
                     command.CommandText = "SELECT HOTEKO, HOSARZ, SUM(case when FOSZAM IS NULL then 0 else 1 end), SUM(case when FOSZAM IS NULL then 1 else 0 end) " +
@@ -1531,39 +1567,39 @@ namespace Labor
                     reader = command.ExecuteReader();
                     while (reader.Read())
                     {
-                       value.Add( new Sarzs(reader.GetString(0),reader.GetString(1), reader.GetInt32(2), reader.GetInt32(3)));
+                       value.Add( new SARZS(reader.GetString(0),reader.GetString(1), reader.GetInt32(2), reader.GetInt32(3)));
                     }
                 }
 
                 laborconnection.Close();
 
-                IComparer<Sarzs> Comparer = new SortBySarzs();
+                IComparer<SARZS> Comparer = new SortBySarzs();
                 value.Sort(Comparer);
 
                 return value;
             }
         }
 
-        public class SortBySarzs : IComparer<Sarzs>
+        public class SortBySarzs : IComparer<SARZS>
         {
-            public int Compare(Sarzs v1, Sarzs v2)
+            public int Compare(SARZS v1, SARZS v2)
             {
-                int s1 = Convert.ToInt32(v1.sarzs);
-                int s2 = Convert.ToInt32(v2.sarzs);
-                int t1 = Convert.ToInt32(v1.termékkód);
-                int t2 = Convert.ToInt32(v2.termékkód);
+                int s1 = Convert.ToInt32(v1.Sarzs);
+                int s2 = Convert.ToInt32(v2.Sarzs);
+                int t1 = Convert.ToInt32(v1.Termekkod);
+                int t2 = Convert.ToInt32(v2.Termekkod);
 
                 if (t1 < t2) { return -1; }
-                else if (t1 == t2)
+                if (t1 == t2)
                 {
                     if (s1 < s2) { return -1; }
                     return 1;
                 }
-                else { return 0; }
+                return 0;
             }
         }
 
-        public List<string> Foglalás_Feltöltés_Ellenőrzés(Import _import)
+        public List<string> Foglalás_Feltöltés_Ellenőrzés(IMPORT _import)
         {
             List<string> hibák = new List<string>();
 
@@ -1575,7 +1611,7 @@ namespace Labor
                 {
                     laborconnection.Open();
 
-            foreach (Import.Import_Hordo item in _import.ImportHordok)
+            foreach (IMPORT.IMPORTHORDO item in _import.ImportHordok)
             {
                 string iProdId = "12" + item.Termekkod.Substring(0, 2) + "01" + item.GyartasiEv + "_0" + item.GyartasiEv + item.Hordoszam;
                 string serial_nr = null;
@@ -1596,19 +1632,16 @@ namespace Labor
                         hibák.Add(item.Termekkod + " " + item.Hordoszam + " -nincs ilyen hordó");
                             continue;
                     }
-                    else
-                    {
-                        command = new SqlCommand("SELECT propstr FROM folyoprops WHERE (serial_nr= " + serial_nr + " ) AND (code=3)");
-                        command.Connection = marillenconnection;
-                        reader = command.ExecuteReader();
-                        while (reader.Read())
-                        {
-                                visarz = reader.GetString(0);
-                            }
-                    reader.Close();
+                command = new SqlCommand("SELECT propstr FROM folyoprops WHERE (serial_nr= " + serial_nr + " ) AND (code=3)");
+                command.Connection = marillenconnection;
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    visarz = reader.GetString(0);
                 }
+                reader.Close();
 
-                        if (visarz != null)
+                if (visarz != null)
                 {
                             command = new SqlCommand("SELECT vigyev FROM l_vizslap WHERE (viteko=" + item.Termekkod + ") AND (visarz= " + visarz + ");");
                     command.Connection = laborconnection;
@@ -1634,11 +1667,11 @@ namespace Labor
             return hibák;
         }
 
-        public List<string> Foglalás_Sarzsok(Import _import)
+        public List<string> Foglalás_Sarzsok(IMPORT _import)
         {
             List<string> sarzsok = new List<string>();
 
-            foreach (Import.Import_Hordo item in _import.ImportHordok)
+            foreach (IMPORT.IMPORTHORDO item in _import.ImportHordok)
             {
                 string iProdId = "12" + item.Termekkod.Substring(0, 2) + "01" + item.GyartasiEv + "_0" + item.GyartasiEv + item.Hordoszam;
                 string serial_nr = null;
@@ -1700,9 +1733,9 @@ namespace Labor
         /// Meg kell jeleníteni a rendszerben elmentett foglalásokat, amelyek még nem kerültek kiszállításra, nincs a szállítólevél mezőjük kitöltve (L_FOGLAL.SZSZAM=NULL).
         /// TODO: Ide majd kell vmi ellenőrzés de még nincs kitalálva
         /// </summary>
-        public List<Foglalás> Konszingnáció_Foglalások()
+        public List<FOGLALAS> Konszingnáció_Foglalások()
         {
-            List<Foglalás> data = new List<Foglalás>();
+            List<FOGLALAS> data = new List<FOGLALAS>();
 
             lock (LaborLock)
             {
@@ -1710,7 +1743,7 @@ namespace Labor
 
                 SqlCommand command = laborconnection.CreateCommand();
                 
-                command.CommandText = "SELECT FOSZAM, FONEVE, FOFOHO, FOTIPU, FOFENE, FODATE FROM L_FOGLAL WHERE SZSZAM IS NULL";
+                command.CommandText = "SELECT FOSZAM, FONEVE, FOFOHO, FOTIPU, FOFENE, FODATE FROM L_FOGLAL WHERE SZSZAM IS NULL order by foszam desc ";
 
                 //teszteléshez
                 /*                
@@ -1721,7 +1754,7 @@ namespace Labor
                 while (reader.Read())
                 {
                     int c = -1;
-                    Foglalás temp_foglalás = new Foglalás(reader.GetInt32(++c), reader.GetString(++c), reader.GetInt16(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c));
+                    FOGLALAS temp_foglalás = new FOGLALAS(reader.GetInt32(++c), reader.GetString(++c), reader.GetInt16(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c));
                     data.Add(temp_foglalás);
                 }
                 command.Dispose();
@@ -1733,9 +1766,9 @@ namespace Labor
         /// <summary>
         /// Itt lehet megnézni a foglaláshoz tartozó hordókat.
         /// </summary>
-        public List<Hordó> Konszignáció_Hordók(int _foglalás_száma)
+        public List<HORDO> Konszignáció_Hordók(int _foglalás_száma)
         {
-            List<Hordó> value = new List<Hordó>();
+            List<HORDO> value = new List<HORDO>();
             lock (LaborLock)
             {
                 laborconnection.Open();
@@ -1746,7 +1779,7 @@ namespace Labor
                 while (reader.Read())
                 {
                     int c = -1;
-                    value.Add(new Hordó(reader.GetString(++c), reader.GetString(++c), reader.GetString(++c), _foglalás_száma, reader.GetString(++c),reader.GetDecimal(++c),reader.GetString(++c)));
+                    value.Add(new HORDO(reader.GetString(++c), reader.GetString(++c), reader.GetString(++c), _foglalás_száma, reader.GetString(++c),reader.GetDecimal(++c),reader.GetString(++c)));
                 }
 
                 command.Dispose();
@@ -1755,7 +1788,7 @@ namespace Labor
             return value;
         }
 
-        public int Konszignáció_ÚJSzállítólevél(KonszignacioSzallitolevel _szállítólevél)
+        public int Konszignáció_ÚJSzállítólevél(KONSZIGNACIOSZALLITOLEVEL _szállítólevél)
         {
             lock (LaborLock)
             {
@@ -1853,7 +1886,7 @@ namespace Labor
         /// <summary>
         /// a kinyomtatott foglalások szállítólevél mezőjét (L_FOGLAL.SZSZAM) kitölti a megadott értékkel hogy a következő foglalás alkalmával ne vegye őket figyelembe 
         /// </summary>
-        public bool Konszignáció_FoglalásokKiszállítása(int _szállítólevélszám, List<Foglalás> _foglalások)
+        public bool Konszignáció_FoglalásokKiszállítása(int _szállítólevélszám, List<FOGLALAS> _foglalások)
         {
             string where = null;
 
@@ -1861,11 +1894,11 @@ namespace Labor
             {
                 if(i!=_foglalások.Count-1)
                 {
-                    where += Update<int>("FOSZAM", _foglalások[i].id) + " or ";
+                    where += Update("FOSZAM", _foglalások[i].ID) + " or ";
                 }
                 else
                 {
-                    where += Update<int>("FOSZAM", _foglalások[i].id);
+                    where += Update("FOSZAM", _foglalások[i].ID);
                 }
             }
 
@@ -1878,7 +1911,7 @@ namespace Labor
                 {
                     command.ExecuteNonQuery();
                 }
-                catch (System.Exception)
+                catch (Exception)
                 {
                     return false;
                 }
@@ -1893,16 +1926,16 @@ namespace Labor
         #endregion
 
         #region MinőségBizonylat
-        public List<string> MinőségBizonylatHotekok(List<Foglalás> _foglalások)
+        public List<string> MinőségBizonylatHotekok(List<FOGLALAS> _foglalások)
         {
             List<string> hotekok = new List<string>();
             lock (LaborLock)
             {
                 string where = null;
                 laborconnection.Open();
-                foreach (Foglalás item in _foglalások)
+                foreach (FOGLALAS item in _foglalások)
                 {
-                    where += " l_hordo.foszam = '" + item.id + "' or";
+                    where += " l_hordo.foszam = '" + item.ID + "' or";
                 }
                 where = where.Substring(0, where.Length - 2);
                 SqlCommand command = laborconnection.CreateCommand();
@@ -1919,7 +1952,7 @@ namespace Labor
         }
 
 
-        public MINOSEGBIZONYLAT.VIZSGALATILAP MinőségBizonylat( List<Foglalás> _foglalások, string _hoteko )
+        public MINOSEGBIZONYLAT.VIZSGALATILAP MinőségBizonylat( List<FOGLALAS> _foglalások, string _hoteko )
         {
             MINOSEGBIZONYLAT.VIZSGALATILAP data = new MINOSEGBIZONYLAT.VIZSGALATILAP( );
 
@@ -1929,9 +1962,9 @@ namespace Labor
                 SqlCommand command = laborconnection.CreateCommand();
 
                 string where = null;
-                foreach (Foglalás item in _foglalások)
+                foreach (FOGLALAS item in _foglalások)
                 {
-                    where += " l_hordo.foszam = '" + item.id + "' or";
+                    where += " l_hordo.foszam = '" + item.ID + "' or";
                 }
                 where = where.Substring(0, where.Length - 2);
 
@@ -1953,9 +1986,9 @@ namespace Labor
                         data.Ph.max = (((double?)GetNullable<decimal>(reader, 5) > data.Ph.max || data.Ph.max == null) ? (double?)GetNullable<decimal>(reader, 5) : data.Ph.max);
                         data.Bostwick.min = (((double?)GetNullable<decimal>(reader, 6) < data.Bostwick.min || data.Bostwick.min == null) ? (double?)GetNullable<decimal>(reader, 6) : data.Bostwick.min);
                         data.Bostwick.max = (((double?)GetNullable<decimal>(reader, 7) > data.Bostwick.max || data.Bostwick.max == null) ? (double?)GetNullable<decimal>(reader, 7) : data.Bostwick.max);
-                        data.CitromsavAdagolas.min = (((double?)GetNullable<Int16>(reader, 8) < data.CitromsavAdagolas.min || data.CitromsavAdagolas.min == null) ? (double?)GetNullable<Int16>(reader, 8) : data.CitromsavAdagolas.min);
-                        data.CitromsavAdagolas.max = (((double?)GetNullable<Int16>(reader, 9) > data.CitromsavAdagolas.max || data.CitromsavAdagolas.max == null) ? (double?)GetNullable<Int16>(reader, 9) : data.CitromsavAdagolas.max);
-                        data.Aszkorbinsav = (((double?)GetNullable<Int16>(reader, 10) > data.Aszkorbinsav || data.Aszkorbinsav == null) ? (double?)GetNullable<Int16>(reader, 10) : data.Aszkorbinsav);
+                        data.CitromsavAdagolas.min = (((double?)GetNullable<Int16>(reader, 8) < data.CitromsavAdagolas.min || data.CitromsavAdagolas.min == null) ? GetNullable<Int16>(reader, 8) : data.CitromsavAdagolas.min);
+                        data.CitromsavAdagolas.max = (((double?)GetNullable<Int16>(reader, 9) > data.CitromsavAdagolas.max || data.CitromsavAdagolas.max == null) ? GetNullable<Int16>(reader, 9) : data.CitromsavAdagolas.max);
+                        data.Aszkorbinsav = (((double?)GetNullable<Int16>(reader, 10) > data.Aszkorbinsav || data.Aszkorbinsav == null) ? GetNullable<Int16>(reader, 10) : data.Aszkorbinsav);
                         data.Hoteko = reader.GetString(11);
                         data.Sarzs += data.Sarzs == null ? reader.GetString(12) : ", " + reader.GetString(12);
                         data.Megnevezes = reader.GetString(13);
@@ -2023,20 +2056,20 @@ namespace Labor
         #endregion
 
         #region Kiszállítások
-        public List<Kiszállítás> Kiszállítások()
+        public List<KISZALLITAS> Kiszállítások()
         {
-            List<Kiszállítás> value = new List<Kiszállítás>();
+            List<KISZALLITAS> value = new List<KISZALLITAS>();
 
             lock (LaborLock)
             {
                 laborconnection.Open();
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT szszam, szszsz,szfene,szdate, szvevo,fofoho FROM l_szlev ORDER BY szszam";
+                command.CommandText = "SELECT szszam, szszsz,szfene,szdate, szvevo,fofoho FROM l_szlev ORDER BY szszam desc";
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    value.Add( new Kiszállítás(reader.GetInt32(0),reader.GetString(1),reader.GetString(2),reader.GetString(3),reader.GetString(4),reader.GetInt16(5)));
+                    value.Add( new KISZALLITAS(reader.GetInt32(0),reader.GetString(1),reader.GetString(2),reader.GetString(3),reader.GetString(4),reader.GetInt16(5)));
                 }
                 command.Dispose();
                 laborconnection.Close();
@@ -2065,9 +2098,9 @@ namespace Labor
         #endregion
 
         #region Felhasználók
-        public List<Felhasználó> Felhasználók()
+        public List<FELHASZNALO> Felhasználók()
         {
-            List<Felhasználó> values = new List<Felhasználó>();
+            List<FELHASZNALO> values = new List<FELHASZNALO>();
 
             lock(LaborLock)
             {
@@ -2079,7 +2112,7 @@ namespace Labor
                     SqlDataReader reader = command.ExecuteReader();
                     while (reader.Read())
                     {
-                        values.Add(new Felhasználó(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5), null));
+                        values.Add(new FELHASZNALO(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5), null));
                     }
                 }
                 catch (SqlException q) { MessageBox.Show("Összes Felhasználó lekérdezés hiba:\n" + q.Message); }
@@ -2091,9 +2124,9 @@ namespace Labor
             return values;
         }
 
-        public Felhasználó? Felhasználó(string _felhasználó_név)
+        public FELHASZNALO? Felhasználó(string _felhasználó_név)
         {
-            Felhasználó? felhasználó = null;
+            FELHASZNALO? felhasználó = null;
 
             lock (LaborLock)
             {
@@ -2105,14 +2138,14 @@ namespace Labor
                     SqlDataReader reader = command.ExecuteReader();
                     while (reader.Read())
                     {
-                        Felhasználó.Jogosultságok.Műveletek törzsadatok = new Labor.Felhasználó.Jogosultságok.Műveletek(VB(reader.GetString(6)), VB(reader.GetString(7)), VB(reader.GetString(8)));
-                        Felhasználó.Jogosultságok.Műveletek vizsgálatok = new Labor.Felhasználó.Jogosultságok.Műveletek(VB(reader.GetString(9)), VB(reader.GetString(10)), VB(reader.GetString(11)));
-                        Felhasználó.Jogosultságok.Műveletek foglalások = new Labor.Felhasználó.Jogosultságok.Műveletek(VB(reader.GetString(12)), VB(reader.GetString(13)), VB(reader.GetString(14)));
-                        Felhasználó.Jogosultságok.Műveletek felhasználók = new Labor.Felhasználó.Jogosultságok.Műveletek(VB(reader.GetString(17)), VB(reader.GetString(18)), VB(reader.GetString(19)));
+                        FELHASZNALO.JOGOSULTSAGOK.Muveletek törzsadatok = new FELHASZNALO.JOGOSULTSAGOK.Muveletek(VB(reader.GetString(6)), VB(reader.GetString(7)), VB(reader.GetString(8)));
+                        FELHASZNALO.JOGOSULTSAGOK.Muveletek vizsgálatok = new FELHASZNALO.JOGOSULTSAGOK.Muveletek(VB(reader.GetString(9)), VB(reader.GetString(10)), VB(reader.GetString(11)));
+                        FELHASZNALO.JOGOSULTSAGOK.Muveletek foglalások = new FELHASZNALO.JOGOSULTSAGOK.Muveletek(VB(reader.GetString(12)), VB(reader.GetString(13)), VB(reader.GetString(14)));
+                        FELHASZNALO.JOGOSULTSAGOK.Muveletek felhasználók = new FELHASZNALO.JOGOSULTSAGOK.Muveletek(VB(reader.GetString(17)), VB(reader.GetString(18)), VB(reader.GetString(19)));
 
-                        Felhasználó.Jogosultságok jogosultságok = new Labor.Felhasználó.Jogosultságok(törzsadatok, vizsgálatok, foglalások, VB(reader.GetString(15)), VB(reader.GetString(16)), felhasználók);
+                        FELHASZNALO.JOGOSULTSAGOK jogosultságok = new FELHASZNALO.JOGOSULTSAGOK(törzsadatok, vizsgálatok, foglalások, VB(reader.GetString(15)), VB(reader.GetString(16)), felhasználók);
 
-                        felhasználó = new Felhasználó(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), _felhasználó_név, reader.GetString(5), jogosultságok);
+                        felhasználó = new FELHASZNALO(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), _felhasználó_név, reader.GetString(5), jogosultságok);
                     }
                     reader.Close();
                 }
@@ -2125,14 +2158,14 @@ namespace Labor
             return felhasználó;
         }
 
-        public bool Felhasználó_Hozzáadás(Felhasználó _f)
+        public bool Felhasználó_Hozzáadás(FELHASZNALO _f)
         {            
-            string data = V_Apostrophe(new string[] { _f.név1, _f.név2, _f.beosztás1, _f.beosztás2, _f.felhasználó_név, _f.jelszó,
-                BV(_f.jogosultságok.Value.törzsadatok.hozzáadás), BV(_f.jogosultságok.Value.törzsadatok.módosítás), BV(_f.jogosultságok.Value.törzsadatok.törlés),
-                BV(_f.jogosultságok.Value.vizsgálatok.hozzáadás), BV(_f.jogosultságok.Value.vizsgálatok.módosítás), BV(_f.jogosultságok.Value.vizsgálatok.törlés),
-                BV(_f.jogosultságok.Value.foglalások.hozzáadás), BV(_f.jogosultságok.Value.foglalások.módosítás), BV(_f.jogosultságok.Value.foglalások.törlés),
-                BV(_f.jogosultságok.Value.konszignáció_nyomtatás), BV(_f.jogosultságok.Value.kiszállítások_törlés),
-                BV(_f.jogosultságok.Value.felhasználók.hozzáadás), BV(_f.jogosultságok.Value.felhasználók.módosítás), BV(_f.jogosultságok.Value.felhasználók.törlés) });
+            string data = V_Apostrophe(new[] { _f.Nev1, _f.Nev2, _f.Beosztas1, _f.Beosztas2, _f.FelhasznaloNev, _f.Jelszo,
+                BV(_f.Jogosultsagok.Value.Torzsadatok.Hozzaadas), BV(_f.Jogosultsagok.Value.Torzsadatok.Modositas), BV(_f.Jogosultsagok.Value.Torzsadatok.Torles),
+                BV(_f.Jogosultsagok.Value.Vizsgalatok.Hozzaadas), BV(_f.Jogosultsagok.Value.Vizsgalatok.Modositas), BV(_f.Jogosultsagok.Value.Vizsgalatok.Torles),
+                BV(_f.Jogosultsagok.Value.Foglalasok.Hozzaadas), BV(_f.Jogosultsagok.Value.Foglalasok.Modositas), BV(_f.Jogosultsagok.Value.Foglalasok.Torles),
+                BV(_f.Jogosultsagok.Value.KonszignacioNyomtatas), BV(_f.Jogosultsagok.Value.KiszallitasokTorlese),
+                BV(_f.Jogosultsagok.Value.Felhasznalok.Hozzaadas), BV(_f.Jogosultsagok.Value.Felhasznalok.Modositas), BV(_f.Jogosultsagok.Value.Felhasznalok.Torles) });
 
             lock (LaborLock)
             {
@@ -2153,14 +2186,14 @@ namespace Labor
             return true;
         }
 
-        public bool Felhasználó_Módosítás(string _felhasználó_név, Felhasználó _f)
+        public bool Felhasználó_Módosítás(string _felhasználó_név, FELHASZNALO _f)
         {
-            string data = V(new string[] { Update<string>("FEFEN1", _f.név1),  Update<string>("FEFEN2", _f.név2), Update<string>("FEBEO1", _f.beosztás1), Update<string>("FEBEO2", _f.beosztás2), Update<string>("FEJELS", _f.jelszó),
-                Update<string>("FETOHO", BV(_f.jogosultságok.Value.törzsadatok.hozzáadás)), Update<string>("FETORO", BV(_f.jogosultságok.Value.törzsadatok.módosítás)), Update<string>("FETOTO", BV(_f.jogosultságok.Value.törzsadatok.törlés)),
-                Update<string>("FEVIHO", BV(_f.jogosultságok.Value.vizsgálatok.hozzáadás)), Update<string>("FEVIRO", BV(_f.jogosultságok.Value.vizsgálatok.módosítás)), Update<string>("FEVITO", BV(_f.jogosultságok.Value.vizsgálatok.törlés)),
-                Update<string>("FEFOKE", BV(_f.jogosultságok.Value.foglalások.hozzáadás)), Update<string>("FEFOFE", BV(_f.jogosultságok.Value.foglalások.módosítás)), Update<string>("FEFOTO", BV(_f.jogosultságok.Value.foglalások.törlés)),
-                Update<string>("FEKONY", BV(_f.jogosultságok.Value.konszignáció_nyomtatás)), Update<string>("FEKITO", BV(_f.jogosultságok.Value.kiszállítások_törlés)),
-                Update<string>("FEFEHO", BV(_f.jogosultságok.Value.felhasználók.hozzáadás)), Update<string>("FEFERO", BV(_f.jogosultságok.Value.felhasználók.módosítás)), Update<string>("FEFETO", BV(_f.jogosultságok.Value.felhasználók.törlés)) });
+            string data = V(new[] { Update("FEFEN1", _f.Nev1),  Update("FEFEN2", _f.Nev2), Update("FEBEO1", _f.Beosztas1), Update("FEBEO2", _f.Beosztas2), Update("FEJELS", _f.Jelszo),
+                Update("FETOHO", BV(_f.Jogosultsagok.Value.Torzsadatok.Hozzaadas)), Update("FETORO", BV(_f.Jogosultsagok.Value.Torzsadatok.Modositas)), Update("FETOTO", BV(_f.Jogosultsagok.Value.Torzsadatok.Torles)),
+                Update("FEVIHO", BV(_f.Jogosultsagok.Value.Vizsgalatok.Hozzaadas)), Update("FEVIRO", BV(_f.Jogosultsagok.Value.Vizsgalatok.Modositas)), Update("FEVITO", BV(_f.Jogosultsagok.Value.Vizsgalatok.Torles)),
+                Update("FEFOKE", BV(_f.Jogosultsagok.Value.Foglalasok.Hozzaadas)), Update("FEFOFE", BV(_f.Jogosultsagok.Value.Foglalasok.Modositas)), Update("FEFOTO", BV(_f.Jogosultsagok.Value.Foglalasok.Torles)),
+                Update("FEKONY", BV(_f.Jogosultsagok.Value.KonszignacioNyomtatas)), Update("FEKITO", BV(_f.Jogosultsagok.Value.KiszallitasokTorlese)),
+                Update("FEFEHO", BV(_f.Jogosultsagok.Value.Felhasznalok.Hozzaadas)), Update("FEFERO", BV(_f.Jogosultsagok.Value.Felhasznalok.Modositas)), Update("FEFETO", BV(_f.Jogosultsagok.Value.Felhasznalok.Torles)) });
 
             lock (LaborLock)
             {
@@ -2201,7 +2234,7 @@ namespace Labor
         #region Sufni
         private class AdminForm : Form
         {
-            public string Data = null;
+            public string Data;
 
             #region Declaration
             private TextBox box_név1;
@@ -2223,11 +2256,11 @@ namespace Labor
 
             private void InitializeForm()
             {
-                ClientSize = new System.Drawing.Size(400, 200 + 64);
+                ClientSize = new Size(400, 200 + 64);
                 MaximumSize = ClientSize;
                 Text = "Admin adatai";
                 StartPosition = FormStartPosition.CenterScreen;
-                FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+                FormBorderStyle = FormBorderStyle.FixedToolWindow;
             }
 
             private void InitializeContent()
@@ -2235,7 +2268,7 @@ namespace Labor
                 const int offset = 16;
                 const int spacer = 24;
                 const int group_spacer = 8;
-                Tuple<string, int, int>[] labels = new Tuple<string, int, int>[]{
+                Tuple<string, int, int>[] labels = {
                     new Tuple<string, int, int>("Név", 2, 1),
                     new Tuple<string, int, int>("Beosztás", 2, 1),
                     new Tuple<string, int, int>("Belépési kód", 1, 0),
@@ -2268,8 +2301,8 @@ namespace Labor
                 //
 
                 Button rendben = new Button();
-                rendben.Size = new System.Drawing.Size(96, 32);
-                rendben.Location = new System.Drawing.Point(ClientSize.Width - rendben.Width - spacer, ClientSize.Height - rendben.Height - spacer);
+                rendben.Size = new Size(96, 32);
+                rendben.Location = new Point(ClientSize.Width - rendben.Width - spacer, ClientSize.Height - rendben.Height - spacer);
                 rendben.Click += rendben_Click;
                 rendben.Text = "Rendben";
 
@@ -2294,14 +2327,14 @@ namespace Labor
             {
                 if (box_jelszó.Text != box_jelszó_mégegyszer.Text) { MessageBox.Show("Nem egyezik a két jelszó!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
 
-                if (!Database.IsCorrectSQLText(box_név1.Text)) { MessageBox.Show("Nem megengedett karakter a név1 mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-                if (!Database.IsCorrectSQLText(box_név2.Text)) { MessageBox.Show("Nem megengedett karakter a név2 mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-                if (!Database.IsCorrectSQLText(box_beosztás1.Text)) { MessageBox.Show("Nem megengedett karakter a beosztás1 mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-                if (!Database.IsCorrectSQLText(box_beosztás2.Text)) { MessageBox.Show("Nem megengedett karakter a beosztás2 mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-                if (!Database.IsCorrectSQLText(box_felhasználó_név.Text)) { MessageBox.Show("Nem megengedett karakter a felhasználó név mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-                if (!Database.IsCorrectSQLText(box_jelszó.Text)) { MessageBox.Show("Nem megengedett karakter a jelszó mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                if (!IsCorrectSQLText(box_név1.Text)) { MessageBox.Show("Nem megengedett karakter a név1 mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                if (!IsCorrectSQLText(box_név2.Text)) { MessageBox.Show("Nem megengedett karakter a név2 mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                if (!IsCorrectSQLText(box_beosztás1.Text)) { MessageBox.Show("Nem megengedett karakter a beosztás1 mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                if (!IsCorrectSQLText(box_beosztás2.Text)) { MessageBox.Show("Nem megengedett karakter a beosztás2 mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                if (!IsCorrectSQLText(box_felhasználó_név.Text)) { MessageBox.Show("Nem megengedett karakter a felhasználó név mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+                if (!IsCorrectSQLText(box_jelszó.Text)) { MessageBox.Show("Nem megengedett karakter a jelszó mezőben!", "Hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
 
-                Data = V_Apostrophe(new string[] { box_név1.Text, box_név2.Text, box_beosztás1.Text, box_beosztás2.Text, box_felhasználó_név.Text, box_jelszó.Text }) + 
+                Data = V_Apostrophe(new[] { box_név1.Text, box_név2.Text, box_beosztás1.Text, box_beosztás2.Text, box_felhasználó_név.Text, box_jelszó.Text }) + 
                     ", 'I', 'I', 'I',   'I', 'I', 'I',   'I', 'I', 'I',   'I',   'I',   'I', 'I', 'I'";
 
                 Close();

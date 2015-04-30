@@ -7,7 +7,7 @@ namespace Labor
     public sealed class LoginForm : Form
     {
         #region Declaration
-        public Felhasználó? felhasználó = null;
+        public FELHASZNALO? felhasználó;
 
         private TextBox box_felhasználónév;
         private TextBox box_jelszó;
@@ -30,7 +30,7 @@ namespace Labor
             MaximumSize = ClientSize;
             Text = "Labor Belépés";
             StartPosition = FormStartPosition.CenterScreen;
-            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            FormBorderStyle = FormBorderStyle.FixedToolWindow;
         }
 
         private void InitializeContent()
@@ -44,11 +44,11 @@ namespace Labor
             rendben.Click += rendben_Click;
             rendben.Text = "Rendben";
 
-            this.KeyPreview = true;
-            this.KeyDown += LoginForm_KeyDown;
+            KeyPreview = true;
+            KeyDown += LoginForm_KeyDown;
 
 
-            string[] labels = new string[] { "Felhasználónév", "Jelszó", "Szerver elérése", "Marillen adatbázis", "Labor adatbázis" };
+            string[] labels = { "Felhasználónév", "Jelszó", "Szerver elérése", "Marillen adatbázis", "Labor adatbázis" };
             for(int current = 0; current < labels.Length; ++current)
             { Label label = MainForm.createlabel(labels[current] + ":", offset, (current < 2 ? current : current + 1) * spacer + offset, this); }
             box_felhasználónév      = MainForm.createtextbox(128 + 32, 0 * spacer + offset, 15, 15 * 8, this, CharacterCasing.Normal);
@@ -83,7 +83,7 @@ namespace Labor
 
             if (felhasználó != null)
             {
-                if (felhasználó.Value.jelszó == box_jelszó.Text)
+                if (felhasználó.Value.Jelszo == box_jelszó.Text)
                 {
                     Close();
                 }
@@ -112,7 +112,7 @@ namespace Labor
 
                 if (felhasználó != null)
                 {
-                    if (felhasználó.Value.jelszó == box_jelszó.Text)
+                    if (felhasználó.Value.Jelszo == box_jelszó.Text)
                     {
                         Close();
                     }

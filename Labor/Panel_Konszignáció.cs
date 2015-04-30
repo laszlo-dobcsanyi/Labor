@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
 
 namespace Labor
 {
-    public struct KonszignacioSzallitolevel
+    public struct KONSZIGNACIOSZALLITOLEVEL
     {
         public Int16 SzallitolevelSzam;
         public string Szallitolevel;
@@ -22,7 +23,7 @@ namespace Labor
         public string Iz;
         public string Illat;
 
-        public KonszignacioSzallitolevel(Int16 _SzallitolevelSzam,
+        public KONSZIGNACIOSZALLITOLEVEL(Int16 _SzallitolevelSzam,
                                          string _Szallitolevel, 
                                          string _FelhasznaloNev,
                                          string _ElszallitasIdeje, 
@@ -52,18 +53,18 @@ namespace Labor
         }
     }
 
-    public struct Konszignáció_TableIndexes
+    public struct KONSZIGNACIO_TABLEINDEXES
     {
-        public const int foglalás_száma = 0;
-        public const int foglalás_neve = 1;
-        public const int foglalt_hordók_száma = 2;
-        public const int foglalás_típusa = 3;
-        public const int készítette = 4;
-        public const int foglalás_ideje = 5;
-        public const int kijelölés = 6;
+        public const int Szam = 0;
+        public const int Nev = 1;
+        public const int HordokSzama = 2;
+        public const int Tipus = 3;
+        public const int Keszitette = 4;
+        public const int Ido = 5;
+        public const int Kijeloles = 6;
     }
 
-    public sealed class Panel_Konszignáció : Tokenized_Control<Foglalás>
+    public sealed class Panel_Konszignáció : Tokenized_Control<FOGLALAS>
     {
         #region Constructor
 
@@ -77,27 +78,31 @@ namespace Labor
         private void 
         InitializeContent()
         {
-            table = new DataGridView();
-            table.Dock = DockStyle.Left;
-            table.RowHeadersVisible = false;
-            table.AllowUserToResizeRows = false;
-            table.AllowUserToResizeColumns = false;
-            table.AllowUserToAddRows = false;
-            table.Width = (6 + 30 + 6 + 10 + 30 + 15 + 6) * 8 + 3;
-            table.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            table.DataSource = CreateSource();
+            table = new DataGridView
+            {
+                Dock = DockStyle.Left,
+                RowHeadersVisible = false,
+                AllowUserToResizeRows = false,
+                AllowUserToResizeColumns = false,
+                AllowUserToAddRows = false,
+                Width = (6 + 30 + 6 + 10 + 30 + 15 + 6)*8 + 3,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                DataSource = CreateSource()
+            };
             table.DataBindingComplete += table_DataBindingComplete;
             table.UserDeletingRow += table_UserDeletingRow;
             table.CellMouseUp += table_CellMouseUp;
 
-            Button btnNyomtatás = new Button();
-            btnNyomtatás.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
-            btnNyomtatás.Text = "Nyomtatás";
-            btnNyomtatás.Size = new System.Drawing.Size(128, 32);
+            Button btnNyomtatás = new Button
+            {
+                Anchor = AnchorStyles.Right | AnchorStyles.Bottom,
+                Text = "Nyomtatás",
+                Size = new Size(128, 32)
+            };
             btnNyomtatás.Location = new Point(ClientRectangle.Width - btnNyomtatás.Size.Width - 16,
                                             ClientRectangle.Height - btnNyomtatás.Height - 16);
-            btnNyomtatás.Enabled = Program.felhasználó.Value.jogosultságok.Value.konszignáció_nyomtatás ? true : false;
-            btnNyomtatás.Click += Nyomtatás_Click;
+            btnNyomtatás.Enabled = Program.felhasználó.Value.Jogosultsagok.Value.KonszignacioNyomtatas ? true : false;
+            btnNyomtatás.Click += Nyomtatas_Click;
 
             Controls.Add(table);
             Controls.Add(btnNyomtatás);
@@ -108,83 +113,81 @@ namespace Labor
         {
             data = new DataTable();
 
-            data.Columns.Add(new DataColumn("Száma", System.Type.GetType("System.Int32")));
-            data.Columns.Add(new DataColumn("Foglalás neve", System.Type.GetType("System.String")));
-            data.Columns.Add(new DataColumn("Hordók", System.Type.GetType("System.Int32")));
-            data.Columns.Add(new DataColumn("Típusa", System.Type.GetType("System.String")));
-            data.Columns.Add(new DataColumn("Készítette", System.Type.GetType("System.String")));
-            data.Columns.Add(new DataColumn("Foglalás ideje", System.Type.GetType("System.String")));
-            data.Columns.Add(new DataColumn("Kijelölés", System.Type.GetType("System.Boolean")));
+            data.Columns.Add(new DataColumn("Száma", Type.GetType("System.Int32")));
+            data.Columns.Add(new DataColumn("Foglalás neve", Type.GetType("System.String")));
+            data.Columns.Add(new DataColumn("Hordók", Type.GetType("System.Int32")));
+            data.Columns.Add(new DataColumn("Típusa", Type.GetType("System.String")));
+            data.Columns.Add(new DataColumn("Készítette", Type.GetType("System.String")));
+            data.Columns.Add(new DataColumn("Foglalás ideje", Type.GetType("System.String")));
+            data.Columns.Add(new DataColumn("Kijelölés", Type.GetType("System.Boolean")));
 
             return data;
         }
         #endregion
 
         #region Tokenizer
-        protected override void SetRow(DataRow _row, Foglalás _foglalás) { Foglalás.SetRow(_row, _foglalás); }
+        protected override void SetRow(DataRow _row, FOGLALAS _foglalás) { FOGLALAS.SetRow(_row, _foglalás); }
 
-        protected override bool SameKeys(Foglalás _1, Foglalás _2) { return Foglalás.SameKeys(_1, _2); }
+        protected override bool SameKeys(FOGLALAS _1, FOGLALAS _2) { return FOGLALAS.SameKeys(_1, _2); }
 
-        protected override bool SameKeys(Foglalás _1, DataRow _row) { return Foglalás.SameKeys(_1, _row); }
+        protected override bool SameKeys(FOGLALAS _1, DataRow _row) { return FOGLALAS.SameKeys(_1, _row); }
 
-        protected override List<Foglalás> CurrentData() { return Program.database.Konszingnáció_Foglalások(); }
+        protected override List<FOGLALAS> CurrentData() { return Program.database.Konszingnáció_Foglalások(); }
         #endregion
 
         #region EventHandlers
 
         private void
-        Nyomtatás_Click(object _sender, EventArgs _event)
+        Nyomtatas_Click( object _sender, EventArgs _event )
         {
-            List<Foglalás> Foglalások = new List<Foglalás>();
+            List<FOGLALAS> Foglalások = new List<FOGLALAS>( );
 
-            foreach (DataGridViewRow item in table.Rows)
+            foreach ( DataGridViewRow item in table.Rows )
             {
-                if( item.Cells[6].Value.ToString() != "" && Convert.ToBoolean(item.Cells[6].Value)== true)
+                if ( item.Cells[ 6 ].Value.ToString( ) != "" &&
+                    Convert.ToBoolean( item.Cells[ 6 ].Value ) )
                 {
-                    Foglalások.Add(new Foglalás((int)item.Cells[Foglalás.TableIndexes.id].Value,
-                                                (string)item.Cells[Foglalás.TableIndexes.név].Value,
-                                                (int)item.Cells[Foglalás.TableIndexes.hordók_száma].Value,
-                                                (string)item.Cells[Foglalás.TableIndexes.típus].Value,
-                                                (string)item.Cells[Foglalás.TableIndexes.készítő].Value,
-                                                (string)item.Cells[Foglalás.TableIndexes.idő].Value));
+                    Foglalások.Add( new FOGLALAS( ( int )item.Cells[ FOGLALAS.TABLEINDEXES.ID ].Value,
+                                                ( string )item.Cells[ FOGLALAS.TABLEINDEXES.Nev ].Value,
+                                                ( int )item.Cells[ FOGLALAS.TABLEINDEXES.HordokSzama ].Value,
+                                                ( string )item.Cells[ FOGLALAS.TABLEINDEXES.Tipus ].Value,
+                                                ( string )item.Cells[ FOGLALAS.TABLEINDEXES.Keszito ].Value,
+                                                ( string )item.Cells[ FOGLALAS.TABLEINDEXES.Ido ].Value ) );
                 }
             }
 
-            if(Foglalások.Count!=0)
+            if ( Foglalások.Count != 0 )
             {
-                KonszignacioNyomtatas nyomtató = new KonszignacioNyomtatas(Foglalások);
-                nyomtató.ShowDialog();
+                KonszignacioNyomtatas nyomtató = new KonszignacioNyomtatas( Foglalások );
+                nyomtató.ShowDialog( );
             }
-            Program.RefreshData();
+            Program.RefreshData( );
         }
 
-        private void 
-        table_CellMouseUp(object _sender, DataGridViewCellMouseEventArgs _event)
+        private void
+        table_CellMouseUp( object _sender, DataGridViewCellMouseEventArgs _event )
         {
             // End of edition on each click on column of checkbox
-            if (_event.RowIndex == -1) return;
+            if ( _event.RowIndex == -1 ) return;
 
-            if (_event.ColumnIndex == 6)
-            {
-                table.EndEdit();
-            }
+            if ( _event.ColumnIndex == 6 ) { table.EndEdit( ); }
             else
             {
-                if (_event.Clicks == 2)
+                if ( _event.Clicks == 2 )
                 {
-                    if (table.SelectedRows.Count != 1) return;
+                    if ( table.SelectedRows.Count != 1 ) return;
 
-                    Foglalás foglalás = new Foglalás((int)table.SelectedRows[0].Cells[Foglalás.TableIndexes.id].Value,
-                                                     (string)table.SelectedRows[0].Cells[Foglalás.TableIndexes.név].Value,
-                                                     (int)table.SelectedRows[0].Cells[Foglalás.TableIndexes.hordók_száma].Value, 
-                                                     (string)table.SelectedRows[0].Cells[Foglalás.TableIndexes.típus].Value,
-                                                     (string)table.SelectedRows[0].Cells[Foglalás.TableIndexes.készítő].Value,
-                                                     (string)table.SelectedRows[0].Cells[Foglalás.TableIndexes.idő].Value);
+                    FOGLALAS foglalás = new FOGLALAS( ( int )table.SelectedRows[ 0 ].Cells[ FOGLALAS.TABLEINDEXES.ID ].Value,
+                                                     ( string )table.SelectedRows[ 0 ].Cells[ FOGLALAS.TABLEINDEXES.Nev ].Value,
+                                                     ( int )table.SelectedRows[ 0 ].Cells[ FOGLALAS.TABLEINDEXES.HordokSzama ].Value,
+                                                     ( string )table.SelectedRows[ 0 ].Cells[ FOGLALAS.TABLEINDEXES.Tipus ].Value,
+                                                     ( string )table.SelectedRows[ 0 ].Cells[ FOGLALAS.TABLEINDEXES.Keszito ].Value,
+                                                     ( string )table.SelectedRows[ 0 ].Cells[ FOGLALAS.TABLEINDEXES.Ido ].Value );
 
-                    KonszignacioHordok hordó_megjelenítő = new KonszignacioHordok(foglalás);
-                    hordó_megjelenítő.ShowDialog(this);
+                    KonszignacioHordok hordó_megjelenítő = new KonszignacioHordok( foglalás );
+                    hordó_megjelenítő.ShowDialog( this );
 
-                    Program.RefreshData();
+                    Program.RefreshData( );
                 }
             }
         }
@@ -207,6 +210,9 @@ namespace Labor
             table.Columns[5].ReadOnly = true;
             table.Columns[6].Width = 6 * 8;
             table.Columns[6].ReadOnly = false;
+
+            table.Sort(table.Columns[0], ListSortDirection.Descending);
+
         }
 
         private void
@@ -215,6 +221,50 @@ namespace Labor
             _event.Cancel = true;
         }
         #endregion
+
+        public sealed class MyClass : Form
+        {
+
+            #region Declaration
+
+            #endregion
+
+            #region Constructor
+            public
+            MyClass( )
+            {
+                InitializeForm( );
+                InitializeContent( );
+                InitializeData( );
+            }
+
+            private void
+            InitializeForm( )
+            {
+                Text = "";
+                ClientSize = new Size( 640, 480 );
+                MinimumSize = ClientSize;
+                StartPosition = FormStartPosition.CenterScreen;
+                FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            }
+
+            private void
+            InitializeContent( )
+            {
+
+            }
+
+            private void
+            InitializeData( )
+            {
+
+            }
+            #endregion
+
+            #region EventHandlers
+
+            #endregion
+        }
 
         public sealed class KonszignacioNyomtatas: Form
         {
@@ -228,11 +278,12 @@ namespace Labor
             TextBox txtIz;
             TextBox txtIllat;
 
-            List<Foglalás> Foglalasok;
+            List<FOGLALAS> Foglalasok;
 
             #region Constructor
+
             public 
-            KonszignacioNyomtatas(List<Foglalás> _foglalások)
+            KonszignacioNyomtatas(List<FOGLALAS> _foglalások)
             {
                 Foglalasok = _foglalások;
 
@@ -244,16 +295,16 @@ namespace Labor
             InitializeForm()
             {
                 Text = "Nyomtatás";
-                FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+                FormBorderStyle = FormBorderStyle.FixedSingle;
                 MaximizeBox = false;
                 ClientSize = new Size(320, 465);
                 StartPosition = FormStartPosition.CenterParent;
                 MinimumSize = ClientSize;
-                FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+                FormBorderStyle = FormBorderStyle.FixedToolWindow;
             }
 
-            private void 
-            InitializeContent()
+            private void
+            InitializeContent( )
             {
                 Label lblNyelv;
                 Label lblVevo;
@@ -264,81 +315,80 @@ namespace Labor
                 Label lblIz;
                 Label lblIllat;
 
-                Label lblVonal = new Label();
+                Label lblVonal = new Label( );
                 lblVonal.Height = 3;
                 lblVonal.Width = 1000;
                 lblVonal.BackColor = Color.Gray;
 
-                Label lblVonal2 = new Label();
+                Label lblVonal2 = new Label( );
                 lblVonal2.Height = 3;
                 lblVonal2.Width = 1000;
                 lblVonal2.BackColor = Color.Gray;
 
                 Button btnRendben;
 
-                lblNyelv = MainForm.createlabel("Nyelv:", 16, 16 + 0 * 32, this);
-                lblVonal.Location = new Point(lblNyelv.Location.X - lblNyelv.Width, 
-                                           lblNyelv.Location.Y + 32);
-                Controls.Add(lblVonal);
+                lblNyelv = MainForm.createlabel( "Nyelv:", 16, 16 + 0 * 32, this );
+                lblVonal.Location = new Point( lblNyelv.Location.X - lblNyelv.Width,
+                                               lblNyelv.Location.Y + 32 );
+                Controls.Add( lblVonal );
 
-                lblVevo = MainForm.createlabel("Vevő:", 16, 32 + 1 * 32, this);
-                lblGepkocsi = MainForm.createlabel("Gépkocsi:", 16, 32 + 2 * 32, this);
-                lblSzallitolevel = MainForm.createlabel("Szállítólevél:", 16, 32 + 3 * 32, this);
+                lblVevo = MainForm.createlabel( "Vevő:", 16, 32 + 1 * 32, this );
+                lblGepkocsi = MainForm.createlabel( "Gépkocsi:", 16, 32 + 2 * 32, this );
+                lblSzallitolevel = MainForm.createlabel( "Szállítólevél:", 16, 32 + 3 * 32, this );
 
-                lblVonal2.Location = new Point(lblSzallitolevel.Location.X - lblSzallitolevel.Width,
-                                            lblSzallitolevel.Location.Y + 32);
-                Controls.Add(lblVonal2);
+                lblVonal2.Location = new Point( lblSzallitolevel.Location.X - lblSzallitolevel.Width,
+                                                lblSzallitolevel.Location.Y + 32 );
+                Controls.Add( lblVonal2 );
 
+                lblGyartasiIdo = MainForm.createlabel( "Gyártási idő:", 16, 32 + 5 * 32, this );
 
-                lblGyartasiIdo = MainForm.createlabel("Gyártási idő:", 16, 32 + 5 * 32, this);
+                lblSzin = MainForm.createlabel( "Szín:", 16, 32 + 6 * 32, this );
+                lblIz = MainForm.createlabel( "Íz:", 16, 32 + 8 * 32, this );
+                lblIllat = MainForm.createlabel( "Illat:", 16, 32 + 10 * 32, this );
 
-                lblSzin = MainForm.createlabel("Szín:", 16, 32 + 6 * 32, this);
-                lblIz = MainForm.createlabel("Íz:", 16, 32 + 8 * 32, this);
-                lblIllat = MainForm.createlabel("Illat:", 16, 32 + 10 * 32, this);
+                cboNyelv = MainForm.createcombobox( lblNyelv.Location.X + 48 + lblNyelv.Width,
+                    lblNyelv.Location.Y, 200, this );
+                cboMegrendelok = MainForm.createcombobox( cboNyelv.Location.X, lblVevo.Location.Y, 200, this );
 
-                cboNyelv = MainForm.createcombobox(lblNyelv.Location.X + 48 + lblNyelv.Width,
-                    lblNyelv.Location.Y, 200, this);
-                cboMegrendelok = MainForm.createcombobox(cboNyelv.Location.X, lblVevo.Location.Y, 200, this);
-                
-                txtRendszam1 = MainForm.createtextbox(cboNyelv.Location.X, lblGepkocsi.Location.Y, 20, 70, this);
-                txtRendszam2 = MainForm.createtextbox(txtRendszam1.Location.X + txtRendszam1.Width + 8,
-                                                      lblGepkocsi.Location.Y, 20, 70, this);
-                txtLevel = MainForm.createtextbox(cboNyelv.Location.X, lblSzallitolevel.Location.Y, 20, 70, this);
-                txtGyartasiIdo = MainForm.createtextbox(cboNyelv.Location.X, lblGyartasiIdo.Location.Y, 20, 70, this);
+                txtRendszam1 = MainForm.createtextbox( cboNyelv.Location.X, lblGepkocsi.Location.Y, 20, 70, this );
+                txtRendszam2 = MainForm.createtextbox( txtRendszam1.Location.X + txtRendszam1.Width + 8,
+                                                      lblGepkocsi.Location.Y, 20, 70, this );
+                txtLevel = MainForm.createtextbox( cboNyelv.Location.X, lblSzallitolevel.Location.Y, 20, 70, this );
+                txtGyartasiIdo = MainForm.createtextbox( cboNyelv.Location.X, lblGyartasiIdo.Location.Y, 20, 70, this );
 
-                txtSzin = MainForm.createtextbox(cboNyelv.Location.X, lblSzin.Location.Y, 60, 200, this);
+                txtSzin = MainForm.createtextbox( cboNyelv.Location.X, lblSzin.Location.Y, 60, 200, this );
                 txtSzin.Multiline = true;
                 txtSzin.Height = 50;
 
-                txtIz = MainForm.createtextbox(cboNyelv.Location.X, lblIz.Location.Y, 60, 200, this);
+                txtIz = MainForm.createtextbox( cboNyelv.Location.X, lblIz.Location.Y, 60, 200, this );
                 txtIz.Multiline = true;
                 txtIz.Height = 50;
 
-                txtIllat = MainForm.createtextbox(cboNyelv.Location.X, lblIllat.Location.Y, 60, 200, this);
+                txtIllat = MainForm.createtextbox( cboNyelv.Location.X, lblIllat.Location.Y, 60, 200, this );
                 txtIllat.Multiline = true;
                 txtIllat.Height = 50;
 
-                btnRendben = new Button();
+                btnRendben = new Button( );
                 btnRendben.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
                 btnRendben.Text = "Rendben";
-                btnRendben.Size = new System.Drawing.Size(96, 32);
-                btnRendben.Location = new Point(ClientRectangle.Width - btnRendben.Size.Width - 16,
-                                                ClientRectangle.Height - btnRendben.Size.Height - 16);
+                btnRendben.Size = new Size( 96, 32 );
+                btnRendben.Location = new Point( ClientRectangle.Width - btnRendben.Size.Width - 16,
+                                                ClientRectangle.Height - btnRendben.Size.Height - 16 );
 
-                cboNyelv.Items.Add("Magyar");
-                cboNyelv.Items.Add("Angol"); 
-                cboNyelv.Items.Add("3. label_nyelv"); 
+                cboNyelv.Items.Add( "Magyar" );
+                cboNyelv.Items.Add( "Angol" );
+                cboNyelv.Items.Add( "3. label_nyelv" );
                 cboNyelv.SelectedIndex = 0;
 
-                List<string> Megrendelok = Program.database.Megrendelők();
-                foreach (string item in Megrendelok)
+                List<string> Megrendelok = Program.database.Megrendelők( );
+                foreach ( string item in Megrendelok )
                 {
-                    cboMegrendelok.Items.Add(item); 
+                    cboMegrendelok.Items.Add( item );
                 }
                 cboMegrendelok.SelectedIndex = 0;
 
-                /*csak tesztelés miatt!
 
+                /*csak tesztelés miatt!
                 txtRendszam1.Text = "KTM791";
                 txtRendszam2.Text = "HCS850";
                 txtLevel.Text = "levél";
@@ -348,9 +398,8 @@ namespace Labor
                 txtIllat.Text = "Illat";
                 */
 
-
                 btnRendben.Click += btnRendben_Click;
-                Controls.Add(btnRendben);
+                Controls.Add( btnRendben );
             }
             #endregion
 
@@ -378,15 +427,15 @@ namespace Labor
                 if (txtIllat.Text == "")
                 { MessageBox.Show("Illat mező nem lehet üres!", "Egyenlőre!", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
 
-                KonszignacioSzallitolevel szállítólevél = new KonszignacioSzallitolevel(0,
+                KONSZIGNACIOSZALLITOLEVEL szállítólevél = new KONSZIGNACIOSZALLITOLEVEL(0,
                                                                                         txtLevel.Text, 
-                                                                                        Foglalasok[0].készítő, 
+                                                                                        Foglalasok[0].Keszito, 
                                                                                         date, 
                                                                                         cboNyelv.Text[0].ToString(), 
                                                                                         cboMegrendelok.Text, 
                                                                                         txtRendszam1.Text, 
                                                                                         txtRendszam2.Text, 
-                                                                                        (Int16)Foglalasok[0].hordók_száma, 
+                                                                                        (Int16)Foglalasok[0].HordokSzama, 
                                                                                         txtGyartasiIdo.Text, 
                                                                                         txtSzin.Text, txtIz.Text, 
                                                                                         txtIllat.Text);
@@ -401,14 +450,14 @@ namespace Labor
             #endregion
         }
 
-        public sealed class KonszignacioHordok : Tokenized_Form<Hordó>
+        public sealed class KonszignacioHordok : Tokenized_Form<HORDO>
         {
-            private Foglalás Foglalás;
+            private FOGLALAS Foglalás;
 
             #region Constructor
 
             public 
-            KonszignacioHordok(Foglalás _foglalás)
+            KonszignacioHordok(FOGLALAS _foglalás)
             {
                 Foglalás = _foglalás;
 
@@ -424,7 +473,7 @@ namespace Labor
                 ClientSize = new Size(430, 568);
                 MinimumSize = ClientSize;
                 StartPosition = FormStartPosition.CenterParent;
-                FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+                FormBorderStyle = FormBorderStyle.FixedToolWindow;
 
                 Load += Konszignáció_Hordók_Load;
             }
@@ -452,34 +501,34 @@ namespace Labor
             {
                 data = new DataTable();
 
-                data.Columns.Add(new DataColumn("Termékkód", System.Type.GetType("System.String")));
-                data.Columns.Add(new DataColumn("Sarzs", System.Type.GetType("System.String")));
-                data.Columns.Add(new DataColumn("Hordó száma", System.Type.GetType("System.String")));
-                data.Columns.Add(new DataColumn("Foglalás száma", System.Type.GetType("System.String")));
-                data.Columns.Add(new DataColumn("Gyártási év", System.Type.GetType("System.String")));
+                data.Columns.Add(new DataColumn("Termékkód", Type.GetType("System.String")));
+                data.Columns.Add(new DataColumn("Sarzs", Type.GetType("System.String")));
+                data.Columns.Add(new DataColumn("Hordó száma", Type.GetType("System.String")));
+                data.Columns.Add(new DataColumn("Foglalás száma", Type.GetType("System.String")));
+                data.Columns.Add(new DataColumn("Gyártási év", Type.GetType("System.String")));
 
                 return data;
             }
             #endregion
 
             #region Tokenizer
-            protected override void SetRow(DataRow _row, Hordó _hordó) { Hordó.SetRow(_row, _hordó); }
+            protected override void SetRow(DataRow _row, HORDO _hordó) { HORDO.SetRow(_row, _hordó); }
 
-            protected override bool SameKeys(Hordó _1, Hordó _2) { return Hordó.SameKeys(_1, _2); }
+            protected override bool SameKeys(HORDO _1, HORDO _2) { return HORDO.SameKeys(_1, _2); }
 
-            protected override bool SameKeys(Hordó _1, DataRow _row) { return Hordó.SameKeys(_1, _row); }
+            protected override bool SameKeys(HORDO _1, DataRow _row) { return HORDO.SameKeys(_1, _row); }
 
-            protected override List<Hordó> CurrentData() { return Program.database.Hordók(Foglalás); }
+            protected override List<HORDO> CurrentData() { return Program.database.Hordók(Foglalás); }
             #endregion
 
             #region EventHandlers
             private void Konszignáció_Hordók_Load(object _sender, EventArgs _event)
             {
-                table.Columns[Hordó.TableIndexes.termékkód].Width = 430 / 4;
-                table.Columns[Hordó.TableIndexes.sarzs].Width = 430 / 4;
-                table.Columns[Hordó.TableIndexes.id].Width = 430 / 4;
-                table.Columns[Hordó.TableIndexes.foglalás_száma].Visible = false;
-                table.Columns[Hordó.TableIndexes.gyártási_év].Width = 430 / 4 - 1;
+                table.Columns[HORDO.TABLEINDEXES.Termekkod].Width = 430 / 4;
+                table.Columns[HORDO.TABLEINDEXES.Sarzs].Width = 430 / 4;
+                table.Columns[HORDO.TABLEINDEXES.ID].Width = 430 / 4;
+                table.Columns[HORDO.TABLEINDEXES.FoglalasSzama].Visible = false;
+                table.Columns[HORDO.TABLEINDEXES.GyartasiEv].Width = 430 / 4 - 1;
             }
 
             private void table_UserDeletingRow(object _sender, DataGridViewRowCancelEventArgs _event)
