@@ -12,8 +12,8 @@ namespace Labor
         public static string marillen_database = "marillen2013";
         public static string labor_database = "Labor";
 
-        public static string sql_username = "labor";
-        public static string sql_password = "labor";
+        public static string sql_username = "l_labor";
+        public static string sql_password = "Mn123456";
 
         public static int    ui_refresh = 5;
         public static string ui_login_name = "";
@@ -61,7 +61,10 @@ namespace Labor
                 }
                 config.Close();
             }
-            catch { }
+         catch ( Exception e )
+         {
+            Console.WriteLine(e.Message);
+         }
         }
 
     }
