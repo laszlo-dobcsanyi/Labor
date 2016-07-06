@@ -351,6 +351,7 @@ namespace Labor
 
         private void Vizsgálat_Módosítás(object _sender, EventArgs _event)
         {
+
             if (table.SelectedRows.Count != 1) return;
             if (!Program.felhasználó.Value.Jogosultsagok.Value.Vizsgalatok.Modositas) return;
 
@@ -362,7 +363,7 @@ namespace Labor
                                                                     (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.szita_átmérő].Value,
                                                                     (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.megrendelő].Value,
                                                                     (int)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.sorszám].Value);
-
+            string q = azonosító.ToString();
             Vizsgálat? _vizsgálat = Program.database.Vizsgálat(azonosító);
             if (_vizsgálat == null) { MessageBox.Show("A kiválasztott vizsgálati lap nem található!", "Adatbázis hiba!", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
 

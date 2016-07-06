@@ -18,12 +18,13 @@ namespace Labor
             {
                 Settings.Configurate();
 
-                database = new Database();
+                //database = new Database();
                 felhasználó = null;
+                database = new Database();
 
                 LoginForm loginform = new LoginForm();
                 Application.Run(loginform);
-
+                database = new Database();
                 if (loginform.felhasználó != null)
                 {
                     felhasználó = loginform.felhasználó;

@@ -9,14 +9,14 @@ namespace Labor
         public static string server = @".\SQLEXPRESS";
         public static bool integrated_security;
 
-        public static string marillen_database = "marillen2013";
+        public static string marillen_database = "Marillen2015";
         public static string labor_database = "Labor";
 
         public static string sql_username = "l_labor";
-        public static string sql_password = "Mn123456";
+        public static string sql_password = "labor";
 
         public static int    ui_refresh = 5;
-        public static string ui_login_name = "";
+        public static string ui_login_name = "l_labor";
         public static bool   ui_manual_locations;
 
         public static string import_directory;
