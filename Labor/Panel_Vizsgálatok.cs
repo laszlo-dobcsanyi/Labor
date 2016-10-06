@@ -11,6 +11,7 @@ namespace Labor
         public struct Azonosító
         {
             public string termékkód;
+            public string othatkod;
             public string sarzs;
             public string hordószám;
             public string hordótípus;
@@ -19,9 +20,10 @@ namespace Labor
             public string megrendelő;
             public int? sorszám;
 
-            public Azonosító(string _termékkód, string _sarzs, string _hordószám, string _hordótípus, double _nettó_töltet, string _szita_átmérő, string _megrendelő, int? _sorszám)
+            public Azonosító(string _termékkód, string _othatkod, string _sarzs, string _hordószám, string _hordótípus, double _nettó_töltet, string _szita_átmérő, string _megrendelő, int? _sorszám)
             {
                 termékkód = _termékkód;
+                othatkod = _othatkod;
                 sarzs = _sarzs;
                 hordószám = _hordószám;
                 hordótípus = _hordótípus;
@@ -34,18 +36,20 @@ namespace Labor
             public struct TableIndexes
             {
                 public const int termékkód = 0;
-                public const int sarzs = 1;
-                public const int hordószám = 2;
-                public const int hordótípus = 3;
-                public const int nettó_töltet = 4;
-                public const int szita_átmérő = 5;
-                public const int megrendelő = 6;
-                public const int sorszám = 7;
+                public const int othatkod = 1;
+                public const int sarzs = 2;
+                public const int hordószám = 3;
+                public const int hordótípus = 4;
+                public const int nettó_töltet = 5;
+                public const int szita_átmérő = 6;
+                public const int megrendelő = 7;
+                public const int sorszám = 8;
             }
 
             public static void SetRow(DataRow _row, Azonosító _azonosító)
             {
                 _row[TableIndexes.termékkód] = _azonosító.termékkód;
+                _row[TableIndexes.othatkod] = _azonosító.othatkod;
                 _row[TableIndexes.sarzs] = _azonosító.sarzs;
                 _row[TableIndexes.hordószám] = _azonosító.hordószám;
                 _row[TableIndexes.hordótípus] = _azonosító.hordótípus;
@@ -308,6 +312,7 @@ namespace Labor
             data = new DataTable();
 
             data.Columns.Add(new DataColumn("Termékkód", Type.GetType("System.String")));
+            data.Columns.Add(new DataColumn("5-6 kód", Type.GetType("System.String")));
             data.Columns.Add(new DataColumn("Sarzs", Type.GetType("System.String")));
             data.Columns.Add(new DataColumn("Hordószám", Type.GetType("System.String")));
             data.Columns.Add(new DataColumn("Hordótípus", Type.GetType("System.String")));
@@ -356,6 +361,7 @@ namespace Labor
             if (!Program.felhasználó.Value.Jogosultsagok.Value.Vizsgalatok.Modositas) return;
 
             Vizsgálat.Azonosító azonosító = new Vizsgálat.Azonosító((string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.termékkód].Value,
+                                                                    table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.othatkod].Value.ToString(),
                                                                     table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.sarzs].Value.ToString(), 
                                                                     (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.hordószám].Value,
                                                                     (string)table.SelectedRows[0].Cells[Vizsgálat.Azonosító.TableIndexes.hordótípus].Value, 
@@ -382,6 +388,7 @@ namespace Labor
             foreach (DataGridViewRow selected in table.SelectedRows)
             {
                 Vizsgálat.Azonosító azonosító = new Vizsgálat.Azonosító((string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.termékkód].Value,
+                                                                        (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.othatkod].Value,
                                                                         (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.sarzs].Value,
                                                                         (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.hordószám].Value,
                                                                         (string)selected.Cells[Vizsgálat.Azonosító.TableIndexes.hordótípus].Value,
@@ -410,6 +417,7 @@ namespace Labor
         {
             table.DataBindingComplete -= table_DataBindingComplete;
             table.Columns[Vizsgálat.Azonosító.TableIndexes.termékkód].Width = 70;
+            table.Columns[Vizsgálat.Azonosító.TableIndexes.othatkod].Width = 70;
             table.Columns[Vizsgálat.Azonosító.TableIndexes.sarzs].Width = 70;
             table.Columns[Vizsgálat.Azonosító.TableIndexes.hordószám].Width = 70;
             table.Columns[Vizsgálat.Azonosító.TableIndexes.hordótípus].Width = 120;
@@ -440,6 +448,7 @@ namespace Labor
 
             #region Declaration
             TextBox box_termékkód;
+            TextBox box_othatkód;
 
             TextBox box_szita_átmérő;
             TextBox box_hordószám;
@@ -532,9 +541,11 @@ namespace Labor
                 #region Labels
                 Label termékkód = MainForm.createlabel("Termékkód:", 10, 10, this);
                 termékkód.Font = new Font(termékkód.Font, FontStyle.Bold);
+
                 Label szita_átmérő = MainForm.createlabel("Szita átmérő:", termékkód.Location.X, termékkód.Location.Y + sor, this);
                 Label megrendelő = MainForm.createlabel("Megrendelő:", termékkód.Location.X, szita_átmérő.Location.Y + sor, this);
-                Label hordószám = MainForm.createlabel("Hordószám:", termékkód.Location.X + oszlop, termékkód.Location.Y, this);
+
+                Label hordószám = MainForm.createlabel("Hordószám:", termékkód.Location.X + 1 * oszlop + 20, termékkód.Location.Y, this);
                 hordószám.Font = new Font(hordószám.Font, FontStyle.Bold);
                 Label hőkezelés = MainForm.createlabel("Hőkezelés °C:", hordószám.Location.X, szita_átmérő.Location.Y, this);
                 Label vonal = new Label();
@@ -559,7 +570,7 @@ namespace Labor
                 Label nettó_töltet = MainForm.createlabel("Nettó töltet kg:", sarzs.Location.X, szita_átmérő.Location.Y, this);
                 Label származási_ország = MainForm.createlabel("Származási ország:", sarzs.Location.X, megrendelő.Location.Y, this);
                 Label műszak_jele = MainForm.createlabel("Műszak jele:", sarzs.Location.X + oszlop, szita_átmérő.Location.Y, this);
-                Label töltőgép_száma = MainForm.createlabel("Töltőgép száma:", műszak_jele.Location.X + oszlop, szita_átmérő.Location.Y, this);
+                Label töltőgép_száma = MainForm.createlabel("Töltőgép száma:", műszak_jele.Location.X + 110, szita_átmérő.Location.Y, this);
                 Label terméknév = MainForm.createlabel("Terméknév:", töltőgép_száma.Location.X, termékkód.Location.Y, this);
                 Label hordótípus = MainForm.createlabel("Hordótípus:", töltőgép_száma.Location.X, megrendelő.Location.Y, this);
                 Label gyümölcsfajta = MainForm.createlabel("Gyümölcsfajta:",töltőgép_száma.Location.X + oszlop - 10, szita_átmérő.Location.Y, this);
@@ -586,6 +597,7 @@ namespace Labor
                 #endregion
 
                 box_termékkód = MainForm.createtextbox(termékkód.Location.X + termékkód.Width + köz, termékkód.Location.Y, 3, méret[0], this);
+                box_othatkód = MainForm.createtextbox(termékkód.Location.X + termékkód.Width + 4 * köz, termékkód.Location.Y, 2, méret[0], this);
                 box_hordószám = MainForm.createtextbox(hordószám.Location.X + hordószám.Width + köz, termékkód.Location.Y, 4, méret[0], this);
                 box_sarzs = MainForm.createtextbox(sarzs.Location.X + sarzs.Width + köz + 28, termékkód.Location.Y, 3, méret[0], this);
                 box_terméknév = MainForm.createtextbox(terméknév.Location.X + terméknév.Width + köz, termékkód.Location.Y, 35, méret[9], this);
@@ -638,6 +650,9 @@ namespace Labor
                 box_k6_cimzett = MainForm.createtextbox(box_k1_cimzett.Location.X, k6.Location.Y, 15, méret[4], this);
                 box_k6_datum = MainForm.createtextbox(box_t_datum.Location.X, k6.Location.Y, 8, méret[5], this);
                 combo_laboros = MainForm.createcombobox(box_t_cimzett.Location.X, laboros.Location.Y, méret[10], this);
+
+                box_othatkód.Text = "01";
+
                 box_sarzs.Enabled = false;
                 box_terméknév.Enabled = false;
                 box_szita_átmérő.Enabled = false;
@@ -649,7 +664,14 @@ namespace Labor
 
                 #region Events
                 box_termékkód.TextChanged += box_termékkód_TextChanged;
+                box_othatkód.TextChanged += box_termékkód_TextChanged;
+
+                box_termékkód.TextChanged += box_hordószám_TextChanged; ;
+                box_othatkód.TextChanged += box_hordószám_TextChanged; ;
                 box_hordószám.TextChanged += box_hordószám_TextChanged;
+
+
+
                 box_citromsav.Leave += box_citromsav_Leave;
                 box_brix.KeyPress += MainForm.OnlyNumber;
                 box_citromsav.KeyPress += MainForm.OnlyNumber;
@@ -729,6 +751,7 @@ namespace Labor
                 if (eredeti != null)
                 {
                     box_termékkód.Text = eredeti.Value.azonosító.termékkód;
+                    box_othatkód.Text = eredeti.Value.azonosító.othatkod;
                     box_szita_átmérő.Text = eredeti.Value.azonosító.szita_átmérő;
                     box_hordószám.Text = eredeti.Value.azonosító.hordószám;
                     box_hőkezelés.Text = eredeti.Value.adatok1.hőkezelés.ToString();
@@ -786,6 +809,7 @@ namespace Labor
                     combo_gyümölcsfajta.Text = eredeti.Value.adatok1.gyümölcsfajta;
 
                     box_termékkód.Enabled = false;
+                    
                     box_hordószám.Enabled = false;
                 }
             }
@@ -796,9 +820,10 @@ namespace Labor
             {
                 NINCS = 0,
                 TERMÉKKÓD = 1,
-                TERMÉKKÓD_BEÁLLÍTÁS = 2,
-                HORDÓSZÁM = 3,
-                KÉSZ = 4
+                OTHATKOD = 2,
+                TERMÉKKÓD_BEÁLLÍTÁS = 3,
+                HORDÓSZÁM = 4,
+                KÉSZ = 5
             }
             private States state = States.NINCS;
 
@@ -819,6 +844,17 @@ namespace Labor
                         box_termékkód.Focus();
                         break;
 
+                    case States.OTHATKOD:
+                        foreach (Control control in Controls)
+                        {
+                            control.Enabled = false;
+                        }
+                        box_termékkód.Enabled = true;
+                        box_hordószám.Enabled = true;
+                        box_othatkód.Enabled = true;
+                        box_othatkód.Focus();
+                        break;
+
                     case States.HORDÓSZÁM:
                         foreach (Control control in Controls)
                         {
@@ -827,10 +863,11 @@ namespace Labor
 
                         box_termékkód.Enabled = true;
                         box_hordószám.Enabled = true;
+                        box_othatkód.Enabled = true;
                         box_hordószám.Focus();
                         break;
 
-                    case States.KÉSZ:
+                         case States.KÉSZ:
                         foreach (Control control in Controls)
                         {
                             control.Enabled = true;
@@ -864,11 +901,11 @@ namespace Labor
 
             private void box_termékkód_TextChanged(object _sender, EventArgs _event)
             {
-                if (box_termékkód.Text.Length == 3 && state != States.KÉSZ)
+                if (box_termékkód.Text.Length == 3 && state != States.KÉSZ && box_othatkód.Text.Length == 2)
                 {
                     if (!Database.IsCorrectSQLText(box_termékkód.Text)) { MessageBox.Show("Nem megfelelő karakter a termékkódban!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
 
-                    List<string> temp = Program.database.Termékkódok(box_termékkód.Text);
+                    List<string> temp = Program.database.Termékkódok(box_termékkód.Text, box_othatkód.Text);
                     if (temp.Count == 0) { MessageBox.Show("Nem található ilyen termékkódú cikk!", "Figyelmeztetés", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
 
                     ListBox termékkódválasztó = new ListBox();
@@ -891,18 +928,27 @@ namespace Labor
                 }
                 else
                 {
-                    SetState(States.TERMÉKKÓD);
+                    //SetState(States.TERMÉKKÓD);
                 }
             }
+
 
             private void termékkódválasztó_KeyDown(object _sender, KeyEventArgs _event)
             {
                 if (_event.KeyCode == Keys.Enter)
                 {
-                    ListBox termékkódválasztó = (ListBox)_sender;
+                    ListBox termékkódválasztó = (ListBox) _sender;
                     Controls.Remove(termékkódválasztó);
 
-                    SetState(States.HORDÓSZÁM);
+                    if (state == States.TERMÉKKÓD)
+                    {
+                        SetState(States.OTHATKOD);
+                    }
+                    else if (state == States.OTHATKOD)
+                    {
+                        SetState(States.HORDÓSZÁM);
+                    }
+
                     box_terméknév.Text = Program.database.Vizsgálat_Terméknév(termékkódválasztó.SelectedItem.ToString().Substring(0, 4));
 
                     List<string> gyümölcsfajták = Program.database.Gyümölcsfajták(box_termékkód.Text);
@@ -914,7 +960,7 @@ namespace Labor
                     combo_gyümölcsfajta.SelectedIndex = 0;
                 }
             }
-
+       
             private void termékkódválasztó_Leave(object _sender, EventArgs _event)
             {
                 ListBox termékkódválasztó = (ListBox)_sender;
@@ -923,9 +969,9 @@ namespace Labor
 
             private void box_hordószám_TextChanged(object _sender, EventArgs _event)
             {
-                if (box_hordószám.Text.Length == 4)
+                if (box_hordószám.Text.Length == 4 && box_termékkód.Text.Length == 3 && box_othatkód.Text.Length == 2 )
                 {
-                    string prodid = "12" + box_termékkód.Text.Substring(0, 2) + "01" + box_termékkód.Text.Substring(2, 1) + "_0" + box_termékkód.Text.Substring(2, 1) + box_hordószám.Text;
+                    string prodid = "12" + box_termékkód.Text.Substring(0, 2) + box_othatkód.Text + box_termékkód.Text.Substring(2, 1) + "_0" + box_termékkód.Text.Substring(2, 1) + box_hordószám.Text;
 
                     if (!Database.IsCorrectSQLText(prodid))
                         { MessageBox.Show("Nem megfelelő karakter a lekérdezésben!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
@@ -960,9 +1006,9 @@ namespace Labor
                         MessageBox.Show("Nem található ilyen!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                 }
-                else
+                else 
                 {
-                    if (state != States.HORDÓSZÁM) SetState(States.HORDÓSZÁM);
+                    //if (state != States.HORDÓSZÁM) SetState(States.HORDÓSZÁM);
                 }
             }
 
@@ -982,12 +1028,13 @@ namespace Labor
                 else box_borkősav.Text = "";
             }
 
-
+               
             private void rendben_Click(object _sender, EventArgs _event)
             {
                 gyártási_év = "201" +  box_termékkód.Text.Substring(box_termékkód.Text.Length - 1, 1);
                 Vizsgálat.Azonosító azonosító = new Vizsgálat.Azonosító(
                         box_termékkód.Text,
+                        box_othatkód.Text,
                         box_sarzs.Text,
                         box_hordószám.Text,
                         combo_hordótípus.Text,

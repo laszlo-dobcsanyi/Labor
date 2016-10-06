@@ -10,7 +10,7 @@ namespace Labor
 {
     public sealed class Database
     {
-        //(feltétel ? igaz : hamis);
+
         private SqlConnection marillenconnection;
         private SqlConnection laborconnection;
         private Object MarillenLock = new Object();
@@ -75,7 +75,7 @@ namespace Labor
                                  "CREATE TABLE L_TORZSA (TOTIPU varchar(20) NOT NULL,TOAZON varchar(25) PRIMARY KEY,TOSZO2 varchar(25),TOSZO3 varchar(25));" +
 
                                  // Vizsgálat
-                                 "CREATE TABLE L_VIZSLAP (VITEKO varchar(3) NOT NULL, VISARZ varchar(3) NOT NULL, VIHOSZ varchar(4) NOT NULL, VIHOTI varchar(25), VINETO DECIMAL(14, 2), VISZAT varchar(100), VIMEGR varchar(50), " +
+                                 "CREATE TABLE L_VIZSLAP (VITEKO varchar(3) NOT NULL, VIOTHA varchar(2), VISARZ varchar(3) NOT NULL, VIHOSZ varchar(4) NOT NULL, VIHOTI varchar(25), VINETO DECIMAL(14, 2), VISZAT varchar(100), VIMEGR varchar(50), " +
                                      "VIMSSZ int, " +
 
                                      // Adatok1
@@ -92,9 +92,9 @@ namespace Labor
                                      "VIMTS1 varchar(15),VIMTD1 varchar(8),VIMKS1 varchar(15),VIMKD1 varchar(8), VIMKS2 varchar(15), VIMKD2 varchar(8), VIMKS3 varchar(15), VIMKD3 varchar(8), VIMKS4 varchar(15), VIMKD4 varchar(8), " +
                                      "VIMKS5 varchar(15), VIMKD5 varchar(8), VIMKS6 varchar(15), VIMKD6 varchar(8),VILABO varchar(15));" +
 
-                                 "CREATE TABLE L_HORDO(HOTEKO varchar(10), HOSARZ varchar(10), HOSZAM varchar(10), FOSZAM int, VIGYEV varchar(10), HOQTY decimal(14, 2), HOTIME char(30));" +
+                                 "CREATE TABLE L_HORDO(HOTEKO varchar(10), HOOTHA varchar(2), HOSARZ varchar(10), HOSZAM varchar(10), FOSZAM int, VIGYEV varchar(10), HOQTY decimal(14, 2), HOTIME char(30));" +
 
-                                 "CREATE TABLE L_FOGLAL (FONEVE varchar(30), FOSZAM int IDENTITY(1,1), FODATE varchar(20), FOTIPU varchar(10), FOFENE varchar(30), FOTEKO varchar(3), FOSARZT varchar(3), FOSARZI varchar(3), FOHOSZT varchar(4)," +
+                                 "CREATE TABLE L_FOGLAL (FONEVE varchar(30), FOSZAM int IDENTITY(1,1), FODATE varchar(20), FOTIPU varchar(10), FOFENE varchar(30), FOTEKO varchar(3),FOOTHAT varchar(2), FOOTHAI varchar(3), FOSARZT varchar(3), FOSARZI varchar(3), FOHOSZT varchar(4)," +
                                      "FOHOSZI varchar(4), FOBRIXT DECIMAL(4,2), FOBRIXI DECIMAL(4,2), FOCSAVT DECIMAL(4,2), FOCSAVI DECIMAL(4,2), FOPEHAT DECIMAL(4,2), FOPEHAI DECIMAL(4,2), FOBOSTT DECIMAL(4,2)," +
                                      "FOBOSTI DECIMAL(4,2), FOASAVT smallint, FOASAVI smallint, FONETOT smallint, FONETOI smallint, FOHOFOT smallint, FOHOFOI smallint, FOCIADT smallint, FOCIADI smallint," +
                                      "FOFAJT varchar(15), FOHOTI varchar(15), FOMEGR varchar(15), FOSZOR varchar(15), FOMUJE varchar(1), FOTOGE varchar(1), FOFOHO smallint, FOSZSZ smallint ," +
@@ -325,12 +325,13 @@ namespace Labor
         /// <summary>
         /// Visszaadja a termékkód darabkával kezdődő kódokat
         /// </summary>
-        public List<string> Termékkódok(string _termékkód_darab)
+        public List<string> Termékkódok(string _termékkód_darab, string _othatkod)
         {
             lock (MarillenLock)
             {
                 List<string> value = new List<string>();
-                string temp = "12" + _termékkód_darab.Substring(0, 2) + "01";
+
+                string temp = "12" + _termékkód_darab.Substring(0, 2) + _othatkod;
                 marillenconnection.Open();
                 SqlCommand command = marillenconnection.CreateCommand();
                 command.CommandText = "SELECT item_nr, name FROM cikkek WHERE item_nr LIKE '" + temp + "' ORDER BY item_nr";
@@ -683,14 +684,14 @@ namespace Labor
                 // Azonosító
                 Vizsgálat.Azonosító? azonosító = null;
                 command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT VITEKO, VISARZ, VIHOSZ, VIHOTI, VINETO, VISZAT, VIMEGR, VIMSSZ FROM L_VIZSLAP WHERE " + where;
+                command.CommandText = "SELECT VITEKO, VIOTHA, VISARZ, VIHOSZ, VIHOTI, VINETO, VISZAT, VIMEGR, VIMSSZ FROM L_VIZSLAP WHERE " + where;
                 try
                 {
                     reader = command.ExecuteReader();
                     while (reader.Read())
                     {
-                        azonosító = new Vizsgálat.Azonosító(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), (double)reader.GetDecimal(4), reader.GetString(5),
-                            reader.GetString(6), reader.GetInt32(7));
+                        azonosító = new Vizsgálat.Azonosító(reader.GetString(0), GetNullableString(reader, 1), reader.GetString(2), reader.GetString(3), reader.GetString(4),
+                            (double)reader.GetDecimal(5), reader.GetString(6), reader.GetString(7), reader.GetInt32(8));
                     }
                     reader.Close();
                 }
@@ -782,13 +783,13 @@ namespace Labor
                 laborconnection.Open();
 
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT VITEKO, VISARZ, VIHOSZ, VIHOTI, VINETO, VISZAT, VIMEGR, VIMSSZ FROM L_VIZSLAP ORDER BY VITEKO, VISARZ, VIHOSZ";
+                command.CommandText = "SELECT VITEKO, VIOTHA, VISARZ, VIHOSZ, VIHOTI, VINETO, VISZAT, VIMEGR, VIMSSZ FROM L_VIZSLAP ORDER BY VITEKO, VISARZ, VIHOSZ";
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    data.Add(new Vizsgálat.Azonosító(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), (double)reader.GetDecimal(4), reader.GetString(5),
-                        reader.GetString(6), reader.GetInt32(7)));
+                    data.Add(new Vizsgálat.Azonosító(reader.GetString(0), GetNullableString(reader, 1), reader.GetString(2), reader.GetString(3), reader.GetString(4), 
+                        (double)reader.GetDecimal(5), reader.GetString(6),reader.GetString(7), reader.GetInt32(8)));
                 }
                 command.Dispose();
                 laborconnection.Close();
@@ -870,8 +871,8 @@ namespace Labor
 
                 // Azonosító
                 command = laborconnection.CreateCommand();
-                command.CommandText = "INSERT INTO L_VIZSLAP (VITEKO, VISARZ, VIHOSZ, VIHOTI, VINETO, VISZAT, VIMEGR, VIMSSZ)" +
-                                    " VALUES('" + _vizsgálat.azonosító.termékkód + "', '" + _vizsgálat.azonosító.sarzs + "', '" + _vizsgálat.azonosító.hordószám + "', '" + _vizsgálat.azonosító.hordótípus + "', " +
+                command.CommandText = "INSERT INTO L_VIZSLAP (VITEKO, VIOTHA, VISARZ, VIHOSZ, VIHOTI, VINETO, VISZAT, VIMEGR, VIMSSZ)" +
+                                    " VALUES('" + _vizsgálat.azonosító.termékkód + "', '"  +_vizsgálat.azonosító.othatkod + "', '" + _vizsgálat.azonosító.sarzs + "', '" + _vizsgálat.azonosító.hordószám + "', '" + _vizsgálat.azonosító.hordótípus + "', " +
                                     _vizsgálat.azonosító.nettó_töltet.ToString().Replace(',', '.') + ", '" + _vizsgálat.azonosító.szita_átmérő + "', '" + _vizsgálat.azonosító.megrendelő + "', " +
                                     "(SELECT COUNT(*) FROM L_VIZSLAP WHERE " + A(new[] { Update("VITEKO", _vizsgálat.azonosító.termékkód), Update("VISARZ", _vizsgálat.azonosító.sarzs) }) + ") + 1)";
 
@@ -1095,7 +1096,7 @@ namespace Labor
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    value.Add(new HORDO(reader.GetString(0), reader.GetString(1), reader.GetString(2), GetNullable<int>(reader, 4), reader.GetString(3), reader.GetDecimal(5), reader.GetString(6)));
+                    value.Add(new HORDO(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), GetNullable<int>(reader, 5), reader.GetString(4), reader.GetDecimal(6), reader.GetString(7)));
                 }
 
                 command.Dispose();
@@ -1113,12 +1114,12 @@ namespace Labor
             {
                 laborconnection.Open();
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT HOTEKO, HOSARZ, HOSZAM, VIGYEV, HOQTY, HOTIME FROM L_HORDO WHERE FOSZAM = " + _foglalás.ID;
+                command.CommandText = "SELECT HOTEKO, HOOTHA, HOSARZ, HOSZAM, VIGYEV, HOQTY, HOTIME FROM L_HORDO WHERE FOSZAM = " + _foglalás.ID;
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    value.Add(new HORDO(reader.GetString(0), reader.GetString(1), reader.GetString(2), _foglalás.ID, reader.GetString(3), reader.GetDecimal(4), reader.GetString(5)));
+                    value.Add(new HORDO(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), _foglalás.ID, reader.GetString(4), reader.GetDecimal(5), reader.GetString(6)));
                 }
 
                 command.Dispose();
@@ -1136,12 +1137,12 @@ namespace Labor
             {
                 laborconnection.Open();
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT HOSZAM, FOSZAM, VIGYEV, HOQTY, HOTIME FROM L_HORDO WHERE (FOSZAM IS NULL OR FOSZAM = " + _foglalás.ID + ") AND HOTEKO = '" + _sarzs.Termekkod + "' AND HOSARZ = '" + _sarzs.Sarzs + "';";
+                command.CommandText = "SELECT HOSZAM, HOOTHA, FOSZAM, VIGYEV, HOQTY, HOTIME FROM L_HORDO WHERE (FOSZAM IS NULL OR FOSZAM = " + _foglalás.ID + ") AND HOTEKO = '" + _sarzs.Termekkod + "' AND HOSARZ = '" + _sarzs.Sarzs + "';";
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    value.Add(new HORDO(_sarzs.Termekkod, _sarzs.Sarzs, reader.GetString(0), GetNullable<int>(reader, 1), reader.GetString(2), reader.GetDecimal(3), reader.GetString(4)));
+                    value.Add(new HORDO(_sarzs.Termekkod, _sarzs.Othatkod, _sarzs.Sarzs, reader.GetString(0), GetNullable<int>(reader, 1), reader.GetString(2), reader.GetDecimal(3), reader.GetString(4)));
                 }
 
                 command.Dispose();
@@ -1188,7 +1189,7 @@ namespace Labor
             }
 
             List<Hordó_Adat> hordó_adatok = new List<Hordó_Adat>();
-            string iPROD_ID = "12" + _vizsgálat.azonosító.termékkód.Substring(0, 2) + "01" + _vizsgálat.adatok1.gyártási_év[_vizsgálat.adatok1.gyártási_év.Length - 1];
+            string iPROD_ID = "12" + _vizsgálat.azonosító.termékkód.Substring(0, 2) + _vizsgálat.azonosító.othatkod + _vizsgálat.adatok1.gyártási_év[_vizsgálat.adatok1.gyártási_év.Length - 1];
 
             lock (MarillenLock)
             {
@@ -1378,7 +1379,7 @@ namespace Labor
 
                 SqlCommand command = laborconnection.CreateCommand();
                 command.CommandText = "SELECT FOFAJT, FOHOTI, FOMEGR, FOSZOR, FOMUJE, FOTOGE, FOTEKO, " +
-                    "FOSARZT, FOSARZI, FOHOSZT, FOHOSZI, FOBRIXT, FOBRIXI, FOCSAVT, FOCSAVI, FOBOSAT, FOBOSAI, FOPEHAT, FOPEHAI, FOBOSTT, FOBOSTI, FOASAVT, FOASAVI, FONETOT, FONETOI, FOHOFOT, FOHOFOI, " +
+                    "FOOTHAT, FOOTHAI, FOSARZT, FOSARZI, FOHOSZT, FOHOSZI, FOBRIXT, FOBRIXI, FOCSAVT, FOCSAVI, FOBOSAT, FOBOSAI, FOPEHAT, FOPEHAI, FOBOSTT, FOBOSTI, FOASAVT, FOASAVI, FONETOT, FONETOI, FOHOFOT, FOHOFOI, " +
                     "FOCIADT, FOCIADI, FOSZATI, FOSZATT  FROM L_FOGLAL WHERE FOSZAM = " + _foglalás.ID;
 
                 try
@@ -1397,6 +1398,8 @@ namespace Labor
                             GetNullableString(reader, ++c));
 
                         data.adatok2 = new VIZSGALAP_SZURO.ADATOK2(
+                            GetNullableString(reader, ++c),
+                            GetNullableString(reader, ++c),
                             GetNullableString(reader, ++c),
                             GetNullableString(reader, ++c),
                             GetNullableString(reader, ++c),
@@ -1466,6 +1469,7 @@ namespace Labor
 
                 // Adatok2
                 data = V(new[] {
+                Update("FOOTHAT", _szűrő.adatok2.Sarzs.min), Update("FOOTHAI", _szűrő.adatok2.Sarzs.max),
                 Update("FOSARZT", _szűrő.adatok2.Sarzs.min), Update("FOSARZI", _szűrő.adatok2.Sarzs.max),
                 Update("FOHOSZT", _szűrő.adatok2.HordoID.min), Update("FOHOSZI", _szűrő.adatok2.HordoID.max),
                 Update("FOBRIXT", _szűrő.adatok2.Brix.min), Update("FOBRIXI", _szűrő.adatok2.Brix.max),
@@ -1571,6 +1575,7 @@ namespace Labor
                     Is(_szűrő.adatok1.MuszakJele, "VIMUJE"),
                     Is(_szűrő.adatok1.ToltogepSzama, "VITOGE"),
                     Is(_szűrő.adatok1.Termekkod, "VITEKO"),
+                    BetweenString(_szűrő.adatok2.OthatKod, "VIOTHA"),
                     BetweenString(_szűrő.adatok2.Sarzs, "CAST( VISARZ AS smallint)"),
                     BetweenString(_szűrő.adatok2.HordoID, "VIHOSZ"),
 
@@ -1625,14 +1630,14 @@ namespace Labor
                     string where = A(new[] { Update("HOTEKO", item.min), Update("HOSARZ", item.max) });
 
                     command = laborconnection.CreateCommand();
-                    command.CommandText = "SELECT HOTEKO, HOSARZ, SUM(case when FOSZAM IS NULL then 0 else 1 end), SUM(case when FOSZAM IS NULL then 1 else 0 end) " +
+                    command.CommandText = "SELECT HOTEKO, HOOTHA,  HOSARZ, SUM(case when FOSZAM IS NULL then 0 else 1 end), SUM(case when FOSZAM IS NULL then 1 else 0 end) " +
                                         "FROM L_HORDO WHERE " + where +
-                                        " GROUP BY HOTEKO, HOSARZ ORDER BY HOTEKO,hosarz desc;";
+                                        " GROUP BY HOTEKO, HOSARZ, hootha ORDER BY HOTEKO,hosarz desc;";
                     reader.Close();
                     reader = command.ExecuteReader();
                     while (reader.Read())
                     {
-                        value.Add(new SARZS(reader.GetString(0), reader.GetString(1), reader.GetInt32(2), reader.GetInt32(3)));
+                        value.Add(new SARZS(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetInt32(4)));
                     }
                 }
 
@@ -1678,7 +1683,7 @@ namespace Labor
 
                     foreach (IMPORT.IMPORTHORDO item in _import.ImportHordok)
                     {
-                        string iProdId = "12" + item.Termekkod.Substring(0, 2) + "01" + item.GyartasiEv + "_0" + item.GyartasiEv + item.Hordoszam;
+                        string iProdId = "12" + item.Termekkod.Substring(0, 2) + item.Othatkod + item.GyartasiEv + "_0" + item.GyartasiEv + item.Hordoszam;
                         string serial_nr = null;
                         string visarz = null;
                         string vigyev = null;
@@ -1731,7 +1736,7 @@ namespace Labor
 
             foreach (IMPORT.IMPORTHORDO item in _import.ImportHordok)
             {
-                string iProdId = "12" + item.Termekkod.Substring(0, 2) + "01" + item.GyartasiEv + "_0" + item.GyartasiEv + item.Hordoszam;
+                string iProdId = "12" + item.Termekkod.Substring(0, 2) + item.Othatkod + item.GyartasiEv + "_0" + item.GyartasiEv + item.Hordoszam;
                 string serial_nr = null;
 
                 lock (MarillenLock)
@@ -1831,13 +1836,13 @@ namespace Labor
             {
                 laborconnection.Open();
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT HOTEKO, HOSARZ, HOSZAM, VIGYEV, HOQTY,HOTIME FROM L_HORDO WHERE FOSZAM = " + _foglalás_száma;
+                command.CommandText = "SELECT HOTEKO, HOOTHA, HOSARZ, HOSZAM, VIGYEV, HOQTY,HOTIME FROM L_HORDO WHERE FOSZAM = " + _foglalás_száma;
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
                     int c = -1;
-                    value.Add(new HORDO(reader.GetString(++c), reader.GetString(++c), reader.GetString(++c), _foglalás_száma, reader.GetString(++c), reader.GetDecimal(++c), reader.GetString(++c)));
+                    value.Add(new HORDO(reader.GetString(++c), reader.GetString(++c), reader.GetString(++c), reader.GetString(++c), _foglalás_száma, reader.GetString(++c), reader.GetDecimal(++c), reader.GetString(++c)));
                 }
 
                 command.Dispose();

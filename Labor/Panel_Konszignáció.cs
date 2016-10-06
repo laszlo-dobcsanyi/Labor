@@ -502,6 +502,7 @@ namespace Labor
                 data = new DataTable();
 
                 data.Columns.Add(new DataColumn("Termékkód", Type.GetType("System.String")));
+                data.Columns.Add(new DataColumn("5-6 kód", Type.GetType("System.String")));
                 data.Columns.Add(new DataColumn("Sarzs", Type.GetType("System.String")));
                 data.Columns.Add(new DataColumn("Hordó száma", Type.GetType("System.String")));
                 data.Columns.Add(new DataColumn("Foglalás száma", Type.GetType("System.String")));

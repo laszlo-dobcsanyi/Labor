@@ -11,6 +11,7 @@ namespace Labor
     public struct HORDO
     {
         public string Termekkod;
+        public string Othatkod;
         public string Sarzs;
         public string ID;
         public int? FoglalasSzama;
@@ -19,6 +20,7 @@ namespace Labor
         public string Time;
 
         public HORDO( string _Termekkod,
+                      string _Othatkod,
                       string _Sarzs,
                       string _ID,
                       int? _FoglalasSzama,
@@ -27,6 +29,7 @@ namespace Labor
                       string _Time )
         {
             Termekkod = _Termekkod;
+            Othatkod = _Othatkod;
             Sarzs = _Sarzs;
             ID = _ID;
             FoglalasSzama = _FoglalasSzama;
@@ -38,16 +41,18 @@ namespace Labor
         public struct TABLEINDEXES
         {
             public const int Termekkod = 0;
-            public const int Sarzs = 1;
-            public const int ID = 2;
-            public const int FoglalasSzama = 3;
-            public const int GyartasiEv = 4;
+            public const int Othatkod = 1;
+            public const int Sarzs = 2;
+            public const int ID = 3;
+            public const int FoglalasSzama = 4;
+            public const int GyartasiEv = 5;
         }
 
         public static void SetRow( DataRow _row, HORDO _hordó )
         {
             _row[ TABLEINDEXES.Termekkod ] = _hordó.Termekkod;
-            _row[ TABLEINDEXES.Sarzs ] = _hordó.Sarzs;
+            _row[ TABLEINDEXES.Othatkod ] = _hordó.Othatkod;
+            _row[TABLEINDEXES.Sarzs] = _hordó.Sarzs;
             _row[ TABLEINDEXES.ID ] = _hordó.ID;
             _row[ TABLEINDEXES.FoglalasSzama ] = _hordó.FoglalasSzama == null ? -1 : _hordó.FoglalasSzama.Value;
             _row[ TABLEINDEXES.GyartasiEv ] = _hordó.GyartasiEv;
@@ -70,16 +75,19 @@ namespace Labor
     public struct SARZS
     {
         public string Termekkod;
+        public string Othatkod;
         public string Sarzs;
         public int Foglalt;
         public int Szabad;
 
         public SARZS( string _Termekkod,
+                      string _Othatkod,
                       string _Sarzs,
                       int _Foglalt,
                       int _Szabad )
         {
             Termekkod = _Termekkod;
+            Othatkod = _Othatkod;
             Sarzs = _Sarzs;
             Foglalt = _Foglalt;
             Szabad = _Szabad;
@@ -88,15 +96,17 @@ namespace Labor
         public struct TABLEINDEXES
         {
             public const int Termekkod = 0;
-            public const int Sarzs = 1;
-            public const int Foglalt = 2;
-            public const int Szabad = 3;
+            public const int Othatkod = 1;
+            public const int Sarzs = 2;
+            public const int Foglalt = 3;
+            public const int Szabad = 4;
         }
 
         public static void
         SetRow( DataRow _row, SARZS _sarzs )
         {
             _row[ TABLEINDEXES.Termekkod ] = _sarzs.Termekkod;
+            _row[ TABLEINDEXES.Othatkod] = _sarzs.Othatkod;
             _row[ TABLEINDEXES.Sarzs ] = _sarzs.Sarzs;
             _row[ TABLEINDEXES.Foglalt ] = _sarzs.Foglalt;
             _row[ TABLEINDEXES.Szabad ] = _sarzs.Szabad;
@@ -232,6 +242,7 @@ namespace Labor
 
         public struct ADATOK2
         {
+            public MinMaxPair<string> OthatKod;
             public MinMaxPair<string> Sarzs;
             public MinMaxPair<string> HordoID;
 
@@ -247,7 +258,8 @@ namespace Labor
             public MinMaxPair<Int16?> CitromsavAd;
             public MinMaxPair<Int16?> SzitaAtmero;
 
-            public ADATOK2( string _MinSarzs, string _MaxSarzs,
+            public ADATOK2(string _MinOthatkod, string _MaxOthatkod,
+                            string _MinSarzs, string _MaxSarzs,
                             string _MinHordoID, string _MaxHordoID,
                             double? _MinBrix, double? _MaxBrix,
                             double? _MinCitromsav, double? _MaxCitromsav,
@@ -260,6 +272,8 @@ namespace Labor
                             Int16? _MinSzitaAtmero, Int16? _MaxSzitaAtmero,
                             Int16? _MinCitromsavAd, Int16? _MaxCitromsavAd )
             {
+                OthatKod = new MinMaxPair< string > (_MinOthatkod, _MaxOthatkod);
+
                 Sarzs = new MinMaxPair<string>( _MinSarzs, _MaxSarzs );
                 HordoID = new MinMaxPair<string>( _MinHordoID, _MaxHordoID );
 
@@ -276,7 +290,8 @@ namespace Labor
                 CitromsavAd = new MinMaxPair<Int16?>( _MinCitromsavAd, _MaxCitromsavAd );
             }
 
-            public ADATOK2( MinMaxPair<string> _Sarzs,
+            public ADATOK2(MinMaxPair<string> _Othatkod,
+                            MinMaxPair<string> _Sarzs,
                             MinMaxPair<string> _HordoID,
                             MinMaxPair<double?> _Brix,
                             MinMaxPair<double?> _Citromsav,
@@ -289,6 +304,7 @@ namespace Labor
                             MinMaxPair<Int16?> _CitromsavAd,
                             MinMaxPair<Int16?> _SzitaAtmero )
             {
+                OthatKod = _Othatkod;
                 Sarzs = _Sarzs;
                 HordoID = _HordoID;
 
@@ -322,16 +338,19 @@ namespace Labor
         {
             public string Sorszam;
             public string Termekkod;
+            public string Othatkod;
             public string GyartasiEv;
             public string Hordoszam;
 
             public IMPORTHORDO( string _Sorszam,
                                 string _Termekkod,
+                                string _Othatkod,
                                 string _GyartasiEv,
                                 string _Hordoszam )
             {
                 Sorszam = _Sorszam;
                 Termekkod = _Termekkod;
+                Othatkod = _Othatkod;
                 GyartasiEv = _GyartasiEv;
                 Hordoszam = _Hordoszam;
             }
@@ -487,6 +506,7 @@ namespace Labor
                 {
                     IMPORT.IMPORTHORDO hordo = new IMPORT.IMPORTHORDO( splitted[ i ].Substring( 0, 3 ),
                                                                         splitted[ i ].Substring( 8, 3 ),
+                                                                        splitted[ i ].Substring( 11, 2 ),
                                                                         splitted[ i ].Substring( 14, 1 ),
                                                                         splitted[ i ].Substring( 15, 4 ) );
                     import.ImportHordok.Add( hordo );
@@ -772,6 +792,7 @@ namespace Labor
                 data = new DataTable( );
 
                 data.Columns.Add( new DataColumn( "Termékkód", Type.GetType( "System.String" ) ) );
+                data.Columns.Add( new DataColumn( "5-6 kód", Type.GetType( "System.String" ) ) );
                 data.Columns.Add( new DataColumn( "Sarzs", Type.GetType( "System.String" ) ) );
                 data.Columns.Add( new DataColumn( "Hordó száma", Type.GetType( "System.String" ) ) );
                 data.Columns.Add( new DataColumn( "Foglalás száma", Type.GetType( "System.String" ) ) );
@@ -796,6 +817,7 @@ namespace Labor
             Foglalás_Szerkesztő_Load( object _sender, EventArgs _event )
             {
                 table.Columns[ HORDO.TABLEINDEXES.Termekkod ].Width = 430 / 4;
+                table.Columns[ HORDO.TABLEINDEXES.Othatkod ].Width = 430 / 4;
                 table.Columns[ HORDO.TABLEINDEXES.Sarzs ].Width = 430 / 4;
                 table.Columns[ HORDO.TABLEINDEXES.ID ].Width = 430 / 4;
                 table.Columns[ HORDO.TABLEINDEXES.FoglalasSzama ].Visible = false;
@@ -866,6 +888,8 @@ namespace Labor
 
             #region Declaration
             TextBox txtTermekkod;
+            TextBox txtOthatkodMin;
+            TextBox txtOthatkodMax;
             TextBox txtSarzsMin;
             TextBox txtHordoIDMin;
             TextBox txtBrixMin;
@@ -937,7 +961,8 @@ namespace Labor
 
                 #region Controls
                 Label termékkód = MainForm.createlabel( "Termékkód:", 10, 10, this );
-                Label sarzs = MainForm.createlabel( "Sarzs:", termékkód.Location.X, termékkód.Location.Y + sor, this );
+                Label othatkód = MainForm.createlabel("5-6 kód:", termékkód.Location.X, termékkód.Location.Y + sor, this);
+                Label sarzs = MainForm.createlabel( "Sarzs:", termékkód.Location.X, othatkód.Location.Y + sor, this );
                 Label hordószám = MainForm.createlabel( "Hordószám:", termékkód.Location.X, sarzs.Location.Y + sor, this );
                 Label brix = MainForm.createlabel( "Brix %:", termékkód.Location.X, hordószám.Location.Y + sor, this );
                 Label citromsav = MainForm.createlabel( "Citromsav %:", termékkód.Location.X, brix.Location.Y + sor, this );
@@ -960,6 +985,8 @@ namespace Labor
                 #region Boxes
                 txtTermekkod = MainForm.createtextbox( termékkód.Location.X + oszlop + 20, termékkód.Location.Y, 5, 70, this );
                 txtTermekkod.Name = "box_termékkód";
+                txtOthatkodMin = MainForm.createtextbox(txtTermekkod.Location.X, othatkód.Location.Y, 2, 70, this);
+                txtOthatkodMax = MainForm.createtextbox(txtTermekkod.Location.X + oszlop, othatkód.Location.Y, 2, 70, this);
                 txtSarzsMin = MainForm.createtextbox( txtTermekkod.Location.X, sarzs.Location.Y, 5, 70, this );
                 txtSarzsMax = MainForm.createtextbox( txtTermekkod.Location.X + oszlop, sarzs.Location.Y, 5, 70, this );
                 txtHordoIDMin = MainForm.createtextbox( txtTermekkod.Location.X, hordószám.Location.Y, 5, 70, this );
@@ -997,6 +1024,8 @@ namespace Labor
 
                 #region Events
                 txtBrixMin.KeyPress += MainForm.OnlyNumber;
+                txtOthatkodMin.KeyPress += MainForm.OnlyNumber;
+                txtOthatkodMax.KeyPress += MainForm.OnlyNumber;
                 txtBrixMax.KeyPress += MainForm.OnlyNumber;
                 txtCitromsavMin.KeyPress += MainForm.OnlyNumber;
                 txtCitromsavMax.KeyPress += MainForm.OnlyNumber;
@@ -1046,6 +1075,8 @@ namespace Labor
                 if ( Eredeti != null )
                 {
                     txtTermekkod.Text = Eredeti.Value.szűrő.Value.adatok1.Termekkod;
+                    txtOthatkodMin.Text = Eredeti.Value.szűrő.Value.adatok2.OthatKod.min;
+                    txtOthatkodMax.Text = Eredeti.Value.szűrő.Value.adatok2.OthatKod.max;
                     txtSarzsMin.Text = Eredeti.Value.szűrő.Value.adatok2.Sarzs.min;
                     txtSarzsMax.Text = Eredeti.Value.szűrő.Value.adatok2.Sarzs.max;
                     txtHordoIDMin.Text = Eredeti.Value.szűrő.Value.adatok2.HordoID.min;
@@ -1108,6 +1139,8 @@ namespace Labor
             private void
             Kereses( object _sender, EventArgs _event )
             {
+                if ( txtOthatkodMin.Text.Length != 0 && txtOthatkodMax.Text.Length != 0 ) if ( MainForm.ConvertOrDie<int>(txtOthatkodMin.Text ) > MainForm.ConvertOrDie<int>(txtOthatkodMax.Text ) ) { MessageBox.Show( "5-5 kód!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning ); return; }
+
                 if ( txtSarzsMin.Text.Length != 0 && txtSarzsMax.Text.Length != 0 ) if ( MainForm.ConvertOrDie<int>( txtSarzsMin.Text ) > MainForm.ConvertOrDie<int>( txtSarzsMax.Text ) ) { MessageBox.Show( "Sarzs!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning ); return; }
                 if ( txtBrixMin.Text.Length != 0 && txtBrixMax.Text.Length != 0 ) if ( MainForm.ConvertOrDie<double>( txtBrixMin.Text ) > MainForm.ConvertOrDie<double>( txtBrixMax.Text ) ) { MessageBox.Show( "brix!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning ); return; }
                 if ( txtCitromsavMin.Text.Length != 0 && txtCitromsavMax.Text.Length != 0 ) if ( MainForm.ConvertOrDie<double>( txtCitromsavMin.Text ) > MainForm.ConvertOrDie<double>( txtCitromsavMax.Text ) ) { MessageBox.Show( "citromsav!", "Hiba", MessageBoxButtons.OK, MessageBoxIcon.Warning ); return; }
@@ -1130,6 +1163,9 @@ namespace Labor
                     MainForm.ConvertOrDieSQLString( txtTermekkod.Text ) );
 
                 VIZSGALAP_SZURO.ADATOK2 adatok2 = new VIZSGALAP_SZURO.ADATOK2(
+                    MainForm.ConvertOrDieSQLString( txtOthatkodMin.Text ),
+                    MainForm.ConvertOrDieSQLString(txtOthatkodMax.Text),
+
                     MainForm.ConvertOrDieSQLString( txtSarzsMin.Text ),
                     MainForm.ConvertOrDieSQLString( txtSarzsMax.Text ),
                     MainForm.ConvertOrDieSQLString( txtHordoIDMin.Text ),
@@ -1240,6 +1276,7 @@ namespace Labor
                     data = new DataTable( );
 
                     data.Columns.Add( new DataColumn( "Termékkód", Type.GetType( "System.String" ) ) );
+                    data.Columns.Add( new DataColumn("5-6 kód", Type.GetType( "System.String" ) ) );
                     data.Columns.Add( new DataColumn( "Sarzs", Type.GetType( "System.String" ) ) );
                     data.Columns.Add( new DataColumn( "Foglalt", Type.GetType( "System.Int32" ) ) );
                     data.Columns.Add( new DataColumn( "Szabad", Type.GetType( "System.Int32" ) ) );
@@ -1284,7 +1321,9 @@ namespace Labor
                 {
                     if ( table.SelectedRows.Count != 1 ) return;
 
-                    SARZS sarzs = new SARZS( ( string )table.SelectedRows[ 0 ].Cells[ SARZS.TABLEINDEXES.Termekkod ].Value, ( string )table.SelectedRows[ 0 ].Cells[ SARZS.TABLEINDEXES.Sarzs ].Value,
+                    SARZS sarzs = new SARZS( ( string )table.SelectedRows[ 0 ].Cells[ SARZS.TABLEINDEXES.Termekkod ].Value,
+                        (string)table.SelectedRows[0].Cells[SARZS.TABLEINDEXES.Othatkod].Value,
+                        ( string )table.SelectedRows[ 0 ].Cells[ SARZS.TABLEINDEXES.Sarzs ].Value,
                         ( int )table.SelectedRows[ 0 ].Cells[ SARZS.TABLEINDEXES.Foglalt ].Value, ( int )table.SelectedRows[ 0 ].Cells[ SARZS.TABLEINDEXES.Szabad ].Value );
 
                     Eredmény_Hordók eredmény_hordók;
