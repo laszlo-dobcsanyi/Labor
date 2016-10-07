@@ -1091,7 +1091,7 @@ namespace Labor
 
                 laborconnection.Open();
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT HOTEKO, HOSARZ, HOSZAM, VIGYEV, FOSZAM, HOQTY, HOTIME FROM L_HORDO WHERE HOTEKO = '" + _sarzs.Termekkod + "' AND HOSARZ = '" + _sarzs.Sarzs + "';";
+                command.CommandText = "SELECT HOTEKO, HOOTHA, HOSARZ, HOSZAM, VIGYEV, FOSZAM, HOQTY, HOTIME FROM L_HORDO WHERE HOTEKO = '" + _sarzs.Termekkod + "' AND HOSARZ = '" + _sarzs.Sarzs + "';";
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
@@ -1229,8 +1229,8 @@ namespace Labor
                 SqlCommand command3 = laborconnection.CreateCommand();
                 foreach (Hordó_Adat adat in hordó_adatok)
                 {
-                    command3.CommandText += "INSERT INTO L_HORDO (HOTEKO, HOSARZ, HOSZAM, VIGYEV, HOQTY, HOTIME) VALUES('" + _vizsgálat.azonosító.termékkód + "','" + _vizsgálat.azonosító.sarzs + "','" +
-                        adat.szám + "','" + _vizsgálat.adatok1.gyártási_év + "', " + adat.tömeg.ToString("F2").Replace(',', '.') + ", '" + adat.év + "');";
+                    command3.CommandText += "INSERT INTO L_HORDO (HOTEKO, HOSARZ, HOSZAM, VIGYEV, HOQTY, HOTIME, HOOTHA) VALUES('" + _vizsgálat.azonosító.termékkód + "','" + _vizsgálat.azonosító.sarzs + "','" +
+                        adat.szám + "','" + _vizsgálat.adatok1.gyártási_év + "', " + adat.tömeg.ToString("F2").Replace(',', '.') + ", '" + adat.év + ", '" + _vizsgálat.azonosító.othatkod + "');";
                 }
                 command3.ExecuteNonQuery();
                 command3.Dispose();
@@ -1510,6 +1510,11 @@ namespace Labor
             lock (LaborLock)
             {
                 SqlCommand command;
+
+                if (_foglalás.Ido.Length > 20)
+                {
+                    _foglalás.Ido = _foglalás.Ido.Substring(20);
+                }
 
                 laborconnection.Open();
 
