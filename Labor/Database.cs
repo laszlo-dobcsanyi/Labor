@@ -1137,12 +1137,12 @@ namespace Labor
             {
                 laborconnection.Open();
                 SqlCommand command = laborconnection.CreateCommand();
-                command.CommandText = "SELECT HOSZAM, HOOTHA, FOSZAM, VIGYEV, HOQTY, HOTIME FROM L_HORDO WHERE (FOSZAM IS NULL OR FOSZAM = " + _foglalás.ID + ") AND HOTEKO = '" + _sarzs.Termekkod + "' AND HOSARZ = '" + _sarzs.Sarzs + "';";
+                command.CommandText = "SELECT HOSZAM, FOSZAM, VIGYEV, HOQTY, HOTIME, HOOTHA FROM L_HORDO WHERE (FOSZAM IS NULL OR FOSZAM = " + _foglalás.ID + ") AND HOTEKO = '" + _sarzs.Termekkod + "' AND HOSARZ = '" + _sarzs.Sarzs + "';";
 
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    value.Add(new HORDO(_sarzs.Termekkod, _sarzs.Othatkod, _sarzs.Sarzs, reader.GetString(0), GetNullable<int>(reader, 1), reader.GetString(2), reader.GetDecimal(3), reader.GetString(4)));
+                    value.Add(new HORDO(_sarzs.Termekkod, reader.GetString(5), _sarzs.Sarzs, reader.GetString(0), GetNullable<int>(reader, 1), reader.GetString(2), reader.GetDecimal(3), reader.GetString(4)));
                 }
 
                 command.Dispose();
@@ -1469,7 +1469,7 @@ namespace Labor
 
                 // Adatok2
                 data = V(new[] {
-                Update("FOOTHAT", _szűrő.adatok2.Sarzs.min), Update("FOOTHAI", _szűrő.adatok2.Sarzs.max),
+                Update("FOOTHAT", _szűrő.adatok2.OthatKod.min), Update("FOOTHAI", _szűrő.adatok2.OthatKod.max),
                 Update("FOSARZT", _szűrő.adatok2.Sarzs.min), Update("FOSARZI", _szűrő.adatok2.Sarzs.max),
                 Update("FOHOSZT", _szűrő.adatok2.HordoID.min), Update("FOHOSZI", _szűrő.adatok2.HordoID.max),
                 Update("FOBRIXT", _szűrő.adatok2.Brix.min), Update("FOBRIXI", _szűrő.adatok2.Brix.max),
@@ -1501,6 +1501,12 @@ namespace Labor
 
         public bool Foglalás_Hozzáadás(FOGLALAS _foglalás)
         {
+            /*
+            if (_foglalás.Ido.Length >= 20)
+            {
+                _foglalás.Ido = _foglalás.Ido.Substring(0, 20);
+            }
+            */
             lock (LaborLock)
             {
                 SqlCommand command;
