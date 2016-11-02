@@ -866,7 +866,6 @@ namespace Labor
                 string data;
                 SqlCommand command;
                 string where = A(new[] { Update("VITEKO", _vizsgálat.azonosító.termékkód), Update("VIHOSZ", _vizsgálat.azonosító.hordószám), Update("VISARZ", _vizsgálat.azonosító.sarzs) });
-
                 laborconnection.Open();
 
                 // Azonosító
@@ -1230,15 +1229,12 @@ namespace Labor
                 foreach (Hordó_Adat adat in hordó_adatok)
                 {
                     command3.CommandText += "INSERT INTO L_HORDO (HOTEKO, HOSARZ, HOSZAM, VIGYEV, HOQTY, HOTIME, HOOTHA) VALUES('" + _vizsgálat.azonosító.termékkód + "','" + _vizsgálat.azonosító.sarzs + "','" +
-                        adat.szám + "','" + _vizsgálat.adatok1.gyártási_év + "', " + adat.tömeg.ToString("F2").Replace(',', '.') + ", '" + adat.év + ", '" + _vizsgálat.azonosító.othatkod + "');";
+                        adat.szám + "','" + _vizsgálat.adatok1.gyártási_év + "', " + adat.tömeg.ToString("F2").Replace(',', '.') + ", '" + adat.év + "', '" + _vizsgálat.azonosító.othatkod + "');";
                 }
                 command3.ExecuteNonQuery();
                 command3.Dispose();
                 laborconnection.Close();
             }
-            foreach (Hordó_Adat adat in hordó_adatok)
-                Console.WriteLine(adat.év);
-
             return true;
         }
 
