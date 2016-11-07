@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -1165,9 +1166,88 @@ namespace Labor
             }
         };
 
-        public bool Hordók_Másolás(Vizsgálat _vizsgálat)
+        /// <summary>
+        /// Átmásolt hordók ellenőrzése egy vizsgálati lapra
+        /// </summary>
+        /// <param name="_vizsgálat"></param>
+        /// <returns></returns>
+        public bool Hordók_Javítás(Vizsgálat _vizsgálat)
         {
-            string where = A(new[] { Update("VITEKO", _vizsgálat.azonosító.termékkód), Update("VISARZ", _vizsgálat.azonosító.sarzs), Update("VIGYEV", _vizsgálat.adatok1.gyártási_év.Substring(3, 1)) });
+            string where = A(new[] {
+                Update("HOTEKO", _vizsgálat.azonosító.termékkód),
+                Update("HOSARZ", _vizsgálat.azonosító.sarzs),
+                Update("VIGYEV",  "201" +_vizsgálat.adatok1.gyártási_év),
+                Update("HOOTHA",  _vizsgálat.azonosító.othatkod),
+            });
+
+            int count = 0;
+
+            lock (LaborLock)
+            {
+                laborconnection.Open();
+                SqlCommand command = laborconnection.CreateCommand();
+                command.CommandText = "SELECT COUNT(*) FROM L_HORDO WHERE " + where;
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    count = reader.GetInt32(0);
+                }
+                reader.Close();
+                laborconnection.Close();
+            }
+
+            List<Hordó_Adat> hordó_adatok = new List<Hordó_Adat>();
+            string iPROD_ID = "12" + _vizsgálat.azonosító.termékkód.Substring(0, 2) + _vizsgálat.azonosító.othatkod + _vizsgálat.adatok1.gyártási_év[_vizsgálat.adatok1.gyártási_év.Length - 1];
+
+            lock (MarillenLock)
+            {
+                string előző = null;
+
+                marillenconnection.Open();
+                SqlCommand command = new SqlCommand("SELECT tetelek.prod_id, tetelek.qty, tetelek.time_ FROM tetelek" +
+                                          " INNER JOIN folyoprops ON tetelek.serial_nr=folyoprops.serial_nr" +
+                                          " WHERE left(tetelek.prod_id,7) = '" + iPROD_ID + "' AND folyoprops.code= '3' AND folyoprops.propstr = '" + _vizsgálat.azonosító.sarzs + "'  ORDER BY tetelek.prod_id;");
+                command.Connection = marillenconnection;
+                SqlDataReader reader = command.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    előző = reader.GetString(0).Substring(reader.GetString(0).Length - 4);
+                    hordó_adatok.Add(new Hordó_Adat(előző, reader.GetDecimal(1), reader.GetDateTime(2).ToString()));
+
+                    while (reader.Read())
+                    {
+                        string szám = reader.GetString(0).Substring(reader.GetString(0).Length - 4);
+                        if (szám != előző)
+                        {
+                            hordó_adatok.Add(new Hordó_Adat(szám, reader.GetDecimal(1), reader.GetDateTime(2).ToString()));
+                        }
+                        előző = szám;
+                    }
+                }
+                reader.Close();
+                marillenconnection.Close();
+            }
+
+            if (hordó_adatok.Count != count && (hordó_adatok.Count != 0))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool Hordók_Másolás(Vizsgálat _vizsgálat, bool javitas = false)
+        {
+            string where = null;
+
+            if (_vizsgálat.adatok1.gyártási_év.Length == 1)
+            {
+                where = A(new[] { Update("VITEKO", _vizsgálat.azonosító.termékkód), Update("VISARZ", _vizsgálat.azonosító.sarzs), Update("VIGYEV", _vizsgálat.adatok1.gyártási_év) });
+            }
+            else
+            {
+                where = A(new[] { Update("VITEKO", _vizsgálat.azonosító.termékkód), Update("VISARZ", _vizsgálat.azonosító.sarzs), Update("VIGYEV", _vizsgálat.adatok1.gyártási_év.Substring(3, 1)) });
+            }
 
             lock (LaborLock)
             {
@@ -1184,7 +1264,7 @@ namespace Labor
                 reader.Close();
                 laborconnection.Close();
 
-                if (count != 1) return true;
+                if (count != 1 && javitas == false) return true;
             }
 
             List<Hordó_Adat> hordó_adatok = new List<Hordó_Adat>();
@@ -1231,6 +1311,7 @@ namespace Labor
                     command3.CommandText += "INSERT INTO L_HORDO (HOTEKO, HOSARZ, HOSZAM, VIGYEV, HOQTY, HOTIME, HOOTHA) VALUES('" + _vizsgálat.azonosító.termékkód + "','" + _vizsgálat.azonosító.sarzs + "','" +
                         adat.szám + "','" + _vizsgálat.adatok1.gyártási_év + "', " + adat.tömeg.ToString("F2").Replace(',', '.') + ", '" + adat.év + "', '" + _vizsgálat.azonosító.othatkod + "');";
                 }
+                File.AppendAllText(@"Hordok_Masolas.txt", command3.CommandText + Environment.NewLine);
                 command3.ExecuteNonQuery();
                 command3.Dispose();
                 laborconnection.Close();

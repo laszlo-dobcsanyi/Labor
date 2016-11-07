@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace Labor
@@ -269,15 +270,75 @@ namespace Labor
             hozzáadás.Enabled = Program.felhasználó.Value.Jogosultsagok.Value.Vizsgalatok.Hozzaadas ? true : false;
             hozzáadás.Click += Vizsgálat_Hozzáadás;
 
+            Button javitas = new Button();
+            javitas.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
+            javitas.Text = "Javítás";
+            javitas.Size = new Size(96, 32);
+            javitas.Location = new Point(törlés.Location.X + törlés.Width + 16, törlés.Location.Y - 64);
+            javitas.Enabled = Program.felhasználó.Value.Jogosultsagok.Value.Vizsgalatok.Hozzaadas ? true : false;
+            javitas.Click += Javitas_Click;
+
             //
 
             Controls.Add(table);
+            Controls.Add(javitas);
             Controls.Add(törlés);
             Controls.Add(hozzáadás);
             Controls.Add(label_kereső);
             Controls.Add(box_kereső);
         }
 
+        private void Javitas_Click(object sender, EventArgs e)
+        {
+            var vizsgálatok = Program.database.Vizsgálatok();
+            String message = "Hordók másolása" + Environment.NewLine;
+            var vizsgalatok = new List<Vizsgálat>();
+            
+            for (int i = 0; i < vizsgálatok.Count; i++)
+            {
+                var vizsgálat = Program.database.Vizsgálat(vizsgálatok[i]);
+                if (vizsgálat != null)
+                {
+                    try
+                    {
+                        bool shouldCopy = Program.database.Hordók_Javítás(vizsgálat.Value);
+
+                        if (shouldCopy == true)
+                        {
+                            bool found = false;
+                            for (int j = 0; j < vizsgalatok.Count; j++)
+                            {
+                                if (vizsgalatok[j].azonosító.termékkód == vizsgálat.Value.azonosító.termékkód &&
+                                    vizsgalatok[j].azonosító.sarzs == vizsgálat.Value.azonosító.sarzs &&
+                                    vizsgalatok[j].azonosító.othatkod == vizsgálat.Value.azonosító.othatkod &&
+                                    vizsgalatok[j].adatok1.gyártási_év == vizsgálat.Value.adatok1.gyártási_év)
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (!found)
+                            {
+                                vizsgalatok.Add(vizsgálat.Value);
+                            }
+
+                            message += "termékkód: " +  vizsgálat.Value.azonosító.termékkód + " sarzs: " + vizsgálat.Value.azonosító.sarzs + " gyártási év:" + vizsgálat.Value.adatok1.gyártási_év + Environment.NewLine;
+                        }
+                    }
+                    catch (Exception ex )
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+
+            foreach (Vizsgálat vizsgalat in vizsgalatok)
+            {
+                Program.database.Hordók_Másolás(vizsgalat, true);
+            }
+
+            MessageBox.Show("Hordók Javítása kész");
+        }
 
         void box_kereső_TextChanged(object sender, EventArgs e)
         {
