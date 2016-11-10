@@ -348,7 +348,16 @@ namespace Labor
                     {
                         if ( Konszignacio.gyumolcstipusok[ i ].Megnevezes == Program.database.Name( inner.Termekkod ) )
                         {
-                            KONSZIGNACIO.GYUMOLCSTIPUS.ADAT temp = new KONSZIGNACIO.GYUMOLCSTIPUS.ADAT( inner.GyartasiEv[ 3 ] + inner.ID, inner.Sarzs, Convert.ToDouble( inner.Mennyiseg ), "", inner.Time.Substring( 0, 11 ) );
+                            KONSZIGNACIO.GYUMOLCSTIPUS.ADAT temp;
+                            if (inner.GyartasiEv.Length == 1)
+                            {
+                                temp = new KONSZIGNACIO.GYUMOLCSTIPUS.ADAT(inner.GyartasiEv + inner.ID, inner.Sarzs, Convert.ToDouble(inner.Mennyiseg), "", inner.Time.Substring(0, 11));
+                            }
+                            else
+                            {
+                                temp = new KONSZIGNACIO.GYUMOLCSTIPUS.ADAT(inner.GyartasiEv[3] + inner.ID, inner.Sarzs, Convert.ToDouble(inner.Mennyiseg), "", inner.Time.Substring(0, 11));
+                            }
+
                             List<Vizsgálat.Azonosító> vizsgálatok = Program.database.Vizsgálatok( );
                             foreach ( Vizsgálat.Azonosító item in vizsgálatok )
                             {

@@ -51,7 +51,7 @@ namespace Labor
             ToolStripStatusLabel Készítők = new ToolStripStatusLabel("Belinyák Nándor és Társai. \u00A9 2014");
             Készítők.BorderSides = ToolStripStatusLabelBorderSides.Left;
 
-            ToolStripStatusLabel Verzió = new ToolStripStatusLabel("Verzió: CSAK HORDÓK MÁSOLÁSRA!");
+            ToolStripStatusLabel Verzió = new ToolStripStatusLabel("Verzió: 0.6.3-2016.11.10");
             Verzió.BorderSides = ToolStripStatusLabelBorderSides.Left;
 
             ToolStripStatusLabel MarillenAdatbazis = new ToolStripStatusLabel( "Adatbázis:  " +  Settings.marillen_database );
